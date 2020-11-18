@@ -22,6 +22,8 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
+    // develop
+    
     private String TAG = "[LOGIN]";
     Button btn_SignUp, btn_SignIn,
             btn_googleSignIn, btn_googleSignOut,
