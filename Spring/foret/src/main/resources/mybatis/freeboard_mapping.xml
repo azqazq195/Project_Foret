@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.freeboard">
+
+<!-- 프리게시판 글 관리 -->
+<insert id="writeFreeboard" parameterType="FreeBoard">
+insert into freeboard_table values (freeboard_no.nextval, 0, 0, 0, #{member_id}, #{freeboard_subject}, #{freeboard_content}, sysdate, sysdate)
+</insert>
+
+<update id="modifyFreeboard" parameterType="FreeBoard">
+update freeboard_table set freeboard_subject=#{freeboard_subject}, freeboard_content=#{freeboard_content}, freeboard_edit_date=sysdate 
+where freeboard_no=#{freeboard_no} and member_id=#{member_id}
+</update>
+
+<update id="updateHitFreeboard" parameterType="int">
+update freeboard_table set freeboard_hit=freeboard_hit+1 where freeboard_no=#{freeboard_no}
+</update>
+
+<update id="updateLikePlusFreeboard" parameterType="int">
+update freeboard_table set freeboard_like_count=freeboard_like_count+1 where freeboard_no=#{freeboard_no}
+</update>
+<update id="updateLikeMinusFreeboard" parameterType="int">
+update freeboard_table set freeboard_like_count=freeboard_like_count-1 where freeboard_no=#{freeboard_no}
+</update>
+
+<update id="updateReplyPlusFreeboard" parameterType="int">
+update freeboard_table set freeboard_comment_count=freeboard_comment_count+1 where freeboard_no=#{freeboard_no}
+</update>
+<update id="updateReplyMinusFreeboard" parameterType="int">
+update freeboard_table set freeboard_comment_count=freeboard_comment_count-1 where freeboard_no=#{freeboard_no}
+</update>
+
+<delete id="deleteFreeboard" parameterType="java.util.Map">
+delete from freeboard_table where freeboard_no=#{freeboard_no} and member_id=#{member_id}
+</delete>
+
+<select id="readFreeboard" parameterType="int" resultType="FreeBoard">
+select*from freeboard_table where freeboard_no=#{freeboard_no}
+</select>
+
+<select id="listDateFreeboard" resultType="FreeBoard" parameterType="java.util.Map">
+<![CDATA[select *from (select rownum rn, tt.* from (select * from freeboard_table order by freeboard_no desc) 
+tt) where rn>=#{startNum} and rn<=#{endNum}]]>
+</select>
+<select id="listReplyFreeboard" resultType="FreeBoard" parameterType="java.util.Map">
+<![CDATA[select *from (select rownum rn, tt.* from (select * from freeboard_table order by freeboard_comment_count desc) 
+tt) where rn>=#{startNum} and rn<=#{endNum}]]>
+</select>
+<select id="listLikeFreeboard" resultType="FreeBoard" parameterType="java.util.Map">
+<![CDATA[select *from (select rownum rn, tt.* from (select * from freeboard_table order by freeboard_like_count desc) 
+tt) where rn>=#{startNum} and rn<=#{endNum}]]>
+</select>
+
+<!-- 내가 누른 프리게시판 좋아요 관리- 프리게시판 구분 번호는 0 -->
+<insert id="clickLike" parameterType="java.util.Map">
+insert into like_save_table values (#{member_id}, 0, null, #{text_no})
+</insert>
+<delete id="unClickLike" parameterType="java.util.Map">
+delete from like_save_table where board_type=0 and member_id=#{member_id} and text_no=#{text_no}
+</delete>
+<select id="likeSeq" parameterType="java.util.Map" resultType="int">
+select text_no from like_save_table where board_type=0 and text_no=#{text_no} and member_id=#{member_id}
+</select>
+<select id="isLiked" parameterType="java.util.Map" resultType="boolean">
+select case when count(*)=1 then 'true' else 'false' end from like_save_table where member_id=#{member_id} and board_type=0 and text_no=#{text_no}
+</select>
+
+<!-- 프리게시판 글 댓글 관리 -->
+<insert id="writeComment" parameterType="FreeBoardComment">
+insert into freeboard_comment_table values (#{freeboard_no}, freeboard_comment_no.nextval, #{freeboard_comment_writer}, 
+#{freeboard_writer}, #{freeboard_comment_content}, sysdate)
+</insert>
+
+<update id="modifyComment" parameterType="java.util.Map">
+update freeboard_comment_table set freeboard_comment_content=#{freeboard_comment_content} where freeboard_comment_no=#{freeboard_comment_no} 
+and freeboard_comment_writer=#{freeboard_comment_writer}
+</update>
+
+<delete id="deleteComment" parameterType="java.util.Map">
+delete from freeboard_comment_table where freeboard_comment_no=#{freeboard_comment_no} and freeboard_comment_writer=#{freeboard_comment_writer}
+</delete>
+<delete id="deleteCommentALL" parameterType="int">
+delete from freeboard_comment_table where freeboard_no=#{freeboard_no}
+</delete>
+
+<select id="commentList" parameterType="int" resultType="FreeBoardComment">
+select*from freeboard_comment_table where freeboard_no=#{freeboard_no} 
+</select>
+<select id="selectComment" parameterType="java.util.Map" resultType="FreeBoardComment">
+select*from freeboard_comment_table where freeboard_comment_no=#{freeboard_comment_no} and freeboard_no=#{freeboard_no}
+</select>
+
+</mapper>
