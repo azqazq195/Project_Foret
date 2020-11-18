@@ -5,7 +5,111 @@
   <link rel="self" href="https://spring.io/blog.atom" />
   <id>http://spring.io/blog.atom</id>
   <icon>https://spring.io/favicon.ico</icon>
-  <updated>2020-11-18T01:38:03Z</updated>
+  <updated>2020-11-18T07:55:11Z</updated>
+  <entry>
+    <title>Spring Data 2020.0 - New and Noteworthy in Spring Data R2DBC 1.2</title>
+    <link rel="alternate" href="https://spring.io/blog/2020/11/18/spring-data-2020-0-new-and-noteworthy-in-spring-data-r2dbc-1-2" />
+    <category term="engineering" label="Engineering" />
+    <author>
+      <name>Mark Paluch</name>
+    </author>
+    <id>tag:spring.io,2020-11-05:4257</id>
+    <updated>2020-11-18T07:55:11Z</updated>
+    <content type="html">&lt;p&gt;This release is a major milestone in Spring&amp;rsquo;s R2DBC support. Spring support for R2DBC started as an experimental project two years ago to evaluate how a reactive SQL integration might look. With this release, Spring Data R2DBC underwent a major refactoring by moving several components into a dedicated &lt;code&gt;spring-r2dbc&lt;/code&gt; module and deprecating components that are provided by the Spring Framework. Besides that change, Spring Data R2DBC ships with the following most notable changes:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Add lifecycle callbacks through the &lt;code&gt;EntityCallback&lt;/code&gt; API&lt;/li&gt;
+  &lt;li&gt;Reactive auditing&lt;/li&gt;
+  &lt;li&gt;Pass-through of &lt;code&gt;enum&lt;/code&gt; values and Postgres Geo types&lt;/li&gt;
+&lt;/ul&gt;&lt;h2&gt;&lt;a href="#spring-r2dbc" class="anchor" name="spring-r2dbc"&gt;&lt;/a&gt;Spring R2DBC&lt;/h2&gt;
+&lt;p&gt;Spring Data R2DBC is now based on &lt;code&gt;spring-r2dbc&lt;/code&gt;, a new module in Spring Framework that ships with core R2DBC support, such as &lt;code&gt;DatabaseClient&lt;/code&gt;, &lt;code&gt;ConnectionFactoryInitializer&lt;/code&gt;, and &lt;code&gt;R2dbcTransactionManager&lt;/code&gt;. Those components were deprecated in favor of Spring R2DBC components and marked for removal with the next major Spring Data R2DBC release. See the &lt;a href="https://docs.spring.io/spring-data/r2dbc/docs/current/reference/html/#upgrading.1.1-1.2"&gt;migration guide&lt;/a&gt; to learn about deprecations and what replacement API to use.&lt;/p&gt;&lt;h2&gt;&lt;a href="#lifecycle-entitycallback-api" class="anchor" name="lifecycle-entitycallback-api"&gt;&lt;/a&gt;Lifecycle EntityCallback API&lt;/h2&gt;
+&lt;p&gt;&lt;a href="https://spring.io/blog/2019/10/08/what-s-new-in-spring-data-moore"&gt;Spring Data Moore introduced&lt;/a&gt; the &lt;a href="https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/mapping/callback/EntityCallbacks.html"&gt;&lt;code&gt;EntityCallback&lt;/code&gt; API&lt;/a&gt; to pre-process and post-process entities upon load, save, and delete operations. Entity callbacks are invoked during persistence operations and allow in-place modifications to entities and returning new object instances if an entity class is immutable.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;EntityCallback&lt;/code&gt; interfaces are reactive-enabled by returning &lt;code&gt;Publisher&amp;lt;T&amp;gt;&lt;/code&gt; where &lt;code&gt;T&lt;/code&gt; represents the entity type. Returning a publisher allows consuming the subscriber context (as is done for reactive auditing) or integrating with other reactive components that perform I/O before saving an entity or after loading one.&lt;/p&gt;
+&lt;p&gt;You can use &lt;code&gt;EntityCallback&lt;/code&gt; for all sorts of callback hooks. The following example defines a &lt;code&gt;BeforeConvertCallback&lt;/code&gt; to generate a primary key value from a H2 sequence for the &lt;code&gt;Customer&lt;/code&gt; type if its identifier is &lt;code&gt;null&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="prettyprint java"&gt;@Bean  &#xD;
+BeforeConvertCallback&amp;lt;Customer&amp;gt; idGeneratingCallback(DatabaseClient databaseClient) {  &#xD;
+  &#xD;
+   return (customer, sqlIdentifier) -&amp;gt; {  &#xD;
+  &#xD;
+      if (customer.getId() == null) {  &#xD;
+  &#xD;
+         return databaseClient.sql(&amp;quot;SELECT primary_key.nextval&amp;quot;) //  &#xD;
+  .map(row -&amp;gt; row.get(0, Long.class)) //  &#xD;
+  .first() //  &#xD;
+  .map(customer::withId);  &#xD;
+      }  &#xD;
+  &#xD;
+      return Mono.just(customer);  &#xD;
+   };  &#xD;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can read more about &lt;a href="https://docs.spring.io/spring-data/r2dbc/docs/current/reference/html/#r2dbc.entity-callbacks"&gt;R2DBC EntityCallbacks&lt;/a&gt; in the &lt;a href="https://docs.spring.io/spring-data/r2dbc/docs/current/reference/html/"&gt;R2DBC reference documentation&lt;/a&gt;.&lt;/p&gt;&lt;h2&gt;&lt;a href="#pass-thru-of-code-enum-code-values-and-postgres-geo-types" class="anchor" name="pass-thru-of-code-enum-code-values-and-postgres-geo-types"&gt;&lt;/a&gt;Pass-thru of &lt;code&gt;enum&lt;/code&gt; Values and Postgres Geo Types&lt;/h2&gt;
+&lt;p&gt;Postgres supports various data types, of which enumerations and Geometric types can be used directly from Spring Data R2DBC. By default, Spring Data converts &lt;code&gt;enum&lt;/code&gt; values to &lt;code&gt;String&lt;/code&gt; by using the enum&amp;rsquo;s &lt;code&gt;name()&lt;/code&gt; method to represent the enumeration value. R2DBC Postgres supports (since version 0.8.4) a specific codec that accepts Java &lt;code&gt;enum&lt;/code&gt; types and maps these onto the corresponding Postgres enum type. &lt;/p&gt;
+&lt;p&gt;Consider the following Java &lt;code&gt;enum&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="prettyprint java"&gt;enum Color {&#xD;
+	Blue, Green, White&#xD;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Enumeration types in Postgres need to be created before using enum types:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="prettyprint sql"&gt;CREATE TYPE color_enum as enum (&amp;#39;Blue&amp;#39;, &amp;#39;Green&amp;#39;, `White`);&#xD;
+&#xD;
+CREATE TABLE product (id SERIAL PRIMARY KEY, color color_enum);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once the enum type is in place, you need to configure the driver to associate the Java enum with the corresponding Postgres enum type. This is done by using the R2DBC Postgres &lt;code&gt;EnumCodec&lt;/code&gt; builder . The resulting &lt;code&gt;CodecRegistrar&lt;/code&gt; must be registered with the connection configuration before creating a &lt;code&gt;ConnectionFactory&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="prettyprint java"&gt;CodecRegistrar codecRegistrar = EnumCodec.builder().withEnum(&amp;quot;color_enum&amp;quot;, Color.class).build();&#xD;
+&#xD;
+PostgresqlConnectionConfiguration configuration = PostgresqlConnectionConfiguration.builder()&#xD;
+ &#xD;
+    .codecRegistrar(codecRegistrar)&#xD;
+ &#xD;
+    // additional configuration&#xD;
+    .build();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;See also the &lt;a href="https://github.com/pgjdbc/r2dbc-postgresql#postgres-enum-types"&gt;driver documentation on Postgres Enum Types&lt;/a&gt; for further reference.&lt;/p&gt;
+&lt;p&gt;Once the &lt;code&gt;ConnectionFactory&lt;/code&gt; is configured, you can configure specific &lt;code&gt;enum&lt;/code&gt; types in Spring Data to be passed-thru to the driver with their actual value instead of converting the enum value to &lt;code&gt;String&lt;/code&gt;. &lt;code&gt;R2dbcCustomConversions&lt;/code&gt; is the entry point to use when configuring simple types and their converters:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="prettyprint java"&gt;R2dbcCustomConversions conversions = R2dbcCustomConversions.of(PostgresDialect.INSTANCE, new ColorConverter());
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now you can use the enumeration type in your domain class:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="prettyprint java"&gt;class Product {&#xD;
+  @Id Integer id;&#xD;
+  Color color;&#xD;
+  // getter, setter, constructors omitted for brevity&#xD;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;See the reference documentation on &lt;a href="https://docs.spring.io/spring-data/r2dbc/docs/current/reference/html/#mapping.explicit.enum.converters"&gt;Overriding Enum Mapping with Explicit Converters&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In contrast to enums, using Postgres Geometric types requires no special setup since Geo types have fixed type identifiers and map to individual Geo types. Spring Data R2DBC supports the use of the following driver-specific types in your entities:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code&gt;io.r2dbc.postgresql.codec.Box&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;io.r2dbc.postgresql.codec.Circle&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;io.r2dbc.postgresql.codec.Line&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;io.r2dbc.postgresql.codec.Lseg&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;io.r2dbc.postgresql.codec.Point&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;io.r2dbc.postgresql.codec.Path&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;io.r2dbc.postgresql.codec.Polygon&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Alternatively, you can use Spring Data&amp;rsquo;s Geo Types in your domain model:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code&gt;org.springframework.data.geo.Box&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;org.springframework.data.geo.Circle&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;org.springframework.data.geo.Point&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;org.springframework.data.geo.Polygon&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To use Geometric types, create a table and a corresponding entity type:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="prettyprint sql"&gt;CREATE TABLE venue (id SERIAL PRIMARY KEY, name VARCHAR(255), location POINT);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class="prettyprint java"&gt;class Venue {&#xD;
+  @Id Long id;&#xD;
+  String name;&#xD;
+  Point location;&#xD;
+  // getter, setter, constructors omitted for brevity&#xD;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, you can use the entity in your application:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="prettyprint java"&gt;R2dbcEntityTemplate template = ¡¦;&#xD;
+&#xD;
+template.insert(new Venue(null, &amp;quot;Seattle Space Needle&amp;quot;, Point.of(47.6204,-122.3491));
+&lt;/code&gt;&lt;/pre&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
   <entry>
     <title>This Week in Spring - November 17th, 2020</title>
     <link rel="alternate" href="https://spring.io/blog/2020/11/18/this-week-in-spring-november-17th-2020" />
@@ -1061,10 +1165,10 @@ dependencies {&#xD;
     <content type="html">&lt;p&gt;Spring Data 2020.0, based on &lt;a href="https://spring.io/blog/2020/10/27/spring-framework-5-3-goes-ga"&gt;Spring Framework 5.3&lt;/a&gt;, is out and with it, a ton of new features across the various stores, which are covered by the individual modules. While posting highlights along with the milestone announcements, we wanted to give you a more detailed description of the new features in a series of blog posts. These posts will cover, among other things:&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;Reactive Context Access features in Data Commons.&lt;/li&gt;
-  &lt;li&gt;Lifecycle callbacks in R2DBC.&lt;/li&gt;
+  &lt;li&gt;Lifecycle callbacks and baselining to Spring R2DBC in &lt;a href="https://spring.io/blog/2020/11/18/spring-data-2020-0-new-and-noteworthy-in-spring-data-r2dbc-1-2"&gt;R2DBC&lt;/a&gt;.&lt;/li&gt;
   &lt;li&gt;General Repository and store-specific Redis Cache Metrics.&lt;/li&gt;
   &lt;li&gt;Neo4J reactive repositories.&lt;/li&gt;
-  &lt;li&gt;Paging repository APIs for Spring Data for Apache Geode .&lt;/li&gt;
+  &lt;li&gt;Paging repository APIs for Spring Data for Apache Geode.&lt;/li&gt;
   &lt;li&gt;Geoshape, index, and reactive search improvements for Spring Data Elasticsearch.&lt;/li&gt;
   &lt;li&gt;Partial filter and aggregation hints in &lt;a href="https://spring.io/blog/2020/11/13/spring-data-2020-0-new-and-noteworthy-in-spring-data-mongodb-3-1"&gt;MongoDB&lt;/a&gt;.&lt;/li&gt;
   &lt;li&gt;&lt;code&gt;@Bean&lt;/code&gt; row mappers for the &lt;a href="https://spring.io/blog/2020/11/10/spring-data-2020-0-new-and-noteworthy-in-spring-data-jdbc-2-1"&gt;JDBC&lt;/a&gt; module.&lt;/li&gt;
@@ -1418,19 +1522,6 @@ Artem&lt;/p&gt;
 &lt;p&gt;For a complete list of changes and upgrade instructions, please see the &lt;a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.4.0-RC1-Release-Notes"&gt;Spring Boot 2.4 Release Notes&lt;/a&gt; on the wiki and the &lt;a href="http://docs.spring.io/spring-boot/docs/2.4.0-RC1/reference/html/"&gt;updated reference documentation&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Barring any unforeseen circumstances, our current plan is to release 2.4.0 GA on November 12, so please give the RC a try if you can. To bootstrap a new project, you can head over to &lt;a href="https://start.spring.io"&gt;https://start.spring.io&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;a href="http://projects.spring.io/spring-boot/"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-boot"&gt;GitHub&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-boot/issues"&gt;Issues&lt;/a&gt; | &lt;a href="http://docs.spring.io/spring-boot/docs/2.4.0-RC1/reference/html"&gt;Documentation&lt;/a&gt; | &lt;a href="http://stackoverflow.com/questions/tagged/spring-boot"&gt;Stack Overflow&lt;/a&gt; | &lt;a href="https://gitter.im/spring-projects/spring-boot"&gt;Gitter&lt;/a&gt;&lt;/p&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>A Bootiful Podcast: Spring Test Framework lead and JUnit contributor Sam Brannen</title>
-    <link rel="alternate" href="https://spring.io/blog/2020/10/29/a-bootiful-podcast-spring-test-framework-lead-and-junit-contributor-sam-brannen" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Josh Long</name>
-    </author>
-    <id>tag:spring.io,2020-10-29:4250</id>
-    <updated>2020-10-29T23:46:08Z</updated>
-    <content type="html">&lt;p&gt;Hi Spring fans! This week, &lt;a href="http://twitter.com/starbuxman"&gt;Josh Long (@starbuxman)&lt;/a&gt; talks to legendary Spring Test Framework lead and JUnit contributor &lt;a href="http://twitter.com/sam_brannen"&gt;Sam Brannen (@sam_brannen)&lt;/a&gt;&lt;/p&gt;
-&lt;iframe title="Spring Test Framework lead Sam Brannen " height="122" width="100%" style="border: none;" scrolling="no" data-name="pb-iframe-player" src="https://www.podbean.com/media/player/6xux3-f0cac3?from=pb6admin&amp;download=1&amp;version=1&amp;auto=0&amp;share=1&amp;download=1&amp;rtl=0&amp;fonts=Helvetica&amp;skin=1&amp;pfauth=&amp;btn-skin=107"&gt;&lt;/iframe&gt;
 &lt;!-- rendered by Sagan Renderer Service --&gt;</content>
   </entry>
 </feed>

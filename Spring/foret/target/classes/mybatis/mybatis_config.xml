@@ -5,6 +5,9 @@
 <configuration>
 	<!-- 클래스에 별명 설정 -->
 	<typeAliases>
+		<!-- 회원 정보 -->
+		<typeAlias type="member.bean.Member" alias="Member"/>
+		<!-- 익명 게시판 -->
 		<typeAlias type="freeboard.bean.FreeBoard" alias="FreeBoard"/>
 		<typeAlias type="freeboard.bean.FreeBoardComment" alias="FreeBoardComment"/>
 	</typeAliases>
@@ -12,5 +15,6 @@
 	<!-- sql mapper 설정 -->
 	<mappers>
 		<mapper resource="mybatis/freeboard_mapping.xml"/>
+		<mapper resource="mybatis/member_mapping.xml"/>
 	</mappers>
 </configuration>

@@ -1,0 +1,21 @@
+package member.dao;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class MemberDAO {
+
+	@Autowired
+	SqlSessionTemplate sqlSession;
+	
+	public int writeFreeboard(FreeBoard freeBoard) {
+		return sqlSession.insert("mybatis.freeboard.writeFreeboard", freeBoard);
+	}
+	
+	public int modifyFreeboard(FreeBoard freeBoard) {
+		return sqlSession.update("mybatis.freeboard.modifyFreeboard", freeBoard);
+	}
+	
+}
