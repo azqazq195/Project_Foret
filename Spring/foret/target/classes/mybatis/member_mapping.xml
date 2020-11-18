@@ -6,12 +6,19 @@
 
 <!-- 프리게시판 글 관리 -->
 <insert id="writeMember" parameterType="Member">
-insert into freeboard_table values (freeboard_no.nextval, 0, 0, 0, #{member_id}, #{freeboard_subject}, #{freeboard_content}, sysdate, sysdate)
+insert into member_table values (seq_member_id.nextval, #{member_name}, #{member_nickname}, #{member_email}, #{member_birth}, sysdate, #{member_chain}, #{member_address}, #{member_photo})
 </insert>
 
 <update id="modifyMember" parameterType="Member">
-update freeboard_table set freeboard_subject=#{freeboard_subject}, freeboard_content=#{freeboard_content}, freeboard_edit_date=sysdate 
-where freeboard_no=#{freeboard_no} and member_id=#{member_id}
+update member_table set 
+member_name = #{member_name},
+member_nickname = #{member_nickname},
+member_email = #{member_email},
+member_birth = #{member_birth},
+member_chain = #{member_chain},
+member_address = #{member_address},
+member_photo = #{member_photo} 
+where member_id=#{member_id}
 </update>
 
 </mapper>
