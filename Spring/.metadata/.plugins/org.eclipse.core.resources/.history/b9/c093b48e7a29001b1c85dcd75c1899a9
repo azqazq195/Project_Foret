@@ -1,0 +1,80 @@
+package member.bean;
+
+public class Member {
+	private int member_id;
+	private String member_email;
+	private String member_nickname;
+	private String member_birth;
+	private String member_join_date;
+	private String member_chain;
+	private String member_address;
+	private String member_photo;
+	
+	public Member() {
+	}
+
+	public int getMember_id() {
+		return member_id;
+	}
+
+	public void setMember_id(int member_id) {
+		this.member_id = member_id;
+	}
+
+	public String getMember_email() {
+		return member_email;
+	}
+
+	public void setMember_email(String member_email) {
+		this.member_email = member_email;
+	}
+
+	public String getMember_nickname() {
+		return member_nickname;
+	}
+
+	public void setMember_nickname(String member_nickname) {
+		this.member_nickname = member_nickname;
+	}
+
+	public String getMember_birth() {
+		return member_birth;
+	}
+
+	public void setMember_birth(String member_birth) {
+		this.member_birth = member_birth;
+	}
+
+	public String getMember_join_date() {
+		return member_join_date;
+	}
+
+	public void setMember_join_date(String member_join_date) {
+		this.member_join_date = member_join_date;
+	}
+
+	public String getMember_chain() {
+		return member_chain;
+	}
+
+	public void setMember_chain(String member_chain) {
+		this.member_chain = member_chain;
+	}
+
+	public String getMember_address() {
+		return member_address;
+	}
+
+	public void setMember_address(String member_address) {
+		this.member_address = member_address;
+	}
+
+	public String getMember_photo() {
+		return member_photo;
+	}
+
+	public void setMember_photo(String member_photo) {
+		this.member_photo = member_photo;
+	}
+	
+}
