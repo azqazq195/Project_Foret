@@ -10,11 +10,20 @@
 		<!-- 익명 게시판 -->
 		<typeAlias type="freeboard.bean.FreeBoard" alias="FreeBoard"/>
 		<typeAlias type="freeboard.bean.FreeBoardComment" alias="FreeBoardComment"/>
+		<!-- 포레 -->
+		<typeAlias type="foret.bean.ForetDTO" alias="foretDTO" />
+		<!-- 포레 게시판 -->
+		<typeAlias type="foret.bean.ForetBoardDTO" alias="foretBoardDTO" />
+		<!-- 사진 -->
+		<typeAlias type="photo.bean.PhotoDTO" alias="photoDTO" />
 	</typeAliases>
 	
 	<!-- sql mapper 설정 -->
 	<mappers>
 		<mapper resource="mybatis/freeboard_mapping.xml"/>
 		<mapper resource="mybatis/member_mapping.xml"/>
+		<mapper resource="mybatis/foret-mapping.xml" />
+		<mapper resource="mybatis/photo-mapping.xml" />
+		<mapper resource="mybatis/foretBoard-mapping.xml" />
 	</mappers>
 </configuration>
