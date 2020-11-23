@@ -27,12 +27,14 @@
 			<artifactId>ojdbc6</artifactId>
 			<version>12.1.0.2</version>
 		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
 		<dependency>
-		             <groupId>commons-fileupload</groupId>
-		             <artifactId>commons-fileupload</artifactId>
-		             <version>1.4</version>
+             <groupId>commons-fileupload</groupId>
+             <artifactId>commons-fileupload</artifactId>
+             <version>1.4</version>
 	    </dependency>
+	    
 	    <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
 		    <groupId>commons-io</groupId>
@@ -76,6 +78,7 @@
 		    <artifactId>json</artifactId>
 		    <version>20200518</version>
 		</dependency>
+		
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
