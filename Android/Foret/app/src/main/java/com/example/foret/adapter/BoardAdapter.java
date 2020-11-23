@@ -9,18 +9,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.foret.R;
-import com.example.foret.model.Board;
+import com.example.foret.model.ForetBoard;
 
 import java.util.ArrayList;
 
 // 리사이클러뷰 어답터
 public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> {
-    private ArrayList<Board> items = new ArrayList<>();
+    private ArrayList<ForetBoard> foretBoardList;
     private ViewHolder viewHolder;
 
     // 리스너 객체 참조를 저장하는 변수
     private OnItemClickListener mListener = null;
+
+    public BoardAdapter(ArrayList<ForetBoard> boardList) {
+        this.foretBoardList = foretBoardList;
+    }
 
     @NonNull
     @Override
@@ -33,21 +38,22 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Board item = items.get(position);
+        ForetBoard item = foretBoardList.get(position);
 
-        viewHolder.imageBoard.setImageResource(item.getImageBoard());
-        viewHolder.subject.setText(item.getSubject());
-        viewHolder.content.setText(item.getContent());
+        Glide.with(viewHolder.imageBoard.getContext()).load(item.getPhoto_name())
+                .placeholder(R.drawable.foret_no_image).into(viewHolder.imageBoard);
+        viewHolder.subject.setText(item.getBoard_subject());
+        viewHolder.content.setText(item.getBoard_content());
 
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return foretBoardList.size();
     }
 
-    public void setItems(ArrayList<Board> items) {
-        this.items = items;
+    public void setItems(ArrayList<ForetBoard> items) {
+        this.foretBoardList = items;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.bumptech.glide.Glide;
 import com.example.foret.R;
 import com.example.foret.model.Foret;
 
@@ -18,18 +19,18 @@ import java.util.List;
 
 public class ForetAdapter extends PagerAdapter {
     private Activity activity;
-    private List<Foret> list;
+    private List<Foret> foretList;
 
-    public ForetAdapter(Activity activity, List<Foret> list) {
+    public ForetAdapter(Activity activity, List<Foret> foretList) {
         this.activity = activity;
-        this.list = list;
+        this.foretList = foretList;
     }
 
     // List 객체에 저장된 데이터 개수 리턴
     @Override
     public int getCount() {
         Log.d("[TEST]", "getCount() 호출 ");
-        return list.size();
+        return foretList.size();
     }
 
     @Override
@@ -47,21 +48,22 @@ public class ForetAdapter extends PagerAdapter {
         // main_fragment_home_foret_thum.xml에 설정된 클래스 객체 생성
         View itemView = activity.getLayoutInflater().inflate(R.layout.main_fragment_home_foret_thum, null);
         // 한 페이지에 보여줄 데이터 1개 꺼내기
-        final Foret foret = list.get(position);
+        final Foret foret = foretList.get(position);
 
         ImageView image = itemView.findViewById(R.id.image);
         TextView title = itemView.findViewById(R.id.title);
         TextView desc = itemView.findViewById(R.id.desc);
 
-        image.setImageResource(foret.getImage());
-        title.setText(foret.getSubject());
-        desc.setText(foret.getSubject());
+        Glide.with(activity).load(foret.getPhoto_name())
+                .placeholder(R.drawable.foret_no_image).into(image);
+        title.setText(foret.getGroup_name());
+        desc.setText(foret.getGroup_profile());
 
         // 이벤트 설정
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, "'" + foret.getSubject()+ "'" + " 포레로 이동",
+                Toast.makeText(activity, "'" + foret.getGroup_name()+ "'" + " 포레로 이동",
                         Toast.LENGTH_SHORT).show();
             }
         });

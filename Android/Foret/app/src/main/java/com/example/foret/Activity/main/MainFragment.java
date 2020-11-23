@@ -19,40 +19,63 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.foret.R;
 import com.example.foret.adapter.BoardAdapter;
 import com.example.foret.adapter.ForetAdapter;
-import com.example.foret.model.Board;
 import com.example.foret.model.Foret;
+import com.example.foret.model.ForetBoard;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
+
 public class MainFragment extends Fragment
         implements ViewPager.OnPageChangeListener, View.OnClickListener {
     ViewPager viewPager;
-    ForetAdapter adapter;
-    List<Foret> list;
+    List<Foret> foretList;
+    ForetAdapter foretAdapter;
     Integer[] colors = null;
     ArgbEvaluator evaluator = new ArgbEvaluator();
 
-    BoardAdapter boardAdapter = new BoardAdapter();
+    ImageView imageAd;
+
+    ArrayList<ForetBoard> foretBoardList;
+    BoardAdapter boardAdapter;
     RecyclerView recyclerView;
 
-    ImageView imageAd;
+    AsyncHttpClient client;
+    ForetBoardResponse foretBoardResponse;
+    String url_foretBoard = "http://192.168.0.2:8081/project/foret/foret_board_list.do";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View rootView = inflater.inflate(R.layout.main_fragment_home, container, false);
-        list = new ArrayList<>();
-        addData();
-        adapter = new ForetAdapter(getActivity(), list);
-        Log.d("[TEST]", "adapter = new ForetAdapter(this, list) 다음 ");
+        Log.d("[TEST]", "메인프래그먼트 진입 ");
+        foretList = new ArrayList<>();
+        foretBoardList = new ArrayList<>();
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            foretList = (List<Foret>) bundle.getSerializable("foretList");
+            Log.d("[TEST]", "foretList => " + foretList.size());
+            foretBoardList = (ArrayList<ForetBoard>) bundle.getSerializable("foretBoardList");
+            Log.d("[TEST]", "foretBoardList => " + foretBoardList.size());
+        }
+        foretAdapter = new ForetAdapter(getActivity(), foretList);
+        Log.d("[TEST]", "foretAdapter = new ForetAdapter(this, list) 다음 ");
+
         viewPager = rootView.findViewById(R.id.viewPager);
-        viewPager.setAdapter(adapter);
+        viewPager.setAdapter(foretAdapter);
         Log.d("[TEST]", "viewPager.setAdapter(adapter) 다음 ");
 
         viewPager.setPadding(130, 0, 130, 0);
-
         Integer[] colors_temp = {
                 getResources().getColor(R.color.color1),
                 getResources().getColor(R.color.color2),
@@ -66,37 +89,47 @@ public class MainFragment extends Fragment
 
         // recycleView 초기화
         recyclerView = rootView.findViewById(R.id.recycler_view);
+        boardAdapter = new BoardAdapter(foretBoardList);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(boardAdapter);
 
         // 아이템 로드
-        boardAdapter.setItems(addBoard1());
+        boardAdapter.setItems(foretBoardList);
 
         imageAd = rootView.findViewById(R.id.imageAd);
         imageAd.setOnClickListener(this);
 
-        boardAdapter.setOnItemClickListener(new BoardAdapter.OnItemClickListener()
-        {
+        boardAdapter.setOnItemClickListener(new BoardAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
                 Log.d("[TEST]", "position => " + position);
 
                 switch (position) {
                     case 0:
-                        Toast.makeText(getActivity(), "게시글1 이동", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),
+                                foretBoardList.get(position).getBoard_subject()+ " 이동",
+                                Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
-                        Toast.makeText(getActivity(), "게시글2 이동", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),
+                                foretBoardList.get(position).getBoard_subject()+ " 이동",
+                                Toast.LENGTH_SHORT).show();
                         break;
                     case 2:
-                        Toast.makeText(getActivity(), "게시글3 이동", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),
+                                foretBoardList.get(position).getBoard_subject()+ " 이동",
+                                Toast.LENGTH_SHORT).show();
                         break;
                     case 3:
-                        Toast.makeText(getActivity(), "게시글4 이동", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),
+                                foretBoardList.get(position).getBoard_subject()+ " 이동",
+                                Toast.LENGTH_SHORT).show();
                         break;
                     case 4:
-                        Toast.makeText(getActivity(), "게시글5 이동", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),
+                                foretBoardList.get(position).getBoard_subject()+ " 이동",
+                                Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
@@ -111,8 +144,13 @@ public class MainFragment extends Fragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (position < (adapter.getCount() -1) && position < (colors.length - 1)) {
+        if (position < (foretAdapter.getCount() -1) && position < (colors.length - 1)) {
             viewPager.setBackgroundColor(
                     (Integer) evaluator.evaluate(
                             positionOffset,
@@ -129,22 +167,37 @@ public class MainFragment extends Fragment
     @Override
     public void onPageSelected(int position) {
         Log.d("[TEST]", "onPageSelected 호출 : " + position);
-        recyclerView.setAdapter(boardAdapter);
+        RequestParams param = new RequestParams();
         switch (position) {
             case 0 :
-                boardAdapter.setItems(addBoard1());
+                client = new AsyncHttpClient();
+                foretBoardResponse = new ForetBoardResponse();
+                param.put("group_no", position+1);
+                client.post(url_foretBoard, param, foretBoardResponse);
                 break;
             case 1 :
-                boardAdapter.setItems(addBoard2());
+                client = new AsyncHttpClient();
+                foretBoardResponse = new ForetBoardResponse();
+                param.put("group_no", position+1);
+                client.post(url_foretBoard, param, foretBoardResponse);
                 break;
             case 2 :
-                boardAdapter.setItems(addBoard3());
+                client = new AsyncHttpClient();
+                foretBoardResponse = new ForetBoardResponse();
+                param.put("group_no", position+1);
+                client.post(url_foretBoard, param, foretBoardResponse);
                 break;
             case 3 :
-                boardAdapter.setItems(addBoard4());
+                client = new AsyncHttpClient();
+                foretBoardResponse = new ForetBoardResponse();
+                param.put("group_no", position+1);
+                client.post(url_foretBoard, param, foretBoardResponse);
                 break;
             case 4 :
-                boardAdapter.setItems(addBoard5());
+                client = new AsyncHttpClient();
+                foretBoardResponse = new ForetBoardResponse();
+                param.put("group_no", position+1);
+                client.post(url_foretBoard, param, foretBoardResponse);
                 break;
         }
     }
@@ -154,66 +207,65 @@ public class MainFragment extends Fragment
         Log.d("[TEST]", "onPageScrollStateChanged 호출 : " + state);
     }
 
-    private void addData() {
-        list.add(new Foret("모임1", "모임내용1", R.drawable.iuu));
-        list.add(new Foret("모임2", "모임내용2", R.drawable.ui));
-        list.add(new Foret("모임3", "모임내용3", R.drawable.iu10));
-        list.add(new Foret("모임4", "모임내용4", R.drawable.iu5));
-        list.add(new Foret("모임5", "모임내용5", R.drawable.iu4));
-    }
-
-    private ArrayList<Board> addBoard1() {
-        ArrayList<Board> item1 = new ArrayList<>();
-        item1.add(new Board(R.drawable.iu4,"포레1게시글1", "게시글내용1게시글내용1게시글내용1게시글내용1게시글내용1게시글내용1게시글내용1게시글내용1게시글내용1게시글내용1게시글내용1게시글내용1게시글내용1게시글내용1게시글내용1게시글내용1"));
-        item1.add(new Board(R.drawable.iuu,"포레1게시글2", "게시글내용2"));
-        item1.add(new Board(R.drawable.iu10,"포레1게시글3", "게시글내용3"));
-        item1.add(new Board(R.drawable.iu5,"포레1게시글4", "게시글내용4"));
-        item1.add(new Board(R.drawable.ui,"포레1게시글5", "게시글내용5"));
-        return item1;
-    }
-
-    private ArrayList<Board> addBoard2() {
-        ArrayList<Board> item2 = new ArrayList<>();
-        item2.add(new Board(R.drawable.iu5,"포레2게시글1", "게시글내용1"));
-        item2.add(new Board(R.drawable.iu10,"포레2게시글2", "게시글내용2"));
-        item2.add(new Board(R.drawable.iuu,"포레2게시글3", "게시글내용3"));
-        item2.add(new Board(R.drawable.iu4,"포레2게시글4", "게시글내용4"));
-        item2.add(new Board(R.drawable.ui,"포레2게시글5", "게시글내용5"));
-        return item2;
-    }
-
-    private ArrayList<Board> addBoard3() {
-        ArrayList<Board> item3 = new ArrayList<>();
-        item3.add(new Board(R.drawable.iu10,"포레3게시글1", "게시글내용1"));
-        item3.add(new Board(R.drawable.iu4,"포레3게시글2", "게시글내용2"));
-        item3.add(new Board(R.drawable.iu5,"포레3게시글3", "게시글내용3"));
-        item3.add(new Board(R.drawable.iuu,"포레3게시글4", "게시글내용4"));
-        item3.add(new Board(R.drawable.ui,"포레3게시글5", "게시글내용5"));
-        return item3;
-    }
-
-    private ArrayList<Board> addBoard4() {
-        ArrayList<Board> item4 = new ArrayList<>();
-        item4.add(new Board(R.drawable.ui,"포레4게시글1", "게시글내용1"));
-        item4.add(new Board(R.drawable.iu5,"포레4게시글2", "게시글내용2"));
-        item4.add(new Board(R.drawable.iu4,"포레4게시글3", "게시글내용3"));
-        item4.add(new Board(R.drawable.iuu,"포레4게시글4", "게시글내용4"));
-        item4.add(new Board(R.drawable.iu10,"포레4게시글5", "게시글내용5"));
-        return item4;
-    }
-
-    private ArrayList<Board> addBoard5() {
-        ArrayList<Board> item5 = new ArrayList<>();
-        item5.add(new Board(R.drawable.iuu,"포레5게시글1", "게시글내용1"));
-        item5.add(new Board(R.drawable.iu4,"포레5게시글2", "게시글내용2"));
-        item5.add(new Board(R.drawable.iu5,"포레5게시글3", "게시글내용3"));
-        item5.add(new Board(R.drawable.iu10,"포레5게시글4", "게시글내용4"));
-        item5.add(new Board(R.drawable.ui,"포레5게시글5", "게시글내용5"));
-        return item5;
-    }
-
     @Override
     public void onClick(View v) {
         Toast.makeText(getActivity(), "광고 이동", Toast.LENGTH_SHORT).show();
+    }
+
+    class ForetBoardResponse extends AsyncHttpResponseHandler {
+        @Override
+        public void onStart() {
+            Log.d("[TEST]", "ForetBoard 통신 시작");
+            foretBoardList.clear();
+        }
+
+        @Override
+        public void onFinish() {
+            Log.d("[TEST]", "ForetBoard 통신 종료");
+            recyclerView.setAdapter(boardAdapter);
+            boardAdapter.setItems(foretBoardList);
+        }
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                String rt = json.getString("rt");
+                int total = json.getInt("total");
+                JSONArray item = json.getJSONArray("item");
+
+                for (int i = 0; i < item.length(); i++) {
+                    JSONObject temp = item.getJSONObject(i);
+                    ForetBoard foretBoard = new ForetBoard();
+                    foretBoard.setGroup_no(temp.getInt("group_no"));
+                    foretBoard.setBoard_no(temp.getInt("board_no"));
+                    foretBoard.setBoard_type(temp.getInt("board_type"));
+                    foretBoard.setBoard_writer(temp.getString("board_writer"));
+                    foretBoard.setBoard_subject(temp.getString("board_subject"));
+                    foretBoard.setBoard_content(temp.getString("board_content"));
+                    foretBoard.setBoard_hit(temp.getInt("board_hit"));
+                    foretBoard.setBoard_like_count(temp.getInt("board_like_count"));
+                    foretBoard.setBoard_comment_count(temp.getInt("board_comment_count"));
+                    foretBoard.setBoard_writed_date(temp.getString("board_writed_date"));
+                    foretBoard.setBoard_edited_date(temp.getString("board_edited_date"));
+
+                    String photo_name = temp.getString("photo_name");
+                    if (photo_name.equals("")) photo_name = "0";
+                    foretBoard.setPhoto_name(photo_name);
+
+                    // list에 저장
+                    foretBoardList.add(foretBoard);
+                    Log.d("[TEST]", "foretBoardList 통신 성공 => " + foretBoardList.size());
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(getActivity(), "ForetBoard 통신 실패", Toast.LENGTH_SHORT).show();
+        }
     }
 }
