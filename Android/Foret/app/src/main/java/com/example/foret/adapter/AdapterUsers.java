@@ -64,7 +64,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder> {
         holder.mNameTv.setText(userName);
         holder.mEmailTv.setText(userEmail);
 
-        Log.d("[test]", "his ID" + hisUID);
+        Log.e("[test]", "his ID" + hisUID);
 
         try {
             Glide.with(context).load(userPhoto).fallback(R.drawable.ic_default_image_foreground)
@@ -76,11 +76,11 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("[test]", "클릭 됨");
+                Log.e("[test]", "클릭 됨");
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("hisUid", hisUID);
                 context.startActivity(intent);
-                Log.d("[test]","스타트 액티비티 ");
+                Log.e("[test]","스타트 액티비티 ");
             }
         });
 

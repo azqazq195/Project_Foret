@@ -42,6 +42,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         Toast.makeText(getContext(),"버튼 눌림",Toast.LENGTH_LONG).show();
         Intent intent = new Intent(getActivity(), TestLoginActivity.class);
         startActivity(intent);
-        ((Activity) getActivity()).overridePendingTransition(0, 0);
+        //((Activity) getActivity()).overridePendingTransition(0, 0);
+        ((Activity) getActivity()).finish();
     }
 }
