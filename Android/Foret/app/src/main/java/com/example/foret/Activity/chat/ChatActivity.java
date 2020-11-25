@@ -74,7 +74,7 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_in_room);
-        Log.d("[test]","Chat 액티비티 시작됨 ");
+        Log.e("[test]","Chat 액티비티 시작됨 ");
         context = this;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -253,7 +253,7 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener {
                     //뷰 설정
                     recyclerView.setAdapter(adapter);
                 }
-                recyclerView.smoothScrollToPosition(adapter.getItemCount());
+                //recyclerView.smoothScrollToPosition(adapter.getItemCount());
             }
 
             @Override
