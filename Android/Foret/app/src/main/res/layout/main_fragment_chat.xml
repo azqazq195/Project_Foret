@@ -14,5 +14,11 @@
         android:text="채팅"
         android:textSize="100dp" />
 
+    <Button
+        android:id="@+id/buttongototestChat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="채팅 테스트" />
+
 
 </LinearLayout>

@@ -37,6 +37,8 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha06'
+
+
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -51,4 +53,10 @@ dependencies {
     // 구글 로그인
     implementation 'com.google.firebase:firebase-auth:20.0.1'
     implementation 'com.firebaseui:firebase-ui-auth:7.0.0'
+
+    //채팅 관련
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.firebase:firebase-storage:19.2.0'
+    implementation 'com.google.firebase:firebase-database:19.5.1'
+
 }
