@@ -1,6 +1,9 @@
 package com.example.foret.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -17,8 +22,15 @@ import com.example.foret.R;
 import com.example.foret.model.ModelChat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -49,6 +61,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
 
         ImageView profileIv;
         TextView messageTv, timeTv, isSeenTv;
+        LinearLayout messageLayout;
+
 
         public MyViewHolder(View v) {
             super(v);
@@ -56,6 +70,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
             profileIv = v.findViewById(R.id.profile);
             timeTv = v.findViewById(R.id.timeTv);
             isSeenTv = v.findViewById(R.id.isSeentTv);
+            messageLayout = v.findViewById(R.id.messageLayout);
 
         }
     }
@@ -103,9 +118,40 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
             e.getMessage();
         }
 
+        //클릭시 삭제 이벤트
+        if(holder.messageTv.getText().equals("이 메세지는 삭제되었습니다.")){
+            holder.messageTv.setTextColor(Color.parseColor("#d0cdcd"));
+        }else{
+
+            holder.messageLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("메세지 삭제");
+                    builder.setMessage("이 메제지를 삭제하시겠습니까?");
+
+                    builder.setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteMessage(position);
+                        }
+                    });
+                    builder.create();
+                    builder.show();
+                }
+            });
+        }
+
+
         //상대가 읽었는지 여부 체크
         if (position == chatList.size() - 1) {
-           // Log.d("[test]","chatItem.isSeen()?"+chatItem.isSeen);
+            // Log.d("[test]","chatItem.isSeen()?"+chatItem.isSeen);
             if (chatItem.isSeen) {
                 holder.isSeenTv.setText("읽음");
             } else {
@@ -114,7 +160,40 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         } else {
             holder.isSeenTv.setVisibility(View.GONE);
         }
+    }
 
+    private void deleteMessage(int position) {
+        String myUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        //보낸 시간으로 메세지 캐치
+        String megTimeStamp = chatList.get(position).getTimestamp();
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");
+        Query query = dbRef.orderByChild("timestamp").equalTo(megTimeStamp);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    if (ds.child("sender").getValue().equals(myUID)) {
+                        //메세지 완전 삭제
+                        //ds.getRef().removeValue();
+
+                        //메세지 내용 체인지
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("message", "이 메세지는 삭제되었습니다.");
+                        ds.getRef().updateChildren(hashMap);
+
+                    } else {
+                        Toast.makeText(context, "내가 보낸 메세지만 삭제할 수 있습니다.", Toast.LENGTH_LONG).show();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
     }
 
