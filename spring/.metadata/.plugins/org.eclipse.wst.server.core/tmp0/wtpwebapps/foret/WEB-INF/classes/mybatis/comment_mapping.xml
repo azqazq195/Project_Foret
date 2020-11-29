@@ -3,4 +3,39 @@
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mybatis.commentMapper">
+	<!-- 댓글 -->
+	<!-- 댓글 추가 -->
+	<insert id="commentWrite" parameterType="commentDTO">
+		INSERT INTO board_comment 
+		VALUES      (seq_board_comment_id.nextval, 
+		             #{board_id}, 
+		             #{writer}, 
+		             #{content}, 
+		             sysdate, 
+		             seq_board_comment_id.nextval)
+	</insert>
+	<!-- 댓글 수정 -->
+	<update id="commentModify" parameterType="commentDTO" >
+		UPDATE board_comment 
+		SET    content = #{content} 
+		WHERE  id = #{id}
+	</update>
+	<!-- 댓글 삭제 -->
+	<delete id="commentDelete" parameterType="commentDTO">
+		DELETE FROM board_comment 
+		WHERE  id = #{id}
+	</delete>
+	<!-- 댓글 내용 Null -->
+	<update id="commentNull" parameterType="commentDTO">
+		UPDATE board_comment 
+		SET    content = NULL 
+		WHERE  id = #{id}
+	</update>
+	
+	<!-- 자식 댓글 확인 -->
+	<select id="getReCommentCnt" parameterType="commentDTO" resultType="int">
+		select Count(*) cnt from board_comment where group_no = #{group_no}
+	</select>
+	
+	<!-- 대댓글 -->
 </mapper>

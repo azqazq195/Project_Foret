@@ -7,4 +7,7 @@ public interface CommentService {
 	public int commentWrite(CommentDTO commentDTO);
 	public int commentModify(CommentDTO commentDTO);
 	public int commentDelete(CommentDTO commentDTO);
+	public int commentNull(CommentDTO commentDTO);
+	
+	public int getReCommentCnt(CommentDTO commentDTO);
 }

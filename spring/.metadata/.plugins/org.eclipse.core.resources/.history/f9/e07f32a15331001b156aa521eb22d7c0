@@ -1,8 +1,0 @@
-package member.bean;
-
-public class MemberLikeBoard {
-	private int id;
-	private int board_id;
-	
-	
-}

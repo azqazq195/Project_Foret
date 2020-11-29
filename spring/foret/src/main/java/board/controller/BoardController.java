@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import board.bean.BoardDTO;
-import member.bean.MemberDTO;
 import photo.bean.PhotoDTO;
 import photo.controller.PhotoService;
 

@@ -23,7 +23,16 @@ public class CommentServiceImpl implements CommentService{
 
 	@Override
 	public int commentDelete(CommentDTO commentDTO) {
-		return commentDAO.commentModify(commentDTO);
+		return commentDAO.commentDelete(commentDTO);
+	}
+
+	@Override
+	public int commentNull(CommentDTO commentDTO) {
+		return commentDAO.commentNull(commentDTO);
 	}
 	
+	@Override
+	public int getReCommentCnt(CommentDTO commentDTO) {
+		return commentDAO.getReCommentCnt(commentDTO);
+	}
 }

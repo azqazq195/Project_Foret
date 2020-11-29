@@ -27,4 +27,6 @@
 <fullyQualifiedTypeName name="org.springframework.beans.factory.annotation.Autowired"/>
 <fullyQualifiedTypeName name="photo.dao.PhotoDAO"/>
 <fullyQualifiedTypeName name="photo.controller.photoService"/>
+<fullyQualifiedTypeName name="java.lang.Exception"/>
+<fullyQualifiedTypeName name="comment.bean.CommentDTO"/>
 </qualifiedTypeNameHistroy>

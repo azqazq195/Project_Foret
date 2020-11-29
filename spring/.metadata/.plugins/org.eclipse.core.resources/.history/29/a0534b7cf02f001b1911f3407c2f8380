@@ -1,8 +1,0 @@
-package region.controller;
-
-import org.springframework.stereotype.Service;
-
-@Service
-public class RegionServiceImpl {
-
-}

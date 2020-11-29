@@ -1,8 +1,0 @@
-package member.controller;
-
-import member.bean.MemberDTO;
-
-public interface MemberService {
-	// 회원 정보 저장
-	public int memberWrite(MemberDTO memberDTO);
-}

@@ -73,7 +73,6 @@ public class ForetController {
 	@RequestMapping(value = "/foret/foret_modify.do")
 	public ModelAndView foretModify(HttpServletRequest request, MultipartFile photo) throws Exception {
 		System.out.println("-- 함수 실행 : foret_modify.do --");
-		
 		request.setCharacterEncoding("UTF-8");
 	    
 		String foretRT = "FAIL"; 

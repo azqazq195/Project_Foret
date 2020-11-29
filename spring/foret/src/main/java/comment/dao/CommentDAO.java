@@ -19,4 +19,11 @@ public class CommentDAO {
 	public int commentDelete(CommentDTO commentDTO) {
 		return sqlSession.delete("mybatis.commentMapper.commentDelete", commentDTO);
 	}
+	public int commentNull(CommentDTO commentDTO) {
+		return sqlSession.update("mybatis.commentMapper.commentNull", commentDTO);
+	}
+	
+	public int getReCommentCnt(CommentDTO commentDTO) {
+		return sqlSession.selectOne("mybatis.commentMapper.getReCommentCnt", commentDTO);
+	}
 }
