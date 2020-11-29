@@ -18,7 +18,13 @@
 		<typeAlias type="foret.bean.ForetTagDTO" alias="foretTagDTO"/>
 		<typeAlias type="foret.bean.ForetMemberDTO" alias="foretMemberDTO"/>
 		
-		<!-- 지역 태그 정보 -->
+		<!-- 보드 정보 -->
+		<typeAlias type="board.bean.BoardDTO" alias="boardDTO"/>
+		
+		<!-- 댓글 정보 -->
+		<typeAlias type="comment.bean.CommentDTO" alias="commentDTO"/>
+		
+		<!-- 지역 태그 사진 정보 -->
 		<typeAlias type="tag.bean.TagDTO" alias="tagDTO"/>
 		<typeAlias type="region.bean.RegionDTO" alias="regionDTO"/>
 		<typeAlias type="photo.bean.PhotoDTO" alias="PhotoDTO"/>
@@ -28,6 +34,8 @@
 	<mappers>
 		<mapper resource="mybatis/member_mapping.xml"/>
 		<mapper resource="mybatis/foret_mapping.xml"/>
+		<mapper resource="mybatis/board_mapping.xml"/>
+		<mapper resource="mybatis/comment_mapping.xml"/>
 		<mapper resource="mybatis/tag_mapping.xml"/>
 		<mapper resource="mybatis/region_mapping.xml"/>
 		<mapper resource="mybatis/photo_mapping.xml"/>

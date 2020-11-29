@@ -1,5 +1,7 @@
 package photo.dao;
 
+import java.util.List;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -25,10 +27,10 @@ public class PhotoDAO {
 		return sqlSession.insert("mybatis.photoMapper.foretPhotoDelete", photoDTO);
 	}
 	
-	public int boardPhotoWrite(PhotoDTO photoDTO) {
-		return sqlSession.insert("mybatis.photoMapper.boardPhotoWrite", photoDTO);
+	public int boardPhotoWrite(List<PhotoDTO> list) {
+		return sqlSession.insert("mybatis.photoMapper.boardPhotoWrite", list);
 	}
-	public int boardPhotoDelete(PhotoDTO photoDTO) {
-		return sqlSession.insert("mybatis.photoMapper.boardPhotoDelete", photoDTO);
+	public int boardPhotoDelete(List<PhotoDTO> list) {
+		return sqlSession.insert("mybatis.photoMapper.boardPhotoDelete", list);
 	}
 }

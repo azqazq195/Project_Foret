@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.boardMapper">
+	<!-- 보드 -->
+	<!-- 보드 추가 -->
+	<insert id="boardWrite" parameterType="boardDTO" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO board 
+		VALUES     (seq_board_id.nextval, 
+		            #{writer}, 
+		            <if test="foret_id == 0">
+		            null,
+		            </if>
+		            <if test="foret_id != 0">
+		            #{foret_id}, 
+		            </if>
+		            #{type}, 
+		            0, 
+		            #{subject}, 
+		            #{content}, 
+		            sysdate, 
+		            sysdate)
+	</insert>
+	<!-- 보드 수정 -->
+	<!-- 보드 삭제 -->
+</mapper>

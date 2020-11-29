@@ -153,7 +153,7 @@
              Note: The pattern used is equivalent to using pattern="common" -->
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" pattern="%h %l %u %t &quot;%r&quot; %s %b" prefix="localhost_access_log" suffix=".txt"/>
 
-      <Context docBase="D:\code\Project\Foret_me\spring\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\ROOT" path="" reloadable="false"/><Context docBase="D:\code\Project\Foret_me\spring\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\foret" path="/foret" reloadable="true" source="org.eclipse.jst.jee.server:foret"/><Context docBase="D:\code\Project\Foret_me\spring\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\apptest" path="/apptest" reloadable="true" source="org.eclipse.jst.jee.server:apptest"/></Host>
+      <Context docBase="D:\code\Project\Foret\spring\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\ROOT" path="" reloadable="false"/><Context docBase="D:\code\Project\Foret\spring\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\apptest" path="/apptest" reloadable="true" source="org.eclipse.jst.jee.server:apptest"/><Context docBase="D:\code\Project\Foret\spring\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\foret" path="/foret" reloadable="true" source="org.eclipse.jst.jee.server:foret"/></Host>
     </Engine>
   </Service>
 </Server>

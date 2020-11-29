@@ -1,5 +1,7 @@
 package photo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,12 +32,12 @@ public class PhotoServiceImpl implements PhotoService{
 	}
 
 	@Override
-	public int boardPhotoWrite(PhotoDTO photoDTO) {
-		return photoDAO.boardPhotoWrite(photoDTO);
+	public int boardPhotoWrite(List<PhotoDTO> list) {
+		return photoDAO.boardPhotoWrite(list);
 	}
 	@Override
-	public int boardPhotoDelete(PhotoDTO photoDTO) {
-		return photoDAO.boardPhotoDelete(photoDTO);
+	public int boardPhotoDelete(List<PhotoDTO> list) {
+		return photoDAO.boardPhotoDelete(list);
 	}
 	
 }

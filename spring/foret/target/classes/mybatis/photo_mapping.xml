@@ -27,15 +27,20 @@
 		             sysdate)
 	</insert>
 	<insert id="boardPhotoWrite" parameterType="photoDTO">
-		INSERT INTO board_photo 
-		VALUES      (seq_board_photo_id.nextval, 
-		             #{reference_id}, 
-		             #{dir}, 
-		             #{filename}, 
-		             #{originname}, 
-		             #{filesize}, 
-		             #{filetype}, 
+		INSERT ALL 
+		<foreach collection="list" item="boardPhoto" separator=" ">
+			INTO board_photo
+			VALUES (get_board_photo_id, 
+		             #{boardPhoto.reference_id}, 
+		             #{boardPhoto.dir}, 
+		             #{boardPhoto.filename}, 
+		             #{boardPhoto.originname}, 
+		             #{boardPhoto.filesize}, 
+		             #{boardPhoto.filetype}, 
 		             sysdate)
+	    </foreach>
+	    SELECT * 
+		FROM   dual
 	</insert>
 	<!-- 사진 삭제 -->
 	<delete id="memberPhotoDelete">
