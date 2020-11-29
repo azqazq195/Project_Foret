@@ -1,0 +1,53 @@
+package photo.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import photo.bean.PhotoDTO;
+import photo.dao.PhotoDAO;
+
+@Service
+public class PhotoServiceImpl implements PhotoService{
+	@Autowired
+	PhotoDAO photoDAO;
+	
+	@Override
+	public int memberPhotoWrite(PhotoDTO photoDTO) {
+		return photoDAO.memberPhotoWrite(photoDTO);
+	}
+	@Override
+	public int memberPhotoModify(PhotoDTO photoDTO) {
+		return photoDAO.memberPhotoModify(photoDTO);
+	}
+	@Override
+	public int memberPhotoDelete(PhotoDTO photoDTO) {
+		return photoDAO.memberPhotoDelete(photoDTO);
+	}
+
+	@Override
+	public int foretPhotoWrite(PhotoDTO photoDTO) {
+		return photoDAO.foretPhotoWrite(photoDTO);
+	}
+	@Override
+	public int foretPhotoModify(PhotoDTO photoDTO) {
+		return photoDAO.foretPhotoModify(photoDTO);
+	}
+	@Override
+	public int foretPhotoDelete(PhotoDTO photoDTO) {
+		return photoDAO.foretPhotoDelete(photoDTO);
+	}
+
+	@Override
+	public int boardPhotoWrite(PhotoDTO photoDTO) {
+		return photoDAO.boardPhotoWrite(photoDTO);
+	}
+	@Override
+	public int boardPhotoModify(PhotoDTO photoDTO) {
+		return photoDAO.boardPhotoModify(photoDTO);
+	}
+	@Override
+	public int boardPhotoDelete(PhotoDTO photoDTO) {
+		return photoDAO.boardPhotoDelete(photoDTO);
+	}
+	
+}

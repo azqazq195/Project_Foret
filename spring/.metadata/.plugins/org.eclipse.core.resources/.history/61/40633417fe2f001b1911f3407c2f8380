@@ -1,0 +1,24 @@
+package photo.dao;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+
+@Repository
+public class PhotoDAO {
+	@Autowired
+	SqlSessionTemplate sqlSession;
+	
+	public int getMemberFirstSeq() {
+		return sqlSession.selectOne("mybatis.filesMapper.getMemberFirstSeq");
+	}
+	
+	public int filesWrite(PhotoDTO filesDTO) {
+		return sqlSession.insert("mybatis.filesMapper.filesWrite", filesDTO);
+	}
+	
+	public String checkFiles(int community_seq) {
+		return sqlSession.selectOne("mybatis.filesMapper.checkFiles", community_seq);
+	}
+}

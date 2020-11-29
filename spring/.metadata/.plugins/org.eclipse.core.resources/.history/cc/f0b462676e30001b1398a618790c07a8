@@ -1,0 +1,91 @@
+package member.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import member.bean.MemberDTO;
+import member.dao.MemberDAO;
+
+@Service
+public class MemberServiceImpl implements MemberService {
+	@Autowired
+	MemberDAO memberDAO;
+
+	@Override
+	public int memberWrite(MemberDTO memberDTO) {
+		return memberDAO.memberWrite(memberDTO);
+	}
+
+	@Override
+	public int memberModify(MemberDTO memberDTO) {
+		return memberDAO.memberModify(memberDTO);
+	}
+
+	@Override
+	public int memberDelete(MemberDTO memberDTO) {
+		return memberDAO.memberDelete(memberDTO);
+	}
+
+	@Override
+	public int memberTagWrite(MemberDTO memberDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int memberTagModify(MemberDTO memberDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int memberTagDelete(MemberDTO memberDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int memberRegionWrite(MemberDTO memberDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int memberRegionModify(MemberDTO memberDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int memberRegionDelete(MemberDTO memberDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int memberBoardLikeWrite(MemberDTO memberDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int memberBoardLikeDelete(MemberDTO memberDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int memberCommentLikeWrite(MemberDTO memberDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int memberCommentLikeDelete(MemberDTO memberDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	
+}

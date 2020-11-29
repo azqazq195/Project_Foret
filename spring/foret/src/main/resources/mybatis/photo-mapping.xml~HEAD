@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.photoMapper">
+
+	<insert id="photoWrite" parameterType="photoDTO">
+		insert into photo_table values
+		(photo_id_photo_table.nextval, #{photo_name}, #{photo_path}, #{photo_type}, sysdate)
+	</insert>
+
+	<delete id="photoDelete" parameterType="int">
+   		delete photo_table where photo_id=#{photo_id}
+	</delete>
+
+	<select id="photoSelect" resultType="photoDTO">
+		select * from photo_table where photo_id=#{photo_id}
+	</select>
+
+	<select id="getMaxPhotoId" resultType="int">
+  		select max(photo_id) as photo_id from photo_table
+	</select>
+	
+	<select id="checkPhoto" parameterType="int" resultType="String">
+		select photo_id from photo_table where photo_id=#{photo_id}
+	</select>
+	
+	
+</mapper>

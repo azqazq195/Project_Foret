@@ -1,0 +1,45 @@
+package member.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import files.bean.FilesDTO;
+import files.dao.FilesDAO;
+import member.bean.MemberDTO;
+
+@Service
+public class MemberServiceImpl implements MemberService {
+
+	@Autowired
+	MemberDAO memberDAO;
+	@Autowired
+	FilesDAO filesDAO;
+	
+	
+	@Override
+	public int memberWrite(MemberDTO memberDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<MemberDTO> memberList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getCommnuityFirstSeq() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int filesWrite(FilesDTO filesDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

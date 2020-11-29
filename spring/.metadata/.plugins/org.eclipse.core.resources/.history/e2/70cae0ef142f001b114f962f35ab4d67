@@ -1,0 +1,18 @@
+package member.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import member.bean.MemberDTO;
+import member.dao.MemberDAO;
+
+public class MemberServiceImpl implements MemberService {
+	@Autowired
+	MemberDAO memberDAO;
+
+	@Override
+	public int memberWrite(MemberDTO memberDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

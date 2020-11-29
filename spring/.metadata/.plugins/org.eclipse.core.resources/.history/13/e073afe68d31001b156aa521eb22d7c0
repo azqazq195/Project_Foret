@@ -1,0 +1,5 @@
+package foret.controller;
+
+public interface ForetService {
+
+}

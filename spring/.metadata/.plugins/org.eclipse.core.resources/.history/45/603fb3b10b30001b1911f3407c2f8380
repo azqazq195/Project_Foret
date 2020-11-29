@@ -1,0 +1,43 @@
+package photo.controller;
+
+import photo.bean.PhotoDTO;
+
+public class photoServiceImpl implements photoService{
+
+	@Override
+	public int memberPhotoWrite(PhotoDTO photoDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int memberPhotoDelete(PhotoDTO photoDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int foretPhotoWrite(PhotoDTO photoDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int foretPhotoDelete(PhotoDTO photoDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int boardPhotoWrite(PhotoDTO photoDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int boardPhotoDelete(PhotoDTO photoDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+}

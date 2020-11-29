@@ -1,0 +1,91 @@
+package tag.controller;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import tag.bean.TagDTO;
+
+
+@Controller
+public class TagController {
+	@Autowired
+	TagService tagService;
+	
+	@RequestMapping(value = "/tag/tag_insert.do")
+	public ModelAndView tagWrite(HttpServletRequest request) throws Exception {
+		request.setCharacterEncoding("UTF-8");
+		
+	    String tag_name = request.getParameter("tag_name");
+	    
+	    TagDTO tagDTO = new TagDTO();
+	    tagDTO.setTag_name(tag_name);
+	    
+	    int tagResult = tagService.tagWrite(tagDTO);
+	    
+	    String tagRT = "FAIL";   
+	    if(tagResult > 0) tagRT = "OK";
+	    
+	    JSONObject json = new JSONObject();
+	    json.put("tagRT", tagRT);
+	    
+	    // 화면 네비게이션
+	    ModelAndView modelAndView = new ModelAndView();
+	    modelAndView.addObject("json", json);
+	    modelAndView.setViewName("tag.jsp");
+	       
+	    return modelAndView;
+	}
+	
+	@RequestMapping(value = "/tag/tag_delete.do")
+	public ModelAndView tagDelete(HttpServletRequest request) throws Exception {
+		// 번호든 이름이든 둘다든
+		request.setCharacterEncoding("UTF-8");
+		
+		int tag_id = 0;
+		String tag_id_string = request.getParameter("tag_id");
+		if(tag_id_string != null) {
+			tag_id = Integer.parseInt(tag_id_string);
+		}
+	    String tag_name = request.getParameter("tag_name");
+	    
+	    System.out.println("---테스트---");
+	    System.out.println(tag_id);
+	    System.out.println(tag_name);
+	    
+	    TagDTO tagDTO = new TagDTO();
+	    tagDTO.setTag_id(tag_id);
+	    tagDTO.setTag_name(tag_name);
+	    
+	    // 아이디가 비면 0
+	    // 이름이 비면 NULL
+	    
+	    System.out.println("---테스트2---");
+	    System.out.println(tagDTO.getTag_id());
+	    System.out.println(tagDTO.getTag_name());
+	    
+	    int tagResult = tagService.tagDelete(tagDTO);
+	    
+	    String tagRT = "FAIL";   
+	    if(tagResult > 0) tagRT = "OK";
+	    
+	    JSONObject json = new JSONObject();
+	    json.put("tagRT", tagRT);
+	    
+	    // 화면 네비게이션
+	    ModelAndView modelAndView = new ModelAndView();
+	    modelAndView.addObject("json", json);
+	    modelAndView.setViewName("tag.jsp");
+	       
+	    return modelAndView;
+	}
+	
+	@RequestMapping(value = "/tag/tag_list.do")
+	public ModelAndView tagDelete(HttpServletRequest request) throws Exception {
+		
+	}
+}

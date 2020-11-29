@@ -65,7 +65,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
+<<<<<<< HEAD
             android:letterSpacing="-0.05dp"
+=======
+            android:letterSpacing="-0.05"
+>>>>>>> feature/androidLogin
             android:text="포레 태그들이 출력되는 자리"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"

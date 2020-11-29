@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.memberMapper">
+	<!-- 멤버 -->
+	<!-- 멤버 추가 -->
+	<insert id="memberWrite" parameterType="memberDTO" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO member 
+		VALUES     (seq_member_id.nextval, 
+		            #{name},
+		            #{email},  
+		            #{password}, 
+		            #{nickname}, 
+		            #{birth}, 
+		            sysdate) 
+	</insert>
+	<!-- 멤버 수정 -->
+	<update id="memberModify" parameterType="memberDTO" >
+		UPDATE member
+		SET    name = #{name},
+		       email = #{email}, 
+		       password = #{password}, 
+		       nickname = #{nickname}, 
+		       birth = #{birth}
+		WHERE  id = #{id}
+	</update>
+	<!-- 멤버 삭제 -->
+	<delete id="memberDelete" parameterType="memberDTO" >
+		DELETE FROM member 
+		WHERE  id = #{id}
+	</delete>
+	
+	<!-- 멤버_태그 -->
+	<!-- 멤버_태그 추가 -->
+	<!-- 멤버_태그 삭제 -->
+	
+	
+	<!-- 멤버_지역 -->
+	<!-- 멤버_지역 추가-->
+	<!-- 멤버_지역 삭제-->
+</mapper>

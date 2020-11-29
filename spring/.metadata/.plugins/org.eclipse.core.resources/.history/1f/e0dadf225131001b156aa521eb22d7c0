@@ -1,0 +1,7 @@
+package photo.controller;
+
+public class PhotoController {
+	public photoWrite() {
+		
+	}
+}
