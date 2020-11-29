@@ -38,4 +38,25 @@
 	</select>
 	
 	<!-- 대댓글 -->
+	<!-- 대댓글 추가 -->
+	<insert id="reCommentWrite" parameterType="commentDTO">
+				INSERT INTO board_comment 
+		VALUES      (seq_board_comment_id.nextval, 
+		             #{board_id}, 
+		             #{writer}, 
+		             #{content}, 
+		             sysdate, 
+		             #{id})
+	</insert>
+	<!-- 대댓글 수정 -->
+	<update id="reCommentModify" parameterType="commentDTO">
+		UPDATE board_comment 
+		SET    content = #{content} 
+		WHERE  id = #{id}
+	</update>
+	<!-- 대댓글 삭제 -->
+	<delete id="reCommentDelete" parameterType="commentDTO">
+		DELETE FROM board_comment 
+		WHERE  id = #{id}
+	</delete>
 </mapper>

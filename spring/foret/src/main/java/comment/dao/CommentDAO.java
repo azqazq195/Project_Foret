@@ -23,6 +23,16 @@ public class CommentDAO {
 		return sqlSession.update("mybatis.commentMapper.commentNull", commentDTO);
 	}
 	
+	public int reCommentWrite(CommentDTO commentDTO) {
+		return sqlSession.insert("mybatis.commentMapper.reCommentWrite", commentDTO);
+	}
+	public int reCommentModify(CommentDTO commentDTO) {
+		return sqlSession.update("mybatis.commentMapper.reCommentModify", commentDTO);
+	}
+	public int reCommentDelete(CommentDTO commentDTO) {
+		return sqlSession.delete("mybatis.commentMapper.reCommentDelete", commentDTO);
+	}
+	
 	public int getReCommentCnt(CommentDTO commentDTO) {
 		return sqlSession.selectOne("mybatis.commentMapper.getReCommentCnt", commentDTO);
 	}
