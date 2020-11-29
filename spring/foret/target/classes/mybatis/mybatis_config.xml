@@ -16,6 +16,7 @@
 		<typeAlias type="foret.bean.ForetDTO" alias="foretDTO"/>
 		<typeAlias type="foret.bean.ForetRegionDTO" alias="foretRegionDTO"/>
 		<typeAlias type="foret.bean.ForetTagDTO" alias="foretTagDTO"/>
+		<typeAlias type="foret.bean.ForetMemberDTO" alias="foretMemberDTO"/>
 		
 		<!-- 지역 태그 정보 -->
 		<typeAlias type="tag.bean.TagDTO" alias="tagDTO"/>

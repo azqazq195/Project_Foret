@@ -11,6 +11,7 @@ public class ForetDTO {
 	private String[] tag;
 	private String[] region_si;
 	private String[] region_gu;
+	private String[] member;
 	
 	public int getId() {
 		return id;
@@ -71,5 +72,11 @@ public class ForetDTO {
 	}
 	public void setRegion_gu(String[] region_gu) {
 		this.region_gu = region_gu;
+	}
+	public String[] getMember() {
+		return member;
+	}
+	public void setMember(String[] member) {
+		this.member = member;
 	}
 }
