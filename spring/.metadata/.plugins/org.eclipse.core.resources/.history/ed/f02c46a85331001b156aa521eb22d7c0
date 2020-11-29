@@ -1,0 +1,6 @@
+package member.bean;
+
+public class MemberLikeComment {
+	private int id;
+	private int comment_id;
+}

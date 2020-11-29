@@ -1,0 +1,5 @@
+package tag.bean;
+
+public class TagDTO {
+
+}

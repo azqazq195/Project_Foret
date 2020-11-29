@@ -1,0 +1,6 @@
+package tag.bean;
+
+public class TagDTO {
+	private int tag_id; 
+	private String tag_name; 
+}

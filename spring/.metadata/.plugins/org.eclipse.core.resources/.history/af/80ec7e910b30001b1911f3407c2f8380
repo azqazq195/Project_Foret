@@ -1,0 +1,7 @@
+package photo.controller;
+
+import photo.bean.PhotoDTO;
+
+public class photoServiceImpl {
+	public int memberPhotoWrite(PhotoDTO photoDTO);
+}

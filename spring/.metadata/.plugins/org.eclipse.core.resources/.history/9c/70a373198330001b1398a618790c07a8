@@ -1,0 +1,11 @@
+package region.controller;
+
+import java.util.List;
+
+import region.bean.RegionDTO;
+
+public interface RegionService {
+	public int regionWrite(RegionDTO regionDTO);
+	public int regionDelete(RegionDTO regionDTO);
+	public List<RegionDTO> regionList();
+}

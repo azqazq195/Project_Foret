@@ -1,0 +1,13 @@
+package member.controller;
+
+import java.util.List;
+
+import files.bean.FilesDTO;
+import member.bean.MemberDTO;
+
+public interface MemberService {
+	public int memberWrite(MemberDTO memberDTO);
+	public int memberModify(MemberDTO memberDTO);
+	public int memberDelete(MemberDTO memberDTO);
+	public List<MemberDTO> memberList();
+}

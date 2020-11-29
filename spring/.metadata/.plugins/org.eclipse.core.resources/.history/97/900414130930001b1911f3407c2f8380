@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.memberMapper">
+
+<!-- 프리게시판 글 관리 -->
+<insert id="memberWrite" parameterType="memberDTO" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+	INSERT INTO member 
+	     VALUES(seq_member_id.nextval,
+	            #{name}, 
+	            #{nickname}, 
+	            #{birth}, 
+	            #{email}, 
+	            sysdate)
+</insert>
+
+
+</mapper>

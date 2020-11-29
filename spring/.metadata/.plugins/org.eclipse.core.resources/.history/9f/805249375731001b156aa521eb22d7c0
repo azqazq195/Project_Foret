@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<!-- 클래스에 별명 설정 -->
+	<typeAliases>
+		<!-- 회원 정보 -->
+		<typeAlias type="member.bean.MemberDTO" alias="memberDTO"/>
+		<typeAlias type="member.bean.MemberDTO" alias="memberDTO"/>
+		<typeAlias type="member.bean.MemberDTO" alias="memberDTO"/>
+		<typeAlias type="member.bean.MemberDTO" alias="memberDTO"/>
+		<typeAlias type="member.bean.MemberDTO" alias="memberDTO"/>
+		
+		<!-- 지역 태그 정보 -->
+		<typeAlias type="tag.bean.TagDTO" alias="tagDTO"/>
+		<typeAlias type="region.bean.RegionDTO" alias="regionDTO"/>
+		<typeAlias type="photo.bean.PhotoDTO" alias="PhotoDTO"/>
+	</typeAliases>
+	
+	<!-- sql mapper 설정 -->
+	<mappers>
+		<mapper resource="mybatis/member_mapping.xml"/>
+		<mapper resource="mybatis/tag_mapping.xml"/>
+		<mapper resource="mybatis/region_mapping.xml"/>
+		<mapper resource="mybatis/photo_mapping.xml"/>
+	</mappers>
+</configuration>

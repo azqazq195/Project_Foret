@@ -1,0 +1,22 @@
+package foret.dao;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import member.bean.MemberDTO;
+
+@Repository
+public class ForetDAO {
+	@Autowired
+	SqlSessionTemplate sqlSession;
+	public int foretWrite(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberWrite", memberDTO);
+	}
+	public int memberModify(MemberDTO memberDTO) {
+		return sqlSession.update("mybatis.memberMapper.memberModify", memberDTO);
+	}
+	public int memberDelete(MemberDTO memberDTO) {
+		return sqlSession.delete("mybatis.memberMapper.memberDelete", memberDTO);
+	}
+}

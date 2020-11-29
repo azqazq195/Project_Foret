@@ -1,0 +1,20 @@
+package tag.controller;
+
+import java.util.List;
+
+import tag.bean.TagDTO;
+
+public interface TagService {
+	// 태그 정보 데이터 저장
+	public int tagWrite(TagDTO tagDTO);
+	public int tagDelete(TagDTO tagDTO);
+	public List<TagDTO> tagList();
+	
+	// 멤버 태그 연결
+	public int memberTagWrite(TagDTO tagDTO);
+	public int memberTagDelete(TagDTO tagDTO);
+	
+	// 포레 태그 연결
+	public int foretTagWrite(TagDTO tagDTO);
+	public int foretTagDelete(TagDTO tagDTO);
+}

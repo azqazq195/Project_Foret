@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.foretMapper">
+	<!-- 포레 -->
+	<!-- 포레 추가-->
+	<insert id="foretWrite" parameterType="memberDTO" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO member 
+		VALUES     (seq_member_id.nextval, 
+		            #{name},
+		            #{email},  
+		            #{password}, 
+		            #{nickname}, 
+		            #{birth}, 
+		            sysdate) 
+	</insert>
+	<!-- 포레 수정-->
+	<!-- 포레 삭제-->
+	
+</mapper>

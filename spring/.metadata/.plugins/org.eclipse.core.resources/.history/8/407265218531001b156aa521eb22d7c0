@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.memberMapper">
+	<!-- 멤버 -->
+	<!-- 멤버 추가 -->
+	<insert id="memberWrite" parameterType="memberDTO" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO member 
+		VALUES     (seq_member_id.nextval, 
+		            #{name},
+		            #{email},  
+		            #{password}, 
+		            #{nickname}, 
+		            #{birth}, 
+		            sysdate) 
+	</insert>
+	<!-- 멤버 수정 -->
+	<update id="memberModify" parameterType="memberDTO" >
+		UPDATE member
+		SET    name = #{name},
+		       email = #{email}, 
+		       password = #{password}, 
+		       nickname = #{nickname}, 
+		       birth = #{birth}
+		WHERE  id = #{id}
+	</update>
+	<!-- 멤버 삭제 -->
+	<delete id="memberDelete" parameterType="memberDTO" >
+		DELETE FROM member 
+		WHERE  id = #{id}
+	</delete>
+
+	<!-- 멤버 좋아요 -->
+	<!-- 보드 좋아요 -->
+	<insert id="memberBoardLike">
+		INSERT INTO like_board 
+		VALUES     (#{id}, 
+		            #{reference_id})
+	</insert>
+	<!-- 보드 싫어요 -->
+	<delete id="memberBoardDisLike">
+	</delete>
+	<!-- 댓글 좋아요 -->
+	<insert id="memberCommentLike">
+			INSERT INTO like_board 
+		VALUES     (#{id}, 
+		            #{reference_id})
+	</insert>
+	<!-- 댓글 싫어요 -->
+	<delete id="memberCommentDisLike">
+	</delete>
+</mapper>

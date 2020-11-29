@@ -1,0 +1,6 @@
+package photo.controller;
+
+
+public class photoServiceImpl {
+	public int memberPhotoWrite(PhotoDTO filesDTO);
+}
