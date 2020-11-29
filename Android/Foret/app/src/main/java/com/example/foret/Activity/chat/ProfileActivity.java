@@ -1,5 +1,6 @@
 package com.example.foret.Activity.chat;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -9,12 +10,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 
 import com.example.foret.R;
-import com.example.foret.helper.Calendar;
+import com.example.foret.helper.CalendarHelper;
+import com.example.foret.helper.ProgressDialogHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -26,7 +27,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     TextView textView1, textView2, textView3;
 
-    Button buttonToGoUserList, buttonToGoChatList;
+    Button buttonToGoUserList, buttonToGoChatList, buttonGoToGroup;
 
     LinearLayout linearLayout;
 
@@ -45,6 +46,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         buttonToGoUserList = findViewById(R.id.buttonToGoUserList);
         buttonToGoChatList = findViewById(R.id.buttonToGoChatList);
+        buttonGoToGroup = findViewById(R.id.buttongoToGroup);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -65,6 +67,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
         buttonToGoChatList.setOnClickListener(this);
         buttonToGoUserList.setOnClickListener(this);
+        buttonGoToGroup.setOnClickListener(this);
 
     }
 
@@ -83,6 +86,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             //startActivity(new Intent(this,UsersFragment.class));
             UsersFragment fragmentuserList = new UsersFragment();
             ft.replace(R.id.container, fragmentuserList, "").commit();
+        } else if (v.getId() == R.id.buttongoToGroup) {
+            startActivity(new Intent(this,GroupChatCreateActivity.class));
         }
     }
 
@@ -117,7 +122,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
         HashMap<String, Object> onlineStatus = new HashMap<>();
         onlineStatus.put("onlineStatus", "online");
-        onlineStatus.put("listlogined_date","현재 접속중");
+        onlineStatus.put("listlogined_date", "현재 접속중");
         userAcitive.updateChildren(onlineStatus);
     }
 
@@ -125,10 +130,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void updateuserActiveStatusOff() {
         FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
         final String userUid = currentUseruser.getUid();
+
         DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
         HashMap<String, Object> onlineStatus = new HashMap<>();
         onlineStatus.put("onlineStatus", "offline");
-        onlineStatus.put("listlogined_date",new Calendar().getCurrentTime());
+        onlineStatus.put("listlogined_date", CalendarHelper.getInstance().getCurrentTime());
         userAcitive.updateChildren(onlineStatus);
     }
 

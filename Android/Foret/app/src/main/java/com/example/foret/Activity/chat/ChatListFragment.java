@@ -1,7 +1,6 @@
 package com.example.foret.Activity.chat;
 
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foret.R;
 import com.example.foret.adapter.ChatListAdapter;
+import com.example.foret.helper.CalendarHelper;
 import com.example.foret.model.ModelChat;
 import com.example.foret.model.ModelChatList;
 import com.example.foret.model.ModelUser;
@@ -27,7 +27,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 
 public class ChatListFragment extends Fragment implements View.OnClickListener {
@@ -63,7 +62,7 @@ public class ChatListFragment extends Fragment implements View.OnClickListener {
         firebaseAuth = FirebaseAuth.getInstance();
         curruntUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        recyclerView = view.findViewById(R.id.my_recycler_view);
+        recyclerView = view.findViewById(R.id.my_recycler_view_personal);
 
         chatlistList = new ArrayList<>();
 
@@ -129,6 +128,8 @@ public class ChatListFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String thelastMeesage = "default";
                 String lastMessageTime = "";
+                int unreadMessageCount = 0;
+
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     ModelChat chat = ds.getValue(ModelChat.class);
                     if (chat == null) {
@@ -141,16 +142,32 @@ public class ChatListFragment extends Fragment implements View.OnClickListener {
                     }
                     if (chat.getReceiver().equals(curruntUser.getUid()) && chat.getSender().equals(userId)
                             || chat.getReceiver().equals(userId) && chat.getSender().equals(curruntUser.getUid())) {
-                        thelastMeesage = chat.getMessage();
 
-                        java.util.Calendar cal = java.util.Calendar.getInstance(Locale.KOREAN);
-                        cal.setTimeInMillis(Long.parseLong(chat.getTimestamp()));
-                        lastMessageTime = DateFormat.format("MM/dd hh:mm aa", cal).toString();
+                        try {
+                            if (chat.getType().equals("image")) {
+                                thelastMeesage = "이미지 파일이 전송되었습니다.";
+                            } else if (chat.getType().equals("video")) {
+                                thelastMeesage = "동영상 파일이 전송되었습니다.";
+                            } else if (chat.getType().equals("text") || chat.getType() == null) {
+                                thelastMeesage = chat.getMessage();
+                            } else {
 
+                            }
+                        } catch (Exception e) {
+                            thelastMeesage = chat.getMessage();
+                        }
+
+                        lastMessageTime = CalendarHelper.getInstance().getRelativeTime(chat.getTimestamp());
+                    }
+
+                    if (chat.getReceiver().equals(curruntUser.getUid()) && chat.getSender().equals(userId) && !chat.isSeen) {
+                        unreadMessageCount++;
                     }
                 }
+
                 adapter.setLastMessageMap(userId, thelastMeesage);
                 adapter.setLastMessageTimeMap(userId, lastMessageTime);
+                adapter.setUnreadMessageCount(userId, unreadMessageCount);
                 adapter.notifyDataSetChanged();
             }
 
@@ -173,8 +190,8 @@ public class ChatListFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if(v.getId()== R.id.button_plus){
-            getFragmentManager().beginTransaction().replace(R.id.container,new UsersFragment(),"").commit();
+        if (v.getId() == R.id.button_plus) {
+            getFragmentManager().beginTransaction().replace(R.id.container, new UsersFragment(), "").commit();
         }
     }
 }

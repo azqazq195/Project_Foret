@@ -15,11 +15,13 @@
         android:background="#28d2c5"
       >
 
-
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileIv"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_default_image_foreground" />
 
@@ -67,6 +69,13 @@
         android:background="@color/white"
         android:gravity="center"
         android:orientation="horizontal">
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/attachButton"
+            android:src="@mipmap/ic_launcher_plus"
+            />
 
         <EditText
             android:id="@+id/messagaEt"

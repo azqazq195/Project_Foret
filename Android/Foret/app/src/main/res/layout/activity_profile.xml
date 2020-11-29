@@ -50,14 +50,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="유저 리스트" />
+
+        <Button
+            android:id="@+id/buttongoToGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="그룹 가기" />
+
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </FrameLayout>
     <!--
         <fragment
             android:id="@+id/userlistFragment"
