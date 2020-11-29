@@ -1,0 +1,16 @@
+package member.controller;
+
+import java.util.List;
+
+import files.bean.FilesDTO;
+import member.bean.MemberDTO;
+
+public interface MemberService {
+	public int memberWrite(MemberDTO memberDTO);
+	
+	public List<MemberDTO> memberList();
+	
+	public int getCommnuityFirstSeq();
+	
+	public int filesWrite(FilesDTO filesDTO);
+}

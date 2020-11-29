@@ -1,0 +1,32 @@
+package member.controller;
+
+import java.util.HashMap;
+
+import member.bean.MemberDTO;
+
+public interface MemberService {
+	// 멤버 데이터
+	public int memberWrite(MemberDTO memberDTO);
+	public int memberModify(MemberDTO memberDTO);
+	public int memberDelete(MemberDTO memberDTO);
+	
+	// 멤버 태그 링크
+	public int memberTagWrite(MemberDTO memberDTO);
+	public int memberTagModify(MemberDTO memberDTO);
+	public int memberTagDelete(MemberDTO memberDTO);
+	
+	// 멤버 지역 링크
+	public int memberRegionWrite(MemberDTO memberDTO);
+	public int memberRegionModify(MemberDTO memberDTO);
+	public int memberRegionDelete(MemberDTO memberDTO);
+	
+	// 멤버 게시글 좋아요 링크
+	public int memberBoardLikeWrite(MemberDTO memberDTO);
+	public int memberBoardLikeDelete(MemberDTO memberDTO);
+	
+	// 멤버 댓글 좋아요 링크
+	public int memberCommentLikeWrite(MemberDTO memberDTO);
+	public int memberCommentLikeDelete(MemberDTO memberDTO);
+	// temp
+	int memberTagWrite(HashMap<String, String[]> map);
+}

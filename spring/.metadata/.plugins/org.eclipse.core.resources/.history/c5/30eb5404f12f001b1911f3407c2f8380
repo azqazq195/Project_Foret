@@ -1,0 +1,28 @@
+package region.controller;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class RegionController {
+	@Autowired
+	RegionService regionService;
+	
+	@RequestMapping(value = "/region/region_insert.do")
+	public ModelAndView regionWrite(HttpServletRequest request) throws Exception {
+		request.setCharacterEncoding("UTF-8");
+	}
+	
+	@RequestMapping(value = "/region/region_delete.do")
+	public ModelAndView regionDelete(HttpServletRequest request) throws Exception {
+		request.setCharacterEncoding("UTF-8");
+	}
+	@RequestMapping(value = "/region/region_list.do")
+	public ModelAndView regionList(HttpServletRequest request) throws Exception {
+		request.setCharacterEncoding("UTF-8");
+	}
+}

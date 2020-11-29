@@ -1,0 +1,6 @@
+package member.bean;
+
+public class MemberTagDTO {
+	private int id;
+	private int tag_id;
+}

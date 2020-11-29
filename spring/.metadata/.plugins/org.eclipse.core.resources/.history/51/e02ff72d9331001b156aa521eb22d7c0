@@ -1,0 +1,20 @@
+package foret.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
+import photo.controller.PhotoService;
+import region.controller.RegionService;
+import tag.controller.TagService;
+
+@Controller
+public class ForetController {
+	@Autowired
+	ForetService foretService;
+	@Autowired
+	PhotoService photoService;
+	@Autowired
+	TagService tagService;
+	@Autowired
+	RegionService regionService;
+}

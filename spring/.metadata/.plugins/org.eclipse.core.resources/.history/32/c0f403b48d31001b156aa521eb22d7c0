@@ -1,0 +1,10 @@
+package foret.bean;
+
+public class ForetDTO {
+	private int id;
+	private int leader_id;
+	private String introduce;
+	private String name;
+	private int max_member;
+	private String date;
+}

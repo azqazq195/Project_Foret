@@ -1,0 +1,17 @@
+package region.controller;
+
+import java.util.List;
+
+import region.bean.RegionDTO;
+import tag.bean.TagDTO;
+
+public interface RegionService {
+	public int tagWrite(TagDTO tagDTO);
+	public int tagDelete(TagDTO tagDTO);
+	public List<TagDTO> tagList();
+	
+	public int regionWrite(RegionDTO regionDTO);
+	public int regionDelete(RegionDTO regionDTO);
+	public List<RegionDTO> regionList();
+	
+}

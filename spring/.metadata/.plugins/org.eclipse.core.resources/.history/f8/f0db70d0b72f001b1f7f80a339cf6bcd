@@ -1,0 +1,23 @@
+package files.dao;
+
+import java.io.File;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import files.bean.FilesDTO;
+@Repository
+public class FilesDAO {
+	@Autowired
+	SqlSessionTemplate sqlSession;
+	
+	public int getCommunityFirstSeq() {
+		return sqlSession.selectOne("mybatis.filesMapper.getMemberFirstSeq");
+	}
+	
+	public int filesWrite(FilesDTO filesDTO) {
+		return sqlSession.insert("mybatis.filesMapper.filesWrite", filesDTO);
+	}
+	
+}

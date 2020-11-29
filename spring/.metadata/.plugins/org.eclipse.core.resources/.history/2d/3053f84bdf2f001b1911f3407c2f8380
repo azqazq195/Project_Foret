@@ -1,0 +1,23 @@
+package tag.controller;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+
+@Controller
+public class TagController {
+	@Autowired
+	TagService tagService;
+	
+	@RequestMapping(value = "/tag/tag_insert.do")
+	public ModelAndView tagWrite(HttpServletRequest request) throws Exception {
+		request.setCharacterEncoding("UTF-8");
+		
+		int name = request.getParameter("name");
+	    String nickname = request.getParameter("nickname");
+	}
+}

@@ -1,0 +1,48 @@
+package member.controller;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import member.bean.MemberDTO;
+
+@Controller
+public class MemberController {
+	@Autowired
+	MemberService memberService;
+	
+	@RequestMapping(value = "/member/member_insert.do")
+	public ModelAndView memberWrite(HttpServletRequest request) throws Exception {
+		request.setCharacterEncoding("UTF-8");
+		
+		String name = request.getParameter("name");
+	    String nickname = request.getParameter("nickname");
+	    String birth = request.getParameter("birth");
+	    String email = request.getParameter("email");
+	    
+	    MemberDTO memberDTO = new MemberDTO();
+	    memberDTO.setName(name);
+	    memberDTO.setNickname(nickname);
+	    memberDTO.setBirth(birth);
+	    memberDTO.setEmail(email);
+	    
+	    int result = memberService.memberWrite(memberDTO);
+	    String rt = "FAIL";   
+	    if(result > 0) rt = "OK";
+	    
+	    JSONObject json = new JSONObject();
+	    json.put("rt", rt);
+	      
+	    // 화면 네비게이션
+	    ModelAndView modelAndView = new ModelAndView();
+	    modelAndView.addObject("json", json);
+	    modelAndView.setViewName("community.jsp");
+	       
+	    return modelAndView;
+	}
+	
+}

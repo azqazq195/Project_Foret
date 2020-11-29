@@ -1,0 +1,19 @@
+package tag.controller;
+
+import tag.bean.TagDTO;
+
+public class TagServiceImpl implements TagService{
+
+	@Override
+	public int tagWrite(TagDTO tagDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int tagDelete(TagDTO tagDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}
