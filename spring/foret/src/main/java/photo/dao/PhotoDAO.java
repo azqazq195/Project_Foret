@@ -30,7 +30,7 @@ public class PhotoDAO {
 	public int boardPhotoWrite(List<PhotoDTO> list) {
 		return sqlSession.insert("mybatis.photoMapper.boardPhotoWrite", list);
 	}
-	public int boardPhotoDelete(List<PhotoDTO> list) {
-		return sqlSession.insert("mybatis.photoMapper.boardPhotoDelete", list);
+	public int boardPhotoDelete(int id) {
+		return sqlSession.insert("mybatis.photoMapper.boardPhotoDelete", id);
 	}
 }

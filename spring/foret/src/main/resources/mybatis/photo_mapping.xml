@@ -53,7 +53,7 @@
 	</delete>
 	<delete id="boardPhotoDelete">
 		DELETE FROM board_photo 
-		WHERE  board_photo = #{reference_id} 
+		WHERE  board_id = #{reference_id} 
 	</delete>
 
 </mapper>

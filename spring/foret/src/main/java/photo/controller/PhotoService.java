@@ -15,5 +15,5 @@ public interface PhotoService {
 	
 	// 게시판 사진
 	public int boardPhotoWrite(List<PhotoDTO> list);
-	public int boardPhotoDelete(List<PhotoDTO> list);
+	public int boardPhotoDelete(int id);
 }

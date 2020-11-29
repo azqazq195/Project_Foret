@@ -36,8 +36,8 @@ public class PhotoServiceImpl implements PhotoService{
 		return photoDAO.boardPhotoWrite(list);
 	}
 	@Override
-	public int boardPhotoDelete(List<PhotoDTO> list) {
-		return photoDAO.boardPhotoDelete(list);
+	public int boardPhotoDelete(int id) {
+		return photoDAO.boardPhotoDelete(id);
 	}
 	
 }
