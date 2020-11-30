@@ -2,11 +2,13 @@ package com.example.foret.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.foret.Activity.chat.ChatActivity;
 import com.example.foret.R;
+import com.example.foret.helper.ProgressDialogHelper;
 import com.example.foret.model.ModelChat;
 import com.example.foret.model.ModelUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,18 +35,20 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyView
     private List<ModelUser> user_list;    //유저 정보
     private HashMap<String, String> lastMessageMap;
     private HashMap<String, String> lastMessageTimeMap;
+    private HashMap<String, Integer> unreadMessageCount;
+
 
     public ChatListAdapter(Context context, List<ModelUser> user_list) {
         this.context = context;
         this.user_list = user_list;
         lastMessageMap = new HashMap<>();
         lastMessageTimeMap = new HashMap<>();
-        }
+        unreadMessageCount = new HashMap<>();
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView textViewNick, textViewContent, textViewTime, textViewCount;
         public ImageView imageViewPhoto, imageViewOnOff;
-
         public View rootView;
 
         public MyViewHolder(View v) {
@@ -62,26 +67,37 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyView
     @Override
     public ChatListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(context).inflate(R.layout.chat_list_row,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_row_chatlist, parent, false);
         ChatListAdapter.MyViewHolder vh = new ChatListAdapter.MyViewHolder(view);
         return vh;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChatListAdapter.MyViewHolder holder, int position) {
-        //데이터 얻고
-        //Log.d("[test","리스트 사이즈 "+user_list.size());
+        //데이터 받기
         final String hisUid = user_list.get(position).getUid();
         String user_Photo = user_list.get(position).getPhotoRoot();
         String user_name = user_list.get(position).getNickname();
+
         String lastMessage = lastMessageMap.get(hisUid);
         String lastMessageTime = lastMessageTimeMap.get(hisUid);
+            int unreadMessageCount1=0;
+        try{
+            unreadMessageCount1 = unreadMessageCount.get(hisUid);
+        }catch (Exception e){
+            Log.e("[test","오류시 his?" + hisUid+ "unreadMessageCount1?"+unreadMessageCount1);
+        }
 
         String myUid1 = FirebaseAuth.getInstance().getUid();
-        int unreadMessage = getUnReadMessage(myUid1, hisUid);
 
-        if(unreadMessage<1){
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");
+
+        //안 읽은 메세지 카운트
+        if (unreadMessageCount1 < 1) {
             holder.textViewCount.setVisibility(View.GONE);
+        } else {
+            holder.textViewCount.setVisibility(View.VISIBLE);
+            holder.textViewCount.setText("" + unreadMessageCount1);
         }
 
         //데이터 셋팅
@@ -92,33 +108,34 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyView
             holder.textViewContent.setVisibility(View.VISIBLE);
             holder.textViewContent.setText(lastMessage);
             holder.textViewTime.setText(lastMessageTime);
-            holder.textViewCount.setText("" + unreadMessage);
         }
 
-            try{
-                String user_photo_root = user_list.get(position).getPhotoRoot();
-                Glide.with(context)
-                        .load(user_photo_root)
-                        .fallback(R.drawable.ic_launcher_background)   // 메세지 여부
-                        .into(holder.imageViewPhoto);
+        try {
+            String user_photo_root = user_list.get(position).getPhotoRoot();
+            Glide.with(context)
+                    .load(user_photo_root)
+                    .fallback(R.drawable.ic_launcher_foreground)   // 메세지 여부
+                    .into(holder.imageViewPhoto);
 
-            }catch (Exception e){
-                Glide.with(context)
-                        .load(R.drawable.ic_launcher_background)//이미지 없을 떄 디폴트
-                        .into(holder.imageViewPhoto);
-            }
-          //온라인 여부 설정
+        } catch (Exception e) {
+            Glide.with(context)
+                    .load(R.drawable.ic_launcher_foreground)//이미지 없을 떄 디폴트
+                    .into(holder.imageViewPhoto);
+        }
+        //온라인 여부 설정
         try {
             if (user_list.get(position).getOnlineStatus().equals("online")) {
                 Glide.with(context)
                         .load(R.drawable.circle_online) //온라인일떄
                         .into(holder.imageViewOnOff);
             } else {
-
+                Glide.with(context)
+                        .load(R.drawable.circle_offline) //오프라인일때
+                        .into(holder.imageViewOnOff);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             Glide.with(context)
-                    .load(R.drawable.circle_offline) //온라인일떄
+                    .load(R.drawable.ic_launcher_foreground) //여부가 없을떄
                     .into(holder.imageViewOnOff);
         }
 
@@ -139,8 +156,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyView
     public void setLastMessageMap(String user_id, String lastMessage) {
         lastMessageMap.put(user_id, lastMessage);
     }
+
     public void setLastMessageTimeMap(String user_id, String lastMessageTime) {
         lastMessageTimeMap.put(user_id, lastMessageTime);
+    }
+
+    public void setUnreadMessageCount(String user_id, int count) {
+        unreadMessageCount.put(user_id, count);
+        Log.e("[test]", "유저 아이디랑 값" + user_id + ", " + count);
     }
 
     @Override
@@ -155,30 +178,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyView
     public void addChat(ModelUser chat) {
         user_list.add(chat);
         notifyItemInserted(user_list.size() - 1); //갱신
-    }
-
-    //안읽은 메세지 갯수 구하기
-    public int getUnReadMessage(final String myUid1, final String hisUid1) {
-        final int[] count = {0};
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");
-
-        dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    ModelChat chat = ds.getValue(ModelChat.class);
-                    if (chat.getReceiver().equals(myUid1) && chat.getSender().equals(hisUid1)) {
-                        if (!chat.isSeen) count[0]++;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-        return count[0];
     }
 
 }

@@ -3,24 +3,32 @@
     package="com.example.foret">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
 
     <application
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:windowSoftInputMode="adjustResize"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Foret">
+        android:theme="@style/Theme.Foret"
+        android:usesCleartextTraffic="true"
+        android:windowSoftInputMode="adjustResize">
+        <activity android:name=".Activity.chat.GroupChatActivity"/>
+        <activity android:name=".Activity.chat.GroupChatListActivity" />
+        <activity android:name=".Activity.chat.GroupChatCreateActivity" />
+        <activity android:name=".Activity.chat.VideoViewActivity" />
         <activity android:name=".Activity.chat.ProfileActivity" />
         <activity android:name=".Activity.chat.ChatActivity" />
-        <activity android:name=".Activity.chat.TestLoginActivity" />
-        <activity android:name=".Activity.login.SplashActivity"></activity>
-        <activity android:name=".Activity.login.SignUpActivity"></activity>
-        <activity android:name=".Activity.login.LoginActivity"></activity>
-
-        <activity android:name=".Activity.main.MainActivity">
+        <activity android:name=".Activity.main.MainActivity" />
+        <activity android:name=".Activity.login.SplashActivity" />
+        <activity android:name=".Activity.login.SignUpActivity" />
+        <activity android:name=".Activity.login.LoginActivity" />
+        <activity android:name=".Activity.chat.TestLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,6 +39,16 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>
