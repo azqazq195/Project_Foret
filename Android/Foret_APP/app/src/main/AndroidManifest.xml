@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.foret_app_prototype">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:hardwareAccelerated="false"
+        android:largeHeap="true"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_foret"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@drawable/ic_foret"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".activity.free.ReadFreeActivity"></activity>
+        <activity android:name=".activity.login.GuideActivity" />
+        <activity android:name=".activity.foret.board.ListForetBoardActivity" />
+        <activity android:name=".activity.foret.EditForetActivity" />
+        <activity android:name=".activity.menu.EditMYInformActivity" />
+        <activity android:name=".activity.foret.board.ReadForetBoardActivity" />
+        <activity android:name=".activity.foret.board.EditForetBoardActivity" />
+        <activity android:name=".activity.foret.board.WriteForetBoardActivity" />
+        <activity android:name=".activity.foret.ViewForetActivity" />
+        <activity android:name=".activity.foret.MakeForetActivity" />
+        <activity android:name=".activity.search.SearchResultActivity" />
+        <activity android:name=".activity.free.EditFreeActivity" />
+        <activity android:name=".activity.free.WriteFreeActivity" />
+        <activity android:name=".activity.login.JoinUsActivity" />
+        <activity android:name=".activity.login.LoginActivity" />
+        <activity android:name=".activity.login.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.MainActivity"
+            android:label="@string/app_name" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+
+</manifest>
