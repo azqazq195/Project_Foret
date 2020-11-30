@@ -1,0 +1,60 @@
+package member.dao;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import member.bean.MemberDTO;
+
+@Repository
+public class MemberDAO {
+	@Autowired
+	SqlSessionTemplate sqlSession;
+	
+	public int memberWrite(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberWrite", memberDTO);
+	}
+	public int memberModify(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberModify", memberDTO);
+	}
+	public int memberDelete(MemberDTO memberDTO) {
+		return sqlSession.delete("mybatis.memberMapper.memberDelete", memberDTO);
+	}
+
+	public int memberTagWrite(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberTagWrite", memberDTO);
+	}
+	public int memberTagModify(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberTagModify", memberDTO);
+	}
+	public int memberTagDelete(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberTagDelete", memberDTO);
+	}
+	
+	public int memberRegionWrite(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberRegionWrite", memberDTO);
+	}
+	public int memberRegionModify(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberRegionModify", memberDTO);
+	}
+	public int memberRegionDelete(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberRegionDelete", memberDTO);
+	}
+	
+	public int memberBoardLikeWrite(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberBoardLikeWrite", memberDTO);
+	}
+	public int memberBoardLikeDelete(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberBoardLikeDelete", memberDTO);
+	}
+	
+	public int memberCommentLikeWrite(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberCommentLikeWrite", memberDTO);
+	}
+	public int memberCommentLikeDelete(MemberDTO memberDTO) {
+		return sqlSession.insert("mybatis.memberMapper.memberCommentLikeDelete", memberDTO);
+	}
+	
+	
+
+}

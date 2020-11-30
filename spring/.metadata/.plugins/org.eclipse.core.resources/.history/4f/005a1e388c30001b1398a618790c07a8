@@ -1,0 +1,80 @@
+package member.controller;
+
+import java.util.HashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import member.bean.MemberDTO;
+import member.dao.MemberDAO;
+
+@Service
+public class MemberServiceImpl implements MemberService {
+	@Autowired
+	MemberDAO memberDAO;
+
+	@Override
+	public int memberWrite(MemberDTO memberDTO) {
+		return memberDAO.memberWrite(memberDTO);
+	}
+
+	@Override
+	public int memberModify(MemberDTO memberDTO) {
+		return memberDAO.memberModify(memberDTO);
+	}
+
+	@Override
+	public int memberDelete(MemberDTO memberDTO) {
+		return memberDAO.memberDelete(memberDTO);
+	}
+
+	@Override
+	public int memberTagWrite(HashMap<String, String[]> map) {
+		return memberDAO.memberTagWrite(map);
+	}
+
+	@Override
+	public int memberTagModify(MemberDTO memberDTO) {
+		return memberDAO.memberTagModify(memberDTO);
+	}
+
+	@Override
+	public int memberTagDelete(MemberDTO memberDTO) {
+		return memberDAO.memberTagDelete(memberDTO);
+	}
+
+	@Override
+	public int memberRegionWrite(MemberDTO memberDTO) {
+		return memberDAO.memberRegionWrite(memberDTO);
+	}
+
+	@Override
+	public int memberRegionModify(MemberDTO memberDTO) {
+		return memberDAO.memberRegionModify(memberDTO);
+	}
+
+	@Override
+	public int memberRegionDelete(MemberDTO memberDTO) {
+		return memberDAO.memberRegionDelete(memberDTO);
+	}
+
+	@Override
+	public int memberBoardLikeWrite(MemberDTO memberDTO) {
+		return memberDAO.memberBoardLikeWrite(memberDTO);
+	}
+
+	@Override
+	public int memberBoardLikeDelete(MemberDTO memberDTO) {
+		return memberDAO.memberBoardLikeDelete(memberDTO);
+	}
+
+	@Override
+	public int memberCommentLikeWrite(MemberDTO memberDTO) {
+		return memberDAO.memberCommentLikeWrite(memberDTO);
+	}
+
+	@Override
+	public int memberCommentLikeDelete(MemberDTO memberDTO) {
+		return memberDAO.memberCommentLikeDelete(memberDTO);
+	}
+}

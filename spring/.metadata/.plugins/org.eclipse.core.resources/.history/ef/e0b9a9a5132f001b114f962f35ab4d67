@@ -1,0 +1,142 @@
+package member.controller;
+
+import java.io.File;
+import java.io.FileOutputStream;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+import member.bean.Member;
+import photo.bean.PhotoDTO;
+import photo.dao.PhotoDAO;
+
+
+@Controller
+public class MemberController {
+
+	@Autowired
+	MemberService service;
+	
+	@RequestMapping(value = "/member/member_write.do")
+	public ModelAndView writeMember(HttpServletRequest request, MultipartFile photo) throws Exception {
+		request.setCharacterEncoding("UTF-8");
+		String dir = request.getSession().getServletContext().getRealPath("/storage");
+		
+		String member_name = request.getParameter("member_name");
+		String member_email = request.getParameter("member_email");
+		String member_nickname = request.getParameter("member_nickname");
+		String member_birth = request.getParameter("member_birth");
+		String member_chain = request.getParameter("member_chain");
+		String member_address = request.getParameter("member_address");
+		
+		System.out.println("member_name : " + member_name);
+		System.out.println("member_email : " + member_email);
+		System.out.println("member_nickname : " + member_nickname);
+		System.out.println("member_birth : " + member_birth);
+		System.out.println("member_chain : " + member_chain);
+		System.out.println("member_address : " + member_address);
+		
+		Member member = new Member();
+		
+		
+		// member.setMember_id(member_id);
+		member.setMember_name(member_name);
+		member.setMember_email(member_email);
+		member.setMember_nickname(member_nickname);
+		member.setMember_birth(member_birth);
+		// member.setMember_join_date(member_join_date);
+		member.setMember_chain(member_chain);
+		member.setMember_address(member_address);
+		// member.setMember_photo(member_photo);
+		
+		System.out.println("DTO 저장");
+		
+		if(photo != null) {
+			System.out.println("photo 전달");
+			String photo_path = request.getSession().getServletContext().getRealPath("/storage");
+			String photo_name = photo.getOriginalFilename();
+			// 저장할 사진의 확장자를 원본이름에서 추출
+			int lastIndex = photo_name.lastIndexOf(".");
+			String photo_type = photo_name.substring(lastIndex + 1);
+			
+			// 사진 복사
+			File file = new File(photo_path, photo_name);
+	        FileCopyUtils.copy(photo.getInputStream(), new FileOutputStream(file));
+			
+			// 사진 dto 저장
+	        PhotoDTO photoDTO = new PhotoDTO();
+			photoDTO.setPhoto_name(photo_name);
+			photoDTO.setPhoto_path(photo_path);
+			photoDTO.setPhoto_type(photo_type);
+			
+			System.out.println("photo_name : " + photo_name);
+			System.out.println("photo_path : " + photo_path);
+			System.out.println("photo_type : " + photo_type);
+			
+			PhotoDAO photoDAO = new PhotoDAO();
+			int photoResult = photoDAO.photoWrite(photoDTO);
+			if(photoResult > 0) { 
+				System.out.println("photoDAO 저장");
+				int seq = photoDAO.getMaxPhotoId();
+				String photo_id = photoDAO.checkPhoto(seq);
+				member.setMember_photo(photo_id);
+			}
+		} else {
+			member.setMember_photo(null);
+		}
+		
+		System.out.println("photo 끝");
+		
+		int result = service.writeMember(member);
+		
+		JSONObject json = new JSONObject();
+		String rt = null;
+		if(result > 0) {
+			rt = "OK";
+		} else {
+			rt = "FAIL";
+		}
+		json.put("rt", rt);
+		
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("json", json);
+		modelAndView.setViewName("member.jsp");
+		
+		return modelAndView;
+	}
+	
+//	@RequestMapping("/freeboard/modifyFreeboard.do")
+//	public ModelAndView modifyFreeboard(HttpServletRequest request) throws Exception {
+//		
+//		request.setCharacterEncoding("UTF-8");
+//		FreeBoard freeBoard = new FreeBoard();
+//		freeBoard.setFreeboard_subject(request.getParameter("freeboard_subject"));
+//		freeBoard.setFreeboard_content(request.getParameter("freeboard_content"));
+//		freeBoard.setFreeboard_no(Integer.parseInt(request.getParameter("freeboard_no")));
+//		freeBoard.setMember_id(request.getParameter("member_id"));
+//		
+//		int result = service.modifyFreeboard(freeBoard);
+//		
+//		JSONObject json = new JSONObject();
+//		String rt = null;
+//		if(result > 0) {
+//			rt = "OK";
+//		} else {
+//			rt = "FAIL";
+//		}
+//		json.put("rt", rt);
+//		
+//		ModelAndView modelAndView = new ModelAndView();
+//		modelAndView.addObject("json", json);
+//		modelAndView.setViewName("freeboard.jsp");
+//		
+//		return modelAndView;
+//	}
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- 클래스에 별명짓기 -->
+	<typeAliases>
+		<typeAlias type="member.bean.MemberDTO" alias="memberDTO"/>
+		<typeAlias type="files.bean.FilesDTO" alias="filesDTO"/>
+	</typeAliases>
+	<!-- sql mapper 설정 -->
+	<mappers>
+		<mapper resource="mybatis/member-mapping.xml"/>
+		<mapper resource="mybatis/files-mapping.xml"/>
+	</mappers>
+</configuration>

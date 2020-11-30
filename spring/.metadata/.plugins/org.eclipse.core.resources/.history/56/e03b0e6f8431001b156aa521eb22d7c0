@@ -1,0 +1,19 @@
+package member.bean;
+
+public class MemberLikeCommentDTO {
+	private int id;
+	private int comment_id;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public int getComment_id() {
+		return comment_id;
+	}
+	public void setComment_id(int comment_id) {
+		this.comment_id = comment_id;
+	}
+}

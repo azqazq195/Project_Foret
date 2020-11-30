@@ -1,0 +1,17 @@
+package region.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class RegionController {
+	@Autowired
+	RegionService regionService;
+	
+	@RequestMapping(value = "/region/region_insert.do")
+	
+	@RequestMapping(value = "/region/region_delete.do")
+	
+	@RequestMapping(value = "/region/region_insert.do")
+}
