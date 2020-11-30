@@ -110,10 +110,6 @@ public class SearchController {
 		System.out.println("-- 함수 종료 : search_member.do --\n");
 		return modelAndView(json);
 	}
-
-	
-	
-	
 	
 	public int haveId(String id) {
 		System.out.println("함수 실행 : haveId");

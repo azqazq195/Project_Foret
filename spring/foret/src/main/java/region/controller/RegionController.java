@@ -92,11 +92,11 @@ public class RegionController {
 	    for(RegionDTO regionDTO : list) {
 	    	JSONObject temp = new JSONObject();
 	    	temp.put("region_id", regionDTO.getRegion_id());
-	    	temp.put("region_si", regionDTO.getRegion_si());
-	    	temp.put("region_gu", regionDTO.getRegion_gu());
+	    	temp.put("region_si", regionDTO.getSi());
+	    	temp.put("region_gu", regionDTO.getGu());
 	    	array.put(temp);
 	    }
-	    json.put("regions", array);
+	    json.put("region", array);
 	    
 	    // 화면 네비게이션
 	    ModelAndView modelAndView = new ModelAndView();
