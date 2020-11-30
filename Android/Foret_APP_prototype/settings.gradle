@@ -1,2 +1,0 @@
-include ':app'
-rootProject.name = "Foret_APP_prototype"
