@@ -11,6 +11,7 @@
 		<typeAlias type="member.bean.MemberLikeDTO" alias="memberLikeDTO"/>
 		<typeAlias type="member.bean.MemberRegionDTO" alias="memberRegionDTO"/>
 		<typeAlias type="member.bean.MemberTagDTO" alias="memberTagDTO"/>
+		<typeAlias type="member.bean.MemberForetDTO" alias="memberForetDTO"/>
 		
 		<!-- 포레 정보 -->
 		<typeAlias type="foret.bean.ForetDTO" alias="foretDTO"/>

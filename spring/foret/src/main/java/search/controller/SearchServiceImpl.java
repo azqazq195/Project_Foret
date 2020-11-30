@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import member.bean.MemberDTO;
+import member.bean.MemberForetDTO;
 import member.bean.MemberLikeDTO;
 import member.bean.MemberRegionDTO;
 import member.bean.MemberTagDTO;
@@ -44,6 +45,11 @@ public class SearchServiceImpl implements SearchService {
 	@Override
 	public List<MemberLikeDTO> memberCommentLikeSelect(int member_id) {
 		return searchDAO.memberCommentLikeSelect(member_id);
+	}
+
+	@Override
+	public List<MemberForetDTO> memberForetSelect(int member_id) {
+		return searchDAO.memberForetSelect(member_id);
 	}
 
 

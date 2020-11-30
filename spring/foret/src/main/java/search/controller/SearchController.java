@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import member.bean.MemberDTO;
+import member.bean.MemberForetDTO;
 import member.bean.MemberLikeDTO;
 import member.bean.MemberRegionDTO;
 import member.bean.MemberTagDTO;
-import tag.bean.TagDTO;
 
 @Controller
 public class SearchController {
@@ -58,6 +58,8 @@ public class SearchController {
 			List<MemberLikeDTO> boardLikeList = searchService.memberBoardLikeSelect(memberDTO.getId());
 			System.out.println("멤버_댓글_좋아요 사진 정보 불러오기");
 			List<MemberLikeDTO> commentLikeList = searchService.memberCommentLikeSelect(memberDTO.getId());
+			System.out.println("멤버_포레 정보 불러오기");
+			List<MemberForetDTO> memberForetList = searchService.memberForetSelect(memberDTO.getId());
 			json.put("RT", RT);
 			JSONArray member = new JSONArray();
 			JSONObject memberTemp = new JSONObject();
@@ -100,6 +102,13 @@ public class SearchController {
 					like_comment.put(memberLikeDTO.getComment_id());
 				}
 				memberTemp.put("like_comment", like_comment);
+			}
+			if(memberForetList != null) {
+				JSONArray member_foret = new JSONArray();
+				for(MemberForetDTO memberForetDTO : memberForetList) {
+					member_foret.put(memberForetDTO.getForet_id());
+				}
+				memberTemp.put("member_foret", member_foret);
 			}
 			member.put(memberTemp);
 			json.put("member", member);

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import member.bean.MemberDTO;
+import member.bean.MemberForetDTO;
 import member.bean.MemberLikeDTO;
 import member.bean.MemberRegionDTO;
 import member.bean.MemberTagDTO;
@@ -33,6 +34,9 @@ public class SearchDAO {
 	}
 	public List<MemberLikeDTO> memberCommentLikeSelect(int member_id) {
 		return sqlSession.selectList("mybatis.searchMapper.memberCommentLikeSelect", member_id);
+	}
+	public List<MemberForetDTO> memberForetSelect(int member_id) {
+		return sqlSession.selectList("mybatis.searchMapper.memberForetSelect", member_id);
 	}
 	
 }
