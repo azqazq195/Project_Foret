@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -70,10 +71,10 @@ public class RecyclerAdapter4 extends RecyclerView.Adapter<RecyclerAdapter4.Adap
         return list.size();
     }
 
-    public class Adapter4 extends RecyclerView.ViewHolder {
+    public class Adapter4 extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView textView1, textView2, textView3, textView4, textView5, textView6, textView7;
-        Button button_like;
+        ToggleButton button_like;
         LinearLayout layout;
 
         public Adapter4(@NonNull View itemView) {
@@ -89,5 +90,9 @@ public class RecyclerAdapter4 extends RecyclerView.Adapter<RecyclerAdapter4.Adap
             layout = itemView.findViewById(R.id.layout);
         }
 
+        @Override
+        public void onClick(View v) {
+
+        }
     }
 }

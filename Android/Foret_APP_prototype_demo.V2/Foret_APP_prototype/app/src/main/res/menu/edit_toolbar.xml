@@ -3,9 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/item_modify"
         android:title="수정 "
         app:showAsAction="always" />
     <item
+        android:id="@+id/item_delete"
         android:title="삭제"
         app:showAsAction="always" />
 </menu>
