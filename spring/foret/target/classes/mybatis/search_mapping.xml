@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.searchMapper">
+	<!-- 이메일 중복 검사 -->
+	<select id="emailCheck" parameterType="String" resultType="memberDTO">
+		select * from V_MEMBER_P where email = #{email}
+	</select>
+	
+	<!-- 내 정보 조회 -->
+	<!-- 멤버 조회 -->
+	<select id="memberSelect" parameterType="String" resultType="memberDTO">
+		select * from V_MEMBER_AND_PHOTO where email = #{email}
+	</select>
+	<!-- 태그 조회 -->
+	<select id="memberTagSelect" parameterType="int" resultType="MemberTagDTO">
+		select * from V_MEMBER_T where id = #{member_id}
+	</select>
+	<!-- 지역 조회 -->
+	<select id="memberRegionSelect" parameterType="int" resultType="MemberRegionDTO">
+		select * from V_MEMBER_R where id = #{member_id}
+	</select>
+	<!-- 보드 좋아요 조회 -->
+	<select id="memberBoardLikeSelect" parameterType="int" resultType="MemberLikeDTO">
+		select * from V_MEMBER_BL where id = #{member_id}
+	</select>
+	<!-- 댓글 좋아요 조회 -->
+	<select id="memberCommentLikeSelect" parameterType="int" resultType="MemberLikeDTO">
+		select * from V_MEMBER_CL where id = #{member_id}
+	</select>
+	<!-- 멤버 포레 조회 -->
+	<select id="memberForetSelect" parameterType="int" resultType="MemberForetDTO">
+		select * from V_MEMBER_F where id = #{member_id}
+	</select>
+</mapper>

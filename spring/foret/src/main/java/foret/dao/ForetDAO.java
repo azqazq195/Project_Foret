@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import foret.bean.ForetDTO;
+import foret.bean.ForetMemberDTO;
 
 @Repository
 public class ForetDAO {
@@ -18,5 +19,12 @@ public class ForetDAO {
 	}
 	public int foretDelete(ForetDTO foretDTO) {
 		return sqlSession.delete("mybatis.foretMapper.foretDelete", foretDTO);
+	}
+	
+	public int foretMemberWrite(ForetMemberDTO foretMemberDTO) {
+		return sqlSession.insert("mybatis.foretMapper.foretMemberWrite", foretMemberDTO);
+	}
+	public int foretMemberDelete(ForetMemberDTO foretMemberDTO) {
+		return sqlSession.insert("mybatis.foretMapper.foretMemberDelete", foretMemberDTO);
 	}
 }

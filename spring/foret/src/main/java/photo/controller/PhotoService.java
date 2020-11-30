@@ -1,5 +1,7 @@
 package photo.controller;
 
+import java.util.List;
+
 import photo.bean.PhotoDTO;
 
 public interface PhotoService {
@@ -12,6 +14,6 @@ public interface PhotoService {
 	public int foretPhotoDelete(PhotoDTO photoDTO);
 	
 	// 게시판 사진
-	public int boardPhotoWrite(PhotoDTO photoDTO);
-	public int boardPhotoDelete(PhotoDTO photoDTO);
+	public int boardPhotoWrite(List<PhotoDTO> list);
+	public int boardPhotoDelete(int id);
 }

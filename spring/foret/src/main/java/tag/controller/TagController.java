@@ -91,7 +91,7 @@ public class TagController {
 	    	temp.put("tag_name", tagDTO.getTag_name());
 	    	array.put(temp);
 	    }
-	    json.put("tags", array);
+	    json.put("tag", array);
 	    
 	    // 화면 네비게이션
 	    ModelAndView modelAndView = new ModelAndView();

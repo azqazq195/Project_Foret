@@ -1,8 +1,0 @@
-package region.bean;
-
-public class RegionDTO {
-	private int region_id;
-	private String region_si;
-	private String region_gu;
-	
-}

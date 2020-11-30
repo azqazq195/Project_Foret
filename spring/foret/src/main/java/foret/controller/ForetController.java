@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import foret.bean.ForetDTO;
+import foret.bean.ForetMemberDTO;
 import foret.bean.ForetRegionDTO;
 import foret.bean.ForetTagDTO;
 import photo.bean.PhotoDTO;
@@ -45,6 +46,7 @@ public class ForetController {
 		String foretTagRT = "FAIL";
 		String foretRegionRT = "FAIL";
 		String foretPhotoRT = "FAIL";
+		String foretMemberRT = "FAIL";
 	    
 	    // 포레 등록 후 회원 아이디 가져오기
 		int foret_id = insertForet(request);
@@ -55,6 +57,7 @@ public class ForetController {
 	    	foretTagRT = getResult(insertForetTag(foret_id, request));
 	    	foretRegionRT = getResult(insertForetRegion(foret_id, request));
 	    	foretPhotoRT = getResult(insertForetPhoto(foret_id, request, photo));
+	    	foretMemberRT = getResult(insertForetMember(foret_id, request));
 	    }
 	    
 	    JSONObject json = new JSONObject();
@@ -62,6 +65,7 @@ public class ForetController {
 	    json.put("foretTagRT", foretTagRT);
 	    json.put("foretRegionRT", foretRegionRT);
 	    json.put("foretPhotoRT", foretPhotoRT);
+	    json.put("foretMemberRT", foretMemberRT);
 	    
 		System.out.println("-- 함수 종료 : foret_insert.do --\n");
 		return modelAndView(json);
@@ -69,7 +73,6 @@ public class ForetController {
 	@RequestMapping(value = "/foret/foret_modify.do")
 	public ModelAndView foretModify(HttpServletRequest request, MultipartFile photo) throws Exception {
 		System.out.println("-- 함수 실행 : foret_modify.do --");
-		
 		request.setCharacterEncoding("UTF-8");
 	    
 		String foretRT = "FAIL"; 
@@ -106,7 +109,30 @@ public class ForetController {
 		System.out.println("-- 함수 종료 : foret_delete.do --\n");
 		return modelAndView(json);
 	}
-
+	@RequestMapping(value = "/foret/foret_member_insert.do")
+	public ModelAndView foretMemberWrite(HttpServletRequest request) throws Exception {
+		System.out.println("-- 함수 실행 : foret_member_insert.do --");
+		request.setCharacterEncoding("UTF-8");
+		String foretMemberRT = "FAIL";
+		foretMemberRT = getResult(insertForetMember(request));
+		JSONObject json = new JSONObject();
+	    json.put("foretMemberRT", foretMemberRT);
+		System.out.println("-- 함수 종료 : foret_member_insert.do --\n");
+		return modelAndView(json);
+	}
+	@RequestMapping(value = "/foret/foret_member_delete.do")
+	public ModelAndView foretMemberDelete(HttpServletRequest request) throws Exception {
+		System.out.println("-- 함수 실행 : foret_member_delete.do --");
+		request.setCharacterEncoding("UTF-8");
+		String foretMemberRT = "FAIL";
+		foretMemberRT = getResult(deleteForetMember(request));
+		JSONObject json = new JSONObject();
+	    json.put("foretMemberRT", foretMemberRT);
+		System.out.println("-- 함수 종료 : foret_member_delete.do --\n");
+		return modelAndView(json);
+	}
+	
+	
 	private int insertForet(HttpServletRequest request) {
 		System.out.println("함수 실행 : insertForet");
 		int foret_id = 0;
@@ -157,7 +183,24 @@ public class ForetController {
 		System.out.println("함수 종료 : insertForetPhoto");
 		return result;
 	}
-		
+	private int insertForetMember(HttpServletRequest request) {
+		System.out.println("함수 실행 : insertForetMember");
+		int foret_id = haveId(request.getParameter("foret_id"));
+		int member_id = haveId(request.getParameter("member_id"));
+		int result = 0;
+		result = foretMemberWrite(foret_id, member_id);
+		System.out.println("함수 종료 : insertForetMember");
+		return result;
+	}
+	private int insertForetMember(int foret_id, HttpServletRequest request) {
+		System.out.println("함수 실행 : insertForetMember");
+		int member_id = haveId(request.getParameter("leader_id"));
+		int result = 0;
+		result = foretMemberWrite(foret_id, member_id);
+		System.out.println("함수 종료 : insertForetMember");
+		return result;
+	}
+
 	private int modifyForet(HttpServletRequest request) {
 		System.out.println("함수 실행 : modifyForet");
 		int result = 0;
@@ -230,6 +273,15 @@ public class ForetController {
 		foretDTO.setId(foret_id);
 		result = foretService.foretDelete(foretDTO);
 		System.out.println("함수 종료 : deleteForet");
+		return result;
+	}
+	private int deleteForetMember(HttpServletRequest request) {
+		System.out.println("함수 실행 : deleteForetMember");
+		int foret_id = haveId(request.getParameter("foret_id"));
+		int member_id = haveId(request.getParameter("member_id"));
+		int result = 0;
+		result = foretMemberDelete(foret_id, member_id);
+		System.out.println("함수 종료 : deleteForetMember");
 		return result;
 	}
 	
@@ -323,6 +375,22 @@ public class ForetController {
 		result = photoService.foretPhotoDelete(photoDTO);
 		System.out.println("함수 종료 : foretPhotoDelete");
 		return result;
+	}
+	public int foretMemberWrite(int foret_id, int member_id) {
+		System.out.println("함수 실행 : foretMemberWrite");
+		ForetMemberDTO foretMemberDTO = new ForetMemberDTO();
+		foretMemberDTO.setForet_id(foret_id);
+		foretMemberDTO.setMember_id(member_id);
+	    System.out.println("함수 종료 : foretMemberWrite");
+	    return foretService.foretMemberWrite(foretMemberDTO);
+	}
+	public int foretMemberDelete(int foret_id, int member_id) {
+		System.out.println("함수 실행 : foretMemberDelete");
+		ForetMemberDTO foretMemberDTO = new ForetMemberDTO();
+		foretMemberDTO.setForet_id(foret_id);
+		foretMemberDTO.setMember_id(member_id);
+	    System.out.println("함수 종료 : foretMemberDelete");
+	    return foretService.foretMemberDelete(foretMemberDTO);
 	}
 	
 	public int haveId(String id) {

@@ -19,9 +19,12 @@
 	
 	<context:component-scan base-package="member"/>
 	<context:component-scan base-package="foret"/>
+	<context:component-scan base-package="board"/>
+	<context:component-scan base-package="comment"/>
 	<context:component-scan base-package="tag"/>
 	<context:component-scan base-package="region"/>
 	<context:component-scan base-package="photo"/>
+	<context:component-scan base-package="search"/>
 	
 	<beans:bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

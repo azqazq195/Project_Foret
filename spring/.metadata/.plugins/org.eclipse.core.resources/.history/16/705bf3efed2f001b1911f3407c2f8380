@@ -1,8 +1,0 @@
-package tag.controller;
-
-import tag.bean.TagDTO;
-
-public interface TagService {
-	public int tagWrite(TagDTO tagDTO);
-	public int tagDelete(TagDTO tagDTO);
-}

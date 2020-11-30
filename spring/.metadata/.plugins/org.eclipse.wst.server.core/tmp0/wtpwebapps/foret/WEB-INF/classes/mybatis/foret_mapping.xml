@@ -28,4 +28,18 @@
 		DELETE FROM foret 
 		WHERE  id = #{id}
 	</delete>
+	
+	<!-- 포레_멤버 -->
+	<!-- 포레_멤버 추가 -->
+	<insert id="foretMemberWrite">
+		INSERT INTO foret_member 
+		VALUES      (#{foret_id}, 
+		             #{member_id}) 
+	</insert>
+	<!-- 포레_멤버 삭제 -->
+	<delete id="foretMemberDelete">
+		DELETE FROM foret_member 
+		WHERE  foret_id = #{foret_id} 
+		  AND  member_id = #{member_id} 
+	</delete>
 </mapper>
