@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/board_search"
+        android:icon="@drawable/search2"
+        android:title="찾기"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/board_type1"
+        android:title="일반게시판 보기" />
+    <item
+        android:id="@+id/board_type2"
+        android:title="일정게시판 보기" />
+    <item
+        android:id="@+id/board_type3"
+        android:title="공지사항 보기" />
+</menu>

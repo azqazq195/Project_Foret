@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 게시판 타입 배열 -->
+    <string-array name="spinner_data">
+        <item>일반</item>
+        <item>일정</item>
+        <item>공지사항</item>
+    </string-array>
+</resources>
