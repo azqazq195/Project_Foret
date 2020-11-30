@@ -7,18 +7,28 @@ public class ModelChat {
     String receiver; //받는사람
     String message; //메세지
     String timestamp; //시간
+    String type;
 
     public boolean isSeen; //읽기 여부
 
     public ModelChat() {
     }
 
-    public ModelChat(String sender, String reciver, String message, String timestamp, boolean isSeen) {
+    public ModelChat(String sender, String receiver, String message, String timestamp, String type, boolean isSeen) {
         this.sender = sender;
-        this.receiver = reciver;
+        this.receiver = receiver;
         this.message = message;
         this.timestamp = timestamp;
+        this.type = type;
         this.isSeen = isSeen;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getSender() {

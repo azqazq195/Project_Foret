@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ProfileActivity">
+    tools:context=".Activity.chat.ProfileActivity">
 
     <LinearLayout
         android:id="@+id/itemView"
@@ -50,29 +50,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="유저 리스트" />
+
+        <Button
+            android:id="@+id/buttongoToGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="그룹 가기" />
+
     </LinearLayout>
 
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </FrameLayout>
+        android:layout_height="match_parent"/>
     <!--
         <fragment
             android:id="@+id/userlistFragment"
-            android:name="com.example.chatting_foret.UsersFragment"
+            android:name="com.example.foret.Activity.chat.UsersFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
         <fragment
             android:id="@+id/chatlistFragment"
-            android:name="com.example.chatting_foret.ChatListFragment"
+            android:name="com.example.foret.Activity.chat.ChatListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
+        -->
 
-    -->
 
 </LinearLayout>

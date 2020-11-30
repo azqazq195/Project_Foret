@@ -5,23 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F1EDED"
-    tools:context=".Activity.chat.ChatActivity">
+    tools:context=".Activity.chat.GroupChatActivity">
 
-    <!--보내는 사람-->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="#28d2c5"
-      >
+        android:background="#28d2c5">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profileIv"
+            android:id="@+id/groupImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_default_image_foreground" />
 
@@ -34,25 +32,18 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/nameTv"
+                android:id="@+id/groupName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="받는 사람"
+                android:text="그룹이름"
                 android:textColor="@color/white"
                 android:textSize="18dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/userStatusTv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="온라인 상태"
-                android:textColor="@color/white" />
         </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>
 
-    <!--받는 사람-->
 
     <!-- 보내는 텍스트 창 -->
     <androidx.recyclerview.widget.RecyclerView
@@ -62,8 +53,8 @@
         android:layout_above="@id/chatLayout"
         android:layout_below="@id/toolbar"
         android:layout_marginTop="-1dp"
-        app:stackFromEnd="true"
-        android:layout_marginBottom="1dp" />
+        android:layout_marginBottom="1dp"
+        app:stackFromEnd="true" />
 
     <LinearLayout
         android:id="@+id/chatLayout"
@@ -75,11 +66,10 @@
         android:orientation="horizontal">
 
         <ImageButton
+            android:id="@+id/attachButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/attachButton"
-            android:src="@mipmap/ic_launcher_plus"
-            />
+            android:src="@mipmap/ic_launcher_plus" />
 
         <EditText
             android:id="@+id/messagaEt"
@@ -101,6 +91,5 @@
             android:src="@drawable/ic_send_foreground" />
 
     </LinearLayout>
-
 
 </RelativeLayout>

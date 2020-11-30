@@ -10,7 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.foret.R;
-import com.example.foret.helper.Calendar;
+import com.example.foret.helper.CalendarHelper;
 import com.example.foret.model.ModelUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -68,7 +68,7 @@ public class TestLoginActivity extends AppCompatActivity implements View.OnClick
                 ModelUser modelUser = new ModelUser();
                 String userNick = editTextNick.getText().toString();
                 String userId = editTextId.getText().toString();
-                String date =  new Calendar().getCurrentTime();
+                String date =  CalendarHelper.getInstance().getCurrentTime();
                 editTextdate.setText(date);
                 String user_email = editTextEmail.getText().toString();
 
