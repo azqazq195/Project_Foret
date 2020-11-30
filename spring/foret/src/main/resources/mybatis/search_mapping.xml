@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.searchMapper">
+	<!-- 이메일 중복 검사 -->
+	<select id="emailCheck" parameterType="String" resultType="memberDTO">
+		select * from V_MEMBER_P where email = #{email}
+	</select>
+	<!-- 내 정보 조회 -->
+	<select id="memberSelect" parameterType="String" resultType="memberDTO">
+		select * from V_MEMBER_P where email = #{email}
+	</select>
+</mapper>

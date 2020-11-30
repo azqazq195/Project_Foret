@@ -39,5 +39,6 @@
 		<mapper resource="mybatis/tag_mapping.xml"/>
 		<mapper resource="mybatis/region_mapping.xml"/>
 		<mapper resource="mybatis/photo_mapping.xml"/>
+		<mapper resource="mybatis/search_mapping.xml"/>
 	</mappers>
 </configuration>
