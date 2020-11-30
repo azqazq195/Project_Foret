@@ -18,7 +18,8 @@
         android:theme="@style/Theme.Foret"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
-        <activity android:name=".Activity.chat.GroupChatActivity"></activity>
+        <activity android:name=".Activity.chat.GroupChatActivity"/>
+        <activity android:name=".Activity.chat.GroupChatListActivity" />
         <activity android:name=".Activity.chat.GroupChatCreateActivity" />
         <activity android:name=".Activity.chat.VideoViewActivity" />
         <activity android:name=".Activity.chat.ProfileActivity" />

@@ -2,16 +2,13 @@ package com.example.foret.model;
 
 public class ModelGroupChatList {
 
-    String GroupName,GroupPhoto,GroupLeader,GroupDescription,
-            GroupId,GroupMaxMember,GroupCurrentJoinedMember,Group_date_issued;
+    String GroupName,GroupPhoto,GroupLeader,GroupDescription,GroupId,GroupMaxMember,GroupCurrentJoinedMember,Group_date_issued;
 
 
     public ModelGroupChatList() {
     }
 
-    public ModelGroupChatList(String groupName, String groupPhoto, String groupLeader,
-                              String groupDescription, String groupId, String groupMaxMember,
-                              String groupCurrentJoinedMember, String group_date_issued) {
+    public ModelGroupChatList(String groupName, String groupPhoto, String groupLeader, String groupDescription, String groupId, String groupMaxMember, String groupCurrentJoinedMember, String group_date_issued) {
         GroupName = groupName;
         GroupPhoto = groupPhoto;
         GroupLeader = groupLeader;

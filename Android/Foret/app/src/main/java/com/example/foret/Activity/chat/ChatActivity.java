@@ -108,7 +108,6 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_in_room);
-        Log.e("[test]", "Chat 액티비티 시작됨 ");
         context = this;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -313,7 +312,7 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener {
         });
     }
 
-    //텍스트 읽음 여부 새롭게 데이터 셋팅
+    // 리스트 셋팅
     public void readMessages() {
         chatList = new ArrayList<>();
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");

@@ -78,9 +78,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         //채링 리스트로 이동
         if (v.getId() == R.id.buttonToGoChatList) {
+            //new GroupChatActivity();
+            new GroupChatListActivity();
             //startActivity(new Intent(this,ChatListFragment.class));
             ChatListFragment fragmentchatList = new ChatListFragment();
             ft.replace(R.id.container, fragmentchatList, "").commit();
+
 
         } else if (v.getId() == R.id.buttonToGoUserList) {
             //startActivity(new Intent(this,UsersFragment.class));

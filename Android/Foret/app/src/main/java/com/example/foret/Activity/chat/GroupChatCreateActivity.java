@@ -73,7 +73,6 @@ public class GroupChatCreateActivity extends AppCompatActivity implements View.O
         name = findViewById(R.id.textViewForGroupName);
         description = findViewById(R.id.textViewForGroupDescription);
 
-        name.setText(group_name);
         client = new AsyncHttpClient();
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -149,22 +148,22 @@ public class GroupChatCreateActivity extends AppCompatActivity implements View.O
             hashMap.put("Group_date_issued",foret.getGroup_date_issued());
 
             //그룹 항목 만들기
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Groups").child(foret.getGroup_name());
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups").child(foret.getGroup_name());
             ref.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-
                     //유저 정보 얻로드
                     HashMap<String, String> hashMap1 = new HashMap<>();
                     hashMap1.put("participantName", user.getNickname());
                     hashMap1.put("uid", "" + firebaseAuth.getCurrentUser().getUid());
                     hashMap1.put("joinedDate", "" + System.currentTimeMillis());
-                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Groups").child(foret.getGroup_name());
-                    reference.child("participants").child(user.getUser_id()).setValue(hashMap1).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                    ref.child("participants").child(user.getUser_id()).setValue(hashMap1).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    //reference.child("participants").child(user.getUser_id()).setValue(hashMap1).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Toast.makeText(activity, "생성 성공", Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(activity,GroupChatActivity.class));
+                            startActivity(new Intent(activity, GroupChatListActivity.class));
 
                         }
                     })
@@ -194,7 +193,6 @@ public class GroupChatCreateActivity extends AppCompatActivity implements View.O
     @Override
     protected void onResume() {
         super.onResume();
-
         description.setText(foret.getGroup_profile());
         name.setText(foret.getGroup_name());
         getImageFromFirebaseStorage();

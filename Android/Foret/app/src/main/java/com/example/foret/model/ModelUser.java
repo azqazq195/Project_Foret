@@ -11,12 +11,12 @@ public class ModelUser {
 
     private String uid, onlineStatus,typingTo;
 
-    private String listlogined_date;
+    private String listlogined_date,joineddate;
 
     public ModelUser() {
     }
 
-    public ModelUser(String msg, String nickname, String user_id, String date, String photoRoot, String email, String uid, String onlineStatus, String typingTo, String listlogined_date) {
+    public ModelUser(String msg, String nickname, String user_id, String date, String photoRoot, String email, String uid, String onlineStatus, String typingTo, String listlogined_date,String joineddate) {
         this.msg = msg;
         this.nickname = nickname;
         this.user_id = user_id;
@@ -27,6 +27,7 @@ public class ModelUser {
         this.onlineStatus = onlineStatus;
         this.typingTo = typingTo;
         this.listlogined_date = listlogined_date;
+        this.joineddate = joineddate;
     }
 
     public String getMsg() {
@@ -107,6 +108,14 @@ public class ModelUser {
 
     public void setListlogined_date(String listlogined_date) {
         this.listlogined_date = listlogined_date;
+    }
+
+    public String getJoineddate() {
+        return joineddate;
+    }
+
+    public void setJoineddate(String joineddate) {
+        this.joineddate = joineddate;
     }
 }
 

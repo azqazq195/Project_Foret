@@ -54,19 +54,20 @@
                 android:text="마지막 메세지"
                 android:singleLine="true"
                 />
+
         <TextView
             android:id="@+id/sendedTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="10dp"
             android:text="가장 최근 메세지 시간"
-            android:textSize="10sp"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="20dp"
+            android:textColor="#090808"
 
 
-            />
+            android:textSize="10sp" />
 
 
 

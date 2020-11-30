@@ -34,7 +34,6 @@
         android:id="@+id/forGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
@@ -43,22 +42,17 @@
             android:layout_height="wrap_content"
             android:text="내 그룹 채팅" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/my_recycler_view_group"
+        <include
+            layout="@layout/activity_group_chatlist"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/noused_chat_list_row">
+            android:layout_height="match_parent" />
 
-        </androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/forPersonal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView

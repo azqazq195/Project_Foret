@@ -27,7 +27,8 @@
         android:background="@color/white"
         android:gravity="center"
         android:text="그룹이름"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#121111" />
 
     <TextView
         android:id="@+id/textViewForGroupDescription"
@@ -37,7 +38,8 @@
         android:layout_marginTop="20dp"
         android:background="@color/white"
         android:text="그룹설명"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#191818" />
 
     <Button
         android:id="@+id/buttonParticipate"

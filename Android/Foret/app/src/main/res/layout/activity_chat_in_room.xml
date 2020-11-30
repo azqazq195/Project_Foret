@@ -53,14 +53,18 @@
     </androidx.appcompat.widget.Toolbar>
 
     <!--받는 사람-->
+
+    <!-- 보내는 텍스트 창 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/chatLayout"
-        android:layout_below="@id/toolbar" />
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="-1dp"
+        app:stackFromEnd="true"
+        android:layout_marginBottom="1dp" />
 
-    <!-- 보내는 텍스트 창 -->
     <LinearLayout
         android:id="@+id/chatLayout"
         android:layout_width="match_parent"

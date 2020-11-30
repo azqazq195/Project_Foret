@@ -99,10 +99,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         return vh;
     }
 
-
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-
         ModelChat chatItem = chatList.get(position);
         String message = chatItem.getMessage();
         String timeStamp = chatItem.getTimestamp();
@@ -120,33 +118,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
          setVisiblityGone(holder);
 
         //데이터 타입에 따라 아이템 셋팅
-        try{
-            if (type.equals("image")) {
-                holder.messageImageView.setVisibility(View.VISIBLE);
-                Glide.with(context).load(message).fallback(R.drawable.ic_default_image_foreground)
-                        .into(holder.messageImageView);
-
-            } else if (type.equals("text")) {
-                holder.messageTextView.setVisibility(View.VISIBLE);
-                holder.messageTextView.setText(message);
-
-            } else if (type.equals("video")) {
-
-                holder.videoView.setVisibility(View.VISIBLE);
-                holder.videoView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(context, VideoViewActivity.class);
-                        intent.putExtra("video",message);
-                        context.startActivity(intent);
-                    }
-                });
-            }
-
-        }catch (Exception e){
-            holder.messageTextView.setVisibility(View.VISIBLE);
-            holder.messageTextView.setText(message);
-        }
 
         try {
             Glide.with(context).load(photoRoot)
@@ -168,7 +139,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         if (holder.messageTextView.getText().equals("이 메세지는 삭제되었습니다.")) {
             holder.messageTextView.setTextColor(Color.parseColor("#d0cdcd"));
         } else {
-
             holder.messageLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -208,7 +178,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         } else {
             holder.isSeenTextView.setVisibility(View.GONE);
         }
-
 
     }
 
@@ -286,7 +255,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         holder.videoView.setVisibility(View.GONE);
 
     }
-
 
     //파이어 스토리 데이터 삭제 메소드 구현해야 함.
     public void deleteDateOnStorage(String type){
