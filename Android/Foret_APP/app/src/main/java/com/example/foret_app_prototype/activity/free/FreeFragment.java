@@ -111,9 +111,10 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.item_search :
+            case R.id.item_search : //검색 버튼 눌렀을때
                 layout_search.setVisibility(View.VISIBLE);
                 searchView.setQueryHint("제목/내용");
+                button4.setVisibility(View.GONE);
                 break;
             case R.id.item_menu :
                 Toast.makeText(activity, "햄버거 메뉴 나타남", Toast.LENGTH_SHORT).show();
