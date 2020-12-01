@@ -1,7 +1,2 @@
 INDEX VERSION 1.4+D:\code\Project\Foret\spring\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
-1001738232.index
-2257880960.index
-999052904.index
-2618530465.index
-3875610617.index
-2804849262.index
+232794043.index

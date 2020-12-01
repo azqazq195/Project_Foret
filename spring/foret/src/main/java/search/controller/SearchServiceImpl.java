@@ -26,6 +26,11 @@ public class SearchServiceImpl implements SearchService {
 	public MemberDTO memberSelect(String email) {
 		return searchDAO.memberSelect(email);
 	}
+	
+	@Override
+	public int memberLogin(String email, String password) {
+		return searchDAO.memberLogin(email, password);
+	}
 
 	@Override
 	public List<MemberTagDTO> memberTagSelect(int member_id) {
@@ -51,7 +56,4 @@ public class SearchServiceImpl implements SearchService {
 	public List<MemberForetDTO> memberForetSelect(int member_id) {
 		return searchDAO.memberForetSelect(member_id);
 	}
-
-
-	
 }
