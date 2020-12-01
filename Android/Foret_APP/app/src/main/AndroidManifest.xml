@@ -33,14 +33,14 @@
         <activity android:name=".activity.free.WriteFreeActivity" />
         <activity android:name=".activity.login.JoinUsActivity" />
         <activity android:name=".activity.login.LoginActivity" >
+
+        </activity>
+        <activity android:name=".activity.login.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".activity.login.SplashActivity">
-
         </activity>
         <activity
             android:name=".activity.MainActivity"

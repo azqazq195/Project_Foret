@@ -3,7 +3,14 @@ package tag.bean;
 public class TagDTO {
 	private int tag_id; 
 	private String tag_name;
+	private int rank;
 	
+	public int getRank() {
+		return rank;
+	}
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
 	public int getTag_id() {
 		return tag_id;
 	}
