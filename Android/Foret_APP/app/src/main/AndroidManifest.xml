@@ -20,11 +20,12 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
-        <activity android:name=".activity.chat.chatactivity.GroupChatCreatectivity"></activity>
+        <activity android:name=".activity.chat.chatactivity.GroupChatCreatectivity"/>
         <activity android:name=".activity.chat.chatactivity.GroupJoinActivity" />
         <activity android:name=".activity.chat.chatactivity.GroupChatActivity" />
         <activity android:name=".activity.chat.chatactivity.ChatActivity" />
         <activity android:name=".activity.chat.chatactivity.VideoViewActivity" />
+        <activity android:name=".activity.SearchLayoutActivity"/>
         <activity android:name=".activity.free.ReadFreeActivity" />
         <activity android:name=".activity.login.GuideActivity" />
         <activity android:name=".activity.foret.board.ListForetBoardActivity" />
@@ -40,15 +41,13 @@
         <activity android:name=".activity.free.WriteFreeActivity" />
         <activity android:name=".activity.login.JoinUsActivity" />
         <activity android:name=".activity.login.LoginActivity" />
-        <activity android:name=".activity.SearchLayoutActivity" />
         <activity android:name=".activity.login.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-        </activity>
+                    </activity>
         <activity android:name=".activity.MainActivity"/>
 
         <provider
