@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.foret_app_prototype.R;
@@ -17,8 +15,6 @@ import com.example.foret_app_prototype.R;
 public class WriteFreeActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-    EditText editText_subject, editText_content;
-    TextView textView_writer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +23,6 @@ public class WriteFreeActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        editText_subject = findViewById(R.id.editText_subject);
-        editText_content = findViewById(R.id.editText_content);
-        textView_writer = findViewById(R.id.textView_writer);
     }
 
     @Override
@@ -43,14 +34,9 @@ public class WriteFreeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home :
-                finish();
-                break;
-            case R.id.item_complete :
-                Toast.makeText(this, "글 올리기 성공", Toast.LENGTH_SHORT).show();
-                finish();
-                break;
+        if (item.getItemId() == R.id.item_complete) {
+            Toast.makeText(this, "글 올리기 성공", Toast.LENGTH_SHORT).show();
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
