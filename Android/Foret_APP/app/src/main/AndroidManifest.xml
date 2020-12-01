@@ -18,6 +18,7 @@
         android:roundIcon="@drawable/ic_foret"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+<<<<<<< HEAD
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
         <activity android:name=".activity.chat.chatactivity.GroupChatCreatectivity"></activity>
@@ -25,6 +26,16 @@
         <activity android:name=".activity.chat.chatactivity.GroupChatActivity" />
         <activity android:name=".activity.chat.chatactivity.ChatActivity" />
         <activity android:name=".activity.chat.chatactivity.VideoViewActivity" />
+=======
+        android:usesCleartextTraffic="true">
+        <activity android:name=".activity.SearchLayoutActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+>>>>>>> 2882ab1990229c99cf5e4594f9644a80583eb435
         <activity android:name=".activity.free.ReadFreeActivity" />
         <activity android:name=".activity.login.GuideActivity" />
         <activity android:name=".activity.foret.board.ListForetBoardActivity" />
@@ -41,11 +52,6 @@
         <activity android:name=".activity.login.JoinUsActivity" />
         <activity android:name=".activity.login.LoginActivity" />
         <activity android:name=".activity.login.SplashActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activity.MainActivity"
