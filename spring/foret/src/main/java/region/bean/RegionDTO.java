@@ -6,7 +6,14 @@ public class RegionDTO {
 	private String region_gu;
 	private String si;
 	private String gu;
+	private int rank;
 
+	public int getRank() {
+		return rank;
+	}
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
 	public int getRegion_id() {
 		return region_id;
 	}

@@ -7,6 +7,10 @@
 	<select id="emailCheck" parameterType="String" resultType="memberDTO">
 		select * from V_MEMBER_P where email = #{email}
 	</select>
+	<!-- 멤버 로그인 -->
+	<select id="memberLogin" parameterType="java.util.Map" resultType="int">
+		select * from V_MEMBER_AND_PHOTO where email = #{email} and password = #{password}
+	</select>
 	
 	<!-- 내 정보 조회 -->
 	<!-- 멤버 조회 -->
@@ -23,11 +27,11 @@
 	</select>
 	<!-- 보드 좋아요 조회 -->
 	<select id="memberBoardLikeSelect" parameterType="int" resultType="MemberLikeDTO">
-		select * from V_MEMBER_BL where id = #{member_id}
+		select * from like_board where id = #{member_id}
 	</select>
 	<!-- 댓글 좋아요 조회 -->
 	<select id="memberCommentLikeSelect" parameterType="int" resultType="MemberLikeDTO">
-		select * from V_MEMBER_CL where id = #{member_id}
+		select * from like_comment where id = #{member_id}
 	</select>
 	<!-- 멤버 포레 조회 -->
 	<select id="memberForetSelect" parameterType="int" resultType="MemberForetDTO">

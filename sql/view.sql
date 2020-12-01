@@ -1,12 +1,89 @@
 COMMIT; 
 
+SELECT * FROM V_MEMBER_AND_PHOTO;
+SELECT * FROM V_MEMBER_T; 
+SELECT * FROM V_MEMBER_R;
+SELECT * FROM V_MEMBER_BL;
+select * from like_board;
+select * from like_comment;
+SELECT * FROM V_MEMBER_CL;
+SELECT * FROM V_MEMBER_F;
+SELECT * FROM V_TAG_RANK;
+SELECT * FROM V_REGION_RANK;
+
+SELECT * FROM V_MEMBER_F where member_id = 1;
+
+
+select * from member;
+select * from member_tag;
+select * from member_region;
+select * from tag;
+select * from region;
+select * from like_board;
+select * from like_comment;
+select * from board;
+select * from board_comment order by group_no asc, id asc;
+select * from foret;
+select * from foret_member order by foret_id asc, member_id asc;
+select * from foret_region;
+
+delete from board_comment where id = 1;
+update foret set name = '포레2', introduce = '포레2입니다' where id=2;
+
+insert into board_comment values(seq_board_comment_id.nextval, 2, 2, '댓글', sysdate, 2);
+
+insert into like_board values(2, 3);
+insert into like_board values(2, 3);
+
+insert into like_comment values(2, 1);
+insert into like_comment values(2, 2);
+
+select tag_name, count(tag_name) as cnt from V_MEMBER_T group by tag_name ORDER by cnt desc;
+
+select * from member_tag;
+select * from member;
+select * from tag;
+
+
+insert into member_tag values (1, 1);
+insert into member_tag values (1, 2);
+insert into member_tag values (1, 3);
+insert into member_tag values (2, 2);
+insert into member_tag values (3, 1);
+insert into member_tag values (4, 2);
+insert into member_tag values (4, 1);
+insert into member_tag values (4, 2);
+insert into member_tag values (5, 1);
+insert into member_tag values (5, 2);
+insert into member_region values (1, 2);
+
+select count(*) from member_tag;
+
 select * from member;
 select * from member_photo;
 select * from member_photo where member_id = 8;
 select * from member_tag;
 select * from member_region;
+select * from foret;
+select * from foret_tag;
+select * from foret_member;
 select * from tag;
 select * from region;
+select * from board;
+select * from board_photo;
+select * from board_comment
+    order by group_no asc, id asc;
+
+delete from board_comment where board_id = 31;
+insert into board_comment values (SEQ_BOARD_COMMENT_ID.nextval, 31, 10, '부모', sysdate, SEQ_BOARD_COMMENT_ID.nextval);
+insert into board_comment values (SEQ_BOARD_COMMENT_ID.nextval, 31, 10, '자식', sysdate, 43);
+delete from board_comment where id = 18;
+select * from board_comment where group_no = 14;
+delete from board_comment where id = 44;
+
+update board_comment set content = '수정' where id = 39;
+select Count(*) cnt from board_comment where group_no = 14;
+
 
 -- CREATE OR REPLACE VIEW V_MEMBER AS    
 ------------- 목차--------------   
@@ -17,6 +94,10 @@ SELECT *
 -- 포레 모든 데이터 조회
 SELECT * 
   FROM V_FORET; 
+  
+-- 보드 모든 데이터 조회
+SELECT * 
+  FROM V_BOARD; 
 
 -- 멤버_테그 조회   
 SELECT * 
@@ -90,47 +171,38 @@ AS
    ORDER BY member.id, 
             tag.tag_id; 
 
--- 멤버_태그 조회    
-CREATE OR REPLACE VIEW V_MEMBER_T 
-AS 
-  SELECT member.id    AS member_id, 
-         tag.tag_name AS tag 
-    FROM member 
-         -- member_tag     
-         LEFT OUTER JOIN member_tag 
-                      ON member.id = member_tag.id 
+SELECT Count(*)     AS cnt, 
+         tag.tag_id   AS tag_id,
+         tag.tag_name AS tag_name
+    FROM member_tag 
          LEFT OUTER JOIN tag 
                       ON member_tag.tag_id = tag.tag_id 
-   ORDER BY member.id, 
-            tag.tag_id; 
+   GROUP BY tag.tag_name, 
+            tag.tag_id 
+   ORDER BY cnt DESC, 
+            tag.tag_id;
 
--- 멤버_지역 조회    
-CREATE OR REPLACE VIEW V_MEMBER_R 
-AS 
-  SELECT member.id AS member_id, 
-         region.si AS si, 
-         region.gu AS gu 
-    FROM member 
-         -- member_tag     
-         LEFT OUTER JOIN member_region 
-                      ON member.id = member_region.id 
-         LEFT OUTER JOIN region 
-                      ON member_region.region_id = region.region_id 
-   ORDER BY member.id, 
-            region.region_id; 
+select * from member_tag;
+select * from foret_tag;
 
--- 멤버_사진 조회  
-CREATE OR REPLACE VIEW V_MEMBER_P 
-AS 
-  SELECT member.id             AS member_id, 
-         member_photo.filename AS filename 
-    FROM member 
-         -- member_photo     
-         LEFT OUTER JOIN member_photo 
-                      ON member.id = member_photo.member_id 
-   ORDER BY member.id, 
-            member_photo.id; 
+SELECT Count(*)     AS cnt, 
+       tag.tag_id   AS tag_id, 
+       tag.tag_name AS tag_name 
+FROM  (SELECT * 
+       FROM   member_tag 
+       UNION ALL 
+       SELECT * 
+       FROM   foret_tag)ref_tag 
+      LEFT OUTER JOIN tag 
+                   ON ref_tag.tag_id = tag.tag_id 
+GROUP  BY tag.tag_name, 
+          tag.tag_id 
+ORDER  BY cnt DESC, 
+          tag.tag_id; 
 
+ select * from member_tag 
+union all 
+select * from foret_tag;           
 -- 멤버_태그 등록 갯수 내림차순 
 CREATE OR REPLACE VIEW CV_MEMBER_T 
 AS 
@@ -171,7 +243,7 @@ AS
          tag.tag_name        AS tag_name, 
          region.si, 
          region.gu, 
-         foret_photo.filename  AS photo_name 
+         foret_photo.filename  AS photo_name  
     FROM foret 
          -- foret_tag    
          LEFT OUTER JOIN foret_tag 
@@ -189,3 +261,27 @@ AS
          -- foret_member    
    ORDER BY foret.id, 
             tag.tag_id; 
+            
+-- 모든 게시판 정보 조회
+CREATE OR replace VIEW v_board 
+AS 
+  SELECT board.id              AS id, 
+         board.writer          AS writer, 
+         board.foret_id        AS foret_id, 
+         board.TYPE            AS TYPE, 
+         board.hit             AS hit, 
+         board.subject         AS subject, 
+         board.content         AS content, 
+         board.reg_date        AS reg_date, 
+         board.edit_date       AS edit_date, 
+         board_comment.content AS board_comment,
+         board_photo.filename  AS photo_name
+     FROM   board 
+         -- board_comment     
+         left outer join board_comment 
+                      ON board.id = board_comment.board_id 
+         -- board_photo     
+         left outer join board_photo 
+                      ON board.id = board_photo.board_id 
+  ORDER  BY board.id; 
+             

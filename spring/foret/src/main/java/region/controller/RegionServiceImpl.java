@@ -57,5 +57,10 @@ public class RegionServiceImpl implements RegionService{
 		return regionDAO.foretRegionDelete(id);
 	}
 
+	@Override
+	public List<RegionDTO> regionRank() {
+		return regionDAO.regionRank();
+	}
+
 
 }

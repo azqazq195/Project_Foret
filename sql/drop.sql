@@ -46,3 +46,5 @@ DROP SEQUENCE seq_member_photo_id;
 DROP SEQUENCE seq_foret_photo_id; 
 
 DROP SEQUENCE seq_board_photo_id; 
+
+DROP SEQUENCE seq_board_comment_id; 

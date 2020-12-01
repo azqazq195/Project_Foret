@@ -105,4 +105,34 @@ public class RegionController {
 	       
 	    return modelAndView;
 	}
+	
+	@RequestMapping(value = "/region/region_rank.do")
+	public ModelAndView regionRank(HttpServletRequest request) throws Exception {
+		request.setCharacterEncoding("UTF-8");
+		
+		List<RegionDTO> list = regionService.regionRank();
+		
+		int total = list.size();
+		
+		JSONObject json = new JSONObject();
+	    json.put("total", total);
+	    
+	    JSONArray array = new JSONArray();
+	    for(RegionDTO regionDTO : list) {
+	    	JSONObject temp = new JSONObject();
+	    	temp.put("rank", regionDTO.getRank());
+	    	temp.put("region_id", regionDTO.getRegion_id());
+	    	temp.put("region_si", regionDTO.getSi());
+	    	temp.put("region_gu", regionDTO.getGu());
+	    	array.put(temp);
+	    }
+	    json.put("region", array);
+	    
+	    // 화면 네비게이션
+	    ModelAndView modelAndView = new ModelAndView();
+	    modelAndView.addObject("json", json);
+	    modelAndView.setViewName("region.jsp");
+	       
+	    return modelAndView;
+	}
 }

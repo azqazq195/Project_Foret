@@ -3,12 +3,15 @@ package search.controller;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import member.bean.MemberDTO;
@@ -37,15 +40,19 @@ public class SearchController {
 		System.out.println("-- 함수 실행 : check_email.do --");
 		return modelAndView(json);
 	}
-	@RequestMapping(value = "/search/search_member.do")
-	public ModelAndView memberSelect(HttpServletRequest request) throws Exception {
-		System.out.println("-- 함수 실행 : search_member.do --");
-		request.setCharacterEncoding("UTF-8");
-		
-		String RT = "FAIL";
 
-		System.out.println("멤버, 사진 정보 불러오기");
-		MemberDTO memberDTO = searchService.memberSelect(request.getParameter("email"));
+	@RequestMapping(value = "/search/member.do")
+	public ModelAndView memberSelect(HttpServletRequest request) throws Exception {
+		System.out.println("-- 함수 실행 : login_member.do --");
+		request.setCharacterEncoding("UTF-8");
+		MemberDTO memberDTO = null;
+		String RT = "FAIL";
+		
+		String email = request.getParameter("email");
+		String password = request.getParameter("password");
+		if(searchService.memberLogin(email, password) > 0) {
+			memberDTO = searchService.memberSelect(email);
+		}
 		
 		JSONObject json = new JSONObject();
 		if(memberDTO != null) {
@@ -67,7 +74,7 @@ public class SearchController {
 			memberTemp.put("name", memberDTO.getName());
 			memberTemp.put("email", memberDTO.getEmail());
 			memberTemp.put("password", memberDTO.getPassword());
-			memberTemp.put("ninckname", memberDTO.getNickname());
+			memberTemp.put("nickname", memberDTO.getNickname());
 			memberTemp.put("birth", memberDTO.getBirth());
 			memberTemp.put("reg_date", memberDTO.getReg_date());
 			memberTemp.put("photo", memberDTO.getPhoto());
@@ -116,7 +123,7 @@ public class SearchController {
 			json.put("RT", RT);
 		}
 		
-		System.out.println("-- 함수 종료 : search_member.do --\n");
+		System.out.println("-- 함수 종료 : login_member.do --\n");
 		return modelAndView(json);
 	}
 	

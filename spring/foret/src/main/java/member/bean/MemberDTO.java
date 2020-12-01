@@ -9,6 +9,13 @@ public class MemberDTO {
 	private String birth; 
 	private String reg_date;
 	private String photo;
+	private String deviceToken;
+	public String getDeviceToken() {
+		return deviceToken;
+	}
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
+	}
 	private String[] tag;
 	private String[] region_si;
 	private String[] region_gu;

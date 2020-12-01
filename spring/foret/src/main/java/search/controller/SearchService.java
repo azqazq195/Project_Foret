@@ -12,6 +12,7 @@ public interface SearchService {
 	
 	public MemberDTO emailCheck(String email);
 	public MemberDTO memberSelect(String email);
+	public int memberLogin(String email, String password);
 	
 	public List<MemberTagDTO> memberTagSelect(int member_id);
 	public List<MemberRegionDTO> memberRegionSelect(int member_id);
