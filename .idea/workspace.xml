@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="04b7cc44-7a18-42aa-b9c4-352d04dd8317" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Android/Foret_APP/app/src/main/res/layout/drawer_header_foret.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Android/Foret_APP/app/src/main/java/com/example/foret_app_prototype/activity/search/SearchFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/Android/Foret_APP/app/src/main/java/com/example/foret_app_prototype/activity/search/SearchFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Android/Foret_APP/app/src/main/res/layout/layout_search.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Android/Foret_APP/app/src/main/res/layout/layout_search.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1l2FDSFQYIvaUxOpf0Y4Bn94xJK" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Android/Foret_APP" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="04b7cc44-7a18-42aa-b9c4-352d04dd8317" name="Default Changelist" comment="" />
+      <created>1606787159485</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1606787159485</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1606787186995">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="549" y="167" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1606787186995" />
+  </component>
+</project>
