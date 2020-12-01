@@ -40,7 +40,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
     RecyclerView recyclerView2;
     TextView button1, button2, button3;
     FloatingActionButton button4;
-    ImageView button5, button_back;
+    ImageView button_back;
     Toolbar toolbar;
     LinearLayout layout_search;
     SearchView searchView;
@@ -62,12 +62,11 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         layout_search = rootView.findViewById(R.id.layout_search);
         recyclerView1 = rootView.findViewById(R.id.recyclerView1);
         recyclerView2 = rootView.findViewById(R.id.recyclerView2);
-        searchView = rootView.findViewById(R.id.searchView);
+//        searchView = rootView.findViewById(R.id.searchView);
         button1 = rootView.findViewById(R.id.button1);
         button2 = rootView.findViewById(R.id.button2);
         button3 = rootView.findViewById(R.id.button3);
         button4 = rootView.findViewById(R.id.button4);
-        button5 = rootView.findViewById(R.id.button5);
         button_back = rootView.findViewById(R.id.button_back);
 
         //recyclerView1.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false));
@@ -79,7 +78,6 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
         button4.setOnClickListener(this);
-        button5.setOnClickListener(this);
         button_back.setOnClickListener(this);
 
         return rootView;
@@ -152,10 +150,6 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 button1.setTextColor(Color.GRAY);
                 break;
             case R.id.button4 :
-                intent = new Intent(activity, WriteFreeActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.button5 :
                 intent = new Intent(activity, WriteFreeActivity.class);
                 startActivity(intent);
                 break;

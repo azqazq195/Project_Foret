@@ -21,13 +21,26 @@
             android:paddingLeft="10dp"
             app:srcCompat="?attr/actionModeCloseDrawable" />
 
-        <SearchView
-            android:id="@+id/searchView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_weight="0"
+            app:srcCompat="@drawable/search2" />
 
-        </SearchView>
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="AutoCompleteTextView" />
+
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="0"
+            app:srcCompat="@drawable/cancel2" />
 
         <TextView
             android:id="@+id/searchButton"
@@ -43,8 +56,8 @@
     </LinearLayout>
 
     <ListView
-        android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:listitem="@android:layout/test_list_item" />
+        android:layout_height="match_parent"
+        android:layout_weight="0" />
+
 </LinearLayout>
