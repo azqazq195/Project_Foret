@@ -39,7 +39,8 @@
         <activity android:name=".activity.search.SearchResultActivity" />
         <activity android:name=".activity.free.EditFreeActivity" />
         <activity android:name=".activity.free.WriteFreeActivity" />
-        <activity android:name=".activity.login.JoinUsActivity" />
+        <activity android:name=".activity.login.JoinUsActivity"
+            android:windowSoftInputMode="adjustResize|adjustPan"/>
         <activity android:name=".activity.login.LoginActivity" />
         <activity android:name=".activity.login.SplashActivity">
             <intent-filter>
