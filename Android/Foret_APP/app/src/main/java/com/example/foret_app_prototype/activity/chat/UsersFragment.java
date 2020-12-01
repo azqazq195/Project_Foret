@@ -47,6 +47,7 @@ public class UsersFragment extends Fragment {
         userlist = new ArrayList<>();
 
         //모든 유저 정보 얻기
+
         getAllusers();
         return view;
     }

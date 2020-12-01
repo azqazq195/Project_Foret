@@ -94,7 +94,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         recyclerView2 = rootView.findViewById(R.id.recyclerView2);
         layout_search = rootView.findViewById(R.id.layout_search);
         button_back = rootView.findViewById(R.id.button_back);
-        searchView = rootView.findViewById(R.id.searchView);
+//        searchView = rootView.findViewById(R.id.searchView);
 
         button_back.setOnClickListener(this);
         floatingActionButton.setOnClickListener(this);
@@ -154,6 +154,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 layout_search.setVisibility(View.GONE);
                 break;
             case R.id.floatingActionButton :
+
                 Toast.makeText(activity, "알아서 기능 넣기", Toast.LENGTH_SHORT).show();
                 break;
         }

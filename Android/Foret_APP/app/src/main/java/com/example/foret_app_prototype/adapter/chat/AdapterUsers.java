@@ -75,11 +75,15 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 Log.e("[test]", "클릭 됨");
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("hisUid", hisUID);
                 context.startActivity(intent);
                 Log.e("[test]","스타트 액티비티 ");
+
+                
             }
         });
 
