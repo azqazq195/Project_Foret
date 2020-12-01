@@ -19,11 +19,6 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
         <activity android:name=".activity.SearchLayoutActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".activity.free.ReadFreeActivity" />
         <activity android:name=".activity.login.GuideActivity" />
@@ -41,6 +36,11 @@
         <activity android:name=".activity.login.JoinUsActivity" />
         <activity android:name=".activity.login.LoginActivity" />
         <activity android:name=".activity.login.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.MainActivity"
