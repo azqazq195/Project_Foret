@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.se.omapi.Session;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,7 +14,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.model.MemberDTO;
@@ -36,10 +37,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     AsyncHttpClient client;
     HttpResponse response;
-    String url = "http://192.168.55.172:8081/foret/search/login_member.do";
-
-    // 자동로그인, 로그인 유지 X
-    private SharedPreferences appData;
+    String url = "http://192.168.55.172:8081/foret/search/member.do";
 
     Button button0;
     TextView button1, button2, button3, button4;
@@ -57,24 +55,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         emailEditText = findViewById(R.id.editText1);
         passwordEditText = findViewById(R.id.editText2);
 
-
         client = new AsyncHttpClient();
         response = new HttpResponse();
-
-//        appData = getSharedPreferences("appData", MODE_PRIVATE);
-//        load();
-//
-//        // 로그인 데이터가 있으면
-//        if(saveLoginData) {
-//            emailEditText.setText(email);
-//            passwordEditText.setText(pwd);
-//        }
 
         button0.setOnClickListener(this); //로그인
         button1.setOnClickListener(this); //구글 로그인
         button2.setOnClickListener(this); //카카오 로그인
         button3.setOnClickListener(this); //비밀번호 찾기
         button4.setOnClickListener(this); //회원가입
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        SessionManager sessionManager = new SessionManager(this);
+        int userID = sessionManager.getSession();
+
+        if(userID != -1) {
+            moveToMainActivity();
+        }
     }
 
     @Override
@@ -86,10 +87,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 params.put("email", emailEditText.getText().toString().trim());
                 params.put("password", passwordEditText.getText().toString().trim());
                 client.post(url, params, response);
-//                save();
-//                intent = new Intent(this, MainActivity.class);
-//                startActivity(intent);
-//                finish();
                 break;
             case R.id.button1 :
                 Toast.makeText(this, "구글 로그인", Toast.LENGTH_SHORT).show();
@@ -108,21 +105,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-//    private void save() {
-//        SharedPreferences.Editor editor = appData.edit();
-//
-//        editor.putBoolean("SAVE_LOGIN_DATA",true);
-//        editor.putString("EMAIL", editText1.getText().toString().trim());
-//        editor.putString("PWD", editText1.getText().toString().trim());
-//
-//        editor.apply();
-//    }
-//
-//    private void load() {
-//        saveLoginData = appData.getBoolean("SAVE_LOGIN_DATA",false);
-//        email = appData.getString("EMAIL", "");
-//        pwd = appData.getString("PWD", "");
-//    }
+    private void moveToMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     class HttpResponse extends AsyncHttpResponseHandler {
         @Override
@@ -137,6 +124,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     JSONObject temp = member.getJSONObject(0);
                     MemberDTO memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
                     // 세션에 담아서 로그인 페이지로
+                    SessionManager sessionManager = new SessionManager(LoginActivity.this);
+                    sessionManager.saveSession(memberDTO);
+                    moveToMainActivity();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
