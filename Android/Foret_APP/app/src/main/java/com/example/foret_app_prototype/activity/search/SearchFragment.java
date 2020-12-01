@@ -151,7 +151,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         Intent intent = null;
         switch (v.getId()) {
-            case R.id.button1 : //내 관심 설정페이지로 이동
+            case R.id.button1 : //내 관심 설정페이지로 이동->햄버거에 있음
                 Toast.makeText(activity, "내 관심 설정 페이지로 이동", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.button2 : //인기태그1 검색화면으로 이동
