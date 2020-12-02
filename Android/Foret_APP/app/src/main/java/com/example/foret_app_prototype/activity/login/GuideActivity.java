@@ -29,11 +29,19 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
+
 import com.example.foret_app_prototype.activity.foret.EditForetActivity;
 import com.example.foret_app_prototype.helper.CalendarHelper;
+
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.helper.ProgressDialogHelper;
@@ -84,7 +92,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     String select_gu = "";
     String select_tag = "";
     String str = "";
-    String show="";
+    String show = "";
 
     List<String> region_si;
     List<String> region_gu;
@@ -105,24 +113,23 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         client = new AsyncHttpClient();
         activity = this;
         context = this;
-        button0 = findViewById(R.id.button0); //건너뛰기
-        button1 = findViewById(R.id.button1); //이전
-        button2 = findViewById(R.id.button2); //다음
-        button3 = findViewById(R.id.button3); //지역 선택하기
-        button4 = findViewById(R.id.button4); //태그 선택하기
-        button5 = findViewById(R.id.button5); //프로필 고르기
-        button6 = findViewById(R.id.button6); //포레 시작하기
+        button0 = findViewById(R.id.button0); // 건너뛰기
+        button1 = findViewById(R.id.button1); // 이전
+        button2 = findViewById(R.id.button2); // 다음
+        button3 = findViewById(R.id.button3); // 지역 선택하기
+        button4 = findViewById(R.id.button4); // 태그 선택하기
+        button5 = findViewById(R.id.button5); // 프로필 고르기
+        button6 = findViewById(R.id.button6); // 포레 시작하기
         textView_region = findViewById(R.id.textView_region);
         textView_tag = findViewById(R.id.textView_tag);
         layout1 = findViewById(R.id.layout1);
-        layout2 = findViewById(R.id.layout2); //지역설정화면
-        layout3 = findViewById(R.id.layout3); //지역설정화면
-        layout4 = findViewById(R.id.layout4); //프사설정화면
-        layout5 = findViewById(R.id.layout5); //포레시작하기
+        layout2 = findViewById(R.id.layout2); // 지역설정화면
+        layout3 = findViewById(R.id.layout3); // 지역설정화면
+        layout4 = findViewById(R.id.layout4); // 프사설정화면
+        layout5 = findViewById(R.id.layout5); // 포레시작하기
         profile = findViewById(R.id.profile);
-        //profile.setImageResource(R.drawable.iu1); //사진이 출력이 안되서 초기세팅해줌
-        Glide.with(this).load(R.drawable.iu1).into(profile);
 
+        profile.setImageResource(R.drawable.foret); // 사진이 출력이 안되서 초기세팅해줌
 
         textView_region.setVisibility(View.GONE);
         textView_tag.setVisibility(View.GONE);
@@ -148,63 +155,63 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    public void layoutVisible (int buttonResourc, View view) {
+    public void layoutVisible(int buttonResourc, View view) {
 
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button0 : //건너뛰기
+            case R.id.button0: // 건너뛰기
                 intent = new Intent(this, MainActivity.class);
 
                 startActivity(intent);
                 finish();
                 break;
-            case R.id.button1 : //이전
+            case R.id.button1: // 이전
                 switch (afterBUTTONCount) {
-                    case 1 :
+                    case 1:
                         layout1.setVisibility(View.VISIBLE);
                         layout2.setVisibility(View.GONE);
                         button1.setVisibility(View.GONE);
-                        afterBUTTONCount=afterBUTTONCount-1;
+                        afterBUTTONCount = afterBUTTONCount - 1;
                         break;
-                    case 2 :
+                    case 2:
                         layout2.setVisibility(View.VISIBLE);
                         layout3.setVisibility(View.GONE);
-                        afterBUTTONCount=afterBUTTONCount-1;
+                        afterBUTTONCount = afterBUTTONCount - 1;
                         break;
-                    case 3 :
+                    case 3:
                         layout3.setVisibility(View.VISIBLE);
                         layout4.setVisibility(View.GONE);
-                        afterBUTTONCount=afterBUTTONCount-1;
+                        afterBUTTONCount = afterBUTTONCount - 1;
                         break;
-                    case 4 :
+                    case 4:
                         layout4.setVisibility(View.VISIBLE);
                         layout5.setVisibility(View.GONE);
-                        afterBUTTONCount=afterBUTTONCount-1;
+                        afterBUTTONCount = afterBUTTONCount - 1;
                         break;
                 }
                 break;
-            case R.id.button2 : //다음
+            case R.id.button2: // 다음
                 switch (afterBUTTONCount) {
-                    case 0 :
+                    case 0:
                         layout1.setVisibility(View.GONE);
                         layout2.setVisibility(View.VISIBLE);
                         button1.setVisibility(View.VISIBLE);
                         afterBUTTONCount++;
                         break;
-                    case 1 :
+                    case 1:
                         layout2.setVisibility(View.GONE);
                         layout3.setVisibility(View.VISIBLE);
                         afterBUTTONCount++;
                         break;
-                    case 2 :
+                    case 2:
                         layout3.setVisibility(View.GONE);
                         layout4.setVisibility(View.VISIBLE);
                         afterBUTTONCount++;
                         break;
-                    case 3 :
+                    case 3:
                         layout4.setVisibility(View.GONE);
                         layout5.setVisibility(View.VISIBLE);
                         afterBUTTONCount++;
@@ -213,28 +220,27 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                         break;
                 }
                 break;
-            case R.id.button3 : //지역선택
+            case R.id.button3: // 지역선택
                 regionDialog();
                 break;
-            case R.id.button4 : //태그선택
+            case R.id.button4: // 태그선택
                 tagDialog();
                 break;
-            case R.id.button5 : //프로필 설정
+            case R.id.button5: // 프로필 설정
                 permissionCheck();
                 showSelect();
                 break;
-            case R.id.button6 : //포레시작
-                ProgressDialogHelper.getInstance().getProgressbar(context,"등록중입니다.");
+            case R.id.button6: // 포레시작
+                ProgressDialogHelper.getInstance().getProgressbar(context, "등록중입니다.");
                 tryToSignUp();
-/*
-                intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                /*
+                 * intent = new Intent(this, MainActivity.class); startActivity(intent);
+                 * finish();
                  */
                 break;
         }
     }
-    
+
     public void regionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
@@ -253,9 +259,9 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         spinner_si.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("[TEST]", "region_si position => " +  position);
+                Log.d("[TEST]", "region_si position => " + position);
                 select_si = (String) parent.getSelectedItem();
-                if(position != 0 && !select_si.equals("")) {
+                if (position != 0 && !select_si.equals("")) {
                     Log.d("[TEST]", "select_si => " + select_si);
                     region_si.add(select_si);
                 }
@@ -263,31 +269,38 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 ArrayAdapter guAdapter;
                 switch (position) {
                     case 1:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.seuol_gu, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.seuol_gu,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 2:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeonggi_si, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeonggi_si,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 3:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daejeon_gu, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daejeon_gu,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 4:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gangwon_si, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gangwon_si,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 5:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gwangju_gu, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gwangju_gu,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 6:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.busan_gu, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.busan_gu,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 7:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeju_si, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeju_si,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                 }
@@ -305,7 +318,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("[TEST]", "region_gu position => " + position);
                 select_gu = (String) parent.getSelectedItem();
-                if(position != 0 && !select_gu.equals("")) {
+                if (position != 0 && !select_gu.equals("")) {
                     Log.d("[TEST]", "select_gu => " + select_gu);
                     region_gu.add(select_gu);
                     str += select_si + " " + select_gu + "\n";
@@ -326,8 +339,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             public void onClick(DialogInterface dialog, int which) {
                 Log.d("[TEST]", "region_si.size() => " + region_si.size());
                 Log.d("[TEST]", "region_gu.size() => " + region_gu.size());
-                //확인 버튼 누르면
-                for (int a=0; a<region_si.size(); a++) {
+                // 확인 버튼 누르면
+                for (int a = 0; a < region_si.size(); a++) {
                     show += region_si.get(a) + " " + region_gu.get(a) + "\n";
                     Log.d("[TEST]", "region_si.get(a) => " + region_si.get(a));
                     Log.d("[TEST]", "region_gu.get(a) => " + region_gu.get(a));
@@ -360,7 +373,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         spinner_tag.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position != 0) {
+                if (position != 0) {
                     select_tag = (String) parent.getSelectedItem();
                     member_tag.add(select_tag);
                     Log.d("[TEST]", "foret_tag.size() => " + member_tag.size());
@@ -379,10 +392,10 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //확인 버튼 누르면
-                for(int a=0; a<member_tag.size(); a++) {
+                // 확인 버튼 누르면
+                for (int a = 0; a < member_tag.size(); a++) {
                     show += "#" + member_tag.get(a) + " ";
-                    Log.d("[TEST]", "foret_tag.get(a) => " +member_tag.get(a));
+                    Log.d("[TEST]", "foret_tag.get(a) => " + member_tag.get(a));
                 }
                 textView_tag.setText(show);
                 textView_tag.setVisibility(View.VISIBLE);
@@ -396,59 +409,58 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void permissionCheck() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
             } else {
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.INTERNET,
-                                Manifest.permission.ACCESS_MEDIA_LOCATION,
-                                Manifest.permission.CAMERA}, 100);
+                        new String[] { Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET,
+                                Manifest.permission.ACCESS_MEDIA_LOCATION, Manifest.permission.CAMERA },
+                        100);
             }
         }
     }
 
     private void showSelect() {
-        final String [] menu = {"새로 촬영하기", "갤러리에서 가져오기"};
+        final String[] menu = { "새로 촬영하기", "갤러리에서 가져오기" };
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setItems(menu, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
-                    case 0: //새로 촬영하기-카메라 호출
-                        filePath = PhotoHelper.getInstance().getNewPhotoPath(); //저장할 사진 경로
-                        Log.d("[TEST]", "photoPath = "+filePath);
+                    case 0: // 새로 촬영하기-카메라 호출
+                        filePath = PhotoHelper.getInstance().getNewPhotoPath(); // 저장할 사진 경로
+                        Log.d("[TEST]", "photoPath = " + filePath);
                         file = new File(filePath);
-                       uri = null;
+                        uri = null;
 
-                        //카메라앱 호출을 위한 암묵적 인텐트 (action과 uri가 필요하다)
+                        // 카메라앱 호출을 위한 암묵적 인텐트 (action과 uri가 필요하다)
                         intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            uri = FileProvider.getUriForFile(GuideActivity.this, getApplicationContext().getPackageName() + ".fileprovider", file);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            uri = FileProvider.getUriForFile(GuideActivity.this,
+                                    getApplicationContext().getPackageName() + ".fileprovider", file);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         } else {
                             uri = Uri.fromFile(file);
                         }
-                        Log.d("[TEST]", "uri : "+uri.toString());
+                        Log.d("[TEST]", "uri : " + uri.toString());
 
-                        //저장할 경로를 파라미터로 설정
+                        // 저장할 경로를 파라미터로 설정
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                         intent.putExtra(AUDIO_SERVICE, false);
 
-                        //카메라 앱 호출
+                        // 카메라 앱 호출
                         startActivityForResult(intent, 200);
                         break;
-                    case 1: //갤러리에서 가져오기-갤러리 호출
+                    case 1: // 갤러리에서 가져오기-갤러리 호출
                         intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                         intent.addCategory(Intent.CATEGORY_OPENABLE);
-                        intent.setType("image/*"); //모든 이미지 표시
+                        intent.setType("image/*"); // 모든 이미지 표시
                         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                        startActivityForResult(intent, 300); //선택된 파일을 돌려받아야함
+                        startActivityForResult(intent, 300); // 선택된 파일을 돌려받아야함
                         break;
                 }
             }
@@ -457,19 +469,18 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         alertDialog.show();
     }
 
-    
-    //여기서부터
+    // 여기서부터
     private void tryToSignUp() {
 
         String[] str_si = new String[region_si.size()];
         String[] str_gu = new String[region_gu.size()];
 
-        for(int a=0; a<str_si.length; a++) {
+        for (int a = 0; a < str_si.length; a++) {
             str_si[a] = region_si.get(a);
             str_gu[a] = region_gu.get(a);
         }
         String[] str_tag = new String[member_tag.size()];
-        for(int a=0; a<str_tag.length; a++) {
+        for (int a = 0; a < str_tag.length; a++) {
             str_tag[a] = member_tag.get(a);
         }
 
@@ -486,46 +497,47 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         params.put("deviceToken", deviceToken);
         params.put("tag", str_tag);
 
-        Log.e("[test]",name+", "+email+", "+pw2+", "+birth+", "+nickname);
+        Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
 
-        //String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
+        // String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
         String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
 
         try {
-            if(file != null) params.put("photo", file);
+            if (file != null)
+                params.put("photo", file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        //멀티파트리퀘스트 형태로 보내는 메서드
+        // 멀티파트리퀘스트 형태로 보내는 메서드
         params.setForceMultipartEntityContentType(true);
         client.post(url, params, new Response(activity));
 
     }
-    
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_OK) {
+        if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case 200:
                     Toast.makeText(this, "사진 첨부 완료", Toast.LENGTH_SHORT).show();
-                    //촬영 결과물을 MediaStore에 등록한다(갤러리에 저장). MediaStore에 등록하지 않으면 우리 앱에서 만든 파일을 다른 앱에서는 사용할 수 없다.
+                    // 촬영 결과물을 MediaStore에 등록한다(갤러리에 저장). MediaStore에 등록하지 않으면 우리 앱에서 만든 파일을 다른 앱에서는
+                    // 사용할 수 없다.
                     intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(filePath));
                     Log.d("[TEST]", filePath);
                     sendBroadcast(intent);
                     Glide.with(this).load(filePath).into(profile);
                     break;
-                case 300 :
+                case 300:
                     String uri1 = data.getData().toString();
-                    String fileName = uri1.substring(uri1.lastIndexOf("/")+1);
-                    Log.d("[TEST]", "fileName = "+fileName);
-                    filePath= FileUtils.getPath(this, data.getData());
+                    String fileName = uri1.substring(uri1.lastIndexOf("/") + 1);
+                    Log.d("[TEST]", "fileName = " + fileName);
+                    filePath = FileUtils.getPath(this, data.getData());
                     file = new File(filePath);
-                    Log.d("[TEST]", "filePath = "+filePath);
-                    Toast.makeText(this, fileName+"을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
+                    Log.d("[TEST]", "filePath = " + filePath);
+                    Toast.makeText(this, fileName + "을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
                     Glide.with(this).load(filePath).into(profile);
                     uri = data.getData();
-
 
             }
         }
@@ -533,13 +545,14 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
     private class Response extends AsyncHttpResponseHandler {
         Activity activity;
+
         public Response(Activity activity) {
             this.activity = activity;
         }
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            String result = new String (responseBody);
+            String result = new String(responseBody);
 
             try {
                 JSONObject json = new JSONObject(result);
@@ -548,22 +561,24 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 String memberRegionRT = json.getString("memberRegionRT");
                 String memberPhotoRT = json.getString("memberPhotoRT");
 
-                if(memberRT.equals("OK")){
-                    Toast.makeText(activity,"결과\n memberRT : "+memberRT+"\nmemberTagRT : "+memberTagRT+"\n memberRegionRT : "+memberRegionRT+"\n memberPhotoRT : "+memberPhotoRT
-                    ,Toast.LENGTH_LONG).show();
+                if (memberRT.equals("OK")) {
+                    Toast.makeText(
+                            activity, "결과\n memberRT : " + memberRT + "\nmemberTagRT : " + memberTagRT
+                                    + "\n memberRegionRT : " + memberRegionRT + "\n memberPhotoRT : " + memberPhotoRT,
+                            Toast.LENGTH_LONG).show();
                     String timestamp = CalendarHelper.getInstance().getCurrentTimeFull();
 
-                    //파이어 베이스 생성
+                    // 파이어 베이스 생성
                     ModelUser modelUser = new ModelUser();
                     modelUser.setEmail(email);
-                    modelUser.setUser_id(pw2);  //원래는 유저 id가 들어가야 함.
+                    modelUser.setUser_id(pw2); // 원래는 유저 id가 들어가야 함.
                     modelUser.setNickname(nickname);
                     modelUser.setJoineddate(timestamp);
 
                     registerUser(modelUser);
-                    Log.e("[test]","성공후 데이터"+", "+email+", "+pw2+", "+timestamp+", "+nickname);
+                    Log.e("[test]", "성공후 데이터" + ", " + email + ", " + pw2 + ", " + timestamp + ", " + nickname);
 
-                }else {
+                } else {
                     Toast.makeText(activity, "등록 실패..", Toast.LENGTH_SHORT).show();
                 }
 
@@ -575,47 +590,46 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(activity, "통신실패, 원인 : "+error.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "통신실패, 원인 : " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    //신규 등록 이메일 + 유저 Id를 통해
+    // 신규 등록 이메일 + 유저 Id를 통해
     public void registerUser(final ModelUser chatuser) {
-        Log.e("[test]","유저등록시작");
+        Log.e("[test]", "유저등록시작");
         FirebaseAuth mAuth;
-        ProgressDialogHelper.getInstance().getProgressbar(this,"파이어베이스 생성중");
+        ProgressDialogHelper.getInstance().getProgressbar(this, "파이어베이스 생성중");
         mAuth = FirebaseAuth.getInstance();
         mAuth.createUserWithEmailAndPassword(chatuser.getEmail(), chatuser.getUser_id())
                 .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        //성공 시 firebase 에 유저 등록됨. 이에 uID를 받음.
+                        // 성공 시 firebase 에 유저 등록됨. 이에 uID를 받음.
                         sendImageMessage(uri);
-                        Log.e("[test]","이미지 등록 종료");
+                        Log.e("[test]", "이미지 등록 종료");
                         if (task.isSuccessful()) {
-                            Log.e("[test]","유저등록성공");
+                            Log.e("[test]", "유저등록성공");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //유저 정보 얻기
+                            // 유저 정보 얻기
                             String email = user.getEmail();
                             String uid = user.getUid();
-                            //해쉬멥에 담아서 저장
+                            // 해쉬멥에 담아서 저장
                             HashMap<Object, String> hashMap = new HashMap<>();
                             hashMap.put("email", email);
                             hashMap.put("uid", uid);
                             hashMap.put("nickname", chatuser.getNickname());
                             hashMap.put("photoRoot", downloadUri);
                             hashMap.put("user_id", chatuser.getUser_id());
-                            hashMap.put("joineddate",chatuser.getDate());
+                            hashMap.put("joineddate", chatuser.getDate());
 
-                            Log.e("[test]","DB 유저 데이터 업로드");
+                            Log.e("[test]", "DB 유저 데이터 업로드");
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            //파이어 베이스에 유저 등록하기
+                            // 파이어 베이스에 유저 등록하기
                             DatabaseReference reference = database.getReference("Users");
 
-                            //유저를 헤쉬맵을 통해 등록하기
+                            // 유저를 헤쉬맵을 통해 등록하기
                             reference.child(uid).setValue(hashMap);
-
 
                             ProgressDialogHelper.getInstance().removeProgressbar();
                             intent = new Intent(GuideActivity.this, MainActivity.class);
@@ -629,19 +643,19 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
-            @Override
-           public void onFailure(@NonNull Exception e) {
-                //사용중인 이메일이 있을때 나옴.
-                Toast.makeText(context, "Fail : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // 사용중인 이메일이 있을때 나옴.
+                        Toast.makeText(context, "Fail : " + e.getMessage(), Toast.LENGTH_SHORT).show();
 
-            }
-        });
+                    }
+                });
 
     }
 
-    //파베에 채팅 이미지 보내기기
+    // 파베에 채팅 이미지 보내기기
     private void sendImageMessage(Uri image_rui) {
-        Log.e("[test]","이미지 등록 시작");
+        Log.e("[test]", "이미지 등록 시작");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         String timeStamp = "" + System.currentTimeMillis();
@@ -653,25 +667,25 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] data = baos.toByteArray();
-            StorageReference ref = FirebaseStorage.getInstance().getReference().child(fileNameAndPath + image_rui.getLastPathSegment());
-            ref.putBytes(data)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Log.e("[test]","이미지등록성공");
-                           Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!uriTask.isSuccessful()) ;
-                            downloadUri = uriTask.getResult().toString();
+            StorageReference ref = FirebaseStorage.getInstance().getReference()
+                    .child(fileNameAndPath + image_rui.getLastPathSegment());
+            ref.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.e("[test]", "이미지등록성공");
+                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                    while (!uriTask.isSuccessful())
+                        ;
+                    downloadUri = uriTask.getResult().toString();
 
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            ProgressDialogHelper.getInstance().removeProgressbar();
-                            Log.e("[test]","이미지등록 실패");
-                        }
-                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    ProgressDialogHelper.getInstance().removeProgressbar();
+                    Log.e("[test]", "이미지등록 실패");
+                }
+            });
 
         } catch (IOException e) {
             e.printStackTrace();
