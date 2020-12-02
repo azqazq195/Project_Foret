@@ -3,18 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:icon="@drawable/menu_home"
+        android:id="@+id/menu_home"
         android:title="HOME" />
     <item
-        android:icon="@drawable/menu_notice"
+        android:id="@+id/menu_notice"
         android:title="공지사항" />
     <item
-        android:icon="@drawable/menu_general"
+        android:id="@+id/menu_general"
         android:title="일반" />
     <item
-        android:icon="@drawable/menu_calendar"
+        android:id="@+id/menu_daily"
         android:title="일정" />
     <item
-        android:icon="@drawable/write"
+        android:id="@+id/menu_myInfoUpdate"
         android:title="내 정보 수정" />
 </menu>

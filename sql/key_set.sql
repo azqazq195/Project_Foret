@@ -25,7 +25,6 @@ ALTER TABLE foret_photo
 ALTER TABLE board_photo 
   ADD CONSTRAINT pk_board_photo PRIMARY KEY ( id ); 
 
--- ¿Ü·¡Å° -- 
 ALTER TABLE member_tag 
   ADD CONSTRAINT fk_member_to_member_tag_1 FOREIGN KEY ( id ) REFERENCES member 
   ( id ) ON DELETE CASCADE; 
@@ -113,3 +112,8 @@ ALTER TABLE foret_photo
 ALTER TABLE board_photo 
   ADD CONSTRAINT fk_board_to_board_photo_1 FOREIGN KEY ( board_id ) REFERENCES 
   board ( id ) ON DELETE CASCADE; 
+
+CREATE OR REPLACE FUNCTION get_board_photo_id RETURN NUMBER IS
+BEGIN
+     RETURN seq_board_photo_id.nextval;
+END;

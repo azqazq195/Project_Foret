@@ -3,16 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:icon="@drawable/notify"
+        android:id="@+id/drawer_notice"
         android:title="공지사항"
         app:showAsAction="withText" />
     <item
-        android:icon="@drawable/menu_general"
-        android:title="내 정보 수정" />
+        android:id="@+id/drawer_myinfo"
+        android:title="내 정보" />
     <item
-        android:icon="@android:drawable/ic_menu_help"
+        android:id="@+id/drawer_help"
         android:title="도움말" />
     <item
-        android:icon="@drawable/like"
+        android:id="@+id/drawer_foret"
         android:title="Foret" />
 </menu>

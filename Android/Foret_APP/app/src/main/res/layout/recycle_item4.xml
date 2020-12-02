@@ -65,9 +65,9 @@
                     android:layout_height="30dp"
                     android:layout_weight="0"
                     android:background="@drawable/like_selector"
+                    android:text="ToggleButton"
                     android:textOff=" "
-                    android:textOn=" "
-                    android:textSize="3dp" />
+                    android:textOn=" " />
 
                 <TextView
                     android:id="@+id/textView5"

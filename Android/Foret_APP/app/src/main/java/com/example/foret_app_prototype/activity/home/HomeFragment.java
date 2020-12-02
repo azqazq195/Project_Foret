@@ -10,14 +10,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,9 +26,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.activity.foret.ViewForetActivity;
-//import com.example.foret_app_prototype.activity.foret.board.ListForetBoardActivity;
 import com.example.foret_app_prototype.activity.foret.board.ListForetBoardActivity;
-import com.example.foret_app_prototype.activity.foret.board.ReadForetBoardActivity;
 import com.example.foret_app_prototype.activity.search.SearchFragment;
 import com.example.foret_app_prototype.adapter.foret.ForetAdapter;
 import com.example.foret_app_prototype.adapter.foret.ForetBoardAdapter;
@@ -40,6 +38,8 @@ import com.example.foret_app_prototype.model.Member;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+//import com.example.foret_app_prototype.activity.foret.board.ListForetBoardActivity;
 
 public class HomeFragment extends Fragment
         implements ViewPager.OnPageChangeListener, View.OnClickListener {
@@ -176,7 +176,8 @@ public class HomeFragment extends Fragment
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.menu) {
-            Toast.makeText(activity, "사이드 바", Toast.LENGTH_SHORT).show();
+            DrawerLayout container = activity.findViewById(R.id.container);
+            container.openDrawer(GravityCompat.END);
         }
         return super.onOptionsItemSelected(item);
     }

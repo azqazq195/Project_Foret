@@ -56,4 +56,9 @@ public class TagServiceImpl implements TagService{
 		return tagDAO.foretTagDelete(id);
 	}
 
+	@Override
+	public List<TagDTO> tagRank() {
+		return tagDAO.tagRank();
+	}
+
 }

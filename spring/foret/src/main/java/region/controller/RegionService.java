@@ -11,6 +11,8 @@ public interface RegionService {
 	public int regionWrite(RegionDTO regionDTO);
 	public int regionDelete(RegionDTO regionDTO);
 	public List<RegionDTO> regionList();
+	public List<RegionDTO> regionRank();
+	
 	
 	// 지역 아이디 가져오기
 	public List<RegionDTO> getRegionId(List<RegionDTO> list);

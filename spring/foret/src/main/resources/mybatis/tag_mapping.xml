@@ -23,7 +23,12 @@
 	<select id="tagList" resultType="tagDTO">
 		SELECT * 
 		FROM   tag 
-		ORDER  BY tag_id DESC 
+		ORDER  BY tag_id ASC 
+	</select>
+	<!-- 태그 랭크 -->
+	<select id="tagRank" resultType="tagDTO">
+		SELECT * 
+		FROM   V_TAG_RANK
 	</select>
 	
 	<!-- 태그 id 가져오기 -->

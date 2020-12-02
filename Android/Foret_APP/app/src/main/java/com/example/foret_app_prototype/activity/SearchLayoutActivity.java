@@ -12,7 +12,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -36,6 +35,7 @@ public class SearchLayoutActivity extends AppCompatActivity implements View.OnCl
     //Button button;
     InputMethodManager inputMethodManager; //키보드 컨트롤 매니저
     Intent intent;
+    //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

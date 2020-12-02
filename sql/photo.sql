@@ -1,4 +1,5 @@
 commit;
+
 select * from member;
 select * from member_photo;
 UPDATE member_photo 

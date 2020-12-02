@@ -1,43 +1,30 @@
 package com.example.foret_app_prototype.activity.login;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.widget.NestedScrollView;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.opengl.Visibility;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.foret_app_prototype.R;
-import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.model.Member;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class JoinUsActivity extends AppCompatActivity implements View.OnClickListener {
     Member member;
@@ -461,7 +448,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // 수행 표시줄에 항목이 있는 경우 이 항목이 추가됨.
-        getMenuInflater().inflate(R.menu.join_us_menu, menu);
+        getMenuInflater().inflate(R.menu.login_activity_sign_up_menu, menu);
         return true;
     }
 

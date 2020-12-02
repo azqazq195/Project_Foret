@@ -1,11 +1,5 @@
 package com.example.foret_app_prototype.activity.login;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -17,29 +11,44 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
-import com.example.foret_app_prototype.activity.foret.EditForetActivity;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
+import com.example.foret_app_prototype.model.Member;
 
 import java.io.File;
 
 public class GuideActivity extends AppCompatActivity implements View.OnClickListener {
+    Member member;
 
     Button button0, button1, button2, button6;
     TextView button3, button4, button5, textView_region, textView_tag;
     ConstraintLayout layout1, layout2, layout3, layout4, layout5;
     ImageView profile;
-    String filePath=null;
+    String filePath = null;
     Intent intent;
     int afterBUTTONCount = 0;
+
+    String select_si = "";
+    String select_gu = "";
+    String select_tag = "";
+    String str = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +69,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         layout4 = findViewById(R.id.layout4); //프사설정화면
         layout5 = findViewById(R.id.layout5); //포레시작하기
         profile = findViewById(R.id.profile);
-        profile.setImageResource(R.drawable.test); //사진이 출력이 안되서 초기세팅해줌
+        profile.setImageResource(R.drawable.foret); //사진이 출력이 안되서 초기세팅해줌
 
         textView_region.setVisibility(View.GONE);
         textView_tag.setVisibility(View.GONE);
@@ -159,34 +168,140 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
     private void regionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("지역을 골라주세요.");
+        View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
+        builder.setTitle("지역을 선택해주세요.");
+
+        Spinner spinner_si = region_view.findViewById(R.id.spinner_si);
+        Spinner spinner_gu = region_view.findViewById(R.id.spinner_gu);
+        TextView selected_view = region_view.findViewById(R.id.selected_view);
+
+        spinner_si.setVisibility(View.VISIBLE);
+        spinner_si.setSelection(0);
+
+        spinner_si.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position != 0) {
+                    select_si = (String) parent.getSelectedItem();
+                }
+                ArrayAdapter guAdapter;
+                switch (position) {
+                    case 1:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.seuol_gu, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 2:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeonggi_si, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 3:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daejeon_gu, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 4:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gangwon_si, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 5:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gwangju_gu, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 6:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.busan_gu, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 7:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeju_si, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                }
+                spinner_gu.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selected_view.setText("최소 한개의 지역을 등록하세요.");
+            }
+        });
+
+        spinner_gu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("[TEST]", "position => " + position);
+                Log.d("[TEST]", "select_gu => " + select_gu);
+                select_gu = (String) parent.getSelectedItem();
+                if(position == 0) {
+
+                } else if (select_gu.equals("")) {
+
+                } else {
+                    str += select_si + " " + select_gu + "\n";
+                    selected_view.setText(str);
+                    spinner_si.setSelection(0);
+                    spinner_gu.setSelection(0);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //확인 버튼 누르면
-                //textView_region.setText("선택한 지역들");
+                textView_region.setText(str);
                 textView_region.setVisibility(View.VISIBLE);
             }
         });
         builder.setNegativeButton("취소", null);
 
+        builder.setView(region_view);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
 
     private void tagDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
         builder.setMessage("태그를 골라주세요.");
+        str = "";
+        Spinner spinner_tag = region_view.findViewById(R.id.spinner_tag);
+        TextView selected_view = region_view.findViewById(R.id.selected_view);
+        spinner_tag.setVisibility(View.VISIBLE);
+
+        spinner_tag.setSelection(0);
+
+        spinner_tag.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position != 0) {
+                    select_tag = (String) parent.getSelectedItem();
+                    str += "#" + select_tag + " ";
+                    selected_view.setText(str);
+                    spinner_tag.setSelection(0);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //확인 버튼 누르면
-                //textView_tag.setText("선택한 태그들");
+                textView_tag.setText(str);
                 textView_tag.setVisibility(View.VISIBLE);
             }
         });
         builder.setNegativeButton("취소", null);
 
+        builder.setView(region_view);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }

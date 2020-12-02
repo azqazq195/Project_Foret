@@ -75,6 +75,7 @@ public class TagController {
 	
 	@RequestMapping(value = "/tag/tag_list.do")
 	public ModelAndView tagList(HttpServletRequest request) throws Exception {
+		System.out.println("-- 함수 실행 : tag_list --");
 		request.setCharacterEncoding("UTF-8");
 		
 		List<TagDTO> list = tagService.tagList(); 
@@ -97,7 +98,37 @@ public class TagController {
 	    ModelAndView modelAndView = new ModelAndView();
 	    modelAndView.addObject("json", json);
 	    modelAndView.setViewName("tag.jsp");
-	       
+	    System.out.println("-- 함수 종료 : tag_list --");
+	    return modelAndView;
+	}
+	
+	@RequestMapping(value = "/tag/tag_rank.do")
+	public ModelAndView tagRank(HttpServletRequest request) throws Exception {
+		System.out.println("-- 함수 실행 : tag_rank --");
+		request.setCharacterEncoding("UTF-8");
+		
+		List<TagDTO> list = tagService.tagRank(); 
+		
+		int total = list.size();
+		
+		JSONObject json = new JSONObject();
+	    json.put("total", total);
+	    
+	    JSONArray array = new JSONArray();
+	    for(TagDTO tagDTO : list) {
+	    	JSONObject temp = new JSONObject();
+	    	temp.put("rank", tagDTO.getRank());
+	    	temp.put("tag_id", tagDTO.getTag_id());
+	    	temp.put("tag_name", tagDTO.getTag_name());
+	    	array.put(temp);
+	    }
+	    json.put("tag", array);
+	    
+	    // 화면 네비게이션
+	    ModelAndView modelAndView = new ModelAndView();
+	    modelAndView.addObject("json", json);
+	    modelAndView.setViewName("tag.jsp");
+	    System.out.println("-- 함수 종료 : tag_rank --");
 	    return modelAndView;
 	}
 }

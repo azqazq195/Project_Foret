@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -94,7 +96,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         recyclerView2 = rootView.findViewById(R.id.recyclerView2);
         layout_search = rootView.findViewById(R.id.layout_search);
         button_back = rootView.findViewById(R.id.button_back);
-//        searchView = rootView.findViewById(R.id.searchView);
 
         button_back.setOnClickListener(this);
         floatingActionButton.setOnClickListener(this);
@@ -141,7 +142,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 layout_search.setVisibility(View.VISIBLE);
                 break;
             case R.id.item_menu :
-                Toast.makeText(activity, "햄버거 메뉴 나타남", Toast.LENGTH_SHORT).show();
+                DrawerLayout container = activity.findViewById(R.id.container);
+                container.openDrawer(GravityCompat.END);
                 break;
         }
         return super.onOptionsItemSelected(item);

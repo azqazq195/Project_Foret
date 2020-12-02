@@ -2,14 +2,6 @@ package com.example.foret_app_prototype.activity.search;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,13 +11,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.activity.foret.MakeForetActivity;
-import com.example.foret_app_prototype.adapter.RecyclerAdapter1;
 import com.example.foret_app_prototype.adapter.RecyclerAdapter2;
 import com.example.foret_app_prototype.adapter.RecyclerAdapter3;
 import com.example.foret_app_prototype.model.Test;
@@ -40,7 +38,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     MainActivity activity;
     LinearLayout layout_search;
     ImageView button_back;
-    SearchView searchView;
     ImageView button1;
     Button button2, button3, button4, button5, button6, button7, button8;
     RecyclerView recyclerView1, recyclerView2;
@@ -64,7 +61,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         layout_search = rootView.findViewById(R.id.layout_search);
         button_back = rootView.findViewById(R.id.button_back);
-//        searchView = rootView.findViewById(R.id.searchView);
         button1 = rootView.findViewById(R.id.button1); //내 관심태그 설정 페이지로 이동(햄버거 메뉴에 넣을 예정)
         button2 = rootView.findViewById(R.id.button2); //인기태그1
         button3 = rootView.findViewById(R.id.button3); //인기태그2
@@ -138,10 +134,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         switch (item.getItemId()) {
             case R.id.item_search :
                 layout_search.setVisibility(View.VISIBLE);
-//                searchView.setQueryHint("이름/태그");
                 break;
-            case R.id.item_menu :
-                Toast.makeText(activity, "햄버거 메뉴 나타남", Toast.LENGTH_SHORT).show();
+            case R.id.item_menu : //햄버거 메뉴 열기
+                DrawerLayout container = activity.findViewById(R.id.container);
+                container.openDrawer(GravityCompat.END);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -151,7 +147,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         Intent intent = null;
         switch (v.getId()) {
-            case R.id.button1 : //내 관심 설정페이지로 이동->햄버거에 있음
+            case R.id.button1 : //내 관심 설정페이지로 이동
                 Toast.makeText(activity, "내 관심 설정 페이지로 이동", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.button2 : //인기태그1 검색화면으로 이동
