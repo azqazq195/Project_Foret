@@ -61,14 +61,12 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         layout_search = rootView.findViewById(R.id.layout_search);
         recyclerView1 = rootView.findViewById(R.id.recyclerView1);
         recyclerView2 = rootView.findViewById(R.id.recyclerView2);
-//        searchView = rootView.findViewById(R.id.searchView);
         button1 = rootView.findViewById(R.id.button1);
         button2 = rootView.findViewById(R.id.button2);
         button3 = rootView.findViewById(R.id.button3);
         button4 = rootView.findViewById(R.id.button4);
         button_back = rootView.findViewById(R.id.button_back);
 
-        //recyclerView1.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false));
         recyclerView2.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false));
 
         testData();
