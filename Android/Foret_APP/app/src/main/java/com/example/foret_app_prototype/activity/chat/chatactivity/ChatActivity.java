@@ -60,9 +60,7 @@ import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
 
-
     RecyclerView recyclerView;
-
     ImageView profilelv;
     TextView nameTv, userStatusTv;
     EditText messageEt;
@@ -78,6 +76,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     String target_nickName;
     String my_nickname;
 
+    //파이어베이스 관련 변수
     DatabaseReference chatRoomList;
     DatabaseReference chatRoomList1;
 
