@@ -63,10 +63,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         layout_search = rootView.findViewById(R.id.layout_search);
         button_back = rootView.findViewById(R.id.button_back);
-<<<<<<< HEAD
-=======
-        searchView = rootView.findViewById(R.id.searchView);
->>>>>>> develop
         button1 = rootView.findViewById(R.id.button1); //내 관심태그 설정 페이지로 이동(햄버거 메뉴에 넣을 예정)
         button2 = rootView.findViewById(R.id.button2); //인기태그1
         button3 = rootView.findViewById(R.id.button3); //인기태그2
@@ -140,10 +136,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         switch (item.getItemId()) {
             case R.id.item_search :
                 layout_search.setVisibility(View.VISIBLE);
-<<<<<<< HEAD
-=======
-                searchView.setQueryHint("이름/태그");
->>>>>>> develop
                 break;
             case R.id.item_menu :
                 Toast.makeText(activity, "햄버거 메뉴 나타남", Toast.LENGTH_SHORT).show();

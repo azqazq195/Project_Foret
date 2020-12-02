@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="HOME" />
+    <item android:title="공지사항" />
+    <item android:title="일반" />
+    <item android:title="일정" />
+    <item android:title="내 정보 수정" />
+</menu>

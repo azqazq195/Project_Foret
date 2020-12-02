@@ -18,13 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
-<<<<<<< HEAD
         <activity android:name=".activity.SearchLayoutActivity">
         </activity>
         <activity android:name=".activity.free.ReadFreeActivity" />
-=======
-        <activity android:name=".activity.free.ReadFreeActivity"></activity>
->>>>>>> develop
         <activity android:name=".activity.login.GuideActivity" />
         <activity android:name=".activity.foret.board.ListForetBoardActivity" />
         <activity android:name=".activity.foret.EditForetActivity" />
