@@ -5,7 +5,7 @@
     <item
         android:title="공지사항"
         app:showAsAction="withText" />
-    <item android:title="내 정보 수정" />
+    <item android:title="내 정보" />
     <item android:title="도움말" />
     <item android:title="Foret" />
 </menu>

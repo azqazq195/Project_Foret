@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.foret_app_prototype.R;
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     AsyncHttpClient client;
     HttpResponse response;
     String url = "http://192.168.55.172:8081/foret/search/member.do";
+    TextView button_out, drawer_text1, drawer_text2 ,drawer_text3;
+    ImageView button_out2, button_drawcancel, profile;
 
 
     @Override
@@ -59,19 +63,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        nav_bottom = findViewById(R.id.nav_bottom);
-        container = findViewById(R.id.container);
-        containerLayout = findViewById(R.id.containerLayout);
         homeFragment = new HomeFragment();
         freeFragment = new FreeFragment();
         searchFragment = new SearchFragment();
         chatFragment = new ChatFragment();
         notifyFragment = new NotifyFragment();
+        nav_bottom = findViewById(R.id.nav_bottom);
+        container = findViewById(R.id.container);
+        containerLayout = findViewById(R.id.containerLayout);
         nav_drawer = findViewById(R.id.nav_drawer);
+        button_out = findViewById(R.id.button_out); //로그아웃버튼
+        button_out2 = findViewById(R.id.button_out2); //로그아웃버튼
+        drawer_text1 = findViewById(R.id.drawer_text1); //아이디
+        drawer_text2 = findViewById(R.id.drawer_text2); //이메일주소
+        drawer_text3 = findViewById(R.id.drawer_text3); //가입일
+
 
         nav_bottom.setOnNavigationItemSelectedListener(this);
         nav_bottom.setItemIconTintList(null);
+
 
         if(savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, homeFragment).commit();
