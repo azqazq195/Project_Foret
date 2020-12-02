@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Foret_APP_prototype</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+
+    <array name="test1">
+        <item>6시 30분 숙제 기억하기!</item>
+        <item>12월 2일 : 좋은날</item>
+    </array>
+    <array name="test2">
+        <item>12월 2일 : 좋은날</item>
+    </array>
+    <array name="test3">
+        <item>댓글이나 좋아요 조회수가 가장 많은 글1</item>
+        <item>댓글이나 좋아요 조회수가 가장 많은 글2</item>
+        <item>댓글이나 좋아요 조회수가 가장 많은 글3</item>
+        <item>댓글이나 좋아요 조회수가 가장 많은 글4</item>
+    </array>
+    <array name="notice">
+        <item>"선미"님이 댓글을 남기셨습니다.</item>
+        <item>"밤샘클럽"포레에 가입하셨습니다. 가입한 포레에 방문해보세요.</item>
+        <item>[공지사항] 우리 지각대장님들 화이팅! </item>
+    </array>
+
+</resources>
