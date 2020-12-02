@@ -6,6 +6,4 @@ public class HomeDTO {
     private String introduce;
     private String photo;
 
-    private  
-
 }
