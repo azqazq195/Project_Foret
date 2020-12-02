@@ -1,11 +1,5 @@
 package com.example.foret_app_prototype.activity.login;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -25,10 +19,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
-import com.example.foret_app_prototype.activity.foret.EditForetActivity;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.model.Member;
@@ -70,7 +69,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         layout4 = findViewById(R.id.layout4); //프사설정화면
         layout5 = findViewById(R.id.layout5); //포레시작하기
         profile = findViewById(R.id.profile);
-        profile.setImageResource(R.drawable.test); //사진이 출력이 안되서 초기세팅해줌
+        profile.setImageResource(R.drawable.foret); //사진이 출력이 안되서 초기세팅해줌
 
         textView_region.setVisibility(View.GONE);
         textView_tag.setVisibility(View.GONE);
