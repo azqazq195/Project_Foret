@@ -8,19 +8,23 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:allowBackup="true"
         android:hardwareAccelerated="false"
+        android:largeHeap="true"
+        android:allowBackup="true"
         android:icon="@drawable/ic_foret"
         android:label="@string/app_name"
-        android:largeHeap="true"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/ic_foret"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
+<<<<<<< HEAD
         <activity android:name=".activity.SearchLayoutActivity">
         </activity>
         <activity android:name=".activity.free.ReadFreeActivity" />
+=======
+        <activity android:name=".activity.free.ReadFreeActivity"></activity>
+>>>>>>> develop
         <activity android:name=".activity.login.GuideActivity" />
         <activity android:name=".activity.foret.board.ListForetBoardActivity" />
         <activity android:name=".activity.foret.EditForetActivity" />
@@ -34,7 +38,9 @@
         <activity android:name=".activity.free.EditFreeActivity" />
         <activity android:name=".activity.free.WriteFreeActivity" />
         <activity android:name=".activity.login.JoinUsActivity" />
-        <activity android:name=".activity.login.LoginActivity" />
+        <activity android:name=".activity.login.LoginActivity" >
+
+        </activity>
         <activity android:name=".activity.login.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,7 +50,9 @@
         </activity>
         <activity
             android:name=".activity.MainActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name" >
+
+        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"

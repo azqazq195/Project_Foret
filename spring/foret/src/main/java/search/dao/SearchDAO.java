@@ -1,6 +1,8 @@
 package search.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,12 @@ public class SearchDAO {
 	}
 	public MemberDTO memberSelect(String email) {
 		return sqlSession.selectOne("mybatis.searchMapper.memberSelect", email);
+	}
+	public int memberLogin(String email, String password) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("email", email);
+		map.put("password", password);
+		return sqlSession.selectOne("mybatis.searchMapper.memberLogin", map);
 	}
 	
 	public List<MemberTagDTO> memberTagSelect(int member_id) {

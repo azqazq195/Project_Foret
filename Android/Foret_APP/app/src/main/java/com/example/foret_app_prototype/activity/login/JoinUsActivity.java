@@ -27,6 +27,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
 
     // 레이아웃 애니메이션
     Animation animation = new AlphaAnimation(0, 1);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,8 +92,9 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
             Toast.makeText(this, "이름를 입력해주세요.", Toast.LENGTH_SHORT).show();
             return false;
         }
-        layout2.setVisibility(View.VISIBLE);
         layout2.setAnimation(animation);
+        layout2.setVisibility(View.VISIBLE);
+
         editText2.requestFocus();
 
         String nickname = editText2.getText().toString().trim();

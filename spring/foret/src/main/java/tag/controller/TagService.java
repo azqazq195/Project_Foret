@@ -11,6 +11,7 @@ public interface TagService {
 	public int tagWrite(TagDTO tagDTO);
 	public int tagDelete(TagDTO tagDTO);
 	public List<TagDTO> tagList();
+	public List<TagDTO> tagRank();
 	
 	// 태그 아이디 가져오기
 	public List<TagDTO> getTagId(List<TagDTO> list);

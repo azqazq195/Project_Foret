@@ -24,6 +24,9 @@ public class RegionDAO {
 	public List<RegionDTO> regionList() {
 		return sqlSession.selectList("mybatis.regionMapper.regionList");
 	}
+	public List<RegionDTO> regionRank() {
+		return sqlSession.selectList("mybatis.regionMapper.regionRank");
+	}
 	
 	public List<RegionDTO> getRegionId(List<RegionDTO> list) {
 		return sqlSession.selectList("mybatis.regionMapper.getRegionId", list);
