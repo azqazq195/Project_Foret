@@ -1,5 +1,6 @@
 package com.example.foret_app_prototype.activity.login;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -7,10 +8,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,11 +33,41 @@ import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.activity.foret.EditForetActivity;
+import com.example.foret_app_prototype.helper.CalendarHelper;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
+import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.Member;
+import com.example.foret_app_prototype.model.ModelUser;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.ResponseHandlerInterface;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class GuideActivity extends AppCompatActivity implements View.OnClickListener {
     Member member;
@@ -50,11 +84,27 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     String select_gu = "";
     String select_tag = "";
     String str = "";
+    String show="";
+
+    List<String> region_si;
+    List<String> region_gu;
+    List<String> member_tag;
+
+    String name, nickname, birth, email, pw2;
+    File file;
+    Uri uri;
+    AsyncHttpClient client;
+    Activity activity;
+    Context context;
+    String downloadUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
+        client = new AsyncHttpClient();
+        activity = this;
+        context = this;
         button0 = findViewById(R.id.button0); //건너뛰기
         button1 = findViewById(R.id.button1); //이전
         button2 = findViewById(R.id.button2); //다음
@@ -70,7 +120,9 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         layout4 = findViewById(R.id.layout4); //프사설정화면
         layout5 = findViewById(R.id.layout5); //포레시작하기
         profile = findViewById(R.id.profile);
-        profile.setImageResource(R.drawable.test); //사진이 출력이 안되서 초기세팅해줌
+        //profile.setImageResource(R.drawable.iu1); //사진이 출력이 안되서 초기세팅해줌
+        Glide.with(this).load(R.drawable.iu1).into(profile);
+
 
         textView_region.setVisibility(View.GONE);
         textView_tag.setVisibility(View.GONE);
@@ -83,6 +135,17 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         button4.setOnClickListener(this);
         button5.setOnClickListener(this);
         button6.setOnClickListener(this);
+
+        name = getIntent().getStringExtra("name");
+        nickname = getIntent().getStringExtra("nickname");
+        birth = getIntent().getStringExtra("birth");
+        email = getIntent().getStringExtra("email");
+        pw2 = getIntent().getStringExtra("pw2");
+
+        region_si = new ArrayList<>();
+        region_gu = new ArrayList<>();
+        member_tag = new ArrayList<>();
+
     }
 
     public void layoutVisible (int buttonResourc, View view) {
@@ -94,6 +157,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.button0 : //건너뛰기
                 intent = new Intent(this, MainActivity.class);
+
                 startActivity(intent);
                 finish();
                 break;
@@ -160,17 +224,24 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 showSelect();
                 break;
             case R.id.button6 : //포레시작
+                ProgressDialogHelper.getInstance().getProgressbar(context,"등록중입니다.");
+                tryToSignUp();
+/*
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();
+                 */
                 break;
         }
     }
-
-    private void regionDialog() {
+    
+    public void regionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
         builder.setTitle("지역을 선택해주세요.");
+
+        str = "";
+        show = "";
 
         Spinner spinner_si = region_view.findViewById(R.id.spinner_si);
         Spinner spinner_gu = region_view.findViewById(R.id.spinner_gu);
@@ -182,9 +253,13 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         spinner_si.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position != 0) {
-                    select_si = (String) parent.getSelectedItem();
+                Log.d("[TEST]", "region_si position => " +  position);
+                select_si = (String) parent.getSelectedItem();
+                if(position != 0 && !select_si.equals("")) {
+                    Log.d("[TEST]", "select_si => " + select_si);
+                    region_si.add(select_si);
                 }
+
                 ArrayAdapter guAdapter;
                 switch (position) {
                     case 1:
@@ -228,14 +303,11 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         spinner_gu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("[TEST]", "position => " + position);
-                Log.d("[TEST]", "select_gu => " + select_gu);
+                Log.d("[TEST]", "region_gu position => " + position);
                 select_gu = (String) parent.getSelectedItem();
-                if(position == 0) {
-
-                } else if (select_gu.equals("")) {
-
-                } else {
+                if(position != 0 && !select_gu.equals("")) {
+                    Log.d("[TEST]", "select_gu => " + select_gu);
+                    region_gu.add(select_gu);
                     str += select_si + " " + select_gu + "\n";
                     selected_view.setText(str);
                     spinner_si.setSelection(0);
@@ -252,8 +324,15 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Log.d("[TEST]", "region_si.size() => " + region_si.size());
+                Log.d("[TEST]", "region_gu.size() => " + region_gu.size());
                 //확인 버튼 누르면
-                textView_region.setText(str);
+                for (int a=0; a<region_si.size(); a++) {
+                    show += region_si.get(a) + " " + region_gu.get(a) + "\n";
+                    Log.d("[TEST]", "region_si.get(a) => " + region_si.get(a));
+                    Log.d("[TEST]", "region_gu.get(a) => " + region_gu.get(a));
+                }
+                textView_region.setText(show);
                 textView_region.setVisibility(View.VISIBLE);
             }
         });
@@ -264,11 +343,14 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         alertDialog.show();
     }
 
-    private void tagDialog() {
+    public void tagDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
         builder.setMessage("태그를 골라주세요.");
+
         str = "";
+        show = "";
+
         Spinner spinner_tag = region_view.findViewById(R.id.spinner_tag);
         TextView selected_view = region_view.findViewById(R.id.selected_view);
         spinner_tag.setVisibility(View.VISIBLE);
@@ -280,6 +362,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(position != 0) {
                     select_tag = (String) parent.getSelectedItem();
+                    member_tag.add(select_tag);
+                    Log.d("[TEST]", "foret_tag.size() => " + member_tag.size());
                     str += "#" + select_tag + " ";
                     selected_view.setText(str);
                     spinner_tag.setSelection(0);
@@ -296,7 +380,11 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //확인 버튼 누르면
-                textView_tag.setText(str);
+                for(int a=0; a<member_tag.size(); a++) {
+                    show += "#" + member_tag.get(a) + " ";
+                    Log.d("[TEST]", "foret_tag.get(a) => " +member_tag.get(a));
+                }
+                textView_tag.setText(show);
                 textView_tag.setVisibility(View.VISIBLE);
             }
         });
@@ -334,9 +422,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                     case 0: //새로 촬영하기-카메라 호출
                         filePath = PhotoHelper.getInstance().getNewPhotoPath(); //저장할 사진 경로
                         Log.d("[TEST]", "photoPath = "+filePath);
-
-                        File file = new File(filePath);
-                        Uri uri = null;
+                        file = new File(filePath);
+                       uri = null;
 
                         //카메라앱 호출을 위한 암묵적 인텐트 (action과 uri가 필요하다)
                         intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -370,6 +457,51 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         alertDialog.show();
     }
 
+    
+    //여기서부터
+    private void tryToSignUp() {
+
+        String[] str_si = new String[region_si.size()];
+        String[] str_gu = new String[region_gu.size()];
+
+        for(int a=0; a<str_si.length; a++) {
+            str_si[a] = region_si.get(a);
+            str_gu[a] = region_gu.get(a);
+        }
+        String[] str_tag = new String[member_tag.size()];
+        for(int a=0; a<str_tag.length; a++) {
+            str_tag[a] = member_tag.get(a);
+        }
+
+        String deviceToken = "test";
+
+        RequestParams params = new RequestParams();
+        params.put("name", name);
+        params.put("email", email);
+        params.put("password", pw2);
+        params.put("birth", birth);
+        params.put("nickname", nickname);
+        params.put("region_si", str_si);
+        params.put("region_gu", str_gu);
+        params.put("deviceToken", deviceToken);
+        params.put("tag", str_tag);
+
+        Log.e("[test]",name+", "+email+", "+pw2+", "+birth+", "+nickname);
+
+        //String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
+        String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
+
+        try {
+            if(file != null) params.put("photo", file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        //멀티파트리퀘스트 형태로 보내는 메서드
+        params.setForceMultipartEntityContentType(true);
+        client.post(url, params, new Response(activity));
+
+    }
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -384,14 +516,167 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                     Glide.with(this).load(filePath).into(profile);
                     break;
                 case 300 :
-                    String uri = data.getData().toString();
-                    String fileName = uri.substring(uri.lastIndexOf("/")+1);
+                    String uri1 = data.getData().toString();
+                    String fileName = uri1.substring(uri1.lastIndexOf("/")+1);
                     Log.d("[TEST]", "fileName = "+fileName);
                     filePath= FileUtils.getPath(this, data.getData());
+                    file = new File(filePath);
                     Log.d("[TEST]", "filePath = "+filePath);
                     Toast.makeText(this, fileName+"을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
                     Glide.with(this).load(filePath).into(profile);
+                    uri = data.getData();
+
+
             }
         }
     }
+
+    private class Response extends AsyncHttpResponseHandler {
+        Activity activity;
+        public Response(Activity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String result = new String (responseBody);
+
+            try {
+                JSONObject json = new JSONObject(result);
+                String memberRT = json.getString("memberRT");
+                String memberTagRT = json.getString("memberTagRT");
+                String memberRegionRT = json.getString("memberRegionRT");
+                String memberPhotoRT = json.getString("memberPhotoRT");
+
+                if(memberRT.equals("OK")){
+                    Toast.makeText(activity,"결과\n memberRT : "+memberRT+"\nmemberTagRT : "+memberTagRT+"\n memberRegionRT : "+memberRegionRT+"\n memberPhotoRT : "+memberPhotoRT
+                    ,Toast.LENGTH_LONG).show();
+                    String timestamp = CalendarHelper.getInstance().getCurrentTimeFull();
+
+                    //파이어 베이스 생성
+                    ModelUser modelUser = new ModelUser();
+                    modelUser.setEmail(email);
+                    modelUser.setUser_id(pw2);  //원래는 유저 id가 들어가야 함.
+                    modelUser.setNickname(nickname);
+                    modelUser.setJoineddate(timestamp);
+
+                    registerUser(modelUser);
+                    Log.e("[test]","성공후 데이터"+", "+email+", "+pw2+", "+timestamp+", "+nickname);
+
+                }else {
+                    Toast.makeText(activity, "등록 실패..", Toast.LENGTH_SHORT).show();
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(activity, "통신실패, 원인 : "+error.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //신규 등록 이메일 + 유저 Id를 통해
+    public void registerUser(final ModelUser chatuser) {
+        Log.e("[test]","유저등록시작");
+        FirebaseAuth mAuth;
+        ProgressDialogHelper.getInstance().getProgressbar(this,"파이어베이스 생성중");
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.createUserWithEmailAndPassword(chatuser.getEmail(), chatuser.getUser_id())
+                .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+
+                        //성공 시 firebase 에 유저 등록됨. 이에 uID를 받음.
+                        sendImageMessage(uri);
+                        Log.e("[test]","이미지 등록 종료");
+                        if (task.isSuccessful()) {
+                            Log.e("[test]","유저등록성공");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            //유저 정보 얻기
+                            String email = user.getEmail();
+                            String uid = user.getUid();
+                            //해쉬멥에 담아서 저장
+                            HashMap<Object, String> hashMap = new HashMap<>();
+                            hashMap.put("email", email);
+                            hashMap.put("uid", uid);
+                            hashMap.put("nickname", chatuser.getNickname());
+                            hashMap.put("photoRoot", downloadUri);
+                            hashMap.put("user_id", chatuser.getUser_id());
+                            hashMap.put("joineddate",chatuser.getDate());
+
+                            Log.e("[test]","DB 유저 데이터 업로드");
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            //파이어 베이스에 유저 등록하기
+                            DatabaseReference reference = database.getReference("Users");
+
+                            //유저를 헤쉬맵을 통해 등록하기
+                            reference.child(uid).setValue(hashMap);
+
+
+                            ProgressDialogHelper.getInstance().removeProgressbar();
+                            intent = new Intent(GuideActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+
+                        } else {
+                            Log.w("TAG", "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+           public void onFailure(@NonNull Exception e) {
+                //사용중인 이메일이 있을때 나옴.
+                Toast.makeText(context, "Fail : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+    }
+
+    //파베에 채팅 이미지 보내기기
+    private void sendImageMessage(Uri image_rui) {
+        Log.e("[test]","이미지 등록 시작");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        String timeStamp = "" + System.currentTimeMillis();
+        String fileNameAndPath = "ChatGroupImages/" + "post_" + timeStamp + " by " + user.getUid() + " file : ";
+
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_rui);
+            ByteArrayOutputStream baos = null;
+            baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+            StorageReference ref = FirebaseStorage.getInstance().getReference().child(fileNameAndPath + image_rui.getLastPathSegment());
+            ref.putBytes(data)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Log.e("[test]","이미지등록성공");
+                           Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                            while (!uriTask.isSuccessful()) ;
+                            downloadUri = uriTask.getResult().toString();
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            ProgressDialogHelper.getInstance().removeProgressbar();
+                            Log.e("[test]","이미지등록 실패");
+                        }
+                    });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
