@@ -59,13 +59,15 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <Button
+                <ToggleButton
                     android:id="@+id/button_like"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_weight="0"
                     android:background="@drawable/like_selector"
-                    android:textSize="3dp" />
+                    android:text="ToggleButton"
+                    android:textOff=" "
+                    android:textOn=" " />
 
                 <TextView
                     android:id="@+id/textView5"
