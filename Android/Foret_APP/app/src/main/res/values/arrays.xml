@@ -6,4 +6,90 @@
         <item>일정</item>
         <item>공지사항</item>
     </string-array>
+
+    <!-- 가이드 지역 선택 -->
+    <string-array name="region">
+        <item>-- 선택 --</item>
+        <item>서울</item>
+        <item>경기/인천</item>
+        <item>충청/대전</item>
+        <item>강원</item>
+        <item>전라/광주</item>
+        <item>경상/부산/대구/울산</item>
+        <item>제주</item>
+    </string-array>
+
+    <string-array name="seuol_gu">
+        <item>-- 선택 --</item>
+        <item>관악구</item>
+        <item>강남구</item>
+        <item>구로구</item>
+        <item>성동구</item>
+    </string-array>
+
+    <string-array name="gyeonggi_si">
+        <item>-- 선택 --</item>
+        <item>성남시</item>
+        <item>수원시</item>
+        <item>안양시</item>
+        <item>안산시</item>
+    </string-array>
+
+    <string-array name="daejeon_gu">
+        <item>-- 선택 --</item>
+        <item>중구</item>
+        <item>남구</item>
+        <item>동구</item>
+        <item>북구</item>
+    </string-array>
+
+    <string-array name="gangwon_si">
+        <item>-- 선택 --</item>
+        <item>춘천시</item>
+        <item>강릉시</item>
+        <item>속초시</item>
+        <item>삼척시</item>
+    </string-array>
+
+    <string-array name="gwangju_gu">
+        <item>-- 선택 --</item>
+        <item>동구</item>
+        <item>서구</item>
+        <item>남구</item>
+        <item>북구</item>
+    </string-array>
+
+    <string-array name="busan_gu">
+        <item>-- 선택 --</item>
+        <item>동구</item>
+        <item>서구</item>
+        <item>남구</item>
+        <item>중구</item>
+    </string-array>
+
+    <string-array name="jeju_si">
+        <item>-- 선택 --</item>
+        <item>제주시</item>
+        <item>서귀포시</item>
+    </string-array>
+
+    <string-array name="jeju_gu">
+        <item>-- 선택 --</item>
+        <item>한림읍</item>
+        <item>우도면</item>
+        <item>남월읍</item>
+        <item>성산읍</item>
+    </string-array>
+
+    <string-array name="tag">
+        <item>-- 선택 --</item>
+        <item>프로그래밍</item>
+        <item>Spring</item>
+        <item>Java</item>
+        <item>Android</item>
+        <item>Sql</item>
+        <item>국어</item>
+        <item>영어</item>
+        <item>일어</item>
+    </string-array>
 </resources>
