@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    tools:context=".activity.chat.chatactivity.GroupChatCreatectivity">
+
+
+    <!--그룹 내용 설정-->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imageViewGroup"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/textViewForGroupName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageViewGroup"
+        android:layout_marginTop="20dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="그룹이름"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#121111" />
+
+    <TextView
+        android:id="@+id/textViewForGroupDescription"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@+id/textViewForGroupName"
+        android:layout_marginTop="20dp"
+        android:background="@color/white"
+        android:text="그룹설명"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#191818" />
+
+    <Button
+        android:id="@+id/buttonParticipate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:text="대화 시작하기" />
+
+
+</RelativeLayout>
