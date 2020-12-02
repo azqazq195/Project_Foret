@@ -35,6 +35,7 @@ public class SearchLayoutActivity extends AppCompatActivity implements View.OnCl
     //Button button;
     InputMethodManager inputMethodManager; //키보드 컨트롤 매니저
     Intent intent;
+    //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
