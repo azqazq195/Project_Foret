@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         notifyFragment = new NotifyFragment();
         nav_drawer = findViewById(R.id.nav_drawer);
 
-        container.addView(nav_drawer);
-        container.openDrawer(GravityCompat.START);
-
         nav_bottom.setOnNavigationItemSelectedListener(this);
         nav_bottom.setItemIconTintList(null);
 

@@ -74,7 +74,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
 
         testData();
 
-        button1.setOnClickListener(this); //
+        button1.setOnClickListener(this);
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
         button4.setOnClickListener(this);
@@ -82,6 +82,8 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
 
         return rootView;
     }
+
+
 
     private void testData() {
         for(int a=0; a<10; a++) {

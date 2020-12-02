@@ -16,7 +16,6 @@
             android:id="@+id/nav_drawer"
             android:layout_width="280dp"
             android:layout_height="match_parent"
-            android:layout_gravity="right"
             android:visibility="visible"
             app:headerLayout="@layout/drawer_header_main"
             app:itemHorizontalPadding="30dp"
