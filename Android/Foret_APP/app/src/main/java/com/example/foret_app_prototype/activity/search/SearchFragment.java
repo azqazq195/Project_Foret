@@ -2,14 +2,6 @@ package com.example.foret_app_prototype.activity.search;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,13 +11,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.activity.foret.MakeForetActivity;
-import com.example.foret_app_prototype.adapter.RecyclerAdapter1;
 import com.example.foret_app_prototype.adapter.RecyclerAdapter2;
 import com.example.foret_app_prototype.adapter.RecyclerAdapter3;
 import com.example.foret_app_prototype.model.Test;
@@ -137,8 +135,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             case R.id.item_search :
                 layout_search.setVisibility(View.VISIBLE);
                 break;
-            case R.id.item_menu :
-                Toast.makeText(activity, "햄버거 메뉴 나타남", Toast.LENGTH_SHORT).show();
+            case R.id.item_menu : //햄버거 메뉴 열기
+                DrawerLayout container = activity.findViewById(R.id.container);
+                container.openDrawer(GravityCompat.END);
                 break;
         }
         return super.onOptionsItemSelected(item);
