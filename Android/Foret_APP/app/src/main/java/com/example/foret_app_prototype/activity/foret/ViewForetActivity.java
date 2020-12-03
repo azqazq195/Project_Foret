@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.board.ListForetBoardActivity;
 import com.example.foret_app_prototype.activity.home.HomeFragment;
+import com.example.foret_app_prototype.activity.login.SessionManager;
 import com.example.foret_app_prototype.adapter.foret.ForetBoardAdapter;
 import com.example.foret_app_prototype.model.Foret;
 import com.example.foret_app_prototype.model.ForetBoard;
@@ -80,6 +81,41 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        getFindId(); // 객체 초기화
+
+        getMember(); // 회원 정보 가져오기
+
+        foretDTO = (ForetDTO) getIntent().getSerializableExtra("foretDTO");
+
+        //GRADE = getIntent().getIntExtra("GRADE", 0);
+
+        if(GRADE == 0) { //포레 가입전
+            button1.setVisibility(View.VISIBLE);
+        } else if(GRADE == 1) { //가입한 상태
+            button2.setVisibility(View.VISIBLE);
+        } else if(GRADE == 2) { //마스터
+            button3.setVisibility(View.VISIBLE);
+        }
+
+        dataSetting(); // 데이터 세팅
+
+
+    }
+
+    private void getMember() {
+        SessionManager sessionManager = new SessionManager(this);
+        String email = sessionManager.getSessionEmail();
+        String password = sessionManager.getSessionPassword();
+        url = "http://34.72.240.24:8085/foret/search/member.do";
+        client = new AsyncHttpClient();
+        viewForetResponse = new ViewForetResponse();
+        RequestParams params = new RequestParams();
+        params.put("email", email);
+        params.put("password", password);
+        client.post(url, params, viewForetResponse);
+    }
+
+    private void getFindId() {
         button1 = findViewById(R.id.button1);
         button2 = findViewById(R.id.button2);
         button3 = findViewById(R.id.button3);
@@ -93,19 +129,6 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         textView_intro = findViewById(R.id.textView_intro);
         listView_notice = findViewById(R.id.listView_notice);
         listView_sche = findViewById(R.id.listView_sche);
-
-        foretDTO = (ForetDTO) getIntent().getSerializableExtra("foretDTO");
-
-        //GRADE = getIntent().getIntExtra("GRADE", 0);
-        if(GRADE == 0) { //포레 가입전
-            button1.setVisibility(View.VISIBLE);
-        } else if(GRADE == 1) { //가입한 상태
-            button2.setVisibility(View.VISIBLE);
-        } else if(GRADE == 2) { //마스터
-            button3.setVisibility(View.VISIBLE);
-        }
-
-        dataSetting();
 
         button1.setOnClickListener(this);
         button2.setOnClickListener(this);
@@ -206,13 +229,13 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void onStart() {
             super.onStart();
-            Log.d("[TEST]", "MainFragmentResponse onStart() 호출");
+            Log.d("[TEST]", "ViewForetResponse onStart() 호출");
         }
 
         @Override
         public void onFinish() {
             super.onFinish();
-            Log.d("[TEST]", "MainFragmentResponse onFinish() 호출");
+            Log.d("[TEST]", "ViewForetResponse onFinish() 호출");
             url = "http://34.72.240.24:8085/search/homeFragement.do";
             foretBoardResponse = new ForetBoardResponse();
             RequestParams params = new RequestParams();
@@ -242,7 +265,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         }
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(ViewForetActivity.this, "MainFragmentResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ViewForetActivity.this, "ViewForetResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
 

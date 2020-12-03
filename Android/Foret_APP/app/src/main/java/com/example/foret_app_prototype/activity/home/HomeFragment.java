@@ -108,17 +108,7 @@ public class HomeFragment extends Fragment
         intent = activity.getIntent();
         searchFragment = new SearchFragment();
 
-        SessionManager sessionManager = new SessionManager(getContext());
-        String email = sessionManager.getSessionEmail();
-        String password = sessionManager.getSessionPassword();
-
-        url = "http://34.72.240.24:8085/foret/search/member.do";
-        client = new AsyncHttpClient();
-        mainFragmentResponse = new MainFragmentResponse();
-        RequestParams params = new RequestParams();
-        params.put("email", email);
-        params.put("password", password);
-        client.post(url, params, mainFragmentResponse);
+        getMember(); // 회원 정보 가져오기
 
         // 뷰페이저(포레)
         foretDTOList = new ArrayList<>();
@@ -146,6 +136,20 @@ public class HomeFragment extends Fragment
         button2.setOnClickListener(this);
 
         return rootView;
+    }
+
+    private void getMember() {
+        SessionManager sessionManager = new SessionManager(getContext());
+        String email = sessionManager.getSessionEmail();
+        String password = sessionManager.getSessionPassword();
+
+        url = "http://34.72.240.24:8085/foret/search/member.do";
+        client = new AsyncHttpClient();
+        mainFragmentResponse = new MainFragmentResponse();
+        RequestParams params = new RequestParams();
+        params.put("email", email);
+        params.put("password", password);
+        client.post(url, params, mainFragmentResponse);
     }
 
     @Override
