@@ -19,10 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.SearchLayoutActivity">
-        </activity>
+        <activity android:name=".activity.menu.EditMyInfoActivity"></activity>
+        <activity android:name=".activity.menu.AppGuideActivity" />
+        <activity android:name=".activity.menu.AppNoticeActivity" />
+        <activity android:name=".activity.menu.MyInfoActivity" />
+        <activity android:name=".activity.SearchLayoutActivity" />
         <activity android:name=".activity.free.ReadFreeActivity" />
-        <activity android:name=".activity.chat.chatactivity.GroupChatCreatectivity"/>
+        <activity android:name=".activity.chat.chatactivity.GroupChatCreatectivity" />
         <activity android:name=".activity.chat.chatactivity.GroupJoinActivity" />
         <activity android:name=".activity.chat.chatactivity.GroupChatActivity" />
         <activity android:name=".activity.chat.chatactivity.ChatActivity" />
@@ -30,7 +33,6 @@
         <activity android:name=".activity.login.GuideActivity" />
         <activity android:name=".activity.foret.board.ListForetBoardActivity" />
         <activity android:name=".activity.foret.EditForetActivity" />
-        <activity android:name=".activity.menu.EditMYInformActivity" />
         <activity android:name=".activity.foret.board.ReadForetBoardActivity" />
         <activity android:name=".activity.foret.board.EditForetBoardActivity" />
         <activity android:name=".activity.foret.board.WriteForetBoardActivity" />
@@ -40,9 +42,7 @@
         <activity android:name=".activity.free.EditFreeActivity" />
         <activity android:name=".activity.free.WriteFreeActivity" />
         <activity android:name=".activity.login.JoinUsActivity" />
-        <activity android:name=".activity.login.LoginActivity">
-
-        </activity>
+        <activity android:name=".activity.login.LoginActivity" />
         <activity android:name=".activity.login.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

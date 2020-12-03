@@ -1,8 +1,9 @@
 package com.example.foret_app_prototype.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class MemberDTO {
+public class MemberDTO implements Serializable {
     private int id;
     private String email;
     private String password;

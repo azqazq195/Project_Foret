@@ -1,6 +1,7 @@
 package com.example.foret_app_prototype.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,8 @@ import com.example.foret_app_prototype.activity.chat.ChatFragment;
 import com.example.foret_app_prototype.activity.free.FreeFragment;
 import com.example.foret_app_prototype.activity.home.HomeFragment;
 import com.example.foret_app_prototype.activity.login.SessionManager;
+import com.example.foret_app_prototype.activity.menu.AppNoticeActivity;
+import com.example.foret_app_prototype.activity.menu.MyInfoActivity;
 import com.example.foret_app_prototype.activity.notify.NotifyFragment;
 import com.example.foret_app_prototype.activity.search.SearchFragment;
 import com.example.foret_app_prototype.model.MemberDTO;
@@ -52,8 +55,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     AsyncHttpClient client;
     HttpResponse response;
     String url = "http://192.168.55.172:8081/foret/search/member.do";
-    TextView button_out, drawer_text1, drawer_text2 ,drawer_text3;
+    TextView button_out, drawer_text1, drawer_text2 ,drawer_text3, drawer_text4;
     ImageView button_out2, button_drawcancel, profile;
+    Intent intent;
 
 
     @Override
@@ -75,7 +79,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         button_drawcancel = findViewById(R.id.button_drawcancel); //햄버거 닫기
         drawer_text1 = findViewById(R.id.drawer_text1); //아이디
         drawer_text2 = findViewById(R.id.drawer_text2); //이메일주소
-        drawer_text3 = findViewById(R.id.drawer_text3); //가입일
+        drawer_text3 = findViewById(R.id.drawer_text3); //멤버아이디
+        drawer_text4 = findViewById(R.id.drawer_text4); //가입일
         profile = findViewById(R.id.profile); //햄버거메뉴에 들어갈 프로필사진
 
         nav_bottom.setOnNavigationItemSelectedListener(this);
@@ -120,10 +125,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, notifyFragment).commit();
                 break;
             case R.id.drawer_notice : //햄버거 공지사항 버튼
+                intent = new Intent(this, AppNoticeActivity.class);
+                startActivity(intent);
                 break;
-            case R.id.drawer_myinfo : //햄버거 내정보 수정
+            case R.id.drawer_myinfo : //햄버거 내정보
+                intent = new Intent(this, MyInfoActivity.class);
+                intent.putExtra("memberDTO", memberDTO);
+                startActivity(intent);
                 break;
             case R.id.drawer_help : //햄버거 도움말
+                Toast.makeText(this, "레이아웃으로 도움말 설명할거 레이아웃 5장", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.drawer_foret : //햄버거 foret ->그냥 넣어놈
                 break;
