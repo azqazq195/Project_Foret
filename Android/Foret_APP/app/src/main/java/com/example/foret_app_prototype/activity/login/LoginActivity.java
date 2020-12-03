@@ -1,9 +1,13 @@
 package com.example.foret_app_prototype.activity.login;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +17,11 @@ import android.widget.Toast;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.model.MemberDTO;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -39,6 +48,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     TextView button1, button2, button3, button4;
     EditText emailEditText, passwordEditText;
 
+    FirebaseAuth mAuth;
+    Context context;
+    FirebaseUser user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +63,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         button4 = findViewById(R.id.button4);
         emailEditText = findViewById(R.id.editText1);
         passwordEditText = findViewById(R.id.editText2);
-
+        context = this;
         client = new AsyncHttpClient();
         response = new HttpResponse();
 
@@ -60,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         button3.setOnClickListener(this); //비밀번호 찾기
         button4.setOnClickListener(this); //회원가입
 
-
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -79,10 +92,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Intent intent = null;
         switch (v.getId()) {
             case R.id.button0 :
+                //파이어 베이스용
+                email = emailEditText.getText().toString().trim();
+                pwd = passwordEditText.getText().toString().trim();
+
                 RequestParams params = new RequestParams();
                 params.put("email", emailEditText.getText().toString().trim());
                 params.put("password", passwordEditText.getText().toString().trim());
-                Toast.makeText(this,"email : "+ emailEditText.getText().toString().trim()+"pw"+passwordEditText.getText().toString().trim(),Toast.LENGTH_LONG).show();
+
                 client.post(url, params, response);
                 break;
             case R.id.button1 :
@@ -117,6 +134,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 JSONObject json = new JSONObject(str);
                 String RT = json.getString("RT");
                 if(RT.equals("OK")) {
+                    //파이어 베이스
+                    joinedMember(email,pwd);
+
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     MemberDTO memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
@@ -135,4 +155,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    //파이어 베이스 로그인
+    public void joinedMember(String member_email, String member_id) {
+
+        mAuth.signInWithEmailAndPassword(member_email, member_id).
+                addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "signInWithEmail:success");
+                            user = mAuth.getCurrentUser();
+                        } else {
+                            Log.w("TAG", "signInWithEmail:failure", task.getException());
+                            Toast.makeText(context, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 }
