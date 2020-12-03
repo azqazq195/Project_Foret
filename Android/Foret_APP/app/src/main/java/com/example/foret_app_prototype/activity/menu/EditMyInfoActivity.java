@@ -34,9 +34,19 @@ import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.model.MemberDTO;
+import com.google.android.gms.common.api.Response;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class EditMyInfoActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -51,6 +61,12 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     String select_gu = "";
     String select_tag = "";
     String str = "";
+    String tag_str_result = "";
+    List<String> region_si;
+    List<String> region_gu;
+    List<String> member_tag;
+    AsyncHttpClient client;
+    MyInfoEditResponse response;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +88,8 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         editText3 = findViewById(R.id.editText3);
         textView_confirm = findViewById(R.id.textView_confirm);
         profile = findViewById(R.id.profile);
+        client = new AsyncHttpClient();
+        response = new MyInfoEditResponse();
 
         dataSetting();
 
@@ -104,6 +122,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         editText1.setText(memberDTO.getNickname());
         button1.setText(getIntent().getStringExtra("region"));
         button2.setText(getIntent().getStringExtra("tag"));
+        Glide.with(this).load(memberDTO.getPhoto()).into(profile);
     }
 
     @Override //메뉴 설정
@@ -124,19 +143,10 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                 if(!editText2.getText().toString().trim().equals(editText3.getText().toString().trim())) {
                     return false;
                 }
-                RequestParams params = new RequestParams();
-                params.put("name", memberDTO.getName());
-                params.put("email", memberDTO.getEmail());
-                params.put("password", editText2.getText().toString().trim());
-                params.put("nickname", editText1.getText().toString().trim());
-                params.put("birth", memberDTO.getBirth());
-                //params.put("region_si", );
-                params.put("tag", button1.getText().toString().trim());
-
-                Toast.makeText(this, "수정완료", Toast.LENGTH_SHORT).show();
-                finish();
+                requestModify();
                 break;
             case android.R.id.home :
+                setResult(RESULT_CANCELED);
                 finish();
                 break;
         }
@@ -173,8 +183,9 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         spinner_si.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position != 0) {
-                    select_si = (String) parent.getSelectedItem();
+                if (position != 0 && !select_si.equals("")) {
+                    Log.d("[TEST]", "select_si => " + select_si);
+                    region_si.add(select_si);
                 }
                 ArrayAdapter guAdapter;
                 switch (position) {
@@ -220,15 +231,14 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("[TEST]", "position => " + position);
-                Log.d("[TEST]", "select_gu => " + select_gu);
                 select_gu = (String) parent.getSelectedItem();
-                if(position == 0) {
-
-                } else if (select_gu.equals("")) {
-
-                } else {
-                    str += select_si + " " + select_gu + "\n";
-                    selected_view.setText(str);
+                if (position != 0 && !select_gu.equals("")) {
+                    Log.d("[TEST]", "select_gu => " + select_gu);
+                    region_gu.add(select_gu);
+                    str += select_si + ", " + select_gu + ", ";
+                    int str_length = str.length(); //스트링 길이
+                    tag_str_result = str.substring(1, str_length);
+                    selected_view.setText(tag_str_result);
                     spinner_si.setSelection(0);
                     spinner_gu.setSelection(0);
                 }
@@ -243,7 +253,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //확인 버튼 누르면
-                button1.setText(str);
+                button1.setText(tag_str_result);
             }
         });
         builder.setNegativeButton("취소", null);
@@ -269,6 +279,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(position != 0) {
                     select_tag = (String) parent.getSelectedItem();
+                    member_tag.add(select_tag);
                     str += "#" + select_tag + " ";
                     selected_view.setText(str);
                     spinner_tag.setSelection(0);
@@ -284,7 +295,6 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //확인 버튼 누르면
                 button2.setText(str);
             }
         });
@@ -363,6 +373,70 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                     Toast.makeText(this, fileName+"을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
                     Glide.with(this).load(filePath).into(profile);
             }
+        }
+    }
+
+    private void requestModify() {
+        String[] str_si = new String[region_si.size()];
+        String[] str_gu = new String[region_gu.size()];
+
+        for (int a = 0; a < str_si.length; a++) {
+            str_si[a] = region_si.get(a);
+            str_gu[a] = region_gu.get(a);
+        }
+        String[] str_tag = new String[member_tag.size()];
+        for (int a = 0; a < str_tag.length; a++) {
+            str_tag[a] = member_tag.get(a);
+        }
+        memberDTO.setPassword(editText2.getText().toString().trim());
+        memberDTO.setNickname(editText1.getText().toString().trim());
+        memberDTO.setRegion_si(region_si);
+        memberDTO.setRegion_gu(region_gu);
+        memberDTO.setTag(member_tag);
+        RequestParams params = new RequestParams();
+        params.put("name", memberDTO.getName());
+        params.put("email", memberDTO.getEmail());
+        params.put("birth", memberDTO.getBirth());
+        params.put("region_si", str_si);
+        params.put("region_gu", str_gu);
+        params.put("tag", str_tag);
+        params.put("id", memberDTO.getId());
+        if(filePath != null) {
+            try {
+                params.put("photo", new File(filePath));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        params.setForceMultipartEntityContentType(true);
+        client.post("http://34.72.240.24:8085/foret/member/member_modify.do", params, response);
+    }
+
+    class MyInfoEditResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str_json = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str_json);
+                if(json.getString("memberRT").equals("OK") && json.getString("memberRegionRT").equals("OK")
+                        && json.getString("memberTagRT").equals("OK") && json.getString("memberPhotoRT").equals("OK")) {
+                    Toast.makeText(EditMyInfoActivity.this, "내 정보 수정이 완료 되었습니다.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    intent.putExtra("memberDTO", memberDTO);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                } else {
+                    Toast.makeText(EditMyInfoActivity.this, "내 정보 수정 실패", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(EditMyInfoActivity.this, "수정하기 500에러 뜸", Toast.LENGTH_SHORT).show();
         }
     }
 }
