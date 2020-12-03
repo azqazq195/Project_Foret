@@ -16,9 +16,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,10 +29,27 @@ import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
+import com.example.foret_app_prototype.model.Foret;
+import com.example.foret_app_prototype.model.Member;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MakeForetActivity extends AppCompatActivity implements View.OnClickListener {
+    Member member;
+
+    AsyncHttpClient client;
+    ForetResponse foretResponse;
+    String url = "";
 
     ImageView image_View_picture, button_cancel;
     EditText editText_name, editText_member, editText_intro;
@@ -37,6 +57,17 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     TextView button_region, button_tag;
     String filePath = null;
     Intent intent;
+    File file;
+
+    String select_si = "";
+    String select_gu = "";
+    String select_tag = "";
+    String str = "";
+    String show = "";
+
+    List<String> region_si;
+    List<String> region_gu;
+    List<String> foret_tag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +83,10 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         button_region = findViewById(R.id.button_region);
         button_tag = findViewById(R.id.button_tag);
 
+        region_si = new ArrayList<>();
+        region_gu = new ArrayList<>();
+        foret_tag = new ArrayList<>();
+
         button_cancel.setOnClickListener(this);
         button_picture.setOnClickListener(this);
         button_complete.setOnClickListener(this);
@@ -64,16 +99,12 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_complete : //완료(확인 버튼)
-                if(editText_name.getText().toString().trim().equals("")|| editText_intro.getText().toString().trim().equals("")||editText_member.getText().toString().trim().equals("")||
-                        button_region.getText().toString().trim().equals("지역 고르기")||button_tag.getText().toString().trim().equals("태그 고르기")) {
-                    Toast.makeText(this, "빈 항목이 없도록 채워주세요", Toast.LENGTH_SHORT).show();
-                    return;
+                if(foretInsert()) {
+                    Toast.makeText(this, "포레를 만들었습니다.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(this, ViewForetActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
-                Toast.makeText(this, "포레를 만들었습니다.", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, ViewForetActivity.class);
-                intent.putExtra("포레정보DTO", "포레정보DTO");
-                startActivity(intent);
-                finish();
                 break;
             case R.id.button_cancel : //취소 버튼
                 finish();
@@ -91,37 +122,209 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    private boolean foretInsert() {
+        String name = editText_name.getText().toString().trim();
+        int max_member = Integer.parseInt(editText_member.getText().toString().trim());
+        String introduce = editText_intro.getText().toString().trim();
+
+        if(name.equals("")) {
+            Toast.makeText(this, "포레 이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(max_member == 0) {
+            Toast.makeText(this, "최소 1명이상을 입력해주세요.", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(introduce.equals("")) {
+            Toast.makeText(this, "포레 소개를 입력해주세요.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        String[] str_si = new String[region_si.size()];
+        String[] str_gu = new String[region_gu.size()];
+        for(int a=0; a<str_si.length; a++) {
+            str_si[a] = region_si.get(a);
+            str_gu[a] = region_gu.get(a);
+        }
+
+        String[] str_tag = new String[foret_tag.size()];
+        for(int a=0; a<str_tag.length; a++) {
+            str_tag[a] = foret_tag.get(a);
+        }
+
+        client = new AsyncHttpClient();
+        foretResponse = new ForetResponse();
+        RequestParams params = new RequestParams();
+
+        params.put("leader_id", member.getId());
+        params.put("name", name);
+        params.put("introduce", introduce);
+        params.put("max_member", max_member);
+        params.put("tag", str_tag);
+        params.put("region_si", str_si);
+        params.put("region_gu", str_gu);
+        if(file != null) {
+            params.put("photo", filePath);
+        }
+        client.post(url, params, foretResponse);
+
+        return true;
+    }
+
     public void regionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("지역을 골라주세요.");
+        View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
+        builder.setTitle("지역을 선택해주세요.");
+
+        str = "";
+        show = "";
+
+        Spinner spinner_si = region_view.findViewById(R.id.spinner_si);
+        Spinner spinner_gu = region_view.findViewById(R.id.spinner_gu);
+        TextView selected_view = region_view.findViewById(R.id.selected_view);
+
+        spinner_si.setVisibility(View.VISIBLE);
+        spinner_si.setSelection(0);
+
+        spinner_si.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("[TEST]", "region_si position => " +  position);
+                select_si = (String) parent.getSelectedItem();
+                if(position != 0 && !select_si.equals("")) {
+                    Log.d("[TEST]", "select_si => " + select_si);
+                    region_si.add(select_si);
+                }
+
+                ArrayAdapter guAdapter;
+                switch (position) {
+                    case 1:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.seuol_gu, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 2:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeonggi_si, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 3:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daejeon_gu, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 4:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gangwon_si, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 5:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gwangju_gu, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 6:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.busan_gu, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 7:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeju_si, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                }
+                spinner_gu.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        spinner_gu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("[TEST]", "region_gu position => " + position);
+                select_gu = (String) parent.getSelectedItem();
+                if(position != 0 && !select_gu.equals("")) {
+                    Log.d("[TEST]", "select_gu => " + select_gu);
+                    region_gu.add(select_gu);
+                    str += select_si + " " + select_gu + "\n";
+                    selected_view.setText(str);
+                    spinner_si.setSelection(0);
+                    spinner_gu.setSelection(0);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Log.d("[TEST]", "region_si.size() => " + region_si.size());
+                Log.d("[TEST]", "region_gu.size() => " + region_gu.size());
                 //확인 버튼 누르면
-                button_region.setText("선택한 지역들");
+                for (int a=0; a<region_si.size(); a++) {
+                    show += region_si.get(a) + " " + region_gu.get(a) + "\n";
+                    Log.d("[TEST]", "region_si.get(a) => " + region_si.get(a));
+                    Log.d("[TEST]", "region_gu.get(a) => " + region_gu.get(a));
+                }
+                button_region.setText(show);
             }
         });
         builder.setNegativeButton("취소", null);
 
+        builder.setView(region_view);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
 
     public void tagDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
         builder.setMessage("태그를 골라주세요.");
+
+        str = "";
+        show = "";
+
+        Spinner spinner_tag = region_view.findViewById(R.id.spinner_tag);
+        TextView selected_view = region_view.findViewById(R.id.selected_view);
+        spinner_tag.setVisibility(View.VISIBLE);
+
+        spinner_tag.setSelection(0);
+
+        spinner_tag.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position != 0) {
+                    select_tag = (String) parent.getSelectedItem();
+                    foret_tag.add(select_tag);
+                    Log.d("[TEST]", "foret_tag.size() => " +foret_tag.size());
+                    str += "#" + select_tag + " ";
+                    selected_view.setText(str);
+                    spinner_tag.setSelection(0);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //확인 버튼 누르면
-                button_tag.setText("선택한 태그들");
+                for(int a=0; a<foret_tag.size(); a++) {
+                    show += "#" + foret_tag.get(a) + " ";
+                    Log.d("[TEST]", "foret_tag.get(a) => " +foret_tag.get(a));
+                }
+                button_tag.setText(show);
             }
         });
         builder.setNegativeButton("취소", null);
 
+        builder.setView(region_view);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-
     }
 
     private void permissionCheck() {
@@ -152,7 +355,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                         filePath = PhotoHelper.getInstance().getNewPhotoPath(); //저장할 사진 경로
                         Log.d("[TEST]", "photoPath = "+filePath);
 
-                        File file = new File(filePath);
+                        file = new File(filePath);
                         Uri uri = null;
 
                         //카메라앱 호출을 위한 암묵적 인텐트 (action과 uri가 필요하다)
@@ -212,4 +415,27 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+
+    class ForetResponse extends AsyncHttpResponseHandler {
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                String rt = json.getString("rt");
+                if(rt.equals("OK")) {
+                    Toast.makeText(MakeForetActivity.this, "포레를 만들었습니다.", Toast.LENGTH_SHORT).show();
+                    finish(); // 현재 액티비티 종료
+                } else {
+                    Toast.makeText(MakeForetActivity.this, "포레를 만들지 못했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(MakeForetActivity.this, "통신 실패", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

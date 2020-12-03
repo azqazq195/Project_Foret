@@ -34,13 +34,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/profile" />
 
-        <TextView
+        <EditText
             android:id="@+id/textView_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="28dp"
             android:layout_marginEnd="20dp"
+            android:inputType="textMultiLine"
             android:letterSpacing="-0.07"
             android:text="포레 이름 들어가는 자리"
             android:textColor="#000000"
