@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     AsyncHttpClient client;
     HttpResponse response;
-    String url = "http://192.168.55.172:8081/foret/search/member.do";
+    String url = "http://34.72.240.24:8085/foret/search/member.do";
 
     Button button0;
     TextView button1, button2, button3, button4;
@@ -82,6 +82,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 RequestParams params = new RequestParams();
                 params.put("email", emailEditText.getText().toString().trim());
                 params.put("password", passwordEditText.getText().toString().trim());
+                Toast.makeText(this,"email : "+ emailEditText.getText().toString().trim()+"pw"+passwordEditText.getText().toString().trim(),Toast.LENGTH_LONG).show();
                 client.post(url, params, response);
                 break;
             case R.id.button1 :

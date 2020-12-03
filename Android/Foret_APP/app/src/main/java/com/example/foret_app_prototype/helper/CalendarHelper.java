@@ -38,7 +38,7 @@ public class CalendarHelper {
         int hh = calendar.get(Calendar.HOUR_OF_DAY);
         int mi = calendar.get(Calendar.MINUTE);
 
-        String currentTime = String.format("%02d일 %02d시 %02d분", dd, hh, mi);
+        String currentTime = String.format("%02d년 %02d월 %02d일 %02d시 %02d분", yy,mm,dd, hh, mi);
         return currentTime;
     }
 
