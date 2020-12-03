@@ -531,7 +531,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
 
         String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
-        //String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
+       // String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
 
         try {
             if (file != null)
@@ -658,7 +658,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         String timestamp = CalendarHelper.getInstance().getCurrentTimeFull();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String timeStamp = "" + System.currentTimeMillis();
-        String fileNameAndPath = "ChatGroupImages/" + "post_" + timeStamp + " by " + user.getUid() + " file : ";
+        String fileNameAndPath = "profileImages/"+user.getUid()+ "_post_" + timeStamp;
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_rui);
             ByteArrayOutputStream baos = null;
