@@ -55,8 +55,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -233,8 +236,9 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 showSelect();
                 break;
             case R.id.button6: // 포레시작
-                ProgressDialogHelper.getInstance().getProgressbar(context, "등록중입니다.");
+
                 tryToSignUp();
+                ProgressDialogHelper.getInstance().getProgressbar(this, "가입 진행중.");
                 /*
                  * intent = new Intent(this, MainActivity.class); startActivity(intent);
                  * finish();
@@ -502,6 +506,12 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
     // 여기서부터
     private void tryToSignUp() {
+        RequestParams params = new RequestParams();
+        params.put("name", name);
+        params.put("email", email);
+        params.put("password", pw2);
+        params.put("birth", birth);
+        params.put("nickname", nickname);
 
         String[] str_si = new String[region_si.size()];
         String[] str_gu = new String[region_gu.size()];
@@ -509,29 +519,21 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         for (int a = 0; a < str_si.length; a++) {
             str_si[a] = region_si.get(a);
             str_gu[a] = region_gu.get(a);
+            params.put("region_si",region_si.get(a)+"시" );
+            params.put("region_gu", region_gu.get(a));
+            Log.e("[test]",region_si.get(a)+", "+region_gu.get(a)+".");
         }
         String[] str_tag = new String[member_tag.size()];
         for (int a = 0; a < str_tag.length; a++) {
             str_tag[a] = member_tag.get(a);
+            params.put("tag", member_tag.get(a));
+            Log.e("[test]",member_tag.get(a)+"가 선택됨.");
         }
-
         String deviceToken = "test";
-
-        RequestParams params = new RequestParams();
-        params.put("name", name);
-        params.put("email", email);
-        params.put("password", pw2);
-        params.put("birth", birth);
-        params.put("nickname", nickname);
-        params.put("region_si", str_si);
-        params.put("region_gu", str_gu);
         params.put("deviceToken", deviceToken);
-        params.put("tag", str_tag);
-
         Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
-
-        String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
-       // String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
+        //String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
+       String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
 
         try {
             if (file != null)
@@ -555,7 +557,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
             String result = new String(responseBody);
-
+            Log.e("[test]", "온석세스 진입");
             try {
                 JSONObject json = new JSONObject(result);
                 String memberRT = json.getString("memberRT");
@@ -563,13 +565,23 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 String memberRegionRT = json.getString("memberRegionRT");
                 String memberPhotoRT = json.getString("memberPhotoRT");
                 member_id = Integer.parseInt(json.getString("member_id"));
+
                 if (memberRT.equals("OK")) {
                     Toast.makeText(
                             activity, "결과\n memberRT : " + memberRT + "\nmemberTagRT : " + memberTagRT
                                     + "\n memberRegionRT : " + memberRegionRT + "\n memberPhotoRT : " + memberPhotoRT,
                             Toast.LENGTH_LONG).show();
-                    //파이어 베이스 이미지 생성
-                    sendImageMessage(uri);
+
+                    ModelUser modelUser = new ModelUser();
+                    String timestamp = CalendarHelper.getInstance().getCurrentTimeFull();
+                    modelUser.setEmail(email);
+                    modelUser.setUser_id(pw2); // 원래는 유저 id가 들어가야 함.
+                    modelUser.setNickname(nickname);
+                    modelUser.setJoineddate(timestamp);
+
+                    //유저 등록
+                    registerUser(modelUser);
+
                 } else {
                     Toast.makeText(activity, "등록 실패..", Toast.LENGTH_SHORT).show();
                 }
@@ -580,8 +592,11 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
         }
 
+
+
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Log.e("[test]", "온페일 진입");
             Toast.makeText(activity, "통신실패, 원인 : " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
@@ -590,7 +605,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     public void registerUser(final ModelUser chatuser) {
         Log.e("[test]", "유저등록시작");
         FirebaseAuth mAuth;
-        ProgressDialogHelper.getInstance().getProgressbar(this, "파이어베이스 생성중");
+
         mAuth = FirebaseAuth.getInstance();
         mAuth.createUserWithEmailAndPassword(chatuser.getEmail(), chatuser.getUser_id())
                 .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
@@ -598,6 +613,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if (task.isSuccessful()) {
+
                             Log.e("[test]", "유저등록성공");
                             FirebaseUser user = mAuth.getCurrentUser();
                             // 유저 정보 얻기
@@ -608,7 +624,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                             hashMap.put("email", email);
                             hashMap.put("uid", uid);
                             hashMap.put("nickname", chatuser.getNickname());
-                            hashMap.put("photoRoot", downloadUri);
+
                             hashMap.put("user_id", chatuser.getUser_id());
                             hashMap.put("joineddate", chatuser.getJoineddate());
 
@@ -616,11 +632,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             // 파이어 베이스에 유저 등록하기
                             DatabaseReference reference = database.getReference("Users");
-
                             // 유저를 헤쉬맵을 통해 등록하기
                             reference.child(uid).setValue(hashMap);
-
-                            ProgressDialogHelper.getInstance().removeProgressbar();
 
                             //세션등록
                             SessionManager sessionManager = new SessionManager(GuideActivity.this);
@@ -630,11 +643,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                             memberDTO.setId(member_id);
                             sessionManager.saveSession(memberDTO);
 
-                            //넘기기
-                            intent = new Intent(GuideActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-
+                            //파이어 베이스 이미지 생성
+                            sendImageMessage(uri);
                         } else {
                             Log.w("TAG", "createUserWithEmail:failure", task.getException());
                             Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show();
@@ -655,7 +665,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     // 파베에 채팅 이미지 보내기기
     private void sendImageMessage(Uri image_rui) {
         Log.e("[test]", "이미지 등록 시작");
-        String timestamp = CalendarHelper.getInstance().getCurrentTimeFull();
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String timeStamp = "" + System.currentTimeMillis();
         String fileNameAndPath = "profileImages/"+user.getUid()+ "_post_" + timeStamp;
@@ -672,25 +682,17 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Log.e("[test]", "이미지등록성공");
                     Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                    while (!uriTask.isSuccessful())
-                        ;
+                    while (!uriTask.isSuccessful());
                     downloadUri = uriTask.getResult().toString();
-                    // 파이어 베이스 생성
-                    ModelUser modelUser = new ModelUser();
-                    modelUser.setEmail(email);
-                    modelUser.setUser_id(pw2); // 원래는 유저 id가 들어가야 함.
-                    modelUser.setNickname(nickname);
-                    modelUser.setJoineddate(timestamp);
+
                     Log.e("[test]", "이미지등록종료");
-                    registerUser(modelUser);
 
-                    Log.e("[test]", "성공후 데이터" + ", " + email + ", " + pw2 + ", " + timestamp + ", " + nickname);
-
+                    addphotopathinfirebase();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    ProgressDialogHelper.getInstance().removeProgressbar();
+
                     Log.e("[test]", "이미지등록 실패");
                 }
             });
@@ -701,5 +703,21 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    //이미지 주소 설정
+    private void addphotopathinfirebase() {
 
+        FirebaseAuth currentUseruser = FirebaseAuth.getInstance();
+        final String userUid = currentUseruser.getUid();
+        DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
+        HashMap<String, Object> photopathupdate = new HashMap<>();
+        photopathupdate.put("photoRoot", downloadUri);
+        userAcitive.updateChildren(photopathupdate);
+
+        ProgressDialogHelper.getInstance().removeProgressbar();
+        //넘기기
+        intent = new Intent(GuideActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+
+    }
 }
