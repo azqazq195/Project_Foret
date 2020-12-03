@@ -69,8 +69,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     Intent intent;
 
     SessionManager sessionManager;
-    String email;
-    String pwd;
 
     FirebaseUser currntuser;
     Context context;
