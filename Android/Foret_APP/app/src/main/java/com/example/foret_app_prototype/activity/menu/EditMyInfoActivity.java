@@ -14,8 +14,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +47,10 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     EditText editText1, editText2, editText3;
     String filePath = null;
     Intent intent;
+    String select_si = "";
+    String select_gu = "";
+    String select_tag = "";
+    String str = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +102,8 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         textView1.setText(memberDTO.getEmail());
         textView2.setText(memberDTO.getId());
         editText1.setText(memberDTO.getNickname());
+        button1.setText(getIntent().getStringExtra("region"));
+        button2.setText(getIntent().getStringExtra("tag"));
     }
 
     @Override //메뉴 설정
@@ -112,10 +121,17 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                     Toast.makeText(this, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
                     return false;
                 }
-
+                if(!editText2.getText().toString().trim().equals(editText3.getText().toString().trim())) {
+                    return false;
+                }
                 RequestParams params = new RequestParams();
                 params.put("name", memberDTO.getName());
                 params.put("email", memberDTO.getEmail());
+                params.put("password", editText2.getText().toString().trim());
+                params.put("nickname", editText1.getText().toString().trim());
+                params.put("birth", memberDTO.getBirth());
+                params.put("region_si", );
+                params.put("tag", button1.getText().toString().trim());
 
                 Toast.makeText(this, "수정완료", Toast.LENGTH_SHORT).show();
                 finish();
@@ -134,12 +150,149 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                 showSelect();
                 break;
             case R.id.button1 :
-                //지역선택 창 띄우기
+                regionDialog();
                 break;
             case R.id.button2 :
-                //태그선택 창 띄우기
+                tagDialog();
                 break;
         }
+    }
+
+    private void regionDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
+        builder.setTitle("지역을 선택해주세요.");
+
+        Spinner spinner_si = region_view.findViewById(R.id.spinner_si);
+        Spinner spinner_gu = region_view.findViewById(R.id.spinner_gu);
+        TextView selected_view = region_view.findViewById(R.id.selected_view);
+
+        spinner_si.setVisibility(View.VISIBLE);
+        spinner_si.setSelection(0);
+
+        spinner_si.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position != 0) {
+                    select_si = (String) parent.getSelectedItem();
+                }
+                ArrayAdapter guAdapter;
+                switch (position) {
+                    case 1:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.seuol_gu, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 2:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeonggi_si, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 3:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daejeon_gu, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 4:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gangwon_si, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 5:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gwangju_gu, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 6:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.busan_gu, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 7:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeju_si, R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                }
+                spinner_gu.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selected_view.setText("최소 한개의 지역을 등록하세요.");
+            }
+        });
+
+        spinner_gu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("[TEST]", "position => " + position);
+                Log.d("[TEST]", "select_gu => " + select_gu);
+                select_gu = (String) parent.getSelectedItem();
+                if(position == 0) {
+
+                } else if (select_gu.equals("")) {
+
+                } else {
+                    str += select_si + " " + select_gu + "\n";
+                    selected_view.setText(str);
+                    spinner_si.setSelection(0);
+                    spinner_gu.setSelection(0);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //확인 버튼 누르면
+                button1.setText(str);
+            }
+        });
+        builder.setNegativeButton("취소", null);
+
+        builder.setView(region_view);
+        android.app.AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void tagDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
+        builder.setMessage("태그를 골라주세요.");
+        str = "";
+        Spinner spinner_tag = region_view.findViewById(R.id.spinner_tag);
+        TextView selected_view = region_view.findViewById(R.id.selected_view);
+        spinner_tag.setVisibility(View.VISIBLE);
+
+        spinner_tag.setSelection(0);
+
+        spinner_tag.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position != 0) {
+                    select_tag = (String) parent.getSelectedItem();
+                    str += "#" + select_tag + " ";
+                    selected_view.setText(str);
+                    spinner_tag.setSelection(0);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //확인 버튼 누르면
+                button2.setText(str);
+            }
+        });
+        builder.setNegativeButton("취소", null);
+
+        builder.setView(region_view);
+        android.app.AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     private void showSelect() {

@@ -18,6 +18,8 @@ import androidx.appcompat.widget.Toolbar;
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.model.MemberDTO;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.RequestParams;
 
 public class MyInfoActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -25,6 +27,9 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
     MemberDTO memberDTO;
     TextView textView1, textView2, textView3, textView4, textView5, textView6, textView7, button_out;
     ImageView profile;
+    String region = "";
+    String tag = "";
+    AsyncHttpClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,8 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
         button_out = findViewById(R.id.button_out);
         profile = findViewById(R.id.profile);
 
+        client = new AsyncHttpClient();
+
         setData();
 
         button_out.setOnClickListener(this);
@@ -59,8 +66,7 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void setData() {
-        String region = (memberDTO.getRegion_si().toString()+","+memberDTO.getRegion_gu()).replace("[", "").replace("]","");
-        String tag = "";
+        region = (memberDTO.getRegion_si().toString()+","+memberDTO.getRegion_gu()).replace("[", "").replace("]","");
         for (int a=0; a<memberDTO.getTag().size(); a++) {
             tag += "#"+memberDTO.getTag().get(a)+" ";
         }
@@ -87,6 +93,8 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.modify :
                 Intent intent = new Intent(this, EditMyInfoActivity.class);
                 intent.putExtra("memberDTO", memberDTO);
+                intent.putExtra("region", region);
+                intent.putExtra("tag", tag);
                 startActivity(intent);
                 break;
             case android.R.id.home :
@@ -111,7 +119,9 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
         builder.setPositiveButton("탈퇴", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //삭제버튼 눌렀을 때 실행되야하는 이벤트->탈퇴성공시 로그인화면으로 보낸다.
+                RequestParams params = new RequestParams();
+                params.put("id", memberDTO.getId());
+                client.post("http://34.72.240.24:8085/foret/member/member_delete.do", params);
             }
         });
         builder.setNegativeButton("취소", null);
