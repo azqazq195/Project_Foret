@@ -9,17 +9,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.activity.login.SplashActivity;
 import com.example.foret_app_prototype.model.MemberDTO;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MyInfoActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -30,6 +39,8 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
     String region = "";
     String tag = "";
     AsyncHttpClient client;
+    Intent intent;
+    DeleteMemberResponse deleteResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,21 +62,17 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
         button_out = findViewById(R.id.button_out);
         profile = findViewById(R.id.profile);
 
+        deleteResponse = new DeleteMemberResponse();
         client = new AsyncHttpClient();
 
-        setData();
+        setData(memberDTO);
+
 
         button_out.setOnClickListener(this);
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //서버에서 데이터 받아와서 setData();
-    }
-
-    private void setData() {
+    private void setData(MemberDTO memberDTO) {
         region = (memberDTO.getRegion_si().toString()+","+memberDTO.getRegion_gu()).replace("[", "").replace("]","");
         for (int a=0; a<memberDTO.getTag().size(); a++) {
             tag += "#"+memberDTO.getTag().get(a)+" ";
@@ -91,11 +98,11 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.modify :
-                Intent intent = new Intent(this, EditMyInfoActivity.class);
+                intent = new Intent(this, EditMyInfoActivity.class);
                 intent.putExtra("memberDTO", memberDTO);
                 intent.putExtra("region", region);
                 intent.putExtra("tag", tag);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
                 break;
             case android.R.id.home :
                 finish();
@@ -121,13 +128,54 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
             public void onClick(DialogInterface dialog, int which) {
                 RequestParams params = new RequestParams();
                 params.put("id", memberDTO.getId());
-                //client.post("http://34.72.240.24:8085/foret/member/member_delete.do", params);
+                client.post("http://34.72.240.24:8085/foret/member/member_delete.do", params, deleteResponse);
             }
         });
         builder.setNegativeButton("취소", null);
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1) {
+            switch (resultCode) {
+                case RESULT_OK :
+                    memberDTO = (MemberDTO) data.getSerializableExtra("memberDTO");
+                    setData(memberDTO);
+                    break;
+                case RESULT_CANCELED : //아무것도 안함
+                    break;
+            }
+        }
+    }
+
+    class DeleteMemberResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if(json.getString("memberRT").equals("OK")) {
+                    Toast.makeText(MyInfoActivity.this, "탈퇴하셨습니다.", Toast.LENGTH_SHORT).show();
+                    intent = new Intent(MyInfoActivity.this, SplashActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                    finish();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(MyInfoActivity.this, "회원탈퇴 500에러뜸", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
