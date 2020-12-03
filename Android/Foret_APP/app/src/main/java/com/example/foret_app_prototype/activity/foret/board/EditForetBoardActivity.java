@@ -227,7 +227,7 @@ public class EditForetBoardActivity extends AppCompatActivity
                         filePath = PhotoHelper.getInstance().getNewPhotoPath(); //저장할 사진 경로
                         Log.d("[TEST]", "photoPath = " + filePath);
 
-                        File file = new File(filePath);
+                        file = new File(filePath);
                         Uri uri = null;
 
                         //카메라앱 호출을 위한 암묵적 인텐트 (action과 uri가 필요하다)

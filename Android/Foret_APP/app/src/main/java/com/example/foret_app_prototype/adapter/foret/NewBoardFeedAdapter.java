@@ -1,7 +1,6 @@
 package com.example.foret_app_prototype.adapter.foret;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,27 +18,32 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.board.ReadForetBoardActivity;
-import com.example.foret_app_prototype.model.Foret;
-import com.example.foret_app_prototype.model.ForetBoard;
-import com.example.foret_app_prototype.model.Member;
+import com.example.foret_app_prototype.model.ForetBoardDTO;
+import com.google.gson.Gson;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
+
 public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Activity activity;
-    private Member member;
-    private List<Foret> foretList;
-    private List<ForetBoard> foretBoardList = new ArrayList<>();
+    private List<ForetBoardDTO> foretBoardDTOList;
 
     private final int TYPE_HEADER = 0;
     private final int TYPE_FOOTER = 1;
     private final int TYPE_ITEM = 2;
 
-
-    public NewBoardFeedAdapter(Activity activity, List<ForetBoard> foretBoardList) {
+    public NewBoardFeedAdapter(Activity activity, List<ForetBoardDTO> foretBoardDTOList) {
         this.activity = activity;
-        this.foretBoardList = foretBoardList;
+        this.foretBoardDTOList = foretBoardDTOList;
     }
 
     @NonNull
@@ -71,19 +75,19 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (holder instanceof ItemViewHolder) {
             // Item을 하나, 하나 보여주는(bind 되는) 함수입니다.
             ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-            itemViewHolder.onBind((foretBoardList.get(position-1)), position);
+            itemViewHolder.onBind((foretBoardDTOList.get(position-1)), position);
         }
     }
 
     @Override
     public int getItemCount() {
-        return foretBoardList.size()+ 2;
+        return foretBoardDTOList.size()+ 2;
     }
 
     public class ItemViewHolder  extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView imageView;
         TextView textView1, textView2, textView3, textView4;
-        ForetBoard foretBoard;
+        ForetBoardDTO foretBoardDTO;
         int position;
         FrameLayout layout;
 
@@ -98,29 +102,37 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             layout = itemView.findViewById(R.id.layout);
         }
 
-        void onBind(ForetBoard foretBoard, int position) {
-            this.foretBoard = foretBoard;
+        void onBind(ForetBoardDTO foretBoardDTO, int position) {
+            this.foretBoardDTO = foretBoardDTO;
             this.position = position;
 
-            if(foretBoard.getBoradImage() != 0) { // 사진이 있으면
-//                String Board_image = foretBoard.getBoard_photo()[0]; // 첫번째 사진을 가져옴
-                imageView.setImageResource(foretBoard.getBoradImage());
-//                Glide.with(activity).load(Board_image).into(imageView);
+            if(!foretBoardDTO.getForet_board_photo().equals("") &&
+                    !foretBoardDTO.getForet_board_photo().equals(null)) { // 사진이 있으면
+                String Board_image = foretBoardDTO.getForet_board_photo().get(0); // 첫번째 사진을 가져옴
+                Glide.with(activity).load(Board_image).into(imageView);
             }
-            switch (foretBoard.getType()) {
+
+            // 1 : 공지사항, 2 : 포레 공지사항, 3 : 포레 일정 게시판, 4 : 포레 게시판, 0 : 익명 게시판
+            switch (foretBoardDTO.getType()) {
+                case 0:
+                    textView1.setText("[익명 게시판]");
+                    break;
                 case 1:
-                    textView1.setText("[일반]");
-                    break;
-                case 2:
-                    textView1.setText("[일정]");
-                    break;
-                case 3:
                     textView1.setText("[공지사항]");
                     break;
+                case 2:
+                    textView1.setText("[포레 공지사항]");
+                    break;
+                case 3:
+                    textView1.setText("[포레 일정]");
+                    break;
+                case 4:
+                    textView1.setText("[일반]");
+                    break;
             }
-            textView2.setText(foretBoard.getSubject());
-            textView3.setText(foretBoard.getContent());
-            textView4.setText(foretBoard.getReg_date());
+            textView2.setText(foretBoardDTO.getSubject());
+            textView3.setText(foretBoardDTO.getContent());
+            textView4.setText(foretBoardDTO.getReg_date());
 
             layout.setOnClickListener(this);
         }
@@ -128,8 +140,6 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(activity, ReadForetBoardActivity.class);
-            intent.putExtra("member", member);
-            intent.putExtra("foretBoard", foretBoard);
             activity.startActivity(intent);
         }
     }
@@ -138,7 +148,7 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public int getItemViewType(int position) {
         if (position == 0) {
             return TYPE_HEADER;
-        } else if (position == foretBoardList.size() + 1) {
+        } else if (position == foretBoardDTOList.size() + 1) {
             return TYPE_FOOTER;
         }
         return TYPE_ITEM;
@@ -166,35 +176,54 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @Override
         public void onClick(View v) {
             Log.d("[TEST]", "푸터 온클릭 호출");
-            addForetBoard1();
-            notifyDataSetChanged();
+            String url = "http://34.72.240.24:8085/search/homeFragement.do"; // 페이징.두
+            AsyncHttpClient client = new AsyncHttpClient();
+            FooterResponse footerResponse = new FooterResponse();
+            RequestParams params = new RequestParams();
+            params.put("foret_id", foretBoardDTOList.get(1).getForet_id());
+            params.put("startNum", "startNum");
+            params.put("endNum", "endNum");
+            client.post(url, params, footerResponse);
         }
     }
 
-    // 포레 게시판
-    private void addForetBoard1() {
-        String[] board_photo = {"photo.jpg", "photo2.jpg", "photo3.jpg"};
-        int b = 0;
-        int c = 1;
-        int d = 5;
-        for(int a=0; a<5; a++) {
-            ForetBoard foretBoard = new ForetBoard();
-            foretBoard.setId(c);
-            foretBoard.setWriter("문성하");
-            foretBoard.setType(c);
-            foretBoard.setHit(b);
-            foretBoard.setSubject("포레 1 게시판 제목 " + (a+1));
-            foretBoard.setContent("포레 1 게시판 내용 " + (a+1));
-            foretBoard.setReg_date("2020.11.26 12:"+ (a+1));
-            foretBoard.setEdit_date("2020.11.26 12:"+ (a+1));
-            foretBoard.setMember_photo("iu.jpg");
-            foretBoard.setBoard_photo(board_photo);
-            foretBoard.setLike_count(b);
-            foretBoard.setComment_count(d);
-            foretBoard.setMemberImage(R.drawable.iu+(a+1));
-            foretBoard.setBoradImage(R.drawable.iu+(6+a));
-            foretBoardList.add(foretBoard);
-            Log.d("[TEST]", "foretBoardList.size() => " + foretBoardList.size());
+    class FooterResponse extends AsyncHttpResponseHandler {
+        @Override
+        public void onStart() {
+            Log.d("[TEST]", "ForetBoardResponse onStart() 호출");
+        }
+        @Override
+        public void onFinish() {
+            Log.d("[TEST]", "ForetBoardResponse onFinish() 호출");
+            notifyDataSetChanged(); // 새로고침
+        }
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            foretBoardDTOList = new ArrayList<>();
+            String str = new String(responseBody);
+            Gson gson = new Gson();
+            try {
+                JSONObject json = new JSONObject(str);
+                String RT = json.getString("RT");
+                if(RT.equals("OK")) {
+                    JSONArray board = json.getJSONArray("board");
+                    JSONObject temp = board.getJSONObject(0);
+                    for(int i=0; i<board.length(); i++) {
+                        ForetBoardDTO foretBoardDTO = gson.fromJson(temp.toString(), ForetBoardDTO.class);
+                        foretBoardDTOList.add(foretBoardDTO);
+                    }
+                    Log.d("[TEST]", "foretBoardDTOList.size() => " + foretBoardDTOList.size());
+                    Toast.makeText(activity, "포레 게시판 정보 가져옴", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(activity, "포레 게시판 정보 못가져옴", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(activity, "ForetBoardResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
 }

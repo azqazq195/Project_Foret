@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,23 +28,34 @@ import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.activity.foret.ViewForetActivity;
 import com.example.foret_app_prototype.activity.foret.board.ListForetBoardActivity;
+import com.example.foret_app_prototype.activity.login.SessionManager;
 import com.example.foret_app_prototype.activity.search.SearchFragment;
 import com.example.foret_app_prototype.adapter.foret.ForetAdapter;
 import com.example.foret_app_prototype.adapter.foret.ForetBoardAdapter;
 import com.example.foret_app_prototype.adapter.foret.NewBoardFeedAdapter;
-import com.example.foret_app_prototype.model.Foret;
-import com.example.foret_app_prototype.model.ForetBoard;
-import com.example.foret_app_prototype.model.Member;
+import com.example.foret_app_prototype.model.ForetBoardDTO;
+import com.example.foret_app_prototype.model.ForetDTO;
+import com.example.foret_app_prototype.model.MemberDTO;
+import com.google.gson.Gson;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
-import java.io.Serializable;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 //import com.example.foret_app_prototype.activity.foret.board.ListForetBoardActivity;
 
 public class HomeFragment extends Fragment
         implements ViewPager.OnPageChangeListener, View.OnClickListener {
-    Member member;
+    MemberDTO memberDTO;
+
     Toolbar toolbar;
     MainActivity activity;
     TextView button1, textView_name;
@@ -52,17 +64,27 @@ public class HomeFragment extends Fragment
     Intent intent;
     SearchFragment searchFragment;
 
+    AsyncHttpClient client;
+    MainFragmentResponse mainFragmentResponse;
+    ForetResponse foretResponse;
+    ForetBoardResponse foretBoardResponse;
+
+    String url = null;
+//    String url = "http://34.72.240.24:8085/foret/search/member.do";  // 멤버 데이터 가져오기
+//    String url = "http://34.72.240.24:8085/search/foretList.do";     // 포레 리스트 가져오기 *필요
+//    String url = "http://34.72.240.24:8085/search/homeFragement.do"; // 포레 게시판리스트 가져오기
+
     // 뷰페이저 (포레)
     ViewPager viewPager;
-    List<Foret> foretList;
-    Foret foret;
+    List<ForetDTO> foretDTOList;
+    ForetDTO foretDTO;
     ForetAdapter foretAdapter;
     Integer[] colors = null;
     ArgbEvaluator evaluator = new ArgbEvaluator();
 
     // 포레 게시판
-    List<ForetBoard> foretBoardList;
-    ForetBoard foretBoard;
+    ForetBoardDTO foretBoardDTO;
+    List<ForetBoardDTO> foretBoardDTOList;
     ForetBoardAdapter foretBoardAdapter;
     NewBoardFeedAdapter newBoardFeedAdapter;
 
@@ -71,11 +93,10 @@ public class HomeFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         toolbar = rootView.findViewById(R.id.home_toolbar);
         activity = (MainActivity)getActivity();
+
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle("");
         setHasOptionsMenu(true);
-
-        addMember(); // 셋 멤버
 
         viewPager = rootView.findViewById(R.id.viewPager);
         button1 = rootView.findViewById(R.id.button1);
@@ -87,17 +108,29 @@ public class HomeFragment extends Fragment
         intent = activity.getIntent();
         searchFragment = new SearchFragment();
 
+        SessionManager sessionManager = new SessionManager(getContext());
+        String email = sessionManager.getSessionEmail();
+        String password = sessionManager.getSessionPassword();
+
+        url = "http://34.72.240.24:8085/foret/search/member.do";
+        client = new AsyncHttpClient();
+        mainFragmentResponse = new MainFragmentResponse();
+        RequestParams params = new RequestParams();
+        params.put("email", email);
+        params.put("password", password);
+        client.post(url, params, mainFragmentResponse);
+
         // 뷰페이저(포레)
-        foretList = new ArrayList<>();
-        addForet();
-        foretAdapter = new ForetAdapter(activity, foretList);
+        foretDTOList = new ArrayList<>();
+        // 포레추가할 코드 <-
+        foretAdapter = new ForetAdapter(activity, foretDTOList);
 
         viewPager = rootView.findViewById(R.id.viewPager);
         viewPager.setAdapter(foretAdapter);
         viewPager.setPadding(130, 0, 130, 0);
 
-        colors = new Integer[foretList.size()];
-        Integer[] colors_temp = new Integer[foretList.size()];
+        colors = new Integer[foretDTOList.size()];
+        Integer[] colors_temp = new Integer[foretDTOList.size()];
 
         for(int i=0; i<colors_temp.length; i++) {
             colors_temp[i] = getResources().getColor(R.color.color+(i+1));
@@ -106,7 +139,6 @@ public class HomeFragment extends Fragment
         viewPager.setOnPageChangeListener(this);
 
         // 포레 게시판
-        addForetBoard1();
         setView();
 
         // 버튼 이벤트
@@ -122,48 +154,28 @@ public class HomeFragment extends Fragment
         // 포레 클릭 이벤트
         foretAdapter.setOnClickListener(new ForetAdapter.OnClickListener() {
             @Override
-            public void onClick(View v, Foret foret) {
+            public void onClick(View v, ForetDTO foretDTO) {
                 Intent intent = new Intent(activity, ViewForetActivity.class);
-                intent.putExtra("member", member);
-                intent.putExtra("foret", foret);
-                intent.putExtra("foretList", (Serializable) foretList);
-                intent.putExtra("foretBoardList", (Serializable) foretBoardList);
-                startActivityForResult(intent, 888);
+                intent.putExtra("ForetDTO", foretDTO);
+                startActivity(intent);
             }
         });
     }
 
     private void setView() {
         // 공지사항
-        foretBoardAdapter = new ForetBoardAdapter(getActivity(), member, foretList, foretBoardList);
+        foretBoardAdapter = new ForetBoardAdapter(getActivity(), foretBoardDTOList);
         recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView1.setAdapter(foretBoardAdapter);
+
         // 일정
         recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView2.setAdapter(foretBoardAdapter);
+
         // 새글 피드
-        newBoardFeedAdapter = new NewBoardFeedAdapter(getActivity(), member, foretList, foretBoardList);
+        newBoardFeedAdapter = new NewBoardFeedAdapter(getActivity(), foretBoardDTOList);
         recyclerView3.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView3.setAdapter(newBoardFeedAdapter);
-
-//        foretBoardAdapter.setItems(foretBoardList);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == activity.RESULT_OK) {
-            switch (requestCode) {
-                case 999: // 포레 게시판 뷰
-                    foretBoardList = (List<ForetBoard>) data.getSerializableExtra("foretBoardList");
-                    setView();
-                    break;
-                case 888: // 포레
-                    break;
-                case 777: // 포레 게시판 리스트
-                    break;
-            }
-        }
     }
 
     @Override
@@ -198,33 +210,29 @@ public class HomeFragment extends Fragment
         else {
             viewPager.setBackgroundColor(colors[colors.length - 1]);
         }
-        foret = foretList.get(position);
-        textView_name.setText(foret.getName());
+        foretDTO = foretDTOList.get(position);
+        textView_name.setText(foretDTO.getForet_name());
     }
 
     @Override
     public void onPageSelected(int position) {
         Log.d("[TEST]", "onPageSelected 호출 : " + position);
+        int page_position = position;
         switch (position) {
             case 0:
-                addForetBoard1();
-                setView();
+                getViewChange(page_position);
                 break;
             case 1:
-                addForetBoard2();
-                setView();
+                getViewChange(page_position);
                 break;
             case 2:
-                addForetBoard3();
-                setView();
+                getViewChange(page_position);
                 break;
             case 3:
-                addForetBoard4();
-                setView();
+                getViewChange(page_position);
                 break;
             case 4:
-                addForetBoard5();
-                setView();
+                getViewChange(page_position);
                 break;
         }
     }
@@ -234,196 +242,159 @@ public class HomeFragment extends Fragment
         Log.d("[TEST]", "onPageScrollStateChanged 호출 : " + state);
     }
 
+    private void getViewChange(int page_position) {
+        url = "http://34.72.240.24:8085/search/homeFragement.do";
+        client = new AsyncHttpClient();
+        foretBoardResponse = new ForetBoardResponse();
+        RequestParams params = new RequestParams();
+        params.put("foret_id", page_position+1);
+        client.post(url, params, foretBoardResponse);
+        setView();
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button1 : // 더많포레
+            case R.id.button1 : // 더많포레 -> 서치로 이동
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, searchFragment).commit();
                 activity.getSupportFragmentManager().beginTransaction().remove(this).commit();
                 break;
             case R.id.button2 : // 화살표
                 intent = new Intent(activity, ListForetBoardActivity.class);
-                intent.putExtra("member", member);
-                intent.putExtra("foret", foret);
-                intent.putExtra("foretBoardList", (Serializable) foretBoardList);
-                startActivityForResult(intent, 777);
+                startActivity(intent);
                 break;
         }
     }
 
+    class MainFragmentResponse extends AsyncHttpResponseHandler {
+        @Override
+        public void onStart() {
+            super.onStart();
+            Log.d("[TEST]", "MainFragmentResponse onStart() 호출");
+        }
 
-    //////////////////////////데이터 추가
-    // 멤버
-    private void addMember() {
-        member = new Member();
-        member.setId("test");
-        member.setPw("1234");
-        member.setName("테스터");
-        member.setBirth("911111");
-        member.setEmail("test@naver.com");
-        member.setImage(R.drawable.iu);
-    }
-    // 포레
-    private void addForet() {
-        foretList = new ArrayList<>();
-        String[] leader = {"문성하", "임선미", "전상만", "전성환", "이인제"};
-        String[] member = {"문성하", "임선미", "전상만", "전성환", "이인제"};
-        String[] region = {"서울시 ", "경기도 성남시 ", "강남구 ", "분당구 "};
-        String[] foret_tag = {"#Java ", "#Spring ", "#Android ", "#SQL "};
-        for(int a=0; a<5; a++) {
-            Foret foret = new Foret();
-            foret.setName("프로그래밍 스터디 포레 " + (a+1));
-            foret.setIntroduce("프로그래밍 스터디 포레 " + (a+1) + " 소개");
-            foret.setMax_member(10);
-            foret.setReg_date("2020.11." + (a+1));
-            foret.setForet_tag(foret_tag);
-            foret.setMember(member);
-            foret.setLeader(leader[a]);
-            foret.setForet_region(region);
-            foret.setForetImage(R.drawable.iu+(a+1));
-            foretList.add(foret);
+        @Override
+        public void onFinish() {
+            super.onFinish();
+            Log.d("[TEST]", "MainFragmentResponse onFinish() 호출");
+            url = "http://34.72.240.24:8085/search/foretList.do";
+            foretResponse = new ForetResponse();
+            RequestParams params = new RequestParams();
+            params.put("member_id", memberDTO.getId());
+            client.post(url, params, foretResponse);
+
+        }
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            Gson gson = new Gson();
+            try {
+                JSONObject json = new JSONObject(str);
+                String RT = json.getString("RT");
+                if(RT.equals("OK")) {
+                    JSONArray member = json.getJSONArray("member");
+                    JSONObject temp = member.getJSONObject(0);
+                    memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
+                    Toast.makeText(getActivity(), "회원정보 가져옴", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "회원정보 못가져옴", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(getActivity(), "MainFragmentResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
 
-    // 포레 게시판
-    private void addForetBoard1() {
-        foretBoardList = new ArrayList<>();
-        String[] board_photo = {"photo.jpg", "photo2.jpg", "photo3.jpg"};
-        int b = 0;
-        int c = 1;
-        int d = 5;
-        for(int a=0; a<5; a++) {
-            ForetBoard foretBoard = new ForetBoard();
-            foretBoard.setId(c);
-            foretBoard.setWriter("문성하");
-            foretBoard.setType(c);
-            foretBoard.setHit(b);
-            foretBoard.setSubject("포레 1 게시판 제목 " + (a+1));
-            foretBoard.setContent("포레 1 게시판 내용 " + (a+1));
-            foretBoard.setReg_date("2020.11.26 12:"+ (a+1));
-            foretBoard.setEdit_date("2020.11.26 12:"+ (a+1));
-            foretBoard.setMember_photo("iu.jpg");
-            foretBoard.setBoard_photo(board_photo);
-            foretBoard.setLike_count(b);
-            foretBoard.setComment_count(d);
-            foretBoard.setMemberImage(R.drawable.iu+(a+1));
-            foretBoard.setBoradImage(R.drawable.iu+(6+a));
-            foretBoardList.add(foretBoard);
-            Log.d("[TEST]", "foretBoardList.size() => " + foretBoardList.size());
+    class ForetResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onStart() {
+            Log.d("[TEST]", "ForetResponse onStart() 호출");
+        }
+
+        @Override
+        public void onFinish() {
+            Log.d("[TEST]", "ForetResponse onFinish() 호출");
+            url = "http://34.72.240.24:8085/search/homeFragement.do";
+            foretBoardResponse = new ForetBoardResponse();
+            RequestParams params = new RequestParams();
+            params.put("foret_id", foretDTO.getForet_id());
+            client.post(url, params, foretBoardResponse);
+        }
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            foretDTOList = new ArrayList<>();
+            String str = new String(responseBody);
+            Gson gson = new Gson();
+            try {
+                JSONObject json = new JSONObject(str);
+                String RT = json.getString("RT");
+                if(RT.equals("OK")) {
+                    JSONArray foret = json.getJSONArray("foret");
+                    JSONObject temp = foret.getJSONObject(0);
+                    for(int i=0; i<foret.length(); i++) {
+                        foretDTO = gson.fromJson(temp.toString(), ForetDTO.class);
+                        foretDTOList.add(foretDTO);
+                    }
+                    Log.d("[TEST]", "foretDTOList.size() => " + foretDTOList.size());
+                    Toast.makeText(getActivity(), "포레정보 가져옴", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "포레정보 못가져옴", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(getActivity(), "ForetResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
 
-    // 포레 게시판
-    private void addForetBoard2() {
-        foretBoardList = new ArrayList<>();
-        String[] board_photo = {"photo.jpg", "photo2.jpg", "photo3.jpg"};
-        int b = 0;
-        int c = 1;
-        int d = 5;
-        for(int a=0; a<5; a++) {
-            ForetBoard foretBoard = new ForetBoard();
-            foretBoard.setId(c);
-            foretBoard.setWriter("임선미");
-            foretBoard.setType(c);
-            foretBoard.setHit(b);
-            foretBoard.setSubject("포레 2 게시판 제목 " + (a+1));
-            foretBoard.setContent("포레 2 게시판 내용 " + (a+1));
-            foretBoard.setReg_date("2020.11.26 12:"+ (a+1));
-            foretBoard.setEdit_date("2020.11.26 12:"+ (a+1));
-            foretBoard.setMember_photo("iu.jpg");
-            foretBoard.setBoard_photo(board_photo);
-            foretBoard.setLike_count(b);
-            foretBoard.setComment_count(d);
-            foretBoard.setMemberImage(R.drawable.iu+(a+1));
-            foretBoard.setBoradImage(R.drawable.iu+(6+a));
-            foretBoardList.add(foretBoard);
-            Log.d("[TEST]", "foretBoardList.size() => " + foretBoardList.size());
+    class ForetBoardResponse extends AsyncHttpResponseHandler {
+        @Override
+        public void onStart() {
+            Log.d("[TEST]", "ForetBoardResponse onStart() 호출");
+        }
+        @Override
+        public void onFinish() {
+            Log.d("[TEST]", "ForetBoardResponse onFinish() 호출");
+        }
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            foretBoardDTOList = new ArrayList<>();
+            String str = new String(responseBody);
+            Gson gson = new Gson();
+            try {
+                JSONObject json = new JSONObject(str);
+                String RT = json.getString("RT");
+                if(RT.equals("OK")) {
+                    JSONArray board = json.getJSONArray("board");
+                    JSONObject temp = board.getJSONObject(0);
+                    for(int i=0; i<board.length(); i++) {
+                        foretBoardDTO = gson.fromJson(temp.toString(), ForetBoardDTO.class);
+                        foretBoardDTOList.add(foretBoardDTO);
+                    }
+                    Log.d("[TEST]", "foretBoardDTOList.size() => " + foretBoardDTOList.size());
+                    Toast.makeText(getActivity(), "포레 게시판 정보 가져옴", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "포레 게시판 정보 못가져옴", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(getActivity(), "ForetBoardResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
-
-    // 포레 게시판
-    private void addForetBoard3() {
-        foretBoardList = new ArrayList<>();
-        String[] board_photo = {"photo.jpg", "photo2.jpg", "photo3.jpg"};
-        int b = 0;
-        int c = 1;
-        int d = 5;
-        for(int a=0; a<5; a++) {
-            ForetBoard foretBoard = new ForetBoard();
-            foretBoard.setId(c);
-            foretBoard.setWriter("전성환");
-            foretBoard.setType(c);
-            foretBoard.setHit(b);
-            foretBoard.setSubject("포레 3 게시판 제목 " + (a+1));
-            foretBoard.setContent("포레 3 게시판 내용 " + (a+1));
-            foretBoard.setReg_date("2020.11.26 12:"+ (a+1));
-            foretBoard.setEdit_date("2020.11.26 12:"+ (a+1));
-            foretBoard.setMember_photo("iu.jpg");
-            foretBoard.setBoard_photo(board_photo);
-            foretBoard.setLike_count(b);
-            foretBoard.setComment_count(d);
-            foretBoard.setMemberImage(R.drawable.iu+(a+1));
-            foretBoard.setBoradImage(R.drawable.iu+(6+a));
-            foretBoardList.add(foretBoard);
-            Log.d("[TEST]", "foretBoardList.size() => " + foretBoardList.size());
-        }
-    }
-
-    // 포레 게시판
-    private void addForetBoard4() {
-        foretBoardList = new ArrayList<>();
-        String[] board_photo = {"photo.jpg", "photo2.jpg", "photo3.jpg"};
-        int b = 0;
-        int c = 1;
-        int d = 5;
-        for(int a=0; a<5; a++) {
-            ForetBoard foretBoard = new ForetBoard();
-            foretBoard.setId(c);
-            foretBoard.setWriter("이인제");
-            foretBoard.setType(c);
-            foretBoard.setHit(b);
-            foretBoard.setSubject("포레 4 게시판 제목 " + (a+1));
-            foretBoard.setContent("포레 4 게시판 내용 " + (a+1));
-            foretBoard.setReg_date("2020.11.26 12:"+ (a+1));
-            foretBoard.setEdit_date("2020.11.26 12:"+ (a+1));
-            foretBoard.setMember_photo("iu.jpg");
-            foretBoard.setBoard_photo(board_photo);
-            foretBoard.setLike_count(b);
-            foretBoard.setComment_count(d);
-            foretBoard.setMemberImage(R.drawable.iu+(a+1));
-            foretBoard.setBoradImage(R.drawable.iu+(6+a));
-            foretBoardList.add(foretBoard);
-            Log.d("[TEST]", "foretBoardList.size() => " + foretBoardList.size());
-        }
-    }
-
-    // 포레 게시판
-    private void addForetBoard5() {
-        foretBoardList = new ArrayList<>();
-        String[] board_photo = {"photo.jpg", "photo2.jpg", "photo3.jpg"};
-        int b = 0;
-        int c = 1;
-        int d = 5;
-        for(int a=0; a<5; a++) {
-            ForetBoard foretBoard = new ForetBoard();
-            foretBoard.setId(c);
-            foretBoard.setWriter("이인제");
-            foretBoard.setType(c);
-            foretBoard.setHit(b);
-            foretBoard.setSubject("포레 5 게시판 제목 " + (a+1));
-            foretBoard.setContent("포레 5 게시판 내용 " + (a+1));
-            foretBoard.setReg_date("2020.11.26 12:"+ (a+1));
-            foretBoard.setEdit_date("2020.11.26 12:"+ (a+1));
-            foretBoard.setMember_photo("iu.jpg");
-            foretBoard.setBoard_photo(board_photo);
-            foretBoard.setLike_count(b);
-            foretBoard.setComment_count(d);
-            foretBoard.setMemberImage(R.drawable.iu+(a+1));
-            foretBoard.setBoradImage(R.drawable.iu+(6+a));
-            foretBoardList.add(foretBoard);
-            Log.d("[TEST]", "foretBoardList.size() => " + foretBoardList.size());
-        }
-    }
-
 
 }
