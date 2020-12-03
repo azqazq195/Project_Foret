@@ -121,7 +121,7 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
             public void onClick(DialogInterface dialog, int which) {
                 RequestParams params = new RequestParams();
                 params.put("id", memberDTO.getId());
-                client.post("http://34.72.240.24:8085/foret/member/member_delete.do", params);
+                //client.post("http://34.72.240.24:8085/foret/member/member_delete.do", params);
             }
         });
         builder.setNegativeButton("취소", null);

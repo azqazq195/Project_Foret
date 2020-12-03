@@ -130,7 +130,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                 params.put("password", editText2.getText().toString().trim());
                 params.put("nickname", editText1.getText().toString().trim());
                 params.put("birth", memberDTO.getBirth());
-                params.put("region_si", );
+                //params.put("region_si", );
                 params.put("tag", button1.getText().toString().trim());
 
                 Toast.makeText(this, "수정완료", Toast.LENGTH_SHORT).show();
