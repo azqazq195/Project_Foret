@@ -106,7 +106,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     Activity activity;
     Context context;
     String downloadUri;
-    String member_id;
+    int member_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -562,7 +562,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 String memberTagRT = json.getString("memberTagRT");
                 String memberRegionRT = json.getString("memberRegionRT");
                 String memberPhotoRT = json.getString("memberPhotoRT");
-                member_id = json.getString("member_id");
+                member_id = Integer.parseInt(json.getString("member_id"));
                 if (memberRT.equals("OK")) {
                     Toast.makeText(
                             activity, "결과\n memberRT : " + memberRT + "\nmemberTagRT : " + memberTagRT
@@ -627,6 +627,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                             MemberDTO memberDTO = new MemberDTO();
                             memberDTO.setEmail(email);
                             memberDTO.setPassword(pw2);
+                            memberDTO.setId(member_id);
                             sessionManager.saveSession(memberDTO);
 
                             //넘기기
