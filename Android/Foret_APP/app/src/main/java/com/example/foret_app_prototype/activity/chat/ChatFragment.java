@@ -156,6 +156,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 layout_search.setVisibility(View.GONE);
                 break;
             case R.id.floatingActionButton :
+                //플러스 버튼
+
 
                 Toast.makeText(activity, "알아서 기능 넣기", Toast.LENGTH_SHORT).show();
                 break;

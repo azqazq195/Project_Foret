@@ -499,8 +499,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
         Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
 
-        // String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
-        String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
+        String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
+        //String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
 
         try {
             if (file != null)
@@ -607,6 +607,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
                         // 성공 시 firebase 에 유저 등록됨. 이에 uID를 받음.
                         sendImageMessage(uri);
+
+
                         Log.e("[test]", "이미지 등록 종료");
                         if (task.isSuccessful()) {
                             Log.e("[test]", "유저등록성공");
@@ -623,7 +625,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                             hashMap.put("user_id", chatuser.getUser_id());
                             hashMap.put("joineddate", chatuser.getDate());
 
-                            Log.e("[test]", "DB 유저 데이터 업로드");
+                            Log.e("[test]", "DB 유저 데이터 업로드"+chatuser.getDate()+"/ photoroot?"+downloadUri);
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             // 파이어 베이스에 유저 등록하기
                             DatabaseReference reference = database.getReference("Users");
