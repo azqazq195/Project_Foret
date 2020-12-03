@@ -1,8 +1,10 @@
 package com.example.foret_app_prototype.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,6 +30,10 @@ import com.example.foret_app_prototype.activity.search.SearchFragment;
 import com.example.foret_app_prototype.model.MemberDTO;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -36,6 +42,9 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -59,12 +68,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     ImageView button_out2, button_drawcancel, profile;
     Intent intent;
 
+    String email;
+    String pwd;
+
+    FirebaseUser currntuser;
+    Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        currntuser = FirebaseAuth.getInstance().getCurrentUser();
+
+        context = this;
         homeFragment = new HomeFragment();
         freeFragment = new FreeFragment();
         searchFragment = new SearchFragment();
@@ -96,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         SessionManager sessionManager = new SessionManager(this);
         String email = sessionManager.getSessionEmail();
         String password = sessionManager.getSessionPassword();
+
         RequestParams params = new RequestParams();
         params.put("email", email);
         params.put("password", password);
@@ -104,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         button_out.setOnClickListener(this);
         button_out2.setOnClickListener(this);
         button_drawcancel.setOnClickListener(this);
+
+
     }
 
     @Override
@@ -185,6 +206,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //로그아웃 눌렀을 때 실행되야하는 이벤트->로그아웃처리
+
+                //파이어 베이스 로그아웃 만들기
+                FirebaseAuth.getInstance().signOut();
             }
         });
         builder.setNegativeButton("취소", null);
@@ -223,6 +247,52 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        if(currntuser == null){
+            //로그인 아닌상태
+            Toast.makeText(context,"파이어베이스 로그아웃 상태..",Toast.LENGTH_LONG).show();
+        }else {
+            updateuserActiveStatusOn();
+        }
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        updateuserActiveStatusOff();
+         //파이어 베이스 로그아웃 해버리기
+        //FirebaseAuth.getInstance().signOut();
+
+    }
+    //내상태 온라인 만들기
+    private void updateuserActiveStatusOn() {
+        FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
+        final String userUid = currentUseruser.getUid();
+        DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
+        HashMap<String, Object> onlineStatus = new HashMap<>();
+        onlineStatus.put("onlineStatus", "online");
+        onlineStatus.put("listlogined_date", "현재 접속중");
+        userAcitive.updateChildren(onlineStatus);
+    }
+
+    //내상태 오프라인 상태 만들기
+    private void updateuserActiveStatusOff() {
+        FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
+        final String userUid = currentUseruser.getUid();
+        DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
+        HashMap<String, Object> onlineStatus = new HashMap<>();
+        onlineStatus.put("onlineStatus", "offline");
+
+        java.util.Calendar cal = java.util.Calendar.getInstance(Locale.KOREAN);
+        cal.setTimeInMillis(Long.parseLong(String.valueOf(System.currentTimeMillis())));
+        String dateTime = DateFormat.format("yy/MM/dd hh:mm aa", cal).toString();
+
+        onlineStatus.put("listlogined_date", "Last Seen at : " + dateTime);
+        userAcitive.updateChildren(onlineStatus);
+    }
 
 }

@@ -46,6 +46,7 @@ import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.Member;
+import com.example.foret_app_prototype.model.MemberDTO;
 import com.example.foret_app_prototype.model.ModelUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -105,6 +106,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     Activity activity;
     Context context;
     String downloadUri;
+    String member_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -415,16 +417,16 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
             } else {
                 ActivityCompat.requestPermissions(this,
-                        new String[] { Manifest.permission.READ_EXTERNAL_STORAGE,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET,
-                                Manifest.permission.ACCESS_MEDIA_LOCATION, Manifest.permission.CAMERA },
+                                Manifest.permission.ACCESS_MEDIA_LOCATION, Manifest.permission.CAMERA},
                         100);
             }
         }
     }
 
     private void showSelect() {
-        final String[] menu = { "새로 촬영하기", "갤러리에서 가져오기" };
+        final String[] menu = {"새로 촬영하기", "갤러리에서 가져오기"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setItems(menu, new DialogInterface.OnClickListener() {
             @Override
@@ -467,6 +469,35 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 200:
+                    Toast.makeText(this, "사진 첨부 완료", Toast.LENGTH_SHORT).show();
+                    // 촬영 결과물을 MediaStore에 등록한다(갤러리에 저장). MediaStore에 등록하지 않으면 우리 앱에서 만든 파일을 다른 앱에서는
+                    // 사용할 수 없다.
+                    intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(filePath));
+                    Log.d("[TEST]", filePath);
+                    sendBroadcast(intent);
+                    Glide.with(this).load(filePath).into(profile);
+                    break;
+                case 300:
+                    String uri1 = data.getData().toString();
+                    String fileName = uri1.substring(uri1.lastIndexOf("/") + 1);
+                    Log.d("[TEST]", "fileName = " + fileName);
+                    filePath = FileUtils.getPath(this, data.getData());
+                    file = new File(filePath);
+                    Log.d("[TEST]", "filePath = " + filePath);
+                    Toast.makeText(this, fileName + "을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
+                    Glide.with(this).load(filePath).into(profile);
+                    uri = data.getData();
+
+            }
+        }
     }
 
     // 여기서부터
@@ -514,35 +545,6 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case 200:
-                    Toast.makeText(this, "사진 첨부 완료", Toast.LENGTH_SHORT).show();
-                    // 촬영 결과물을 MediaStore에 등록한다(갤러리에 저장). MediaStore에 등록하지 않으면 우리 앱에서 만든 파일을 다른 앱에서는
-                    // 사용할 수 없다.
-                    intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(filePath));
-                    Log.d("[TEST]", filePath);
-                    sendBroadcast(intent);
-                    Glide.with(this).load(filePath).into(profile);
-                    break;
-                case 300:
-                    String uri1 = data.getData().toString();
-                    String fileName = uri1.substring(uri1.lastIndexOf("/") + 1);
-                    Log.d("[TEST]", "fileName = " + fileName);
-                    filePath = FileUtils.getPath(this, data.getData());
-                    file = new File(filePath);
-                    Log.d("[TEST]", "filePath = " + filePath);
-                    Toast.makeText(this, fileName + "을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
-                    Glide.with(this).load(filePath).into(profile);
-                    uri = data.getData();
-
-            }
-        }
-    }
-
     private class Response extends AsyncHttpResponseHandler {
         Activity activity;
 
@@ -560,24 +562,14 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 String memberTagRT = json.getString("memberTagRT");
                 String memberRegionRT = json.getString("memberRegionRT");
                 String memberPhotoRT = json.getString("memberPhotoRT");
-
+                member_id = json.getString("member_id");
                 if (memberRT.equals("OK")) {
                     Toast.makeText(
                             activity, "결과\n memberRT : " + memberRT + "\nmemberTagRT : " + memberTagRT
                                     + "\n memberRegionRT : " + memberRegionRT + "\n memberPhotoRT : " + memberPhotoRT,
                             Toast.LENGTH_LONG).show();
-                    String timestamp = CalendarHelper.getInstance().getCurrentTimeFull();
-
-                    // 파이어 베이스 생성
-                    ModelUser modelUser = new ModelUser();
-                    modelUser.setEmail(email);
-                    modelUser.setUser_id(pw2); // 원래는 유저 id가 들어가야 함.
-                    modelUser.setNickname(nickname);
-                    modelUser.setJoineddate(timestamp);
-
-                    registerUser(modelUser);
-                    Log.e("[test]", "성공후 데이터" + ", " + email + ", " + pw2 + ", " + timestamp + ", " + nickname);
-
+                    //파이어 베이스 이미지 생성
+                    sendImageMessage(uri);
                 } else {
                     Toast.makeText(activity, "등록 실패..", Toast.LENGTH_SHORT).show();
                 }
@@ -605,11 +597,6 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        // 성공 시 firebase 에 유저 등록됨. 이에 uID를 받음.
-                        sendImageMessage(uri);
-
-
-                        Log.e("[test]", "이미지 등록 종료");
                         if (task.isSuccessful()) {
                             Log.e("[test]", "유저등록성공");
                             FirebaseUser user = mAuth.getCurrentUser();
@@ -623,9 +610,9 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                             hashMap.put("nickname", chatuser.getNickname());
                             hashMap.put("photoRoot", downloadUri);
                             hashMap.put("user_id", chatuser.getUser_id());
-                            hashMap.put("joineddate", chatuser.getDate());
+                            hashMap.put("joineddate", chatuser.getJoineddate());
 
-                            Log.e("[test]", "DB 유저 데이터 업로드"+chatuser.getDate()+"/ photoroot?"+downloadUri);
+                            Log.e("[test]", "DB 유저 데이터 업로드" + chatuser.getJoineddate() + "/ photoroot?" + downloadUri);
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             // 파이어 베이스에 유저 등록하기
                             DatabaseReference reference = database.getReference("Users");
@@ -634,6 +621,15 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                             reference.child(uid).setValue(hashMap);
 
                             ProgressDialogHelper.getInstance().removeProgressbar();
+
+                            //세션등록
+                            SessionManager sessionManager = new SessionManager(GuideActivity.this);
+                            MemberDTO memberDTO = new MemberDTO();
+                            memberDTO.setEmail(email);
+                            memberDTO.setPassword(pw2);
+                            sessionManager.saveSession(memberDTO);
+
+                            //넘기기
                             intent = new Intent(GuideActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
@@ -645,24 +641,23 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // 사용중인 이메일이 있을때 나옴.
-                        Toast.makeText(context, "Fail : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // 사용중인 이메일이 있을때 나옴.
+                Toast.makeText(context, "Fail : " + e.getMessage(), Toast.LENGTH_SHORT).show();
 
-                    }
-                });
+            }
+        });
 
     }
 
     // 파베에 채팅 이미지 보내기기
     private void sendImageMessage(Uri image_rui) {
         Log.e("[test]", "이미지 등록 시작");
+        String timestamp = CalendarHelper.getInstance().getCurrentTimeFull();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
         String timeStamp = "" + System.currentTimeMillis();
         String fileNameAndPath = "ChatGroupImages/" + "post_" + timeStamp + " by " + user.getUid() + " file : ";
-
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_rui);
             ByteArrayOutputStream baos = null;
@@ -679,6 +674,16 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                     while (!uriTask.isSuccessful())
                         ;
                     downloadUri = uriTask.getResult().toString();
+                    // 파이어 베이스 생성
+                    ModelUser modelUser = new ModelUser();
+                    modelUser.setEmail(email);
+                    modelUser.setUser_id(pw2); // 원래는 유저 id가 들어가야 함.
+                    modelUser.setNickname(nickname);
+                    modelUser.setJoineddate(timestamp);
+                    Log.e("[test]", "이미지등록종료");
+                    registerUser(modelUser);
+
+                    Log.e("[test]", "성공후 데이터" + ", " + email + ", " + pw2 + ", " + timestamp + ", " + nickname);
 
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -694,5 +699,6 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         }
 
     }
+
 
 }

@@ -35,5 +35,11 @@
         <item>"밤샘클럽"포레에 가입하셨습니다. 가입한 포레에 방문해보세요.</item>
         <item>[공지사항] 우리 지각대장님들 화이팅!</item>
     </array>
+    <string name="title_activity_chat_container">ChatContainerActivity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
 
 </resources>

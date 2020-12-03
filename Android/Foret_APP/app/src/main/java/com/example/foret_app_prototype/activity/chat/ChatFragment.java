@@ -1,6 +1,7 @@
 package com.example.foret_app_prototype.activity.chat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
+import com.example.foret_app_prototype.activity.chat.chatactivity.ChatContainerActivity;
 import com.example.foret_app_prototype.adapter.chat.ChatListAdapter;
 import com.example.foret_app_prototype.adapter.chat.GroupAdapter;
 import com.example.foret_app_prototype.helper.CalendarHelper;
@@ -157,9 +159,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.floatingActionButton :
                 //플러스 버튼
+                startActivity(new Intent(context,ChatContainerActivity.class));
 
-
-                Toast.makeText(activity, "알아서 기능 넣기", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
