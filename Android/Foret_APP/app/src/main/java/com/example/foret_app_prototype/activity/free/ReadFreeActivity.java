@@ -35,6 +35,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,6 +60,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
     CommentListResponse listResponse;
     InsertCommentResponse writeCommentResponse;
     InsertReCommentResponse writeReplyResponse;
+    ViewFreeBoardResponse readBoardResponse;
     CommentListFreeBoardAdapter adapter;
     List<ForetBoardComment> commentlist;
     ForetBoard foretBoard;
@@ -104,13 +106,13 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         listResponse = new CommentListResponse();
         writeCommentResponse = new InsertCommentResponse();
         writeReplyResponse = new InsertReCommentResponse();
+        readBoardResponse = new ViewFreeBoardResponse();
         
         foretBoard = (ForetBoard) getIntent().getSerializableExtra("foretBoard");
         like_count = foretBoard.getLike_count();
         comment_count = foretBoard.getComment_count();
 
         setDataBoard(foretBoard);
-        setDataComment();
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         textView_reply.setVisibility(View.GONE);
@@ -131,24 +133,10 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         textView_comment.setText(foretBoard.getComment_count()+"");
     }
 
-    //댓글이 추가될 때마다 서버 다시 불러올 것
-    private void setDataComment() {
-        for(int a=0; a<5; a++) {
-            foretBoardComment = new ForetBoardComment();
-            foretBoardComment.setWriter("3");
-            foretBoardComment.setContent("댓글테스트좀해보자 하하하하"+a);
-            foretBoardComment.setReg_date("2020-12-02");
-            commentlist.add(foretBoardComment);
-        }
-        adapter = new CommentListFreeBoardAdapter(commentlist, this, memberID);
-        adapter.setCommentClickListener(this);
-        recyclerView.setAdapter(adapter);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-
+        //불러오기 요청
     }
 
     @Override
@@ -286,6 +274,23 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
+                if(json.getString("RT").equals("OK")) {
+                    JSONArray board = json.getJSONArray("board");
+                    for(int a=0; a<board.length(); a++) {
+                        JSONObject object = board.getJSONObject(a);
+                        foretBoardComment = new ForetBoardComment();
+                        foretBoardComment.setReg_date(object.getString("reg_date"));
+                        foretBoardComment.setBoard_id(object.getInt("board_id"));
+                        foretBoardComment.setId(object.getInt("id"));
+                        foretBoardComment.setGrade(object.getString("content"));
+                        foretBoardComment.setGroup_no(object.getInt("group_no"));
+                        commentlist.add(foretBoardComment);
+                        adapter = new CommentListFreeBoardAdapter(commentlist, ReadFreeActivity.this, memberID);
+                        adapter.setCommentClickListener(ReadFreeActivity.this);
+                        recyclerView.setAdapter(adapter);
+                    }
+
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

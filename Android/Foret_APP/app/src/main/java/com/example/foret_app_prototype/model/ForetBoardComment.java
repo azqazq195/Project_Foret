@@ -11,6 +11,7 @@ public class ForetBoardComment implements Serializable {
     private String reg_date;
     private int group_no;
     private int group_seq;
+    private String grade;
 
     public ForetBoardComment() {
     }
@@ -84,5 +85,13 @@ public class ForetBoardComment implements Serializable {
 
     public void setGroup_seq(int group_seq) {
         this.group_seq = group_seq;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 }
