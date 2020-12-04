@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
+import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.MemberDTO;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -42,8 +43,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     AsyncHttpClient client;
     HttpResponse response;
-    String url = "http://34.72.240.24:8085/foret/search/member.do";
-
+    //String url = "http://34.72.240.24:8085/foret/search/member.do";
+    String url = "http://192.168.0.180:8085/foret/search/member.do";
     Button button0;
     TextView button1, button2, button3, button4;
     EditText emailEditText, passwordEditText;
@@ -65,6 +66,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         passwordEditText = findViewById(R.id.editText2);
         context = this;
         client = new AsyncHttpClient();
+        final int DEFAULT_TIME = 20*1000;
+        client.setConnectTimeout(DEFAULT_TIME);
+        client.setResponseTimeout(DEFAULT_TIME);
+        client.setTimeout(DEFAULT_TIME);
+        client.setResponseTimeout(DEFAULT_TIME);
         response = new HttpResponse();
 
         button0.setOnClickListener(this); //로그인
@@ -99,7 +105,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 RequestParams params = new RequestParams();
                 params.put("email", emailEditText.getText().toString().trim());
                 params.put("password", passwordEditText.getText().toString().trim());
-
+                ProgressDialogHelper.getInstance().getProgressbar(this, "");
                 client.post(url, params, response);
                 break;
             case R.id.button1 :
@@ -143,6 +149,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     // 세션에 담아서 로그인 페이지로
                     SessionManager sessionManager = new SessionManager(LoginActivity.this);
                     sessionManager.saveSession(memberDTO);
+                    Log.e("[test]","성공진입/"+statusCode);
+                    ProgressDialogHelper.getInstance().removeProgressbar();
                     moveToMainActivity();
                 }
             } catch (JSONException e) {
@@ -152,6 +160,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(LoginActivity.this, "이메일과 비밀번호를 확인해 주세요", Toast.LENGTH_SHORT).show();
+            Log.e("[test]",error.getMessage()+"/"+statusCode);
         }
     }
 

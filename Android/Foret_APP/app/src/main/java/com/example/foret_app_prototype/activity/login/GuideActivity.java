@@ -48,6 +48,7 @@ import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.Member;
 import com.example.foret_app_prototype.model.MemberDTO;
 import com.example.foret_app_prototype.model.ModelUser;
+import com.google.android.gms.common.api.Response;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -238,7 +239,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             case R.id.button6: // 포레시작
 
                 tryToSignUp();
-                ProgressDialogHelper.getInstance().getProgressbar(this, "가입 진행중.");
+
                 /*
                  * intent = new Intent(this, MainActivity.class); startActivity(intent);
                  * finish();
@@ -519,22 +520,31 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         for (int a = 0; a < str_si.length; a++) {
             str_si[a] = region_si.get(a);
             str_gu[a] = region_gu.get(a);
-            params.put("region_si",region_si.get(a)+"시" );
-            params.put("region_gu", region_gu.get(a));
-            Log.e("[test]",region_si.get(a)+", "+region_gu.get(a)+".");
+            if(a==0){
+                params.put("region_si","서울시" );
+                params.put("region_gu", "강남구");
+            }else {
+                params.add("region_si", "성남시");
+                params.add("region_gu", "분당구");
+            }
+
         }
         String[] str_tag = new String[member_tag.size()];
         for (int a = 0; a < str_tag.length; a++) {
             str_tag[a] = member_tag.get(a);
-            params.put("tag", member_tag.get(a));
-            Log.e("[test]",member_tag.get(a)+"가 선택됨.");
+
+            if(a==0){
+                params.put("tag","태그1" );
+            }else {
+                params.add("tag", "태그2");
+            }
         }
         String deviceToken = "test";
-        params.put("deviceToken", deviceToken);
+        params.put("device_Token", deviceToken);
         Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
         //String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
-       String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
-
+       //String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
+        String url = "http://192.168.0.180:8085/foret/member/member_insert.do";
         try {
             if (file != null)
                 params.put("photo", file);
@@ -543,8 +553,14 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         }
         // 멀티파트리퀘스트 형태로 보내는 메서드
         params.setForceMultipartEntityContentType(true);
-        client.post(url, params, new Response(activity));
 
+        final int DEFAULT_TIME = 20*1000;
+        client.setConnectTimeout(DEFAULT_TIME);
+        client.setResponseTimeout(DEFAULT_TIME);
+        client.setTimeout(DEFAULT_TIME);
+        client.setResponseTimeout(DEFAULT_TIME);
+        client.post(url, params, new Response(activity));
+        ProgressDialogHelper.getInstance().getProgressbar(this, "가입 진행중.");
     }
 
     private class Response extends AsyncHttpResponseHandler {

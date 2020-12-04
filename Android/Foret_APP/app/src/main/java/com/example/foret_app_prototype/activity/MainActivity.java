@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -63,7 +64,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     MemberDTO memberDTO;
     AsyncHttpClient client;
     HttpResponse response;
-    String url = "http://34.72.240.24::8085/foret/search/member.do";
+    //String url = "http://34.72.240.24::8085/foret/search/member.do";
+    String url = "http://192.168.0.180:8085/foret/search/member.do";
     TextView button_out, drawer_text1, drawer_text2, drawer_text3, drawer_text4;
     ImageView button_out2, button_drawcancel, profile;
     Intent intent;
@@ -261,7 +263,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onResume() {
         super.onResume();
-
+        currntuser = FirebaseAuth.getInstance().getCurrentUser();
+        Log.e("[test]",FirebaseAuth.getInstance().getCurrentUser().toString());
         if (currntuser == null) {
             //로그인 아닌상태
             Toast.makeText(context, "파이어베이스 로그아웃 상태..", Toast.LENGTH_LONG).show();

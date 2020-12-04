@@ -65,8 +65,8 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
     AsyncHttpClient client;
     ForetResponse foretResponse;
-    String url = "http://34.72.240.24::8085/foret/foret_insert.do";
-
+    //String url = "http://34.72.240.24::8085/foret/foret_insert.do";
+    String url = "http://192.168.0.180:8085/foret/foret/foret_insert.do";
     ImageView image_View_picture, button_cancel;
     EditText editText_name, editText_member, editText_intro;
     Button button_complete, button_picture;
@@ -165,22 +165,35 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(this, "포레 소개를 입력해주세요.", Toast.LENGTH_SHORT).show();
             return false;
         }
+        RequestParams params = new RequestParams();
 
         String[] str_si = new String[region_si.size()];
         String[] str_gu = new String[region_gu.size()];
         for (int a = 0; a < str_si.length; a++) {
             str_si[a] = region_si.get(a);
             str_gu[a] = region_gu.get(a);
+            if(a==0){
+                params.put("region_si","서울시" );
+                params.put("region_gu", "강남구");
+            }else {
+                params.add("region_si", "성남시");
+                params.add("region_gu", "분당구");
+            }
         }
 
         String[] str_tag = new String[foret_tag.size()];
         for (int a = 0; a < str_tag.length; a++) {
             str_tag[a] = foret_tag.get(a);
+            if(a==0){
+                params.put("tag","태그1" );
+            }else {
+                params.add("tag", "태그2");
+            }
         }
 
         client = new AsyncHttpClient();
         foretResponse = new ForetResponse();
-        RequestParams params = new RequestParams();
+
 
         SessionManager sessionManager = new SessionManager(this);
         int leader_id = sessionManager.getSession();
@@ -189,14 +202,21 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         params.put("name", name);
         params.put("introduce", introduce);
         params.put("max_member", max_member);
-        params.put("tag", str_tag);
-        params.put("region_si", str_si);
-        params.put("region_gu", str_gu);
+       // params.put("tag", str_tag);
+       // params.put("region_si", str_si);
+       // params.put("region_gu", str_gu);
         if (file != null) {
             params.put("photo", filePath);
         }
+
+        final int DEFAULT_TIME = 20*1000;
+        client.setConnectTimeout(DEFAULT_TIME);
+        client.setResponseTimeout(DEFAULT_TIME);
+        client.setTimeout(DEFAULT_TIME);
+        client.setResponseTimeout(DEFAULT_TIME);
         client.post(url, params, foretResponse);
 
+        ProgressDialogHelper.getInstance().getProgressbar(this,"포레 생성중");
 
         //파이어 베이스용 데이터 삽입
         foret = new Foret();
@@ -206,8 +226,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     if (firebaseAuth.getCurrentUser().getUid() == ds.getValue()) {
-                        ModelUser user = ds.getValue(ModelUser.class);
+                        user = ds.getValue(ModelUser.class);
                         foret.setLeader(user.getNickname());
+                        Log.e("[test]",user.getNickname());
                     }
                 }
             }
@@ -483,17 +504,20 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     class ForetResponse extends AsyncHttpResponseHandler {
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            Log.e("[test]","통신 후 데이터 리턴");
+            ProgressDialogHelper.getInstance().removeProgressbar();
+
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                String rt = json.getString("rt");
+                String rt = json.getString("foretRT");
                 if (rt.equals("OK")) {
                     Toast.makeText(MakeForetActivity.this, "포레를 만들었습니다.", Toast.LENGTH_SHORT).show();
                     ProgressDialogHelper.getInstance().getProgressbar(context,"채팅방 생성중입니다.");
                     HashMap<String, Object> hashMap = new HashMap<>();
                     hashMap.put("GroupName", foret.getName());
                     hashMap.put("GroupPhoto", foret.getForet_photo());
-                    hashMap.put("GroupLeader", foret.getLeader());
+                    hashMap.put("GroupLeader", foret.getLeader()); //안들어가있음
                     hashMap.put("GroupDescription", foret.getIntroduce());
                     //hashMap.put("GroupId", ""+foret.getGroup_no());
                     hashMap.put("GroupMaxMember", "" + foret.getMax_member());
@@ -505,7 +529,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                     ref.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            //유저 정보 얻로드
+                            //유저 정보 얻로드 -- 안들어가있음
                             HashMap<String, String> hashMap1 = new HashMap<>();
                             hashMap1.put("participantName", user.getNickname());
                             hashMap1.put("uid", "" + firebaseAuth.getCurrentUser().getUid());
@@ -552,6 +576,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(MakeForetActivity.this, "통신 실패", Toast.LENGTH_SHORT).show();
+            Log.e("[test]", error.getMessage()+"/ "+statusCode);
         }
 
 
