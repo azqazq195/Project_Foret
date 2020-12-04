@@ -12,6 +12,9 @@ public class ForetBoardComment implements Serializable {
     private int group_no;
     private int group_seq;
 
+    public ForetBoardComment() {
+    }
+
     public ForetBoardComment(String content, String writer, String reg_date, int writer_image) {
         this.writer_image = writer_image;
         this.content = content;

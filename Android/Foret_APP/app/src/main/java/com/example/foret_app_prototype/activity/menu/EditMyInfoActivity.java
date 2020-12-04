@@ -397,9 +397,6 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         params.put("name", memberDTO.getName());
         params.put("email", memberDTO.getEmail());
         params.put("birth", memberDTO.getBirth());
-        params.put("region_si", str_si);
-        params.put("region_gu", str_gu);
-        params.put("tag", str_tag);
         params.put("id", memberDTO.getId());
         if(filePath != null) {
             try {

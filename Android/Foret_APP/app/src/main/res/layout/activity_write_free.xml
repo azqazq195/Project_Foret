@@ -59,7 +59,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView_writer" />
 
     <EditText
-        android:id="@+id/editText_subjext"
+        android:id="@+id/editText_subject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -80,6 +80,6 @@
         android:layout_marginEnd="16dp"
         android:text="작성자"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_subjext" />
+        app:layout_constraintTop_toBottomOf="@+id/editText_subject" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

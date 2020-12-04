@@ -18,6 +18,7 @@ public class ForetBoard implements Serializable {
     private String[] board_photo;
     private int like_count;
     private int comment_count;
+    private boolean like;
 
     // 임시
     private int boradImage;
@@ -150,4 +151,13 @@ public class ForetBoard implements Serializable {
     public void setMemberImage(int memberImage) {
         this.memberImage = memberImage;
     }
+
+    public boolean isLike() {
+        return like;
+    }
+
+    public void setLike(boolean like) {
+        this.like = like;
+    }
+
 }

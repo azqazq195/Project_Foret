@@ -27,7 +27,6 @@ import android.widget.Toast;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.adapter.RecyclerAdapter3;
-import com.example.foret_app_prototype.adapter.RecyclerAdapter4;
 import com.example.foret_app_prototype.model.Test;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
