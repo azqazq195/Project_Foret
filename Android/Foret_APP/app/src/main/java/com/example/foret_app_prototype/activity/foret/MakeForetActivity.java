@@ -135,11 +135,6 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         switch (v.getId()) {
             case R.id.button_complete: //완료(확인 버튼)
                 foretInsert();
-                    //Toast.makeText(this, "포레를 만들었습니다.", Toast.LENGTH_SHORT).show();
-                    //Intent intent = new Intent(this, ViewForetActivity.class);
-                    //startActivity(intent);
-                    //finish();
-
                 break;
             case R.id.button_cancel: //취소 버튼
                 finish();

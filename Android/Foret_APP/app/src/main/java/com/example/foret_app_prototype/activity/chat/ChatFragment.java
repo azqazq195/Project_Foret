@@ -193,8 +193,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     }
     //내 그룹 채팅방 로드
     private void loadGroupChatList() {
-        groupChatLists = new ArrayList<>();
 
+        groupName = "영어 그룹";
+        member_id = "지젼성한";
+        groupChatLists = new ArrayList<>();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -203,7 +205,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     //여기 확인 필요 - 현재 유저가 해당 그룹의 인원일 떄
                     //if (!ds.child("participants").child(member_id).exists()) {
-                    if (!ds.child(groupName).child("participants").child(member_id).exists()) {
+                    if (ds.child(groupName).child("participants").child(member_id).exists()) {
                         ModelGroupChatList model = ds.getValue(ModelGroupChatList.class);
                         groupChatLists.add(model);
                     }
