@@ -3,6 +3,7 @@ package com.example.foret_app_prototype.activity.chat;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,6 +29,7 @@ import com.example.foret_app_prototype.activity.chat.chatactivity.ChatContainerA
 import com.example.foret_app_prototype.adapter.chat.ChatListAdapter;
 import com.example.foret_app_prototype.adapter.chat.GroupAdapter;
 import com.example.foret_app_prototype.helper.CalendarHelper;
+import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.ModelChat;
 import com.example.foret_app_prototype.model.ModelChatList;
 import com.example.foret_app_prototype.model.ModelGroupChatList;
@@ -126,12 +128,12 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         reCycleViewGroup.setHasFixedSize(true);
         reCycleViewGroup.setLayoutManager(linearLayoutManager1);
 
-        //채팅방 내용 로드
-        loadGroupChatList();
-        loadPersonalChatList();
+        getChatData();
 
         return rootView;
     }
+
+
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -169,6 +171,12 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    private void getChatData() {
+        ProgressDialogHelper.getInstance().getProgressbar(getContext(),"잠시만 기다려주세요");
+        //채팅방 내용 로드
+        loadGroupChatList();
+        loadPersonalChatList();
+    }
     //내 개인 채팅방 리스트 로드
     private void loadPersonalChatList() {
         chatlistList = new ArrayList<>();
@@ -194,32 +202,52 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     //내 그룹 채팅방 로드
     private void loadGroupChatList() {
 
-        groupName = "영어 그룹";
-        member_id = "지젼성한";
         groupChatLists = new ArrayList<>();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
-        reference.addValueEventListener(new ValueEventListener() {
+        Log.e("[test]","curruntUser.getUid()?"+curruntUser.getUid());
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                groupChatLists.clear();
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    //여기 확인 필요 - 현재 유저가 해당 그룹의 인원일 떄
-                    //if (!ds.child("participants").child(member_id).exists()) {
-                    if (ds.child(groupName).child("participants").child(member_id).exists()) {
-                        ModelGroupChatList model = ds.getValue(ModelGroupChatList.class);
-                        groupChatLists.add(model);
-                    }
-                    groupAdapter = new GroupAdapter(context, groupChatLists);
-                    reCycleViewGroup.setAdapter(groupAdapter);
-                }
+           for(DataSnapshot ds : snapshot.getChildren()){
+
+               Log.e("[test]","ds.getValue())?"+ds.child("uid").getValue());
+
+               if(curruntUser.getUid().equals(ds.child("uid").getValue())){
+                   member_id = ds.child("nickname").getValue()+"";
+                   Log.e("[test]","member_id"+member_id);
+                   DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
+                   reference.addValueEventListener(new ValueEventListener() {
+                       @Override
+                       public void onDataChange(@NonNull DataSnapshot snapshot) {
+                           groupChatLists.clear();
+                           for (DataSnapshot ds : snapshot.getChildren()) {
+                               //여기 확인 필요 - 현재 유저가 해당 그룹의 인원일 떄
+                               //if (!ds.child("participants").child(member_id).exists()) {
+                               if (ds.child("participants").child(member_id).exists()) {
+                                   ModelGroupChatList model = ds.getValue(ModelGroupChatList.class);
+                                   groupChatLists.add(model);
+                               }
+                               groupAdapter = new GroupAdapter(context, groupChatLists);
+                               reCycleViewGroup.setAdapter(groupAdapter);
+                           }
+                       }
+                       @Override
+                       public void onCancelled(@NonNull DatabaseError error) {
+                           Toast.makeText(context, "해당 멤버가 아닙니다.", Toast.LENGTH_LONG).show();
+                       }
+                   });
+               }
+           }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(context, "해당 멤버가 아닙니다.", Toast.LENGTH_LONG).show();
+
             }
         });
-    }
 
+        //member_id = "지젼성한";
+
+    }
     //유저 리스트 로드
     private void loadChat() {
         userList = new ArrayList<>();
@@ -251,8 +279,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
             }
         });
-    }
 
+        //화면종료
+        ProgressDialogHelper.getInstance().removeProgressbar();
+    }
     //내 개인 채팅방 마지막 메세지 찾기
     private void loadPersonalLastMessage(final String userId) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
