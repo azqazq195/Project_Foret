@@ -92,6 +92,10 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     Foret foret;
     String group_name;
 
+    int leader_id;
+    String name;
+    int max_member;
+    String introduce;
     Context context;
 
     @Override
@@ -121,18 +125,16 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
         firebaseAuth = FirebaseAuth.getInstance();
 
+        client = new AsyncHttpClient();
+        foretResponse = new ForetResponse();
+
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_complete: //완료(확인 버튼)
-                if (foretInsert()) {
-                    //Toast.makeText(this, "포레를 만들었습니다.", Toast.LENGTH_SHORT).show();
-                    //Intent intent = new Intent(this, ViewForetActivity.class);
-                    //startActivity(intent);
-                    //finish();
-                }
+                foretInsert();
                 break;
             case R.id.button_cancel: //취소 버튼
                 finish();
@@ -150,20 +152,20 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    private boolean foretInsert() {
-        String name = editText_name.getText().toString().trim();
-        int max_member = Integer.parseInt(editText_member.getText().toString().trim());
-        String introduce = editText_intro.getText().toString().trim();
+    private void foretInsert() {
+         name = editText_name.getText().toString().trim();
+        max_member = Integer.parseInt(editText_member.getText().toString().trim());
+        introduce = editText_intro.getText().toString().trim();
 
         if (name.equals("")) {
             Toast.makeText(this, "포레 이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
-            return false;
+            return;
         } else if (max_member == 0) {
             Toast.makeText(this, "최소 1명이상을 입력해주세요.", Toast.LENGTH_SHORT).show();
-            return false;
+            return;
         } else if (introduce.equals("")) {
             Toast.makeText(this, "포레 소개를 입력해주세요.", Toast.LENGTH_SHORT).show();
-            return false;
+            return;
         }
         RequestParams params = new RequestParams();
 
@@ -191,12 +193,8 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             }
         }
 
-        client = new AsyncHttpClient();
-        foretResponse = new ForetResponse();
-
-
         SessionManager sessionManager = new SessionManager(this);
-        int leader_id = sessionManager.getSession();
+        leader_id = sessionManager.getSession();
 
         params.put("leader_id", leader_id);
         params.put("name", name);
@@ -218,40 +216,6 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
         ProgressDialogHelper.getInstance().getProgressbar(this,"포레 생성중");
 
-        //파이어 베이스용 데이터 삽입
-        foret = new Foret();
-        DatabaseReference userName = FirebaseDatabase.getInstance().getReference("Users");
-        userName.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    if (firebaseAuth.getCurrentUser().getUid() == ds.getValue()) {
-                        user = ds.getValue(ModelUser.class);
-                        foret.setLeader(user.getNickname());
-                        Log.e("[test]",user.getNickname());
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-        foret.setName(name);
-        foret.setIntroduce(introduce);
-        foret.setMax_member(max_member);
-
-        String makeForetTime = CalendarHelper.getInstance().getRelativeTime("" + System.currentTimeMillis());
-        foret.setReg_date(makeForetTime);
-
-
-        if (file != null) {
-            foret.setForet_photo(filePath);
-        }
-        foret.setForet_photo(filePath);
-
-        return true;
     }
 
     public void regionDialog() {
@@ -504,7 +468,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     class ForetResponse extends AsyncHttpResponseHandler {
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            Log.e("[test]","통신 후 데이터 리턴");
+            Log.e("[test]","통신 성공");
             ProgressDialogHelper.getInstance().removeProgressbar();
 
             String str = new String(responseBody);
@@ -512,58 +476,96 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                 JSONObject json = new JSONObject(str);
                 String rt = json.getString("foretRT");
                 if (rt.equals("OK")) {
-                    Toast.makeText(MakeForetActivity.this, "포레를 만들었습니다.", Toast.LENGTH_SHORT).show();
-                    ProgressDialogHelper.getInstance().getProgressbar(context,"채팅방 생성중입니다.");
-                    HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("GroupName", foret.getName());
-                    hashMap.put("GroupPhoto", foret.getForet_photo());
-                    hashMap.put("GroupLeader", foret.getLeader()); //안들어가있음
-                    hashMap.put("GroupDescription", foret.getIntroduce());
-                    //hashMap.put("GroupId", ""+foret.getGroup_no());
-                    hashMap.put("GroupMaxMember", "" + foret.getMax_member());
-                    hashMap.put("GroupCurrentJoinedMember", 1);
-                    hashMap.put("Group_date_issued", foret.getReg_date());
-
-                    //그룹 항목 만들기
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups").child(foret.getName());
-                    ref.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    //파이어 베이스용 데이터 삽입
+                    foret = new Foret();
+                    foret.setName(name);
+                    foret.setIntroduce(introduce);
+                    foret.setMax_member(max_member);
+                    if (file != null) {
+                        foret.setForet_photo(filePath);
+                    }
+                    foret.setForet_photo(filePath);
+                    String makeForetTime = CalendarHelper.getInstance().getCurrentTimeFull();
+                    foret.setReg_date(makeForetTime);
+                    DatabaseReference userName = FirebaseDatabase.getInstance().getReference("Users");
+                    Log.e("[test]","포레 생성중");
+                    userName.addValueEventListener(new ValueEventListener() {
                         @Override
-                        public void onSuccess(Void aVoid) {
-                            //유저 정보 얻로드 -- 안들어가있음
-                            HashMap<String, String> hashMap1 = new HashMap<>();
-                            hashMap1.put("participantName", user.getNickname());
-                            hashMap1.put("uid", "" + firebaseAuth.getCurrentUser().getUid());
-                            hashMap1.put("joinedDate", "" + System.currentTimeMillis());
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Log.e("[test]","레퍼런스?"+userName.getRef().toString());
+                            for (DataSnapshot ds : snapshot.getChildren()) {
+                                Log.e("[test]","firebaseAuth.getCurrentUser().getUid()  : "+firebaseAuth.getCurrentUser().getUid());
 
-                            ref.child("participants").child(user.getUser_id()).setValue(hashMap1).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                //reference.child("participants").child(user.getUser_id()).setValue(hashMap1).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(context, "포레와 채팅방 생성 성공!", Toast.LENGTH_LONG).show();
+                                if (firebaseAuth.getCurrentUser().getUid().equals(ds.child("uid").getValue())) {
+                                    user = ds.getValue(ModelUser.class);
+                                    foret.setLeader(user.getNickname());
+                                    Log.e("[test]","user.getNickname() : "+user.getNickname());
+                                    Log.e("[test]",user.getNickname());
+
                                     ProgressDialogHelper.getInstance().removeProgressbar();
-                                }
-                            })
-                                    .addOnFailureListener(new OnFailureListener() {
+                                    ProgressDialogHelper.getInstance().getProgressbar(context,"채팅방 생성중입니다.");
+                                    Log.e("[test]","파이어 베이스에 포레 생성중");
+                                    Log.e("[test]"," 자료들 확인 : "+foret.getName()+foret.getIntroduce());
+                                    HashMap<String, Object> hashMap = new HashMap<>();
+                                    hashMap.put("GroupName", foret.getName());
+                                    hashMap.put("GroupPhoto", foret.getForet_photo());
+                                    hashMap.put("GroupLeader", user.getNickname()); //안들어가있음
+                                    hashMap.put("GroupDescription", foret.getIntroduce());
+                                    //hashMap.put("GroupId", ""+foret.getGroup_no());
+                                    hashMap.put("GroupMaxMember", "" + foret.getMax_member());
+                                    hashMap.put("GroupCurrentJoinedMember", 1);
+                                    hashMap.put("Group_date_issued", foret.getReg_date());
+
+                                    //그룹 항목 만들기
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups").child(foret.getName());
+                                    ref.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            //유저 정보 얻로드 -- 안들어가있음
+
+                                            HashMap<String, String> hashMap1 = new HashMap<>();
+                                            hashMap1.put("participantName", user.getNickname());
+                                            hashMap1.put("uid", "" + firebaseAuth.getCurrentUser().getUid());
+                                            hashMap1.put("joinedDate", "" + System.currentTimeMillis());
+
+                                            ref.child("participants").child(user.getNickname()).setValue(hashMap1).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(context, "포레와 채팅방 생성 성공!", Toast.LENGTH_LONG).show();
+                                                    ProgressDialogHelper.getInstance().removeProgressbar();
+
+                                                    Intent intent = new Intent(MakeForetActivity.this, ViewForetActivity.class);
+                                                    startActivity(intent);
+                                                    finish(); // 현재 액티비티 종료
+
+
+                                                }
+                                            })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            ProgressDialogHelper.getInstance().removeProgressbar();
+                                                            Toast.makeText(context, "유저 정보 업로드 실패", Toast.LENGTH_LONG).show();
+                                                        }
+                                                    });
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
+                                            Log.e("[test]","그룹생성 실패 원인 : "+e.getMessage());
                                             ProgressDialogHelper.getInstance().removeProgressbar();
-                                            Toast.makeText(context, "유저 정보 업로드 실패", Toast.LENGTH_LONG).show();
                                         }
                                     });
-
-
+                                }
+                            }
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
+
                         @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(context, "그룹생성 실패 원인 : "+e.getMessage(), Toast.LENGTH_LONG).show();
-                            ProgressDialogHelper.getInstance().removeProgressbar();
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("[test]","error " +error.getMessage());
                         }
                     });
-
-                    Intent intent = new Intent(MakeForetActivity.this, ViewForetActivity.class);
-                    startActivity(intent);
-                    finish(); // 현재 액티비티 종료
 
                 } else {
                     Toast.makeText(MakeForetActivity.this, "포레를 만들지 못했습니다.", Toast.LENGTH_SHORT).show();

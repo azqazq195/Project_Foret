@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,15 +30,27 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.activity.foret.MakeForetActivity;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
+import com.example.foret_app_prototype.model.Foret;
 import com.example.foret_app_prototype.model.ForetBoard;
+import com.example.foret_app_prototype.model.Member;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
+
 public class WriteForetBoardActivity extends AppCompatActivity implements View.OnClickListener {
-    List<ForetBoard> foretBoardList;
+    Member member;
+    Foret foret;
 
     EditText editText_content, editText_subject;
     TextView textView_writer;
@@ -45,12 +58,22 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
     ImageView imageView0, imageView1, imageView2, imageView3, imageView4;
     Button button;
 
+    File file;
     String filePath = null;
     Intent intent;
 
     // 이미지 카운트
     int image_count = 0;
+
+    AsyncHttpClient client;
+    ForetBoardResponse foretBoardResponse;
+    String url = "";
+
+    // 보낼 데이터
     String[] str_boardImage = new String[5];
+    int type = 0;
+    String subject = "";
+    String content = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +85,28 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
         getSupportActionBar().setDisplayShowTitleEnabled(false); // 기존 타이틀 제거
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 뒤로가기 버튼
 
-        foretBoardList = (List<ForetBoard>) getIntent().getSerializableExtra("foretBoardList");
+        getFindbyId(); // 객체 초기화
 
-        getFindbyId();
+        textView_writer.setText(member.getName());
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0: type = 1; // 일반
+                        break;
+                    case 1: type = 2; // 일정
+                        break;
+                    case 2: type = 3; // 공지
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void getFindbyId() {
@@ -93,7 +135,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
         switch (item.getItemId()) {
             case R.id.item_complete : // 완료 버튼
                 if(inputBoard()) {
-                    writeCheck();
+                    putParams();
                 }
                 return true;
             case android.R.id.home : // 뒤로가기 버튼
@@ -103,9 +145,25 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
         return super.onOptionsItemSelected(item);
     }
 
+    private void putParams() {
+        client = new AsyncHttpClient();
+        foretBoardResponse = new ForetBoardResponse();
+        RequestParams params = new RequestParams();
+
+        params.put("writer", member.getId());
+        params.put("foret_id", foret.getId());
+        params.put("type", type);
+        params.put("subject", member.getId());
+        params.put("content", member.getId());
+        if(file != null) {
+            params.put("photo", str_boardImage);
+        }
+        client.post(url, params, foretBoardResponse);
+    }
+
     private boolean inputBoard() {
-        String subject = editText_subject.getText().toString().trim();
-        String content = editText_content.getText().toString();
+        subject = editText_subject.getText().toString().trim();
+        content = editText_content.getText().toString();
         if(subject.equals("")) {
             Toast.makeText(this, "제목을 입력하세요.", Toast.LENGTH_SHORT).show();
             return false;
@@ -113,9 +171,6 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
             Toast.makeText(this, "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
             return false;
         }
-        ForetBoard foretBoard = new ForetBoard();
-        foretBoard.setBoard_photo(str_boardImage);
-        Log.d("[TEST]", "foretBoard.getBoard_photo() => " + foretBoard.getBoard_photo());
         return true;
     }
 
@@ -150,7 +205,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
     }
 
     private void showSelect() {
-        final String [] menu = {"새로 촬영하기", "갤러리에서 가져오기"};
+        final String[] menu = {"새로 촬영하기", "갤러리에서 가져오기"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setItems(menu, new DialogInterface.OnClickListener() {
             @Override
@@ -160,7 +215,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
                         filePath = PhotoHelper.getInstance().getNewPhotoPath(); //저장할 사진 경로
                         Log.d("[TEST]", "photoPath = " + filePath);
 
-                        File file = new File(filePath);
+                        file = new File(filePath);
                         Uri uri = null;
 
                         //카메라앱 호출을 위한 암묵적 인텐트 (action과 uri가 필요하다)
@@ -172,7 +227,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
                         } else {
                             uri = Uri.fromFile(file);
                         }
-                        Log.d("[TEST]", "uri : "+uri.toString());
+                        Log.d("[TEST]", "uri : " + uri.toString());
 
                         //저장할 경로를 파라미터로 설정
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
@@ -231,7 +286,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
                     Log.d("[TEST]", "fileName = " + fileName);
                     filePath = FileUtils.getPath(this, data.getData());
                     Log.d("[TEST]", "filePath = " + filePath);
-                    Toast.makeText(this, fileName+"을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, fileName + "을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
                     insertImage();
             }
         }
@@ -260,6 +315,28 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
             image_count = 5;
         }
         Log.d("[TEST]", "str_boardImage.length() => " + str_boardImage.length);
+    }
+
+    class ForetBoardResponse extends AsyncHttpResponseHandler {
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                String rt = json.getString("rt");
+                if(rt.equals("OK")) {
+                    writeCheck();
+                } else {
+                    Toast.makeText(WriteForetBoardActivity.this, "등록하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(WriteForetBoardActivity.this, "통신 실패", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

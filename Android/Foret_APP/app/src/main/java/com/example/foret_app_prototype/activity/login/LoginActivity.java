@@ -43,8 +43,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     AsyncHttpClient client;
     HttpResponse response;
-    //String url = "http://34.72.240.24:8085/foret/search/member.do";
-    String url = "http://192.168.0.180:8085/foret/search/member.do";
+    String url = "http://34.72.240.24:8085/foret/search/member.do";
+//    String url = "http://192.168.0.180:8085/foret/search/member.do";
     Button button0;
     TextView button1, button2, button3, button4;
     EditText emailEditText, passwordEditText;
@@ -105,7 +105,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 RequestParams params = new RequestParams();
                 params.put("email", emailEditText.getText().toString().trim());
                 params.put("password", passwordEditText.getText().toString().trim());
-                ProgressDialogHelper.getInstance().getProgressbar(this, "");
+                ProgressDialogHelper.getInstance().getProgressbar(this, "로그인 진행중");
                 client.post(url, params, response);
                 break;
             case R.id.button1 :
@@ -127,6 +127,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void moveToMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra("email",email);
+        intent.putExtra("pwd",pwd);
         startActivity(intent);
         finish();
     }
@@ -151,7 +153,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     sessionManager.saveSession(memberDTO);
                     Log.e("[test]","성공진입/"+statusCode);
                     ProgressDialogHelper.getInstance().removeProgressbar();
-                    moveToMainActivity();
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -166,7 +168,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     //파이어 베이스 로그인
     public void joinedMember(String member_email, String member_id) {
-
+        Log.d("TAG", "signInWithEmail:진입");
+        Log.d("TAG", "member_email:"+member_email);
+        Log.d("TAG", "member_id:"+member_id);
         mAuth.signInWithEmailAndPassword(member_email, member_id).
                 addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -174,6 +178,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (task.isSuccessful()) {
                             Log.d("TAG", "signInWithEmail:success");
                             user = mAuth.getCurrentUser();
+                            moveToMainActivity();
                         } else {
                             Log.w("TAG", "signInWithEmail:failure", task.getException());
                             Toast.makeText(context, "Authentication failed.",

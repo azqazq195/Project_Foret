@@ -1,9 +1,11 @@
 package com.example.foret_app_prototype.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class ModelGroupChatList {
 
     String GroupName,GroupPhoto,GroupLeader,GroupDescription,GroupId,GroupMaxMember,GroupCurrentJoinedMember,Group_date_issued;
-
 
     public ModelGroupChatList() {
     }

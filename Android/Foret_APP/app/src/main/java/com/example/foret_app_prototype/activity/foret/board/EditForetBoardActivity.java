@@ -25,12 +25,21 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.activity.foret.EditForetActivity;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.model.ForetBoard;
 import com.example.foret_app_prototype.model.Member;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
+
+import cz.msebera.android.httpclient.Header;
 
 public class EditForetBoardActivity extends AppCompatActivity
         implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -38,6 +47,11 @@ public class EditForetBoardActivity extends AppCompatActivity
     Member member;
     ForetBoard foretBoard;
 
+    AsyncHttpClient client;
+    EditForetBoardResponse editForetBoardResponse;
+    String url = "";
+
+    File file;
     Spinner spinner_board_type;
     TextView textView_writer;
     EditText editText_subject, editText_content;
@@ -66,10 +80,20 @@ public class EditForetBoardActivity extends AppCompatActivity
 
         getFindbyId(); // 객체 초기화
 
+        dataSetting(); // 데이터 세팅
+
+    }
+
+    private void dataSetting() {
         spinner_board_type.setSelection((foretBoard.getType()-1));
         textView_writer.setText(foretBoard.getWriter());
         editText_subject.setText(foretBoard.getSubject());
         editText_content.setText(foretBoard.getContent());
+//        if(foretBoard.getBoard_photo().equals("")) { // 사진이 있으면
+//            for(int a=0; a<foretBoard.getBoard_photo().length; a++) {
+//                Glide.with(this).load(foretBoard.getBoard_photo()[a]).into(imageView[a]);
+//            }
+//        }
         for(int i=0; i<foretBoard.getBoard_photo().length; i++) {
             imageView[i].setImageResource(foretBoard.getBoradImage());
         }
@@ -122,8 +146,37 @@ public class EditForetBoardActivity extends AppCompatActivity
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         //spinner의 선택된 위치 가져오기
-        selectedIndex = spinner_board_type.getSelectedItemPosition();
+        selectedIndex = (spinner_board_type.getSelectedItemPosition()+1);
         Log.d("[TEST]", "selectedIndex+1 => " + (selectedIndex+1));
+    }
+
+    private void modify() {
+        String subject = editText_subject.getText().toString().trim();
+        String content = editText_content.getText().toString().trim();
+        if(subject.equals("")) {
+            Toast.makeText(this, "제목을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(content.equals("")) {
+            Toast.makeText(this, "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        client = new AsyncHttpClient();
+        editForetBoardResponse = new EditForetBoardResponse();
+        RequestParams params = new RequestParams();
+
+        params.put("id", foretBoard.getId());
+        params.put("writer", member.getId());
+//        params.put("foret_id", foret.getId());
+        params.put("type", spinner_board_type);
+//        params.put("hit", hit);
+        params.put("subject", subject);
+        params.put("content", content);
+        if(str_boardImage.length != 0) {
+            params.put("photo", str_boardImage);
+        }
+        client.post(url, params, editForetBoardResponse);
     }
 
     @Override
@@ -136,32 +189,13 @@ public class EditForetBoardActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.item_complete : // 완료 버튼
-                if(getComplete()) {
-                    modifyCheck();
-                }
+                modify();
                 break;
             case android.R.id.home : // 뒤로가기 버튼
                 finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private boolean getComplete() {
-        String subject = editText_subject.getText().toString().trim();
-        String content = editText_content.getText().toString().trim();
-        if(subject.equals("")) {
-            Toast.makeText(this, "제목을 입력하세요.", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if(content.equals("")) {
-            Toast.makeText(this, "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        foretBoard.setType(selectedIndex+1);
-        foretBoard.setSubject(subject);
-        foretBoard.setContent(content);
-        return true;
     }
 
     private void modifyCheck() {
@@ -171,10 +205,8 @@ public class EditForetBoardActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(getApplicationContext(), "게시글을 수정했습니다.", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.putExtra("member", member);
-                intent.putExtra("foretBoard", foretBoard);
-                setResult(RESULT_OK, intent);
+                Intent intent = new Intent(EditForetBoardActivity.this, ReadForetBoardActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -195,7 +227,7 @@ public class EditForetBoardActivity extends AppCompatActivity
                         filePath = PhotoHelper.getInstance().getNewPhotoPath(); //저장할 사진 경로
                         Log.d("[TEST]", "photoPath = " + filePath);
 
-                        File file = new File(filePath);
+                        file = new File(filePath);
                         Uri uri = null;
 
                         //카메라앱 호출을 위한 암묵적 인텐트 (action과 uri가 필요하다)
@@ -281,5 +313,27 @@ public class EditForetBoardActivity extends AppCompatActivity
             Glide.with(this).load(filePath).into(imageView[4]);
         }
         Log.d("[TEST]", "str_boardImage.length() => " + str_boardImage.length);
+    }
+
+    class EditForetBoardResponse extends AsyncHttpResponseHandler {
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                String rt = json.getString("rt");
+                if(rt.equals("OK")) {
+                    modifyCheck();
+                } else {
+                    Toast.makeText(EditForetBoardActivity.this, "게시판을 수정하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(EditForetBoardActivity.this, "통신 실패", Toast.LENGTH_SHORT).show();
+        }
     }
 }

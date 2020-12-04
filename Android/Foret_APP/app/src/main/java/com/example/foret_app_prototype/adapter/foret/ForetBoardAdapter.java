@@ -11,10 +11,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.board.ReadForetBoardActivity;
 import com.example.foret_app_prototype.model.Foret;
 import com.example.foret_app_prototype.model.ForetBoard;
+import com.example.foret_app_prototype.model.ForetBoardDTO;
 import com.example.foret_app_prototype.model.Member;
 
 import java.io.Serializable;
@@ -22,19 +24,12 @@ import java.util.List;
 
 public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.ViewHolder> {
     private Activity activity;
-    private Member member;
-    private List<Foret> foretList;
-    private List<ForetBoard> foretBoardList;
+    private List<ForetBoardDTO> foretBoardDTOList;
     private ViewHolder viewHolder;
 
-//    private OnItemClickListener mListener = null;
-
-
-    public ForetBoardAdapter(Activity activity, Member member, List<Foret> foretList, List<ForetBoard> foretBoardList) {
+    public ForetBoardAdapter(Activity activity, List<ForetBoardDTO> foretBoardDTOList) {
         this.activity = activity;
-        this.member = member;
-        this.foretList = foretList;
-        this.foretBoardList = foretBoardList;
+        this.foretBoardDTOList = foretBoardDTOList;
     }
 
     @NonNull
@@ -49,35 +44,35 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Foret foret = foretList.get(position);
-        ForetBoard foretBoard = foretBoardList.get(position);
+        ForetBoardDTO foretBoardDTO = foretBoardDTOList.get(position);
 
-//        Glide.with(viewHolder.imageBoard.getContext()).load(item.getPhoto_name())
-//                .placeholder(R.drawable.noimage).into(viewHolder.imageBoard);
-
-        switch (foretBoard.getType()) {
+        // 1 : 공지사항, 2 : 포레 공지사항, 3 : 포레 일정 게시판, 4 : 포레 게시판, 0 : 익명 게시판
+        switch (foretBoardDTO.getType()) {
+            case 0:
+                viewHolder.type.setText("[익명 게시판]");
+                break;
             case 1:
-                viewHolder.type.setText("[일반]");
-                break;
-            case 2:
-                viewHolder.type.setText("[일정]");
-                break;
-            case 3:
                 viewHolder.type.setText("[공지사항]");
                 break;
+            case 2:
+                viewHolder.type.setText("[포레 공지사항]");
+                break;
+            case 3:
+                viewHolder.type.setText("[포레 일정]");
+                break;
+            case 4:
+                viewHolder.type.setText("[일반]");
+                break;
         }
-        viewHolder.subject.setText(foretBoard.getSubject());
-        viewHolder.date.setText(foretBoard.getReg_date());
+        viewHolder.subject.setText(foretBoardDTO.getSubject());
+        viewHolder.date.setText(foretBoardDTO.getReg_date());
 
         // 아이템 클릭 이벤트 처리.
         viewHolder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ReadForetBoardActivity.class);
-                intent.putExtra("member", member);
-                intent.putExtra("foret", foret);
-                intent.putExtra("foretBoard", foretBoard);
-                intent.putExtra("foretBoardList", (Serializable) foretBoardList);
+                intent.putExtra("foretBoardDTO", foretBoardDTO);
                 activity.startActivity(intent);
             }
         });
@@ -85,11 +80,11 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
 
     @Override
     public int getItemCount() {
-        return foretBoardList.size();
+        return foretBoardDTOList.size();
     }
 
-    public void setItems(List<ForetBoard> items) {
-        this.foretBoardList = items;
+    public void setItems(List<ForetBoardDTO> items) {
+        this.foretBoardDTOList = items;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -105,13 +100,4 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
             layout = itemView.findViewById(R.id.layout);
         }
     }
-
-//    public interface OnItemClickListener {
-//        void onItemClick(View v, int position);
-//    }
-//
-//    // OnItemClickListener 객체 참조를 어댑터에 전달하는 메서드
-//    public void setOnItemClickListener(OnItemClickListener listener) {
-//        this.mListener = listener;
-//    }
 }

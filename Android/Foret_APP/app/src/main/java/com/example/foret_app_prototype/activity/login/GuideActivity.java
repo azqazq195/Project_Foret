@@ -542,9 +542,13 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         String deviceToken = "test";
         params.put("device_Token", deviceToken);
         Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
-        //String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
-       //String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
         String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
+       //String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
+<<<<<<< HEAD
+        String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
+=======
+//        String url = "http://192.168.0.180:8085/foret/member/member_insert.do";
+>>>>>>> develop
         try {
             if (file != null)
                 params.put("photo", file);
@@ -554,7 +558,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         // 멀티파트리퀘스트 형태로 보내는 메서드
         params.setForceMultipartEntityContentType(true);
 
-        final int DEFAULT_TIME = 20*1000;
+        final int DEFAULT_TIME = 50*1000;
         client.setConnectTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
         client.setTimeout(DEFAULT_TIME);

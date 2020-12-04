@@ -19,12 +19,27 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.helper.CalendarHelper;
+import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.Member;
+import com.example.foret_app_prototype.model.MemberDTO;
+import com.example.foret_app_prototype.model.ModelUser;
+import com.google.gson.Gson;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 public class JoinUsActivity extends AppCompatActivity implements View.OnClickListener {
     Member member;
@@ -46,11 +61,13 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
     String birth;
     String email;
     String pw;
+    String check_email;
 
     String nameValidation = "^[A-z|가-힣]([A-z|가-힣]*)$";
     String nickValidation = "^[A-z|가-힣|0-9]([A-z|가-힣|0-9]*)$";
     String emailValidation = "^[A-z|0-9]([A-z|0-9]*)(@)([A-z]*)(\\.)([a-zA-Z]){2,3}$";
-    String pwValidation = "^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{6,12}$";
+    //    String pwValidation = "^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{6,12}$";
+    String pwValidation = "^(?=.*[a-zA-Z0-9])(?=.*[a-zA-Z!@#$%^&*])(?=.*[0-9!@#$%^&*])[A-Za-z[0-9]$@$!%*#?&].{5,12}$";
 
     int name_eq = 0;     // 이름 체크
     int nick_eq = 0;     // 닉네임 체크
@@ -258,21 +275,16 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
             public void afterTextChanged(Editable s) {
                 email = editText4.getText().toString().trim();
                 if (email.matches(emailValidation) && s.length() > 0) {
-                    textView4.setText("사용 가능한 이메일입니다.");
-                    textView4.setTextColor(Color.parseColor("#FF0000FF"));
+                    textView4.setText("체크버튼을 눌러주세요.");
+                    textView4.setTextColor(Color.parseColor("#FF0000"));
+                    check4.setImageResource(R.drawable.check2);
                     check4.setVisibility(View.VISIBLE);
                 } else {
                     textView4.setText("이메일 형식으로 입력해주세요.");
                     textView4.setTextColor(Color.parseColor("#FF0000"));
                     check4.setVisibility(View.INVISIBLE);
                 }
-                if (check4.getVisibility() == View.VISIBLE) {
-                    email_eq = 1;
-                    Log.d("[TEST]", "[EMAIL]email_eq => " + email_eq);
-                } else {
-                    email_eq = 0;
-                    Log.d("[TEST]", "[EMAIL]email_eq => " + email_eq);
-                }
+
                 Log.d("[TEST]", "email => " + email);
                 Log.d("[TEST]", "email.matches(emailValidation) => " + email.matches(emailValidation));
                 Log.d("[TEST]", "s.length() => " + s.length());
@@ -280,25 +292,39 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-    private void editEmail() {
+    private void checkedEmail() {
         email = editText4.getText().toString().trim();
-        if (email.equals("")) {
-            textView4.setText("이메일을 입력해주세요.");
-            textView4.setTextColor(Color.parseColor("#FF0000"));
-            return;
-        } else if (!email.matches(emailValidation)) {
-            textView4.setText("이메일 형식으로 입력해주세요.");
-            textView4.setTextColor(Color.parseColor("#FF0000"));
-            return;
+        String url = "http://34.72.240.24:8085/foret/search/check_email.do";
+        AsyncHttpClient client = new AsyncHttpClient();
+        EmailResponse emailResponse = new EmailResponse();
+        RequestParams params = new RequestParams();
+        params.put("email", email);
+        client.post(url, params, emailResponse);
+    }
+
+    private void editEmail() {
+        if(email_eq == 1) {
+            email = editText4.getText().toString().trim();
+            if (email.equals("")) {
+                textView4.setText("이메일을 입력해주세요.");
+                textView4.setTextColor(Color.parseColor("#FF0000"));
+                return;
+            } else if (!email.matches(emailValidation)) {
+                textView4.setText("이메일 형식으로 입력해주세요.");
+                textView4.setTextColor(Color.parseColor("#FF0000"));
+                return;
+            }
+            check_count++;
+            Log.d("[TEST]", "[email]check_count => " + check_count);
+            animation = new AlphaAnimation(0, 1);
+            animation.setDuration(1000);
+            layout5.startAnimation(animation);
+            layout5.setVisibility(View.VISIBLE);
+            editText5.requestFocus();
+            checkPw();
+        } else {
+            Toast.makeText(this, "이메일 중복검사를 해주세요.", Toast.LENGTH_SHORT).show();
         }
-        check_count++;
-        Log.d("[TEST]", "[email]check_count => " + check_count);
-        animation = new AlphaAnimation(0, 1);
-        animation.setDuration(1000);
-        layout5.startAnimation(animation);
-        layout5.setVisibility(View.VISIBLE);
-        editText5.requestFocus();
-        checkPw();
     }
 
     private void checkPw() {
@@ -314,12 +340,20 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void afterTextChanged(Editable s) {
                 pw = editText5.getText().toString().trim();
-                if (pw.matches(pwValidation) && s.length() > 0) {
+                if (pw.matches(pwValidation) && s.length() > 5) {
                     textView5.setText("사용 가능한 비밀번호입니다.");
                     textView5.setTextColor(Color.parseColor("#FF0000FF"));
                     check5.setVisibility(View.VISIBLE);
-                } else {
-                    textView5.setText("영문+숫자+특수문자를 포함하세요.");
+                } else if (pw.length() < pw_length) {
+                    textView5.setText("최소 6자이상 입력해주세요.");
+                    textView5.setTextColor(Color.parseColor("#FF0000"));
+                    check5.setVisibility(View.INVISIBLE);
+                } else if (pw.length() > pw_length2) {
+                    textView5.setText("최대 12자이하 입력해주세요.");
+                    textView5.setTextColor(Color.parseColor("#FF0000"));
+                    check5.setVisibility(View.INVISIBLE);
+                } else if (!pw.matches(pwValidation)) {
+                    textView5.setText("문자,숫자,특수문자중 2가지를 포함하세요.");
                     textView5.setTextColor(Color.parseColor("#FF0000"));
                     check5.setVisibility(View.INVISIBLE);
                 }
@@ -353,7 +387,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
             textView5.setTextColor(Color.parseColor("#FF0000"));
             return;
         } else if (!pw.matches(pwValidation)) {
-            textView5.setText("영문+숫자+특수문자를 포함하세요.");
+            textView5.setText("문자,숫자,특수문자중 2가지를 포함하세요.");
             textView5.setTextColor(Color.parseColor("#FF0000"));
             return;
         }
@@ -441,6 +475,10 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
                 //커서 맨 뒤로
                 editText5.setSelection(editText5.getText().length());
                 editText6.setSelection(editText6.getText().length());
+                break;
+            case R.id.check4:
+                checkedEmail();
+                break;
         }
     }
 
@@ -498,11 +536,11 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
             public void onClick(DialogInterface dialog, int which) {
                 if (checkJoin()) {
                     intent = new Intent(getApplicationContext(), GuideActivity.class);
-                    intent.putExtra("name",name);
-                    intent.putExtra("nickname",nickname);
-                    intent.putExtra("birth",birth);
-                    intent.putExtra("email",email);
-                    intent.putExtra("pw2",pw);
+                    intent.putExtra("name", name);
+                    intent.putExtra("nickname", nickname);
+                    intent.putExtra("birth", birth);
+                    intent.putExtra("email", email);
+                    intent.putExtra("pw2", pw);
                     startActivity(intent);
                     finish();
                 }
@@ -542,6 +580,56 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
         check5 = findViewById(R.id.check5);
         check6 = findViewById(R.id.check6);
 
+        check4.setOnClickListener(this);
         show_pw.setOnClickListener(this);
+    }
+
+    private class EmailResponse extends AsyncHttpResponseHandler {
+        @Override
+        public void onStart() {
+            super.onStart();
+            Log.e("[TEST]","EmailResponse onStart() 호출");
+        }
+
+        @Override
+        public void onFinish() {
+            super.onFinish();
+            Log.e("[TEST]","EmailResponse onFinish() 호출");
+            if (check_email.equals("OK")) {
+                textView4.setText("사용 가능한 이메일입니다.");
+                textView4.setTextColor(Color.parseColor("#FF0000FF"));
+                check4.setImageResource(R.drawable.check);
+                check4.setVisibility(View.VISIBLE);
+                email_eq = 1;
+            } else if (check_email.equals("FAIL")) {
+                textView4.setText("이미 사용중인 이메일입니다.");
+                textView4.setTextColor(Color.parseColor("#FF0000"));
+                check4.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                String RT = json.getString("RT");
+                if(RT.equals("OK")) {
+                    check_email = "OK";
+                    Log.e("[TEST]","이메일 사용가능");
+                } else {
+                    check_email = "FAIL";
+                    Log.e("[TEST]","이메일 사용불가");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(JoinUsActivity.this, "EmailResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Log.e("[TEST]","check_email => " + check_email);
+        }
     }
 }
