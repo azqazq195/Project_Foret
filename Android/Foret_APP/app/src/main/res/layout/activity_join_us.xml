@@ -11,29 +11,30 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#23272A"
+        android:background="@color/foret2"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:theme="@style/ToolbarWhite"/>
+        app:theme="@style/ToolbarWhite" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="50dp"
-        android:background="#23272A">
+        android:background="#FFFFFF">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#23272A"
+            android:background="#FFFFFF"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/logo"
-                android:layout_width="403dp"
+                android:layout_width="300dp"
                 android:layout_height="139dp"
-                android:background="#23272A"
-                app:srcCompat="@drawable/foret" />
+                android:layout_gravity="center"
+                android:background="#FFFFFF"
+                app:srcCompat="@drawable/foreticon" />
 
             <TextView
                 android:id="@+id/textView42"
@@ -88,6 +89,9 @@
                             android:id="@+id/editText1"
                             android:layout_width="250dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:background="@drawable/edit_text_box"
+                            android:padding="5dp"
                             android:ems="10"
                             android:hint="문성하"
                             android:inputType="textPersonName"
@@ -138,6 +142,9 @@
                             android:id="@+id/editText2"
                             android:layout_width="250dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:background="@drawable/edit_text_box"
+                            android:padding="5dp"
                             android:ems="10"
                             android:hint="zi젼성하"
                             android:inputType="textPersonName"
@@ -188,6 +195,9 @@
                             android:id="@+id/editText3"
                             android:layout_width="250dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:background="@drawable/edit_text_box"
+                            android:padding="5dp"
                             android:ems="10"
                             android:hint="생년월일 8자리"
                             android:inputType="date"
@@ -239,6 +249,9 @@
                             android:id="@+id/editText4"
                             android:layout_width="250dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:background="@drawable/edit_text_box"
+                            android:padding="5dp"
                             android:ems="10"
                             android:hint="foret@email.com"
                             android:inputType="textEmailAddress"
@@ -289,6 +302,9 @@
                             android:id="@+id/editText5"
                             android:layout_width="250dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:background="@drawable/edit_text_box"
+                            android:padding="5dp"
                             android:ems="10"
                             android:hint="최소 6자리 최대 12자리"
                             android:inputType="textPassword"
@@ -327,6 +343,9 @@
                             android:id="@+id/editText6"
                             android:layout_width="250dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:background="@drawable/edit_text_box"
+                            android:padding="5dp"
                             android:ems="10"
                             android:hint="다시 한번 입력해주세요."
                             android:inputType="textPassword"

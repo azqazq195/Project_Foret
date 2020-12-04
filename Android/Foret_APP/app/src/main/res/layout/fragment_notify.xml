@@ -10,7 +10,7 @@
         android:id="@+id/notify_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
+        android:background="@color/foret2"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,7 +23,7 @@
             android:layout_width="135dp"
             android:layout_height="38dp"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/foret_logo"
+            app:srcCompat="@drawable/foret"
             tools:layout_editor_absoluteX="149dp"
             tools:layout_editor_absoluteY="7dp" />
 

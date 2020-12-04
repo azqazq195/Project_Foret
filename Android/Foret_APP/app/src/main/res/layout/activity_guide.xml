@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/foret"
+    android:background="@color/color"
     tools:context=".activity.login.GuideActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,10 +35,10 @@
 
                 <ImageView
                     android:id="@+id/imageView10"
-                    android:layout_width="95dp"
-                    android:layout_height="64dp"
+                    android:layout_width="120dp"
+                    android:layout_height="80dp"
                     android:layout_gravity="clip_horizontal"
-                    app:srcCompat="@drawable/foret" />
+                    app:srcCompat="@drawable/foreticon" />
             </LinearLayout>
 
             <TextView
@@ -47,15 +47,15 @@
                 android:layout_height="wrap_content"
                 android:letterSpacing="-0.07"
                 android:text="Welcome,"
-                android:textColor="#FFFFFF"
-                android:textSize="90dp" />
+                android:textColor="@color/foret2"
+                android:textSize="85dp" />
 
             <TextView
                 android:id="@+id/textView38"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="환영합니다!"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/black"
                 android:textSize="30sp" />
         </LinearLayout>
 
@@ -66,6 +66,9 @@
             android:layout_marginEnd="40dp"
             android:layout_marginBottom="128dp"
             android:text="포레 시작하기"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#000000"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -86,7 +89,8 @@
             android:layout_marginTop="40dp"
             android:text="프로필 사진을 등록해주세요."
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile" />
@@ -96,7 +100,7 @@
             android:layout_width="120dp"
             android:layout_height="130dp"
             android:layout_marginTop="30dp"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView17"
@@ -109,7 +113,7 @@
             android:layout_marginTop="200dp"
             android:text="거의 완료 되었어요!"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
             android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -132,7 +136,7 @@
             android:text="포레에서 활용할 태그들을\n선택해주세요."
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
             android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -144,7 +148,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="태그는 당신이 포레를 찾고, 만드는데 도움을 줍니다."
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView36" />
@@ -156,7 +160,7 @@
             android:layout_marginTop="32dp"
             android:text="태그 선택하기"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_tag" />
@@ -168,7 +172,7 @@
             android:layout_marginTop="35dp"
             android:ellipsize="end"
             android:text="#공부, #영어, #코딩, #다이어트, ..."
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
             android:textSize="36sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -192,7 +196,7 @@
             android:letterSpacing="-0.07"
             android:text="지역을 등록해주세요."
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
             android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -206,7 +210,7 @@
             android:text="성동구\n마포구"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
             android:textSize="36sp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
@@ -220,7 +224,7 @@
             android:layout_marginTop="45dp"
             android:text="지역 선택하기"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -244,6 +248,7 @@
             android:layout_marginTop="100dp"
             android:layout_marginBottom="100dp"
             android:orientation="vertical"
+            android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -253,27 +258,29 @@
                 android:id="@+id/imageView9"
                 android:layout_width="314dp"
                 android:layout_height="182dp"
-                app:srcCompat="@drawable/foret" />
+                app:srcCompat="@drawable/foreticon" />
 
             <TextView
                 android:id="@+id/textView27"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="65dp"
                 android:letterSpacing="-0.07"
                 android:text="포레에 가입하신 것을 환영합니다."
+                android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:textColor="#FFFFFF" />
+                android:textColor="#000000" />
 
             <TextView
                 android:id="@+id/textView29"
-                android:layout_width="319dp"
-                android:layout_height="66dp"
-                android:layout_marginTop="40dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
                 android:letterSpacing="-0.05"
-                android:text="더 효과적인 포레 사용을 위해 몇 가지를 더 등록해야 해요."
+                android:text="더 효과적인 포레 사용을 위해 몇 가지를 \n더 등록해야 해요."
+                android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="#FFFFFF" />
+                android:textColor="#000000" />
 
         </LinearLayout>
 
@@ -283,8 +290,12 @@
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="120dp"
+        android:background="#FFFFFF"
         android:text="이전"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#000000"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button2" />
 
@@ -293,8 +304,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="120dp"
+        android:background="#FFFFFF"
         android:text="다음"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#000000"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -302,11 +317,11 @@
         android:id="@+id/button0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
         android:background="#00FFFFFF"
         android:text="건너뛰기"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
