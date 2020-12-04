@@ -1,7 +1,10 @@
 package com.example.foret_app_prototype.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,11 +23,17 @@ import com.example.foret_app_prototype.activity.chat.ChatFragment;
 import com.example.foret_app_prototype.activity.free.FreeFragment;
 import com.example.foret_app_prototype.activity.home.HomeFragment;
 import com.example.foret_app_prototype.activity.login.SessionManager;
+import com.example.foret_app_prototype.activity.menu.AppNoticeActivity;
+import com.example.foret_app_prototype.activity.menu.MyInfoActivity;
 import com.example.foret_app_prototype.activity.notify.NotifyFragment;
 import com.example.foret_app_prototype.activity.search.SearchFragment;
 import com.example.foret_app_prototype.model.MemberDTO;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -33,6 +42,9 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -51,9 +63,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     MemberDTO memberDTO;
     AsyncHttpClient client;
     HttpResponse response;
-    String url = "http://192.168.55.172:8081/foret/search/member.do";
-    TextView button_out, drawer_text1, drawer_text2 ,drawer_text3;
+    String url = "http://34.72.240.24::8085/foret/search/member.do";
+    TextView button_out, drawer_text1, drawer_text2, drawer_text3, drawer_text4;
     ImageView button_out2, button_drawcancel, profile;
+    Intent intent;
+
+    SessionManager sessionManager;
+    String email;
+    String pwd;
+
+    FirebaseUser currntuser;
+    Context context;
 
 
     @Override
@@ -61,6 +81,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        currntuser = FirebaseAuth.getInstance().getCurrentUser();
+
+        context = this;
         homeFragment = new HomeFragment();
         freeFragment = new FreeFragment();
         searchFragment = new SearchFragment();
@@ -75,22 +98,24 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         button_drawcancel = findViewById(R.id.button_drawcancel); //햄버거 닫기
         drawer_text1 = findViewById(R.id.drawer_text1); //아이디
         drawer_text2 = findViewById(R.id.drawer_text2); //이메일주소
-        drawer_text3 = findViewById(R.id.drawer_text3); //가입일
+        drawer_text3 = findViewById(R.id.drawer_text3); //멤버아이디
+        drawer_text4 = findViewById(R.id.drawer_text4); //가입일
         profile = findViewById(R.id.profile); //햄버거메뉴에 들어갈 프로필사진
 
         nav_bottom.setOnNavigationItemSelectedListener(this);
         nav_drawer.setNavigationItemSelectedListener(this::onNavigationItemSelected);
         nav_bottom.setItemIconTintList(null);
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, homeFragment).commit();
         }
 
         client = new AsyncHttpClient();
         response = new HttpResponse();
-        SessionManager sessionManager = new SessionManager(this);
+         sessionManager = new SessionManager(this);
         String email = sessionManager.getSessionEmail();
         String password = sessionManager.getSessionPassword();
+
         RequestParams params = new RequestParams();
         params.put("email", email);
         params.put("password", password);
@@ -99,6 +124,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         button_out.setOnClickListener(this);
         button_out2.setOnClickListener(this);
         button_drawcancel.setOnClickListener(this);
+
+
     }
 
     @Override
@@ -119,13 +146,19 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.navigation_notify:
                 getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, notifyFragment).commit();
                 break;
-            case R.id.drawer_notice : //햄버거 공지사항 버튼
+            case R.id.drawer_notice: //햄버거 공지사항 버튼
+                intent = new Intent(this, AppNoticeActivity.class);
+                startActivity(intent);
                 break;
-            case R.id.drawer_myinfo : //햄버거 내정보 수정
+            case R.id.drawer_myinfo: //햄버거 내정보
+                intent = new Intent(this, MyInfoActivity.class);
+                intent.putExtra("memberDTO", memberDTO);
+                startActivity(intent);
                 break;
-            case R.id.drawer_help : //햄버거 도움말
+            case R.id.drawer_help: //햄버거 도움말
+                Toast.makeText(this, "레이아웃으로 도움말 설명할거 레이아웃 5장", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.drawer_foret : //햄버거 foret ->그냥 넣어놈
+            case R.id.drawer_foret: //햄버거 foret ->그냥 넣어놈
                 break;
         }
         return true;
@@ -137,12 +170,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             container.closeDrawer(GravityCompat.END);
             return;
         }
-        if(pressedTime == 0) {
+        if (pressedTime == 0) {
             Toast.makeText(MainActivity.this, "한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
             pressedTime = System.currentTimeMillis();
         } else {
-            int seconds = (int)(System.currentTimeMillis() - pressedTime);
-            if(seconds > 2000) {
+            int seconds = (int) (System.currentTimeMillis() - pressedTime);
+            if (seconds > 2000) {
                 Toast.makeText(MainActivity.this, "한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
                 pressedTime = 0;
             } else {
@@ -155,13 +188,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button_out : //로그아웃
+            case R.id.button_out: //로그아웃
                 logOutDialog();
                 break;
-            case R.id.button_out2 : //로그아웃
+            case R.id.button_out2: //로그아웃
                 logOutDialog();
                 break;
-            case R.id.button_drawcancel : //햄버거 닫기
+            case R.id.button_drawcancel: //햄버거 닫기
                 container.closeDrawer(GravityCompat.END);
                 break;
         }
@@ -174,6 +207,20 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //로그아웃 눌렀을 때 실행되야하는 이벤트->로그아웃처리
+
+                //세션 제거
+                sessionManager.removeSession();
+
+                //파이어 베이스 로그아웃 만들기
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                FirebaseUser user = auth.getCurrentUser();
+                updateuserActiveStatusOff();
+                auth.signOut();
+
+                if (user == null) {
+                    Toast.makeText(context, "로그아웃 됨", Toast.LENGTH_LONG).show();
+                    finish();
+                }
             }
         });
         builder.setNegativeButton("취소", null);
@@ -191,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             try {
                 JSONObject json = new JSONObject(str);
                 String RT = json.getString("RT");
-                if(RT.equals("OK")) {
+                if (RT.equals("OK")) {
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
@@ -206,10 +253,60 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(MainActivity.this, "에러", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (currntuser == null) {
+            //로그인 아닌상태
+            Toast.makeText(context, "파이어베이스 로그아웃 상태..", Toast.LENGTH_LONG).show();
+        } else {
+            updateuserActiveStatusOn();
+        }
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) updateuserActiveStatusOff();
+        //파이어 베이스 로그아웃 해버리기
+        //FirebaseAuth.getInstance().signOut();
+
+    }
+
+    //내상태 온라인 만들기
+    private void updateuserActiveStatusOn() {
+        FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
+        final String userUid = currentUseruser.getUid();
+        DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
+        HashMap<String, Object> onlineStatus = new HashMap<>();
+        onlineStatus.put("onlineStatus", "online");
+        onlineStatus.put("listlogined_date", "현재 접속중");
+        userAcitive.updateChildren(onlineStatus);
+    }
+
+    //내상태 오프라인 상태 만들기
+    private void updateuserActiveStatusOff() {
+        FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
+        final String userUid = currentUseruser.getUid();
+        DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
+        HashMap<String, Object> onlineStatus = new HashMap<>();
+        onlineStatus.put("onlineStatus", "offline");
+
+        java.util.Calendar cal = java.util.Calendar.getInstance(Locale.KOREAN);
+        cal.setTimeInMillis(Long.parseLong(String.valueOf(System.currentTimeMillis())));
+        String dateTime = DateFormat.format("yy/MM/dd hh:mm aa", cal).toString();
+
+        onlineStatus.put("listlogined_date", "Last Seen at : " + dateTime);
+        userAcitive.updateChildren(onlineStatus);
     }
 
 }

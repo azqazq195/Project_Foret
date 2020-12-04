@@ -94,7 +94,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void afterTextChanged(Editable s) {
                 name = editText1.getText().toString().trim();
-                if(name.matches(nameValidation) && s.length() > 0) {
+                if (name.matches(nameValidation) && s.length() > 0) {
                     textView1.setText("이름을 입력했습니다.");
                     textView1.setTextColor(Color.parseColor("#FF0000FF"));
                     check1.setVisibility(View.VISIBLE);
@@ -103,7 +103,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
                     textView1.setTextColor(Color.parseColor("#FF0000"));
                     check1.setVisibility(View.INVISIBLE);
                 }
-                if(check1.getVisibility() == View.VISIBLE) {
+                if (check1.getVisibility() == View.VISIBLE) {
                     name_eq = 1;
                     Log.d("[TEST]", "[NAME]name_eq => " + name_eq);
                 } else {
@@ -119,7 +119,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
 
     private void editName() {
         name = editText1.getText().toString().trim();
-        if(name.equals("")) {
+        if (name.equals("")) {
             textView1.setText("이름을 입력해주세요.");
             textView1.setTextColor(Color.parseColor("#FF0000"));
             return;
@@ -147,7 +147,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void afterTextChanged(Editable s) {
                 nickname = editText2.getText().toString().trim();
-                if(nickname.matches(nickValidation) && s.length() > 0) {
+                if (nickname.matches(nickValidation) && s.length() > 0) {
                     textView2.setText("사용 가능한 닉네임입니다.");
                     textView2.setTextColor(Color.parseColor("#FF0000FF"));
                     check2.setVisibility(View.VISIBLE);
@@ -156,7 +156,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
                     textView2.setTextColor(Color.parseColor("#FF0000"));
                     check2.setVisibility(View.INVISIBLE);
                 }
-                if(check2.getVisibility() == View.VISIBLE) {
+                if (check2.getVisibility() == View.VISIBLE) {
                     nick_eq = 1;
                     Log.d("[TEST]", "[NICK]nick_eq => " + nick_eq);
                 } else {
@@ -172,7 +172,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
 
     private void editNick() {
         nickname = editText2.getText().toString().trim();
-        if(nickname.equals("")) {
+        if (nickname.equals("")) {
             textView2.setText("닉네임을 입력해주세요.");
             textView2.setTextColor(Color.parseColor("#FF0000"));
             return;
@@ -200,7 +200,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void afterTextChanged(Editable s) {
                 birth = editText3.getText().toString().trim();
-                if(birth_length == s.length()) {
+                if (birth_length == s.length()) {
                     textView3.setText("생년월일을 입력했습니다.");
                     textView3.setTextColor(Color.parseColor("#FF0000FF"));
                     check3.setVisibility(View.VISIBLE);
@@ -209,7 +209,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
                     textView3.setTextColor(Color.parseColor("#FF0000"));
                     check3.setVisibility(View.INVISIBLE);
                 }
-                if(check3.getVisibility() == View.VISIBLE) {
+                if (check3.getVisibility() == View.VISIBLE) {
                     birty_eq = 1;
                     Log.d("[TEST]", "[BIRTH]birty_eq => " + birty_eq);
                 } else {
@@ -224,11 +224,11 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
 
     private void editBirth() {
         birth = editText3.getText().toString().trim();
-        if(birth.equals("")) {
+        if (birth.equals("")) {
             textView3.setText("생년월일을 입력해주세요.");
             textView3.setTextColor(Color.parseColor("#FF0000"));
             return;
-        } else if(birth.length() < birth_length) {
+        } else if (birth.length() < birth_length) {
             textView3.setText("생년월일을 8자리를 입력해주세요.");
             textView3.setTextColor(Color.parseColor("#FF0000"));
             return;
@@ -257,7 +257,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void afterTextChanged(Editable s) {
                 email = editText4.getText().toString().trim();
-                if(email.matches(emailValidation) && s.length() > 0) {
+                if (email.matches(emailValidation) && s.length() > 0) {
                     textView4.setText("사용 가능한 이메일입니다.");
                     textView4.setTextColor(Color.parseColor("#FF0000FF"));
                     check4.setVisibility(View.VISIBLE);
@@ -266,7 +266,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
                     textView4.setTextColor(Color.parseColor("#FF0000"));
                     check4.setVisibility(View.INVISIBLE);
                 }
-                if(check4.getVisibility() == View.VISIBLE) {
+                if (check4.getVisibility() == View.VISIBLE) {
                     email_eq = 1;
                     Log.d("[TEST]", "[EMAIL]email_eq => " + email_eq);
                 } else {
@@ -314,7 +314,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void afterTextChanged(Editable s) {
                 pw = editText5.getText().toString().trim();
-                if(pw.matches(pwValidation) && s.length() > 0) {
+                if (pw.matches(pwValidation) && s.length() > 0) {
                     textView5.setText("사용 가능한 비밀번호입니다.");
                     textView5.setTextColor(Color.parseColor("#FF0000FF"));
                     check5.setVisibility(View.VISIBLE);
@@ -323,7 +323,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
                     textView5.setTextColor(Color.parseColor("#FF0000"));
                     check5.setVisibility(View.INVISIBLE);
                 }
-                if(check5.getVisibility() == View.VISIBLE) {
+                if (check5.getVisibility() == View.VISIBLE) {
                     pw_eq = 1;
                     Log.d("[TEST]", "[PW]pw_eq => " + pw_eq);
                 } else {
@@ -340,19 +340,19 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
     private void editPw() {
         pw = editText5.getText().toString().trim();
         Log.d("[TEST]", "pw.length() => " + pw.length());
-        if(pw.equals("")) {
+        if (pw.equals("")) {
             textView5.setText("비밀번호를 입력해주세요.");
             textView5.setTextColor(Color.parseColor("#FF0000"));
             return;
-        } else if(pw.length() < pw_length) {
+        } else if (pw.length() < pw_length) {
             textView5.setText("최소 6자이상 입력해주세요.");
             textView5.setTextColor(Color.parseColor("#FF0000"));
             return;
-        } else if(pw.length() > pw_length2) {
+        } else if (pw.length() > pw_length2) {
             textView5.setText("최대 12자이하 입력해주세요.");
             textView5.setTextColor(Color.parseColor("#FF0000"));
             return;
-        } else if(!pw.matches(pwValidation)) {
+        } else if (!pw.matches(pwValidation)) {
             textView5.setText("영문+숫자+특수문자를 포함하세요.");
             textView5.setTextColor(Color.parseColor("#FF0000"));
             return;
@@ -380,7 +380,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void afterTextChanged(Editable s) {
                 String pw2 = editText6.getText().toString().trim();
-                if(pw2.equals(pw)) {
+                if (pw2.equals(pw)) {
                     textView5.setText("비밀번호를 확인했습니다.");
                     textView5.setTextColor(Color.parseColor("#FF0000FF"));
                     check6.setVisibility(View.VISIBLE);
@@ -389,7 +389,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
                     textView5.setTextColor(Color.parseColor("#FF0000"));
                     check6.setVisibility(View.INVISIBLE);
                 }
-                if(check6.getVisibility() == View.VISIBLE) {
+                if (check6.getVisibility() == View.VISIBLE) {
                     pw2_eq = 1;
                     Log.d("[TEST]", "[PW]pw_eq => " + pw_eq);
                 } else {
@@ -414,7 +414,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private boolean checkJoin() {
-        if(check_count != 6) {
+        if (check_count != 6) {
             return false;
         }
         return true;
@@ -456,7 +456,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.d("[TEST]", "[이벤트]check_count => " + check_count);
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.next: // 다음
                 switch (check_count) {
                     case 0:
@@ -496,8 +496,13 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
         builder.setPositiveButton("다음", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(checkJoin()) {
+                if (checkJoin()) {
                     intent = new Intent(getApplicationContext(), GuideActivity.class);
+                    intent.putExtra("name",name);
+                    intent.putExtra("nickname",nickname);
+                    intent.putExtra("birth",birth);
+                    intent.putExtra("email",email);
+                    intent.putExtra("pw2",pw);
                     startActivity(intent);
                     finish();
                 }
