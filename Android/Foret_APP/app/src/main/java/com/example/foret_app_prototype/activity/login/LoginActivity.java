@@ -42,7 +42,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     AsyncHttpClient client;
     HttpResponse response;
-    String url = "http://34.72.240.24:8085/foret/search/member.do";
+//    String url = "http://34.72.240.24:8085/foret/search/member.do";
+    String url = "http://192.168.0.180:8085/foret/search/member.do";
 
     Button button0;
     TextView button1, button2, button3, button4;

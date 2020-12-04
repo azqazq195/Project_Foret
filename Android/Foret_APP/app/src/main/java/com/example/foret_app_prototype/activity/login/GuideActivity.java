@@ -530,8 +530,9 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
         Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
 
-        String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
-        //String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
+//        String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
+//        String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
+        String url = "http://192.168.0.180:8085/foret/member/member_insert.do";
 
         try {
             if (file != null)
