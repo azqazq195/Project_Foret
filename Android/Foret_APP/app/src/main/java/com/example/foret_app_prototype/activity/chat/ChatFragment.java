@@ -193,21 +193,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     }
     //내 그룹 채팅방 로드
     private void loadGroupChatList() {
-
-        //서버에서 내그룹 받아오기
-        RequestParams params = new RequestParams();
-        //params.put("name", name);
-        AsyncHttpClient client = new AsyncHttpClient();
-        String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
-        //client.post(url, params, new Response(activity));
-
-
-
-
         groupChatLists = new ArrayList<>();
-        //groupName = groupChatLists.get(groupChatLists.size()).getGroupName();
-        groupName = "영어 그룹";
-        member_id = "opihgfy";
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -215,16 +202,15 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 groupChatLists.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     //여기 확인 필요 - 현재 유저가 해당 그룹의 인원일 떄
-                    if (!ds.child("participants").child(member_id).exists()) {
+                    //if (!ds.child("participants").child(member_id).exists()) {
+                    if (!ds.child(groupName).child("participants").child(member_id).exists()) {
                         ModelGroupChatList model = ds.getValue(ModelGroupChatList.class);
                         groupChatLists.add(model);
                     }
                     groupAdapter = new GroupAdapter(context, groupChatLists);
                     reCycleViewGroup.setAdapter(groupAdapter);
                 }
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(context, "해당 멤버가 아닙니다.", Toast.LENGTH_LONG).show();

@@ -29,8 +29,11 @@ import com.example.foret_app_prototype.activity.menu.MyInfoActivity;
 import com.example.foret_app_prototype.activity.notify.NotifyFragment;
 import com.example.foret_app_prototype.activity.search.SearchFragment;
 import com.example.foret_app_prototype.model.MemberDTO;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     Intent intent;
 
     SessionManager sessionManager;
-
+    FirebaseAuth mAuth;
     FirebaseUser currntuser;
     Context context;
 
@@ -80,8 +83,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        currntuser = FirebaseAuth.getInstance().getCurrentUser();
+        mAuth = FirebaseAuth.getInstance();
+        String email1 = getIntent().getStringExtra("email");
+        String pwd = getIntent().getStringExtra("pwd");
 
         context = this;
         homeFragment = new HomeFragment();
@@ -119,6 +123,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         RequestParams params = new RequestParams();
         params.put("email", email);
         params.put("password", password);
+        final int DEFAULT_TIME = 40*1000;
+        client.setConnectTimeout(DEFAULT_TIME);
+        client.setResponseTimeout(DEFAULT_TIME);
+        client.setTimeout(DEFAULT_TIME);
+        client.setResponseTimeout(DEFAULT_TIME);
         client.post(url, params, response);
 
         button_out.setOnClickListener(this);
@@ -264,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onResume() {
         super.onResume();
         currntuser = FirebaseAuth.getInstance().getCurrentUser();
-        Log.e("[test]",FirebaseAuth.getInstance().getCurrentUser().toString());
+        Log.e("[test]",FirebaseAuth.getInstance().getCurrentUser()+"");
         if (currntuser == null) {
             //로그인 아닌상태
             Toast.makeText(context, "파이어베이스 로그아웃 상태..", Toast.LENGTH_LONG).show();
@@ -278,9 +287,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onStop() {
         super.onStop();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) updateuserActiveStatusOff();
-        //파이어 베이스 로그아웃 해버리기
-        //FirebaseAuth.getInstance().signOut();
-
     }
 
     //내상태 온라인 만들기
