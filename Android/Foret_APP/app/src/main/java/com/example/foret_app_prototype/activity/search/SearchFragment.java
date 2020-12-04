@@ -1,5 +1,6 @@
 package com.example.foret_app_prototype.activity.search;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.activity.foret.MakeForetActivity;
+import com.example.foret_app_prototype.activity.login.SessionManager;
 import com.example.foret_app_prototype.adapter.RecyclerAdapter2;
 import com.example.foret_app_prototype.adapter.RecyclerAdapter3;
 import com.example.foret_app_prototype.model.Test;
@@ -46,6 +48,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     List<Test> list2;
     RecyclerAdapter2 adapter2;
     RecyclerAdapter3 adapter3;
+    Context context;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,11 +57,11 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         list2 = new ArrayList<>();
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
         toolbar = (androidx.appcompat.widget.Toolbar) rootView.findViewById(R.id.search_toolbar);
-        activity = (MainActivity)getActivity();
+        activity = (MainActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle(null);
         setHasOptionsMenu(true);
-
+        context = getContext();
         layout_search = rootView.findViewById(R.id.layout_search);
         button_back = rootView.findViewById(R.id.button_back);
         button1 = rootView.findViewById(R.id.button1); //내 관심태그 설정 페이지로 이동(햄버거 메뉴에 넣을 예정)
@@ -96,7 +99,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private void testData2() {
         int resource[] = {R.drawable.icon, R.drawable.icon2, R.drawable.icon3, R.drawable.icon4,
                 R.drawable.icon5, R.drawable.icon, R.drawable.icon4, R.drawable.icon2, R.drawable.icon5};
-        for(int a=0; a<resource.length; a++) {
+        for (int a = 0; a < resource.length; a++) {
             Test test = new Test();
             test.setResource(resource[a]);
             test.setTest1("포레 이름");
@@ -112,7 +115,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
     private void testData1() {
         String testArray[] = {"디자인", "코딩", "영어", "다이어트", "조깅", "성수동"};
-        for (int a=0; a<testArray.length; a++) {
+        for (int a = 0; a < testArray.length; a++) {
             Test test = new Test();
             test.setTest1(testArray[a]);
             list1.add(test);
@@ -132,10 +135,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.item_search :
+            case R.id.item_search:
                 layout_search.setVisibility(View.VISIBLE);
                 break;
-            case R.id.item_menu : //햄버거 메뉴 열기
+            case R.id.item_menu: //햄버거 메뉴 열기
                 DrawerLayout container = activity.findViewById(R.id.container);
                 container.openDrawer(GravityCompat.END);
                 break;
@@ -147,48 +150,51 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         Intent intent = null;
         switch (v.getId()) {
-            case R.id.button1 : //내 관심 설정페이지로 이동
+            case R.id.button1: //내 관심 설정페이지로 이동
                 Toast.makeText(activity, "내 관심 설정 페이지로 이동", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.button2 : //인기태그1 검색화면으로 이동
+            case R.id.button2: //인기태그1 검색화면으로 이동
                 intent = new Intent(activity, SearchResultActivity.class);
                 intent.putExtra("tag", "공부");
                 activity.startActivity(intent);
                 break;
-            case R.id.button3 : //인기태그2 검색화면으로 이동
+            case R.id.button3: //인기태그2 검색화면으로 이동
                 intent = new Intent(activity, SearchResultActivity.class);
                 intent.putExtra("tag", "코딩");
                 activity.startActivity(intent);
                 break;
-            case R.id.button4 : //인기태그3 검색화면으로 이동
+            case R.id.button4: //인기태그3 검색화면으로 이동
                 intent = new Intent(activity, SearchResultActivity.class);
                 intent.putExtra("tag", "영어");
                 activity.startActivity(intent);
                 break;
-            case R.id.button5 : //인기태그4 검색화면으로 이동
+            case R.id.button5: //인기태그4 검색화면으로 이동
                 intent = new Intent(activity, SearchResultActivity.class);
                 intent.putExtra("tag", "아이패드");
                 activity.startActivity(intent);
                 break;
-            case R.id.button6 : //인기태그5 검색화면으로 이동
+            case R.id.button6: //인기태그5 검색화면으로 이동
                 intent = new Intent(activity, SearchResultActivity.class);
                 intent.putExtra("tag", "영어회화");
                 activity.startActivity(intent);
                 break;
-            case R.id.button7 : //포레 만들기 화면으로 이동
-                intent = new Intent(activity, MakeForetActivity.class);
-                activity.startActivity(intent);
+            case R.id.button7: //포레 만들기 화면으로 이동
+                goToMakeNewForet();
                 break;
-            case R.id.button8 : //갱신버튼
+            case R.id.button8: //갱신버튼
                 Toast.makeText(activity, "누르면 항목이 바껴요", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.button9 : //포레 만들기 화면으로 이동
-                intent = new Intent(activity, MakeForetActivity.class);
-                activity.startActivity(intent);
+            case R.id.button9: //포레 만들기 화면으로 이동
+                goToMakeNewForet();
                 break;
-            case R.id.button_back :
+            case R.id.button_back:
                 layout_search.setVisibility(View.GONE);
                 break;
         }
+    }
+
+    private void goToMakeNewForet() {
+        Intent intent = new Intent(activity, MakeForetActivity.class);
+        activity.startActivity(intent);
     }
 }
