@@ -5,24 +5,25 @@
     android:id="@+id/footerLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="20dp"
+    android:layout_marginLeft="10dp"
     android:layout_marginTop="5dp"
-    android:layout_marginRight="20dp"
-    android:layout_marginBottom="5dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="7dp"
     android:gravity="center">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="5dp"
         app:cardBackgroundColor="#D6D6D6"
         app:cardCornerRadius="20dp"
-        app:cardElevation="5dp">
+        app:cardElevation="3dp">
 
         <LinearLayout
             android:id="@+id/layout2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#23272A"
+            android:background="@color/foret5"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -39,7 +40,7 @@
                 android:layout_gravity="center"
                 android:text="더보기"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="#FFFFFF" />
+                android:textColor="#C8686868" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

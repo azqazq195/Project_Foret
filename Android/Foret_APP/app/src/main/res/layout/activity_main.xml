@@ -38,9 +38,7 @@
             app:layout_constraintBottom_toTopOf="@+id/nav_bottom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </LinearLayout>
+            app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -49,12 +47,15 @@
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
+        android:alwaysDrawnWithCache="false"
         android:fitsSystemWindows="true"
         android:layoutDirection="ltr"
         android:visibility="visible"
         app:headerLayout="@layout/drawer_header_main"
-        app:itemHorizontalPadding="30dp"
+        app:itemHorizontalPadding="40dp"
         app:itemIconPadding="20dp"
+        app:itemTextAppearance="@style/TextAppearance.AppCompat.Large"
+        app:itemTextColor="#101010"
         app:menu="@menu/drawer_main">
 
         <ImageView
@@ -84,7 +85,7 @@
                 android:id="@+id/button_out2"
                 android:layout_width="25dp"
                 android:layout_height="35dp"
-                android:layout_marginStart="30dp"
+                android:layout_marginStart="32dp"
                 android:layout_marginBottom="30dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

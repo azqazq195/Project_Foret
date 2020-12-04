@@ -135,7 +135,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         layout5 = findViewById(R.id.layout5); // 포레시작하기
         profile = findViewById(R.id.profile);
 
-        profile.setImageResource(R.drawable.foret); // 사진이 출력이 안되서 초기세팅해줌
+      //  profile.setImageResource(R.drawable.foret); // 사진이 출력이 안되서 초기세팅해줌
 
         textView_region.setVisibility(View.GONE);
         textView_tag.setVisibility(View.GONE);
@@ -543,12 +543,6 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         params.put("device_Token", deviceToken);
         Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
         String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
-       //String url = "http://192.168.219.100:8085/foret/member/member_insert.do";
-<<<<<<< HEAD
-        String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
-=======
-//        String url = "http://192.168.0.180:8085/foret/member/member_insert.do";
->>>>>>> develop
         try {
             if (file != null)
                 params.put("photo", file);

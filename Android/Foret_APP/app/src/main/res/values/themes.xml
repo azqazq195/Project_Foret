@@ -22,7 +22,7 @@
         <item name="android:titleTextColor">@android:color/white</item>
         <item name="android:colorControlNormal">@android:color/white</item>
         <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item> <!--Toolbar 스타일-->
-        <item name="actionMenuTextColor">@color/white</item> <!--액션 메뉴의 텍스트 색상-->
+        <item name="actionMenuTextColor">@color/foret4</item> <!--액션 메뉴의 텍스트 색상-->
         <item name="colorControlNormal">@color/white</item> <!--홈/뒤로가기 버튼의 색상-->
     </style>
 

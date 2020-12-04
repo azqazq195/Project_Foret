@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     MemberDTO memberDTO;
     AsyncHttpClient client;
     HttpResponse response;
-    //String url = "http://34.72.240.24::8085/foret/search/member.do";
-    String url = "http://192.168.0.180:8085/foret/search/member.do";
+    String url = "http://34.72.240.24::8085/foret/search/member.do";
+    //String url = "http://192.168.0.180:8085/foret/search/member.do";
     TextView button_out, drawer_text1, drawer_text2, drawer_text3, drawer_text4;
     ImageView button_out2, button_drawcancel, profile;
     Intent intent;
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         nav_bottom.setItemIconTintList(null);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, homeFragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, freeFragment).commit();
         }
 
         client = new AsyncHttpClient();

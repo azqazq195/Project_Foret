@@ -11,14 +11,15 @@
         android:id="@+id/home_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/foret2"
+        android:background="@color/foret4"
+        android:elevation="3dp"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/normal_toolbar">
+        app:menu="@menu/normal_toolbar2">
 
         <ImageView
             android:id="@+id/imageView5"
@@ -47,7 +48,9 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="380dp">
+                android:layout_height="380dp"
+                android:background="@drawable/gradi2"
+                android:elevation="3dp">
 
                 <TextView
                     android:id="@+id/textView7"
@@ -57,6 +60,7 @@
                     android:layout_marginTop="16dp"
                     android:text="내 포레"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="#FFFFFF"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -84,30 +88,51 @@
                     android:id="@+id/button1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
                     android:layout_marginEnd="16dp"
-                    android:text="더 많은 포레들을 만나보세요!"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/round3"
+                    android:elevation="4dp"
+                    android:padding="4dp"
+                    android:text=" 더 많은 포레들을 만나보세요! "
+                    android:textColor="#FFFFFF"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/viewPager_layout" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginTop="15dp"
+                android:background="#FFFFFF">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_centerInParent="true"
+                    android:background="#E1E1E1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textView_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:elevation="3dp"
                     android:letterSpacing="-0.05"
                     android:paddingLeft="15dp"
-                    android:paddingEnd="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="3dp"
                     android:singleLine="true"
                     android:text="포레이름이 들어감 포레이름이 들어감"
-                    android:textColor="#000000"
-                    android:textSize="35dp"
+                    android:textAlignment="center"
+                    android:textColor="#252525"
+                    android:textColorLink="#FFFFFF"
+                    android:textSize="32dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -116,7 +141,6 @@
                     android:id="@+id/button2"
                     android:layout_width="21dp"
                     android:layout_height="20dp"
-                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="16dp"
                     android:src="@drawable/move"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -126,19 +150,22 @@
                     android:id="@+id/textView13"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     android:layout_marginTop="20dp"
                     android:text="공지사항"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.046"
+                    android:textColor="#252525"
+                    android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView_name" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView1"
-                    android:layout_width="389dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="10dp"
                     android:clipToPadding="false"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.529"
@@ -152,6 +179,7 @@
                     android:layout_marginTop="20dp"
                     android:text="일정"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="#252525"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.046"
@@ -160,9 +188,11 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView2"
-                    android:layout_width="389dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="10dp"
                     android:clipToPadding="false"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.529"
@@ -176,6 +206,8 @@
                     android:layout_marginTop="20dp"
                     android:text="새 글 피드"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="#252525"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.045"
                     app:layout_constraintStart_toStartOf="parent"
@@ -183,9 +215,11 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView3"
-                    android:layout_width="389dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_marginBottom="20dp"
                     android:paddingBottom="45dp"
                     app:layout_constraintBottom_toBottomOf="parent"

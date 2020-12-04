@@ -11,7 +11,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/foret2"
+        android:background="@color/color"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:theme="@style/ToolbarWhite" />
@@ -32,9 +32,9 @@
                 android:id="@+id/logo"
                 android:layout_width="300dp"
                 android:layout_height="139dp"
-                android:layout_gravity="center"
+                android:layout_marginLeft="30dp"
                 android:background="#FFFFFF"
-                app:srcCompat="@drawable/foreticon" />
+                app:srcCompat="@drawable/logo_final" />
 
             <TextView
                 android:id="@+id/textView42"
@@ -47,7 +47,9 @@
                 android:paddingLeft="10dp"
                 android:paddingTop="10dp"
                 android:text="상단의 다음을 눌러주세요."
-                android:textSize="16dp" />
+                android:textColor="@color/foret4"
+                android:textSize="16dp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -91,11 +93,13 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
                             android:background="@drawable/edit_text_box"
-                            android:padding="5dp"
                             android:ems="10"
                             android:hint="문성하"
                             android:inputType="textPersonName"
-                            android:textColor="#000000" />
+                            android:padding="5dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                            android:textColor="#000000"
+                            android:textSize="25dp" />
 
                         <ImageView
                             android:id="@+id/check1"
@@ -144,11 +148,13 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
                             android:background="@drawable/edit_text_box"
-                            android:padding="5dp"
                             android:ems="10"
                             android:hint="zi젼성하"
                             android:inputType="textPersonName"
-                            android:textColor="#000000" />
+                            android:padding="5dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                            android:textColor="#000000"
+                            android:textSize="25dp" />
 
                         <ImageView
                             android:id="@+id/check2"
@@ -197,12 +203,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
                             android:background="@drawable/edit_text_box"
-                            android:padding="5dp"
                             android:ems="10"
                             android:hint="생년월일 8자리"
                             android:inputType="date"
                             android:maxLength="8"
-                            android:textColor="#000000" />
+                            android:padding="5dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                            android:textColor="#000000"
+                            android:textSize="25dp" />
 
                         <ImageView
                             android:id="@+id/check3"
@@ -251,11 +259,13 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
                             android:background="@drawable/edit_text_box"
-                            android:padding="5dp"
                             android:ems="10"
                             android:hint="foret@email.com"
                             android:inputType="textEmailAddress"
-                            android:textColor="#000000" />
+                            android:padding="5dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                            android:textColor="#000000"
+                            android:textSize="25dp" />
 
                         <ImageView
                             android:id="@+id/check4"
@@ -304,10 +314,11 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
                             android:background="@drawable/edit_text_box"
-                            android:padding="5dp"
                             android:ems="10"
                             android:hint="최소 6자리 최대 12자리"
                             android:inputType="textPassword"
+                            android:padding="5dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
                             android:textColor="#000000" />
 
                         <ImageView
@@ -345,11 +356,13 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
                             android:background="@drawable/edit_text_box"
-                            android:padding="5dp"
                             android:ems="10"
                             android:hint="다시 한번 입력해주세요."
                             android:inputType="textPassword"
-                            android:textColor="#000000" />
+                            android:padding="5dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                            android:textColor="#000000"
+                            android:textSize="25dp" />
 
                         <ImageView
                             android:id="@+id/check6"

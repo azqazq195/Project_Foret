@@ -67,13 +67,12 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
 
         setData(memberDTO);
 
-
         button_out.setOnClickListener(this);
 
     }
 
     private void setData(MemberDTO memberDTO) {
-        region = (memberDTO.getRegion_si().toString()+","+memberDTO.getRegion_gu()).replace("[", "").replace("]","");
+        region = (memberDTO.getRegion_si().toString()+","+memberDTO.getRegion_gu().toString()).replace("[", "").replace("]","");
         for (int a=0; a<memberDTO.getTag().size(); a++) {
             tag += "#"+memberDTO.getTag().get(a)+" ";
         }

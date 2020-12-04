@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     String url = "http://34.72.240.24:8085/foret/search/member.do";
 //    String url = "http://192.168.0.180:8085/foret/search/member.do";
     Button button0;
-    TextView button1, button2, button3, button4;
+    TextView button3, button4;
     EditText emailEditText, passwordEditText;
 
     FirebaseAuth mAuth;
@@ -58,8 +58,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         button0 = findViewById(R.id.button0);
-        button1 = findViewById(R.id.button1);
-        button2 = findViewById(R.id.button2);
         button3 = findViewById(R.id.button3);
         button4 = findViewById(R.id.button4);
         emailEditText = findViewById(R.id.editText1);
@@ -74,8 +72,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         response = new HttpResponse();
 
         button0.setOnClickListener(this); //로그인
-        button1.setOnClickListener(this); //구글 로그인
-        button2.setOnClickListener(this); //카카오 로그인
         button3.setOnClickListener(this); //비밀번호 찾기
         button4.setOnClickListener(this); //회원가입
 
@@ -107,12 +103,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 params.put("password", passwordEditText.getText().toString().trim());
                 ProgressDialogHelper.getInstance().getProgressbar(this, "로그인 진행중");
                 client.post(url, params, response);
-                break;
-            case R.id.button1 :
-                Toast.makeText(this, "구글 로그인", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.button2 :
-                Toast.makeText(this, "카카오 로그인", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.button3 :
                 Toast.makeText(this, "이름, 이메일 주소로 비밀번호 찾기", Toast.LENGTH_SHORT).show();

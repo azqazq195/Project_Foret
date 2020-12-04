@@ -3,15 +3,22 @@ package com.example.foret_app_prototype.activity.search;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,17 +37,23 @@ import com.example.foret_app_prototype.adapter.RecyclerAdapter2;
 import com.example.foret_app_prototype.adapter.RecyclerAdapter3;
 import com.example.foret_app_prototype.model.Test;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchFragment extends Fragment implements View.OnClickListener {
+import cz.msebera.android.httpclient.Header;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
+public class SearchFragment extends Fragment implements View.OnClickListener,
+        TextView.OnEditorActionListener, AdapterView.OnItemClickListener {
 
     Toolbar toolbar;
     MainActivity activity;
     LinearLayout layout_search;
-    ImageView button_back;
-    ImageView button1;
+    ImageView button_back, button1, button_searchINTO, button_reset;
     Button button2, button3, button4, button5, button6, button7, button8;
     RecyclerView recyclerView1, recyclerView2;
     FloatingActionButton button9;
@@ -49,6 +62,15 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     RecyclerAdapter2 adapter2;
     RecyclerAdapter3 adapter3;
     Context context;
+    AsyncHttpClient client;
+    RecommandListResponse foretListResponse;
+    AutoCompleteTextView autoCompleteTextView;
+    TextView button_searchGO;
+    ListView search_list;
+    List<String> autoCompleteList; //자동완성 데이터를 넣어줄 리스트
+    //Button button;
+    InputMethodManager inputMethodManager; //키보드 컨트롤 매니저
+    Intent intent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,6 +97,29 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         button9 = rootView.findViewById(R.id.button9); //갱신
         recyclerView1 = rootView.findViewById(R.id.recyclerView1); //관심태그 목록
         recyclerView2 = rootView.findViewById(R.id.recyclerView2); //인기포레 목록
+        button_searchINTO = rootView.findViewById(R.id.button_searchINTO);
+        button_reset = rootView.findViewById(R.id.button_reset);
+        autoCompleteTextView = rootView.findViewById(R.id.autoCompleteTextView);
+        button_searchGO = rootView.findViewById(R.id.button_searchGO);
+        search_list = rootView.findViewById(R.id.search_list);
+        autoCompleteList = new ArrayList<String>();
+
+        inputMethodManager = (InputMethodManager)activity.getSystemService(INPUT_METHOD_SERVICE); //키보드 등 입력받는 방법을 관리하는 Manager객체
+
+        layout_search.setVisibility(View.GONE);
+        setAutoCompleteData(); //자동완성 데이터 세팅 함수
+        autoCompleteTextView.setAdapter(new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, autoCompleteList));
+        //autoCompleteTextView에 자동완성 데이터들이 담길 어댑터를 연결한다.
+
+        autoCompleteTextView.setOnEditorActionListener(this);
+        button_back.setOnClickListener(this);
+        button_searchINTO.setOnClickListener(this);
+        button_reset.setOnClickListener(this);
+        button_searchGO.setOnClickListener(this);
+        search_list.setOnItemClickListener(this);
+
+        client = new AsyncHttpClient();
+        foretListResponse = new RecommandListResponse();
 
         recyclerView1.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false));
         recyclerView2.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false));
@@ -94,6 +139,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         button_back.setOnClickListener(this);
         return rootView;
+    }
+
+    //자동완성에 사용될 데이터를 리스트에 추가한다
+    private void setAutoCompleteData() {
     }
 
     private void testData2() {
@@ -196,5 +245,28 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private void goToMakeNewForet() {
         Intent intent = new Intent(activity, MakeForetActivity.class);
         activity.startActivity(intent);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        return false;
+    }
+
+    class RecommandListResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+        }
     }
 }
