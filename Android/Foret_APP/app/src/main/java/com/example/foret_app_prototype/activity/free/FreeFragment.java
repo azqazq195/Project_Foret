@@ -86,8 +86,8 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         button4 = rootView.findViewById(R.id.button4);
         button_back = rootView.findViewById(R.id.button_back);
         client = new AsyncHttpClient();
-        response1 = new FreeboardListResponse();
-        response2 = new FreeboardLikeResponse();
+        response1 = new FreeboardListResponse(); //리스트
+        response2 = new FreeboardLikeResponse(); //좋아요
         like = new ArrayList<JSONArray>();
 
         SessionManager sessionManager = new SessionManager(activity);
@@ -111,10 +111,11 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         list.clear();
-        like.clear();
         RequestParams params = new RequestParams();
         params.put("type", 0);
-        client.post("http://34.72.240.24:8085/foret/search/etcBoardListRecent.do", params, response1);
+        params.put("pg", 1);
+        params.put("size", 10);
+        client.post("http://34.72.240.24:8085/foret/search/boardListRecentPage.do", params, response1);
     }
 
     private void testData() {
@@ -159,6 +160,10 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         Intent intent = null;
+        RequestParams params = new RequestParams();
+        params.put("type", 0);
+        params.put("pg", 1);
+        params.put("size", 10);
         switch (v.getId()) {
             case R.id.button1 : //최신순
                 button1.setTextColor(Color.BLACK);
@@ -167,6 +172,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 button2.setTextColor(Color.GRAY);
                 button3.setTypeface(null);
                 button3.setTextColor(Color.GRAY);
+                client.post("http://34.72.240.24:8085/foret/search/etcBoardListRecentPage.do", params, response1);
                 break;
             case R.id.button2 : //추천순
                 button2.setTextColor(Color.BLACK);
@@ -175,6 +181,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 button1.setTextColor(Color.GRAY);
                 button3.setTypeface(null);
                 button3.setTextColor(Color.GRAY);
+                client.post("http://34.72.240.24:8085/foret/search/etcBoardListLikePage.do", params, response1);
                 break;
             case R.id.button3 : //댓글순
                 button3.setTextColor(Color.BLACK);
@@ -183,6 +190,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 button2.setTextColor(Color.GRAY);
                 button1.setTypeface(null);
                 button1.setTextColor(Color.GRAY);
+                client.post("http://34.72.240.24:8085/foret/search/etcBoardListCommentPage.do", params, response1);
                 break;
             case R.id.button4 :
                 intent = new Intent(activity, WriteFreeActivity.class);
@@ -190,7 +198,6 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.button_back :
                 layout_search.setVisibility(View.GONE);
-                RequestParams params = new RequestParams();
                 break;
 
         }
@@ -227,6 +234,11 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                     RequestParams params = new RequestParams();
                     params.put("email", email);
                     params.put("password", pw);
+                    final int DEFAULT_TIME = 20*1000;
+                    client.setConnectTimeout(DEFAULT_TIME);
+                    client.setResponseTimeout(DEFAULT_TIME);
+                    client.setTimeout(DEFAULT_TIME);
+                    client.setResponseTimeout(DEFAULT_TIME);
                     client.post("http://34.72.240.24:8085/foret/search/member.do", params, response2);
                 }
             } catch (JSONException e) {

@@ -33,6 +33,10 @@ import com.example.foret_app_prototype.model.ForetBoardComment;
 import com.example.foret_app_prototype.response.CommentListResponse;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +56,9 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
     int memberID;
     Intent intent;
     AsyncHttpClient client;
-    CommentListResponse response;
+    CommentListResponse listResponse;
+    InsertCommentResponse writeCommentResponse;
+    InsertReCommentResponse writeReplyResponse;
     CommentListFreeBoardAdapter adapter;
     List<ForetBoardComment> commentlist;
     ForetBoard foretBoard;
@@ -95,7 +101,9 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
 
         commentlist = new ArrayList<>();
         client = new AsyncHttpClient();
-        response = new CommentListResponse();
+        listResponse = new CommentListResponse();
+        writeCommentResponse = new InsertCommentResponse();
+        writeReplyResponse = new InsertReCommentResponse();
         
         foretBoard = (ForetBoard) getIntent().getSerializableExtra("foretBoard");
         like_count = foretBoard.getLike_count();
@@ -140,6 +148,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
+
     }
 
     @Override
@@ -192,7 +201,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
                 replying = false;
                 break;
             case R.id.button_input : //댓글 쓰기
-                inputRecomment();
+                inputComment();
                 break;
             case R.id.likeButton : //좋아요 처리
                 if(likeButton.isChecked()) {
@@ -206,15 +215,18 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
-    private void inputRecomment() {
-        foretBoardComment = new ForetBoardComment();
-        foretBoardComment.setWriter("3");
-        foretBoardComment.setContent(editText_comment.getText().toString().trim());
-        foretBoardComment.setReg_date("2020-12-02");
-        commentlist.add(foretBoardComment);
-        commentlist.add(position+1, foretBoardComment);
-        adapter = new CommentListFreeBoardAdapter(commentlist, this, memberID);
-        recyclerView.setAdapter(adapter);
+    private void inputComment() {
+        RequestParams params = new RequestParams();
+        String url = "";
+        params.put("board_id", foretBoard.getId());
+        params.put("writer", memberID);
+        params.put("content", editText_comment.getText().toString().trim());
+        if(!replying) { //대댓글쓰기
+            params.put("comment_id", foretBoardComment.getGroup_no());
+            client.post("http://34.72.240.24:8085/foret/comment/comment_insert.do", params, writeCommentResponse);
+        } else {
+            client.post("http://34.72.240.24:8085/foret/comment/recomment_insert.do", params, writeReplyResponse);
+        }
     }
 
     //답글버튼 눌렀을 때
@@ -247,10 +259,37 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
-    class CommentListResponse extends AsyncHttpResponseHandler {
+    @Override
+    public void onDeleteButtonClick(boolean delete) {
+        if(delete) {
+            comment_count --;
+        }
+    }
+
+    class ViewFreeBoardResponse extends AsyncHttpResponseHandler { //글 상세보기기
+
+       @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+        }
+    }
+
+    class CommentListResponse extends AsyncHttpResponseHandler { //댓글목록 불러오기 : http://34.72.240.24:8085/foret/search/commentList.do
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
 
         }
 
@@ -264,12 +303,21 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if(json.getString("commentRT").equals("OK")) {
+                    Toast.makeText(ReadFreeActivity.this, "댓글 작성 성공", Toast.LENGTH_SHORT).show();
+                    //후 서버 다시 요청->리스트 정렬
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+            Toast.makeText(ReadFreeActivity.this, "댓글 작성 실패", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -277,12 +325,21 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if(json.getString("commentRT").equals("OK")) {
+                    Toast.makeText(ReadFreeActivity.this, "댓글 작성 성공", Toast.LENGTH_SHORT).show();
+                    //후 서버 다시 요청->리스트 정렬
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+            Toast.makeText(ReadFreeActivity.this, "댓글 작성 실패", Toast.LENGTH_SHORT).show();
         }
     }
 }

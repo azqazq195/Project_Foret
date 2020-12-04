@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         client = new AsyncHttpClient();
         response = new HttpResponse();
-         sessionManager = new SessionManager(this);
+        sessionManager = new SessionManager(this);
         String email = sessionManager.getSessionEmail();
         String password = sessionManager.getSessionPassword();
 

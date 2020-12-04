@@ -21,9 +21,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.activity.free.ReadFreeActivity;
 import com.example.foret_app_prototype.model.ForetBoardComment;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -39,7 +43,6 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
     AsyncHttpClient client;
     ModifyCommentResponse modifyResponse;
     DeleteCommentResponse deleteResponse;
-    CommentView commentView;
 
     public CommentListFreeBoardAdapter(List<ForetBoardComment> list, Context context, int memberID) {
         this.list = list;
@@ -135,7 +138,8 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
             public void onClick(DialogInterface dialog, int which) {
                 list.remove(positon);
                 notifyItemRemoved(positon);
-                notifyItemRangeChanged(positon, list.size());
+                notifyItemRangeChanged(positon, list.size()-1);
+                commentClickListener.onDeleteButtonClick(true);
             }
         });
         builder.setNegativeButton("취소", null);
@@ -178,18 +182,27 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
     public interface CommentClickListener {
         public void onReplyButtonClick(View v, String target, int position, boolean reply);
         public void onModifyButtonClick(View v, boolean modify);
+        public void onDeleteButtonClick(boolean delete);
     }
 
     class ModifyCommentResponse extends AsyncHttpResponseHandler {
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if(json.getString("commentRT").equals("OK")) {
+                    Toast.makeText(activity, "댓글 수정 성공", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+            Toast.makeText(activity, "수정할 수 없습니다", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -197,12 +210,20 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if(json.getString("commentRT").equals("OK")) {
+                    Toast.makeText(activity, "댓글 삭제 성공", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+            Toast.makeText(activity, "삭제할 수 없습니다", Toast.LENGTH_SHORT).show();
         }
     }
 }

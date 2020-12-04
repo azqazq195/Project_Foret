@@ -78,7 +78,7 @@ public class WriteFreeActivity extends AppCompatActivity {
                 }
                 RequestParams params = new RequestParams();
                 params.put("writer", id);
-                params.put("foret_id", 0);
+                params.put("foret_id", 1);
                 params.put("type", 0);
                 params.put("subject", editText_subject.getText().toString().trim());
                 params.put("content", editText_content.getText().toString().trim());

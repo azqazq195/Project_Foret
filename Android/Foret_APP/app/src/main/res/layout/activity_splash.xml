@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:background="#23272A"
+    android:background="#FFFFFF"
     tools:context=".activity.login.SplashActivity">
 
     <Button
@@ -15,6 +15,7 @@
         android:layout_marginStart="128dp"
         android:layout_marginTop="160dp"
         android:layout_marginEnd="127dp"
+        android:background="@drawable/round"
         android:insetTop="10dp"
         android:insetBottom="10dp"
         android:text="Log in"
@@ -35,9 +36,9 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="146dp"
         android:letterSpacing="-0.05"
-        android:text="포레가 처음이신가요?\n구글, 카카오로 회원가입하기"
+        android:text="포레가 처음이신가요?\n회원가입하기"
         android:textAlignment="center"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/foret"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.461"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,6 +54,6 @@
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/foret" />
+        app:srcCompat="@drawable/foreticon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
