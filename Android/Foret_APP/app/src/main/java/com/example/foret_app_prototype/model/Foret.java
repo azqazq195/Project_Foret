@@ -6,6 +6,7 @@ public class Foret implements Serializable {
     private String rt;
     private int total;
 
+    private int id;
     private String name;
     private String introduce;
     private int max_member;
@@ -33,6 +34,14 @@ public class Foret implements Serializable {
 
     public void setTotal(int total) {
         this.total = total;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

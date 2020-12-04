@@ -10,28 +10,30 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.model.Foret;
+import com.example.foret_app_prototype.model.ForetDTO;
 
 import java.util.List;
 
 public class ForetAdapter extends PagerAdapter {
     private Activity activity;
-    private List<Foret> foretList;
+    private List<ForetDTO> foretDTOList;
 
     // 리스너 객체 참조를 저장하는 변수
     private OnClickListener clickListener = null;
 
-    public ForetAdapter(Activity activity, List<Foret> foretList) {
+    public ForetAdapter(Activity activity, List<ForetDTO> foretDTOList) {
         this.activity = activity;
-        this.foretList = foretList;
+        this.foretDTOList = foretDTOList;
     }
 
     // List 객체에 저장된 데이터 개수 리턴
     @Override
     public int getCount() {
         Log.d("[TEST]", "getCount() 호출 ");
-        return foretList.size();
+        return foretDTOList.size();
     }
 
     @Override
@@ -49,25 +51,24 @@ public class ForetAdapter extends PagerAdapter {
         // main_fragment_home_foret_thum.xml에 설정된 클래스 객체 생성
         View itemView = activity.getLayoutInflater().inflate(R.layout.fragment_main_home_foret_thum, null);
         // 한 페이지에 보여줄 데이터 1개 꺼내기
-        final Foret foret = foretList.get(position);
+        final ForetDTO foretDTO = foretDTOList.get(position);
 
         ImageView image = itemView.findViewById(R.id.image);
         TextView title = itemView.findViewById(R.id.title);
         TextView desc = itemView.findViewById(R.id.desc);
 
-//        Glide.with(activity).load(foret.getPhoto_name())
-//                .placeholder(R.drawable.noimage)
-//                .into(image);
-        image.setImageResource(foret.getForetImage());
-        title.setText(foret.getName());
-        desc.setText(foret.getIntroduce());
+        Glide.with(activity).load(foretDTO.getForet_photo())
+                .placeholder(R.drawable.foret_logo)
+                .into(image);
+        title.setText(foretDTO.getForet_name());
+        desc.setText(foretDTO.getIntroduce());
 
         // 이벤트 설정
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (clickListener != null) {
-                    clickListener.onClick(v, foret);
+                    clickListener.onClick(v, foretDTO);
                 }
             }
         });
@@ -86,7 +87,7 @@ public class ForetAdapter extends PagerAdapter {
     }
 
         public interface OnClickListener {
-            void onClick(View v, Foret foret);
+            void onClick(View v, ForetDTO foretDTO);
         }
 
         // OnClickListener 객체 참조를 어댑터에 전달하는 메서드
