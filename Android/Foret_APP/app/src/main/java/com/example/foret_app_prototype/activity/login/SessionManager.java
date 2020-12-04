@@ -37,6 +37,7 @@ public class SessionManager {
         return sharedPreferences.getString("password", null);
     }
 
+
     public void removeSession() {
         editor.putInt(SESSION_KEY, -1).commit();
     }

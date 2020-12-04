@@ -32,6 +32,7 @@ import com.example.foret_app_prototype.model.ModelChat;
 import com.example.foret_app_prototype.model.ModelChatList;
 import com.example.foret_app_prototype.model.ModelGroupChatList;
 import com.example.foret_app_prototype.model.ModelUser;
+import com.google.android.gms.common.api.Response;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,6 +41,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +79,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     //그룹 정보
     String groupName;
     String member_id;
-
+    String[] foret;
     Context context;
 
     public ChatFragment() {
@@ -190,6 +193,17 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     }
     //내 그룹 채팅방 로드
     private void loadGroupChatList() {
+
+        //서버에서 내그룹 받아오기
+        RequestParams params = new RequestParams();
+        //params.put("name", name);
+        AsyncHttpClient client = new AsyncHttpClient();
+        String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
+        //client.post(url, params, new Response(activity));
+
+
+
+
         groupChatLists = new ArrayList<>();
         //groupName = groupChatLists.get(groupChatLists.size()).getGroupName();
         groupName = "영어 그룹";
@@ -310,5 +324,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         });
 
     }
+
 
 }
