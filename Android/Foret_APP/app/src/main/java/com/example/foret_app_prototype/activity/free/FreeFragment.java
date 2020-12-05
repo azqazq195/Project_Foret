@@ -137,7 +137,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.normal_toolbar2, menu);
+        inflater.inflate(R.menu.normal_toolbar, menu);
     }
 
     @Override

@@ -24,7 +24,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/foret_logo" />
+            app:srcCompat="@drawable/sss" />
 
         <TextView
             android:id="@+id/textView24"
@@ -54,7 +54,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,6 +64,7 @@
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:fillViewport="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -75,13 +76,19 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="20dp"
+                    android:background="@drawable/edge_edit"
                     android:ems="10"
                     android:inputType="textPersonName"
+                    android:letterSpacing="-0.05"
+                    android:padding="5dp"
+                    android:text="이름이"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView25"/>
+                    app:layout_constraintTop_toBottomOf="@+id/textView25" />
 
                 <TextView
                     android:id="@+id/textView25"
@@ -123,6 +130,9 @@
                     android:layout_marginStart="20dp"
                     android:ems="10"
                     android:inputType="numberSigned"
+                    android:text="5"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView30" />
@@ -141,17 +151,22 @@
                 <EditText
                     android:id="@+id/editText_intro"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="100dp"
                     android:layout_marginStart="20dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="20dp"
+                    android:background="@drawable/edge_edit"
                     android:ems="10"
                     android:gravity="start|top"
                     android:inputType="textMultiLine"
                     android:maxLines="5"
+                    android:padding="5dp"
+                    android:text="내용테스트"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView33"/>
+                    app:layout_constraintTop_toBottomOf="@+id/textView33" />
 
                 <TextView
                     android:id="@+id/textView34"
@@ -200,30 +215,34 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView35" />
 
                 <Button
-                    android:id="@+id/button_complete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="20dp"
-                    android:text="확인"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/button_picture" />
-
-                <Button
                     android:id="@+id/button_picture"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="30dp"
                     android:layout_marginTop="28dp"
                     android:layout_marginEnd="20dp"
-                    android:text="포레 프로필 사진 등록"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/round"
+                    android:letterSpacing="-0.05"
+                    android:text="    포레 프로필 사진 등록    "
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/button_tag" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
+
+        <Button
+            android:id="@+id/button_complete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@color/foret4"
+            android:text="포레 만들기"
+            android:textColor="#FFFFFF"
+            android:textSize="25dp" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

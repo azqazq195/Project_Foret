@@ -2,10 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mebuformain"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
-    android:id="@+id/mebuformain"
-    android:background="#D8D8D8">
+    android:background="@color/foret4">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
@@ -39,17 +39,33 @@
                     android:layout_height="70dp"
                     android:src="@drawable/iu" />
 
-                <TextView
-                    android:id="@+id/drawer_text1Formain"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginRight="10dp"
-                    android:text="멤버"
-                    android:textAlignment="textEnd"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textSize="14dp"
-                    android:textStyle="bold" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/drawer_text1Formain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/round5"
+                        android:padding="5dp"
+                        android:text="마스터"
+                        android:textAlignment="textEnd"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textColor="@color/foret4"
+                        android:textSize="10dp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -73,6 +89,7 @@
                         android:singleLine="true"
                         android:text="오늘도화이팅"
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:textColor="#FFFFFF"
                         android:textSize="27dp"
                         android:textStyle="bold" />
 
@@ -84,7 +101,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:singleLine="true"
-                    android:text="이메일 주소" />
+                    android:text="이메일 주소"
+                    android:textColor="#FFFFFF" />
 
                 <TextView
                     android:id="@+id/drawer_text4formain"
@@ -92,7 +110,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:singleLine="true"
-                    android:text="포레 가입일"
+                    android:text="이 포레 가입일"
+                    android:textColor="#FFFFFF"
                     android:textSize="14dp" />
 
             </LinearLayout>
@@ -100,5 +119,17 @@
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/stroke"
+        android:layerType="software"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

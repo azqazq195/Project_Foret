@@ -178,7 +178,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.search_fragment_toolbar2, menu);
+        inflater.inflate(R.menu.search_fragment_toolbar, menu);
     }
 
     @Override

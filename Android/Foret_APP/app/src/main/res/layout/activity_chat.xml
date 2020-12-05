@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F1EDED"
+    android:background="#f2ffed"
     tools:context=".activity.chat.chatactivity.ChatActivity">
 
     <!--보내는 사람-->
@@ -12,16 +12,16 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="#28d2c5"
-        >
+        android:background="@color/foret4"
+        android:gravity="center">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileIv"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_default_image_foreground" />
 
@@ -29,7 +29,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="10dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -62,8 +63,8 @@
         android:layout_above="@id/chatLayout"
         android:layout_below="@id/toolbar"
         android:layout_marginTop="-1dp"
-        app:stackFromEnd="true"
-        android:layout_marginBottom="1dp" />
+        android:layout_marginBottom="1dp"
+        app:stackFromEnd="true" />
 
     <LinearLayout
         android:id="@+id/chatLayout"
@@ -75,11 +76,10 @@
         android:orientation="horizontal">
 
         <ImageButton
+            android:id="@+id/attachButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/attachButton"
-            android:src="@mipmap/ic_launcher_plus"
-            />
+            android:src="@mipmap/ic_launcher_plus" />
 
         <EditText
             android:id="@+id/messagaEt"
@@ -88,18 +88,19 @@
             android:layout_weight="1"
             android:background="@null"
             android:hint="메세지를 입력하세요"
-            android:textColor="@color/black"
             android:inputType="textCapSentences|textMultiLine"
-            android:padding="15dp" />
+            android:padding="15dp"
+            android:textColor="@color/black" />
 
         <ImageButton
             android:id="@+id/sendBtn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_margin="3dp"
-            android:background="@null"
+            android:background="#FFFFFF"
             android:padding="5dp"
-            android:src="@drawable/ic_send_foreground" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/paperairplane" />
 
     </LinearLayout>
 

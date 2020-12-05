@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/board"
     tools:context=".activity.foret.ViewForetActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -28,6 +29,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="#000000"
             android:textSize="20dp"
+            android:textStyle="bold"
             tools:layout_editor_absoluteX="197dp"
             tools:layout_editor_absoluteY="18dp" />
 
@@ -36,9 +38,11 @@
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView3"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="1dp"
+        android:layout_marginBottom="10dp"
         android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/include2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,6 +59,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="18dp"
                 android:text="작성자"
+                android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/image_profile"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -64,9 +69,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="9dp"
                 android:text="공감(0)"
-                app:layout_constraintBottom_toTopOf="@+id/include"
+                android:textColor="#000000"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
@@ -77,7 +81,12 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
+                android:background="@drawable/edit_text_box"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:singleLine="false"
                 android:text="제목"
+                android:textColor="#000000"
                 android:textSize="30dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -89,38 +98,77 @@
                 android:layout_height="45dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="16dp"
-                android:background="#FFFFFF"
-                android:src="@color/foret"
+                android:src="@drawable/test"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <include
-                android:id="@+id/include"
-                layout="@layout/layout_comment"
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:background="#E1E1E1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/likeButton" />
+
+            <TextView
+                android:id="@+id/textView_comment2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:text="댓글(0)"
+                android:textColor="#000000"
+                app:layout_constraintStart_toEndOf="@+id/imageView16"
+                app:layout_constraintTop_toBottomOf="@+id/view" />
+
+            <ImageView
+                android:id="@+id/imageView16"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view"
+                app:srcCompat="@drawable/chaticon" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constrainedHeight="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/edit_text_box"
+                android:padding="3dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView_like" />
+                app:layout_constraintTop_toBottomOf="@+id/textView_comment2" />
 
             <ToggleButton
                 android:id="@+id/likeButton"
                 android:layout_width="31dp"
                 android:layout_height="28dp"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/like_selector"
                 android:textOff=""
                 android:textOn=""
-                app:layout_constraintBottom_toTopOf="@+id/include"
-                app:layout_constraintEnd_toStartOf="@+id/textView_like" />
+                app:layout_constraintEnd_toStartOf="@+id/textView_like"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
             <LinearLayout
                 android:id="@+id/linearLayout3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginEnd="5dp"
+                android:background="@drawable/edit_text_box"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="10dp"
@@ -135,7 +183,8 @@
                     android:layout_marginBottom="10dp"
                     android:letterSpacing="-0.07"
                     android:padding="5dp"
-                    android:text="내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 " />
+                    android:text="내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 "
+                    android:textColor="@color/text" />
 
                 <androidx.viewpager.widget.ViewPager
                     android:id="@+id/imageViewpager"
@@ -170,6 +219,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <include
+        android:id="@+id/include2"
         layout="@layout/comment_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

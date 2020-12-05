@@ -11,20 +11,20 @@
         android:id="@+id/search_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/foret4"
+        android:background="@color/color"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/search_fragment_toolbar2">
+        app:menu="@menu/search_fragment_toolbar">
 
         <ImageView
             android:id="@+id/imageView5"
             android:layout_width="135dp"
             android:layout_height="38dp"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/foret"
+            app:srcCompat="@drawable/logo_final"
             tools:layout_editor_absoluteX="149dp"
             tools:layout_editor_absoluteY="7dp" />
 
