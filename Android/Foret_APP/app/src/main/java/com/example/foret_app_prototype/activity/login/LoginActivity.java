@@ -1,8 +1,5 @@
 package com.example.foret_app_prototype.activity.login;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
@@ -33,7 +33,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpResponse;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -43,8 +42,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     AsyncHttpClient client;
     HttpResponse response;
-    //String url = "http://34.72.240.24:8085/foret/search/member.do";
-    String url = "http://34.72.240.24:8085/foret/search/member.do";
+    String url = "http://34.72.240.24:8085/foret/search/member_login.do";
+    //String url = "http://192.168.219.100:8085/foret/search/member.do";
     Button button0;
     TextView button3, button4;
     EditText emailEditText, passwordEditText;

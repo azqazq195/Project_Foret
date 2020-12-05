@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/foret4">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
@@ -53,7 +54,7 @@
                         android:singleLine="true"
                         android:text="오늘도화이팅"
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                        android:textColor="#000000"
+                        android:textColor="#FFFFFF"
                         android:textSize="27dp"
                         android:textStyle="bold" />
 
@@ -64,7 +65,7 @@
                         android:layout_marginTop="3dp"
                         android:singleLine="true"
                         android:text="이메일 주소"
-                        android:textColor="#000000"
+                        android:textColor="#FFFFFF"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
@@ -75,7 +76,7 @@
                         android:layout_marginTop="3dp"
                         android:singleLine="true"
                         android:text="memberID"
-                        android:textColor="#000000"
+                        android:textColor="#FFFFFF"
                         android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -95,7 +96,7 @@
                     android:layout_marginLeft="3dp"
                     android:layout_marginTop="15dp"
                     android:text="포레 가입일 : 2020.12.02"
-                    android:textColor="#000000" />
+                    android:textColor="#FFFFFF" />
             </LinearLayout>
 
         </LinearLayout>
@@ -103,14 +104,14 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="10dp"
-        android:background="#E1E1E1"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="1dp"
+        android:background="@drawable/stroke"
+        android:layerType="software"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

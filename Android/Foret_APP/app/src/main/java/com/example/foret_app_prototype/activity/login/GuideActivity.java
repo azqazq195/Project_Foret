@@ -1,12 +1,5 @@
 package com.example.foret_app_prototype.activity.login;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -38,17 +32,13 @@ import androidx.core.content.FileProvider;
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
-
-import com.example.foret_app_prototype.activity.foret.EditForetActivity;
 import com.example.foret_app_prototype.helper.CalendarHelper;
-
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.Member;
 import com.example.foret_app_prototype.model.MemberDTO;
 import com.example.foret_app_prototype.model.ModelUser;
-import com.google.android.gms.common.api.Response;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -56,11 +46,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -68,8 +55,8 @@ import com.google.firebase.storage.UploadTask;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.ResponseHandlerInterface;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -102,6 +89,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
     List<String> region_si;
     List<String> region_gu;
+    List<String> tag_name;
     List<String> member_tag;
 
     String name, nickname, birth, email, pw2;
@@ -113,6 +101,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     String downloadUri;
     int member_id;
     String deviceToken;
+    RegionListResponse regionListResponse;
+    TagListResponse tagListResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +126,13 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         layout4 = findViewById(R.id.layout4); // 프사설정화면
         layout5 = findViewById(R.id.layout5); // 포레시작하기
         profile = findViewById(R.id.profile);
+        regionListResponse = new RegionListResponse();
+        tagListResponse = new TagListResponse();
+
+        region_si = new ArrayList<>();
+        region_gu = new ArrayList<>();
+        tag_name = new ArrayList<>();
+        member_tag = new ArrayList<>();
 
       //  profile.setImageResource(R.drawable.foret); // 사진이 출력이 안되서 초기세팅해줌
 
@@ -157,9 +154,9 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         email = getIntent().getStringExtra("email");
         pw2 = getIntent().getStringExtra("pw2");
 
-        region_si = new ArrayList<>();
-        region_gu = new ArrayList<>();
-        member_tag = new ArrayList<>();
+        //각 지역, 태그 리스트에 DB에 저장된 목록 저장
+        client.post("http://34.72.240.24:8085/foret/region/region_list.do", regionListResponse);
+        client.post("http://34.72.240.24:8085/foret/tag/tag_list.do", tagListResponse);
 
     }
 
@@ -749,5 +746,56 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         startActivity(intent);
         finish();
 
+    }
+
+    class RegionListResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if(json.getInt("total") != 0) {
+                    JSONArray region = json.getJSONArray("region");
+                    for (int a=0; a<region.length(); a++) {
+                        JSONObject object = region.getJSONObject(a);
+                        region_si.add(object.getString("region_si"));
+                        region_gu.add(object.getString("region_gu"));
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(GuideActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class TagListResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if(json.getInt("total") != 0) {
+                    JSONArray tag = json.getJSONArray("tag");
+                    for (int a=0; a<tag.length(); a++) {
+                        JSONObject object = tag.getJSONObject(a);
+                        tag_name.add(object.getString("tag_name"));
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(GuideActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
+        }
     }
 }

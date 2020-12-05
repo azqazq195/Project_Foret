@@ -31,16 +31,15 @@ import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
-import com.example.foret_app_prototype.activity.login.GuideActivity;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.MemberDTO;
-import com.google.android.gms.common.api.Response;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -69,8 +68,12 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     List<String> region_si;
     List<String> region_gu;
     List<String> member_tag;
+    List<String> tag_name;
+
     AsyncHttpClient client;
     MyInfoEditResponse response;
+    RegionListResponse2 regionListResponse;
+    TagListResponse2 tagListResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +101,17 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         profile = findViewById(R.id.profile);
         client = new AsyncHttpClient();
         response = new MyInfoEditResponse();
+        regionListResponse = new RegionListResponse2();
+        tagListResponse = new TagListResponse2();
+
+        region_si = new ArrayList<>();
+        region_gu = new ArrayList<>();
+        member_tag = new ArrayList<>();
+        tag_name = new ArrayList<>();
+
+        //각 지역, 태그 리스트에 DB에 저장된 목록 저장
+        client.post("http://34.72.240.24:8085/foret/region/region_list.do", regionListResponse);
+        client.post("http://34.72.240.24:8085/foret/tag/tag_list.do", tagListResponse);
 
         dataSetting();
 
@@ -510,6 +524,108 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             ProgressDialogHelper.getInstance().removeProgressbar();
             Toast.makeText(EditMyInfoActivity.this, "수정하기 500에러 뜸", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class RegionListResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if(json.getInt("total") != 0) {
+                    JSONArray region = json.getJSONArray("region");
+                    for (int a=0; a<region.length(); a++) {
+                        JSONObject object = region.getJSONObject(a);
+                        region_si.add(object.getString("region_si"));
+                        region_gu.add(object.getString("region_gu"));
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(EditMyInfoActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class TagListResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if(json.getInt("total") != 0) {
+                    JSONArray tag = json.getJSONArray("tag");
+                    for (int a=0; a<tag.length(); a++) {
+                        JSONObject object = tag.getJSONObject(a);
+                        member_tag.add(object.getString("tag_name"));
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(EditMyInfoActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class RegionListResponse2 extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if(json.getInt("total") != 0) {
+                    JSONArray region = json.getJSONArray("region");
+                    for (int a=0; a<region.length(); a++) {
+                        JSONObject object = region.getJSONObject(a);
+                        region_si.add(object.getString("region_si"));
+                        region_gu.add(object.getString("region_gu"));
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(EditMyInfoActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class TagListResponse2 extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if(json.getInt("total") != 0) {
+                    JSONArray tag = json.getJSONArray("tag");
+                    for (int a=0; a<tag.length(); a++) {
+                        JSONObject object = tag.getJSONObject(a);
+                        tag_name.add(object.getString("tag_name"));
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(EditMyInfoActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
         }
     }
 }

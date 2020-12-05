@@ -10,7 +10,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +18,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -58,7 +56,6 @@ public class HomeFragment extends Fragment
     Toolbar toolbar;
     MainActivity activity;
     TextView button1, textView_name;
-    ImageView button2;
     RecyclerView recyclerView1, recyclerView2, recyclerView3;
     Intent intent;
     SearchFragment searchFragment;
@@ -109,7 +106,6 @@ public class HomeFragment extends Fragment
 
         viewPager = rootView.findViewById(R.id.viewPager);
         button1 = rootView.findViewById(R.id.button1);
-        button2 = rootView.findViewById(R.id.button2);
         textView_name = rootView.findViewById(R.id.textView_name);
         recyclerView1 = rootView.findViewById(R.id.recyclerView1);
         recyclerView2 = rootView.findViewById(R.id.recyclerView2);
@@ -142,7 +138,6 @@ public class HomeFragment extends Fragment
 
         // 버튼 이벤트
         button1.setOnClickListener(this);
-        button2.setOnClickListener(this);
 
         return rootView;
     }

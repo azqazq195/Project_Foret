@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -61,8 +62,6 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
     List<JSONArray> like;
 
     int id;
-    String email;
-    String pw;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,8 +89,6 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
 
         SessionManager sessionManager = new SessionManager(activity);
         id = sessionManager.getSession();
-        email = sessionManager.getSessionEmail();
-        pw = sessionManager.getSessionPassword();
 
         recyclerView2.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false));
 
@@ -111,7 +108,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         list.clear();
         RequestParams params = new RequestParams();
         params.put("type", 0);
-        params.put("foret_id", id);
+        params.put("foret_id", 0);
         params.put("pg", 1);
         params.put("size", 10);
         params.put("inquiry_type", 1);
@@ -154,10 +151,11 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        list.clear();
         Intent intent = null;
         RequestParams params = new RequestParams();
         params.put("type", 0);
-        params.put("foret_id", id);
+        params.put("foret_id", 0);
         params.put("pg", 1);
         params.put("size", 10);
         switch (v.getId()) {
@@ -198,7 +196,6 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
             case R.id.button_back :
                 layout_search.setVisibility(View.GONE);
                 break;
-
         }
     }
 
@@ -220,19 +217,18 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                         ForetBoard foretBoard = new ForetBoard();
                         JSONObject object = board.getJSONObject(a);
                         foretBoard.setReg_date(object.getString("reg_date"));
-                        foretBoard.setHit(object.getInt("hit"));
                         foretBoard.setLike_count(object.getInt("board_like"));
                         foretBoard.setSubject(object.getString("subject"));
                         foretBoard.setComment_count(object.getInt("board_comment"));
                         foretBoard.setId(object.getInt("id")); //글 번호
                         foretBoard.setWriter(String.valueOf(object.getInt("writer")));
-                        foretBoard.setEdit_date(object.getString("edit_date"));
                         foretBoard.setContent(object.getString("content"));
                         list.add(foretBoard);
+                        Log.e("TEST", "진입테스트8"+list.size());
                     }
+                    Log.e("[TEST]", list.size()+"");
                     RequestParams params = new RequestParams();
-                    params.put("email", email);
-                    params.put("password", pw);
+                    params.put("id", id);
                     final int DEFAULT_TIME = 20*1000;
                     client.setConnectTimeout(DEFAULT_TIME);
                     client.setResponseTimeout(DEFAULT_TIME);
@@ -261,18 +257,29 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 if(json.getString("RT").equals("OK")){
                     JSONArray member = json.getJSONArray("member");
                     JSONObject object = member.getJSONObject(0);
+                    Log.e("[TEST]", "진입테스트2");
                     JSONArray like_comment = object.getJSONArray("like_comment");
+                    Log.e("[TEST]", "진입테스트3"+like_comment.length());
                     like.add(like_comment);
-                    for (ForetBoard foretBoard : list) {
+                    Log.e("[TEST]", "진입테스트4"+like.toString());
+                    for (int a=0; a<list.size(); a++) {
+                        Log.e("TEST", "진입테스트8"+list.size());
+                        ForetBoard foretBoard = list.get(a);
                         int seq = foretBoard.getId();
-                        if(like.contains(seq)) {
+                        Log.e("[TEST]", "진입테스트6" + foretBoard.getId());
+                        if (like.contains(seq)) {
                             foretBoard.setLike(true);
+                            Log.e("[TEST]", "진입테스트7" + foretBoard.isLike());
                         } else {
                             foretBoard.setLike(false);
+                            Log.e("[TEST]", "진입테스트7" + foretBoard.isLike());
                         }
+                        list.set(a, foretBoard);
+                        Log.e("TEST", "진입테스트8"+list.size());
                     }
                     adapter = new ListFreeBoardAdapter(list, activity, id);
                     recyclerView2.setAdapter(adapter);
+                    Log.e("TEST", "진입테스트9"+list.size());
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -281,7 +288,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+            Toast.makeText(activity, "댓글 목록을 불러 올 수 없습니다", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -7,7 +7,7 @@
     tools:context=".activity.foret.board.WriteForetBoardActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/cosutom_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/white"
@@ -19,7 +19,7 @@
         app:menu="@menu/complete_toolbar">
 
         <TextView
-            android:id="@+id/textView40"
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -33,28 +33,20 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <TextView
-        android:id="@+id/textView41"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="35dp"
-        android:text="제목"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
     <EditText
         android:id="@+id/editText_content"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="350dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/edge_edit"
         android:ems="10"
         android:gravity="start|top"
         android:hint="내용 입력..."
         android:inputType="textMultiLine"
-        android:padding="5dp"
+        android:padding="10dp"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_writer" />
@@ -64,97 +56,106 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/edge_edit"
         android:ems="10"
+        android:hint="제목입력"
         android:inputType="textPersonName"
+        android:padding="5dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView41" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner" />
 
     <TextView
         android:id="@+id/textView_writer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:text="작성자"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText_subject" />
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="65dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@+id/imageView1"
-        app:layout_constraintTop_toTopOf="@+id/imageView0"
-        app:srcCompat="@drawable/picture" />
-
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="65dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@+id/imageView0"
-        app:layout_constraintTop_toTopOf="@+id/imageView0"
-        app:srcCompat="@drawable/picture" />
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="65dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="@+id/imageView0"
-        app:srcCompat="@drawable/picture" />
-
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="65dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/edge_edit"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView3"
-        app:layout_constraintTop_toTopOf="@+id/imageView0"
-        app:srcCompat="@drawable/picture" />
-
-    <ImageView
-        android:id="@+id/imageView0"
-        android:layout_width="65dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="7dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button"
-        app:srcCompat="@drawable/picture" />
+        app:layout_constraintTop_toBottomOf="@+id/editText_content">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="102dp"
-        android:layout_height="39dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:text="사진 올리기"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_content" />
+        <ImageView
+            android:id="@+id/imageView0"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/picture" />
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/picture" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/picture" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/picture" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/picture" />
+
+    </LinearLayout>
 
     <Spinner
         android:id="@+id/spinner"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/edge_edit"
         android:entries="@array/spinner_data"
         android:paddingLeft="7dp"
         android:paddingTop="3dp"
         android:paddingBottom="3dp"
-        app:layout_constraintBottom_toTopOf="@+id/editText_subject"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/cosutom_toolbar"
         tools:listitem="@android:layout/test_list_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
