@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         button_out2.setOnClickListener(this);
         button_drawcancel.setOnClickListener(this);
 
-        updateToken(FirebaseInstanceId.getInstance().getToken());
+
     }
 
     //안드로이드 푸쉬알림을 위한 추가
@@ -328,6 +328,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             Toast.makeText(context, "파이어베이스 로그아웃 상태..", Toast.LENGTH_LONG).show();
         } else {
                 mUID = currntuser.getUid();
+            updateToken(FirebaseInstanceId.getInstance().getToken());
             SharedPreferences sp =getSharedPreferences("SP_USER",MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("Currnt_USERID",mUID);
