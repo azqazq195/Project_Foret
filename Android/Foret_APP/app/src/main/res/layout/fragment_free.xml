@@ -4,26 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".activity.free.FreeFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/free_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/color"
+        android:background="@color/foret4"
+        android:elevation="10dp"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/search_fragment_toolbar">
+        app:menu="@menu/normal_toolbar2">
 
         <ImageView
             android:id="@+id/imageView5"
             android:layout_width="135dp"
             android:layout_height="38dp"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/logo_final"
+            app:srcCompat="@drawable/foret"
             tools:layout_editor_absoluteX="149dp"
             tools:layout_editor_absoluteY="7dp" />
 
@@ -51,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="요즘 가장 인기 있는 topic"
+                android:text="Hot"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#000000"
                 android:textStyle="bold"
@@ -78,7 +80,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="32dp"
                 android:text="최신순"
-                android:textColor="#000000"
+                android:textColor="@color/foret4"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recyclerView1" />
@@ -117,6 +119,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button2" />
 
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/star"
+                app:layout_constraintStart_toEndOf="@+id/textView11"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -129,6 +141,7 @@
         android:clickable="true"
         android:src="@drawable/write"
         app:backgroundTint="#FFFFFF"
+        app:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/nestedScrollView4"
         app:layout_constraintEnd_toEndOf="parent" />
 

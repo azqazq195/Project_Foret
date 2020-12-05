@@ -34,6 +34,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="1dp"
+        android:background="#FFFFFF"
         android:fillViewport="true"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/include"
@@ -50,9 +51,10 @@
                 android:id="@+id/textView_writer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginEnd="20dp"
                 android:text="작성자"
+                android:textSize="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_subject" />
 
@@ -60,11 +62,26 @@
                 android:id="@+id/textView_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginEnd="20dp"
                 android:text="공감(0)"
+                android:textColor="#000000"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_date" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:background="#E1E1E1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_writer" />
 
             <TextView
                 android:id="@+id/textView_subject"
@@ -74,6 +91,7 @@
                 android:layout_marginTop="3dp"
                 android:layout_marginEnd="20dp"
                 android:text="제목"
+                android:textColor="#000000"
                 android:textSize="30dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -86,6 +104,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="20dp"
                 android:text="작성일"
+                android:textSize="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
@@ -96,14 +115,29 @@
                 android:layout_marginStart="23dp"
                 android:layout_marginTop="16dp"
                 android:text="글 번호"
+                android:textSize="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="10dp"
+                android:background="#E1E1E1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/likeButton" />
 
             <ToggleButton
                 android:id="@+id/likeButton"
                 android:layout_width="31dp"
                 android:layout_height="28dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/like_selector"
                 android:textOff=""
                 android:textOn=""
@@ -130,7 +164,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:padding="5dp"
-                    android:text="내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 " />
+                    android:text="내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 "
+                    android:textColor="#000000" />
 
             </LinearLayout>
 
@@ -138,10 +173,11 @@
                 android:id="@+id/textView_comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
                 android:text="댓글(0)"
-                app:layout_constraintStart_toStartOf="parent"
+                android:textColor="#000000"
+                app:layout_constraintStart_toEndOf="@+id/imageView7"
                 app:layout_constraintTop_toBottomOf="@+id/textView_like" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -151,6 +187,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_comment" />
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="15dp"
+                app:layout_constraintEnd_toStartOf="@+id/textView_comment"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/chaticon"
+                tools:layout_editor_absoluteY="325dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

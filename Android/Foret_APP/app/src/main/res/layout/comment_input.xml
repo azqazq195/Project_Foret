@@ -11,12 +11,13 @@
         android:id="@+id/textView_reply"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#F1F1F1"
+        android:background="@color/foret4"
         android:paddingLeft="12dp"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:text="OO님께 답글 작성중입니다..."
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#FFFFFF"
         android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +31,7 @@
         android:layout_marginEnd="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/cancel" />
+        app:srcCompat="@drawable/cancel3" />
 
     <EditText
         android:id="@+id/editText_comment"
@@ -52,7 +53,7 @@
         android:layout_width="65dp"
         android:layout_height="wrap_content"
         android:text="입력"
-        android:textColor="#000000"
+        android:textColor="@color/foret4"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_reply" />

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ public class ListFreeBoardAdapter extends RecyclerView.Adapter<ListFreeBoardAdap
     int member_id;
     int like_count;
     FreeBoardOnClickListener onClick=null;
+    boolean singline = true;
 
     public ListFreeBoardAdapter(List<ForetBoard> list, Context context, int member_id) {
         this.list = list;
@@ -80,6 +82,18 @@ public class ListFreeBoardAdapter extends RecyclerView.Adapter<ListFreeBoardAdap
                     holder.textView5.setText(like_count+"");
                 }
                 onClick.onlikeClick(v, like_count);
+            }
+        });
+        holder.textView4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(singline) {
+                    holder.textView4.setMaxLines(10);
+                    singline = false;
+                }  else {
+                    holder.textView4.setMaxLines(2);
+                    singline = true;
+                }
             }
         });
     }

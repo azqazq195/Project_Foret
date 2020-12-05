@@ -53,7 +53,6 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
     ImageView button_back;
     Toolbar toolbar;
     LinearLayout layout_search;
-    SearchView searchView;
     ListView recyclerView1;
     ListFreeBoardAdapter adapter;
     AsyncHttpClient client;
@@ -108,7 +107,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         return rootView;
     }
 
-    public void onResume() {
+   /* public void onResume() {
         super.onResume();
         list.clear();
         RequestParams params = new RequestParams();
@@ -116,7 +115,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         params.put("pg", 1);
         params.put("size", 10);
         client.post("http://34.72.240.24:8085/foret/search/boardListRecentPage.do", params, response1);
-    }
+    }*/
 
     private void testData() {
         for (int a=0; a<3; a++) {
@@ -138,18 +137,13 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.search_fragment_toolbar, menu);
+        inflater.inflate(R.menu.normal_toolbar2, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.item_search : //검색 버튼 눌렀을때
-                layout_search.setVisibility(View.VISIBLE);
-                searchView.setQueryHint("제목/내용");
-                button4.setVisibility(View.GONE);
-                break;
-            case R.id.item_menu :
+            case R.id.menu :
                 DrawerLayout container = activity.findViewById(R.id.container);
                 container.openDrawer(GravityCompat.END);
                 break;
@@ -166,7 +160,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         params.put("size", 10);
         switch (v.getId()) {
             case R.id.button1 : //최신순
-                button1.setTextColor(Color.BLACK);
+                button1.setTextColor(Color.parseColor("#22997b"));
                 button1.setTypeface(Typeface.DEFAULT_BOLD);
                 button2.setTypeface(null);
                 button2.setTextColor(Color.GRAY);
@@ -175,7 +169,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 client.post("http://34.72.240.24:8085/foret/search/etcBoardListRecentPage.do", params, response1);
                 break;
             case R.id.button2 : //추천순
-                button2.setTextColor(Color.BLACK);
+                button2.setTextColor(Color.parseColor("#22997b"));
                 button2.setTypeface(Typeface.DEFAULT_BOLD);
                 button1.setTypeface(null);
                 button1.setTextColor(Color.GRAY);
@@ -184,7 +178,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 client.post("http://34.72.240.24:8085/foret/search/etcBoardListLikePage.do", params, response1);
                 break;
             case R.id.button3 : //댓글순
-                button3.setTextColor(Color.BLACK);
+                button3.setTextColor(Color.parseColor("#22997b"));
                 button3.setTypeface(Typeface.DEFAULT_BOLD);
                 button2.setTypeface(null);
                 button2.setTextColor(Color.GRAY);

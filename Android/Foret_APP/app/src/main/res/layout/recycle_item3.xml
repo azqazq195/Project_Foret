@@ -10,7 +10,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         app:cardCornerRadius="10dp"
-        app:cardElevation="5dp">
+        app:cardElevation="5dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="false">
 
         <LinearLayout
             android:id="@+id/layout"
@@ -49,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:text="#포레태그"
-                    android:textColor="#000000"
+                    android:textColor="@color/foret4"
                     android:textStyle="bold" />
 
                 <TextView
@@ -64,13 +66,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="포레 개설일"
-                    android:textAlignment="textEnd" />
+                    android:textAlignment="textEnd"
+                    android:textSize="10dp" />
 
                 <TextView
                     android:id="@+id/textView5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="지역" />
+                    android:text="지역"
+                    android:textColor="@color/foret4"
+                    android:textSize="12dp" />
             </LinearLayout>
         </LinearLayout>
 

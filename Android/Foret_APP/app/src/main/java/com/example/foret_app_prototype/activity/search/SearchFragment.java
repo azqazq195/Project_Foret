@@ -66,7 +66,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     RecommandListResponse foretListResponse;
     AutoCompleteTextView autoCompleteTextView;
     TextView button_searchGO;
-    ListView search_list;
+    ListView search_listView;
     List<String> autoCompleteList; //자동완성 데이터를 넣어줄 리스트
     //Button button;
     InputMethodManager inputMethodManager; //키보드 컨트롤 매니저
@@ -101,7 +101,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         button_reset = rootView.findViewById(R.id.button_reset);
         autoCompleteTextView = rootView.findViewById(R.id.autoCompleteTextView);
         button_searchGO = rootView.findViewById(R.id.button_searchGO);
-        search_list = rootView.findViewById(R.id.search_list);
+        search_listView = rootView.findViewById(R.id.search_list);
         autoCompleteList = new ArrayList<String>();
 
         inputMethodManager = (InputMethodManager)activity.getSystemService(INPUT_METHOD_SERVICE); //키보드 등 입력받는 방법을 관리하는 Manager객체
@@ -116,7 +116,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         button_searchINTO.setOnClickListener(this);
         button_reset.setOnClickListener(this);
         button_searchGO.setOnClickListener(this);
-        search_list.setOnItemClickListener(this);
+        search_listView.setOnItemClickListener(this);
 
         client = new AsyncHttpClient();
         foretListResponse = new RecommandListResponse();
@@ -178,7 +178,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.search_fragment_toolbar, menu);
+        inflater.inflate(R.menu.search_fragment_toolbar2, menu);
     }
 
     @Override
@@ -247,6 +247,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         activity.startActivity(intent);
     }
 
+    //검색결과 레이아웃에 출력
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 

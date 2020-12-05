@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".activity.search.SearchFragment">
 
     <androidx.appcompat.widget.Toolbar
@@ -33,6 +34,7 @@
         android:id="@+id/nestedScrollView6"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#FFFFFF"
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -66,13 +68,15 @@
 
                 <ImageView
                     android:id="@+id/button1"
-                    android:layout_width="21dp"
-                    android:layout_height="20dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:layout_marginTop="14dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/move"
+                    android:layout_marginEnd="18dp"
+                    android:foregroundGravity="center"
+                    android:src="@drawable/arrow2"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/arrow2" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView1"
@@ -81,11 +85,19 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    app:layout_constraintBottom_toTopOf="@+id/textView19"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
+                <ImageView
+                    android:id="@+id/imageView10"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/star"
+                    app:layout_constraintStart_toEndOf="@+id/textView10"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -94,6 +106,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
                 android:text="많이 찾는 태그"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#000000"
@@ -106,27 +119,39 @@
                 android:layout_width="0dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginEnd="10dp"
-                android:background="#E8E8E8"
+                android:background="@drawable/round4"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="많이 찾는 태그1"
+                android:textColor="@color/foret4"
                 app:layout_constraintEnd_toStartOf="@+id/button3"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
+            <ImageView
+                android:id="@+id/imageView11"
+                android:layout_width="127dp"
+                android:layout_height="68dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="15dp"
+                android:src="@drawable/cloud"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button6" />
 
             <Button
                 android:id="@+id/button3"
                 android:layout_width="0dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginEnd="10dp"
-                android:background="#E8E8E8"
+                android:background="@drawable/round4"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="많이 찾는 태그2"
+                android:textColor="@color/foret4"
                 app:layout_constraintEnd_toStartOf="@+id/button4"
                 app:layout_constraintStart_toEndOf="@+id/button2"
                 app:layout_constraintTop_toBottomOf="@+id/textView19" />
@@ -136,12 +161,13 @@
                 android:layout_width="0dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginEnd="20dp"
-                android:background="#E8E8E8"
+                android:background="@drawable/round4"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="많이 찾는 태그3"
+                android:textColor="@color/foret4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/button3"
                 app:layout_constraintTop_toBottomOf="@+id/textView19" />
@@ -152,10 +178,11 @@
                 android:layout_height="30dp"
                 android:layout_marginStart="80dp"
                 android:layout_marginTop="12dp"
-                android:background="#E8E8E8"
+                android:background="@drawable/round4"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="많이 찾는 태그4"
+                android:textColor="@color/foret4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button3" />
 
@@ -165,35 +192,54 @@
                 android:layout_height="30dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="80dp"
-                android:background="#E8E8E8"
+                android:background="@drawable/round4"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:singleLine="true"
                 android:text="많이 찾는 태그5"
+                android:textColor="@color/foret4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button3" />
 
             <Button
                 android:id="@+id/button7"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="40dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/round"
-                android:text="내 포레 만들기 GO"
+                android:background="#00FFFFFF"
+                android:lineSpacingExtra="0sp"
+                android:text="GO"
+                android:textColor="#1E496C"
+                android:textSize="40dp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.882"
                 app:layout_constraintStart_toEndOf="@+id/textView21"
                 app:layout_constraintTop_toBottomOf="@+id/button5" />
+
+            <View
+                android:id="@+id/view4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="20dp"
+                android:background="#E1E1E1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
             <TextView
                 android:id="@+id/textView20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="37dp"
+                android:layout_marginTop="45dp"
                 android:lineSpacingExtra="0sp"
                 android:text="찾으시는 포레가 없으신가요?"
+                android:textColor="#606060"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button5" />
@@ -205,6 +251,8 @@
                 android:layout_marginStart="16dp"
                 android:text="자신만의 포레를 만들어 보세요."
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/foret4"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
@@ -237,7 +285,8 @@
                 android:id="@+id/button8"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginEnd="20dp"
                 android:background="@drawable/renuew"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />

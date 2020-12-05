@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#FFFFFF"
     tools:context=".activity.chat.ChatFragment">
 
     <androidx.appcompat.widget.Toolbar
@@ -23,7 +24,7 @@
             android:layout_width="135dp"
             android:layout_height="38dp"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/foreticon"
+            app:srcCompat="@drawable/logo_final"
             tools:layout_editor_absoluteX="149dp"
             tools:layout_editor_absoluteY="7dp" />
 
@@ -63,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="15dp"
-                android:text="포레 채팅"
+                android:text="포레 채팅방"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#000000"
                 android:textStyle="bold"
@@ -93,6 +94,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView28" />
+
+            <ImageView
+                android:id="@+id/imageView12"
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="18dp"
+                android:src="@drawable/chaticon"
+                app:layout_constraintStart_toEndOf="@+id/textView26"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

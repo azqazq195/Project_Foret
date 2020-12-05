@@ -8,9 +8,10 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:cardCornerRadius="15dp"
-        app:cardElevation="5dp"
+        app:cardElevation="3dp"
+        app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="true">
 
         <LinearLayout
@@ -24,7 +25,8 @@
                 android:id="@+id/textView1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="글 번호" />
+                android:text="글 번호"
+                android:textSize="10dp" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -32,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="글 제목"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:textColor="#000000"
+                android:textColor="@color/foret4"
                 android:textStyle="bold" />
 
             <TextView
@@ -47,10 +49,12 @@
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="3dp"
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:paddingBottom="10dp"
-                android:text="선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미"
+                android:text="선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선선미선미선미선미선미선미선미선미선미선미선미미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미선미"
                 android:textColor="#000000" />
 
             <LinearLayout
@@ -70,26 +74,58 @@
                     android:textOn=" " />
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/textView55"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
+                    android:text="공감(" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="5"
+                    android:textColor="@color/foret4"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView36"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
-                    android:text="공감(0)" />
+                    android:layout_weight="0"
+                    android:text=")" />
 
                 <Button
                     android:id="@+id/button_comment"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:background="@drawable/chat_icon"
+                    android:layout_width="27dp"
+                    android:layout_height="23dp"
+                    android:background="@drawable/chaticon"
                     android:textSize="3dp" />
+
+                <TextView
+                    android:id="@+id/textView66"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:text="댓글(" />
 
                 <TextView
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
-                    android:text="댓글(0)" />
+                    android:layout_weight="0"
+                    android:text="3"
+                    android:textColor="@color/foret4"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView48"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text=")" />
 
                 <TextView
                     android:id="@+id/textView7"
@@ -97,8 +133,19 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="작성일"
-                    android:textAlignment="viewEnd" />
+                    android:textAlignment="viewEnd"
+                    android:textSize="10dp" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_centerInParent="true"
+        android:background="#E1E1E1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </LinearLayout>
