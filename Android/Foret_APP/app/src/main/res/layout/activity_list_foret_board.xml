@@ -169,6 +169,7 @@
         android:id="@+id/foret_drawer"
         android:layout_width="280dp"
         android:layout_height="match_parent"
+        android:layout_gravity="end"
         android:background="@color/foret4"
         android:visibility="visible"
         app:headerLayout="@layout/drawer_header_foret"
@@ -176,7 +177,6 @@
         app:itemIconPadding="20dp"
         app:itemTextAppearance="@style/TextAppearance.AppCompat.Large"
         app:itemTextColor="#FFFFFF"
-        android:layout_gravity="end"
         app:menu="@menu/drawer_foret">
 
         <ImageView

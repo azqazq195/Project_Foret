@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -107,15 +106,17 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         return rootView;
     }
 
-   /* public void onResume() {
+    public void onResume() {
         super.onResume();
         list.clear();
         RequestParams params = new RequestParams();
         params.put("type", 0);
+        params.put("foret_id", id);
         params.put("pg", 1);
         params.put("size", 10);
-        client.post("http://34.72.240.24:8085/foret/search/boardListRecentPage.do", params, response1);
-    }*/
+        params.put("inquiry_type", 1);
+        client.post("http://34.72.240.24:8085/foret/search/boardList.do", params, response1);
+    }
 
     private void testData() {
         for (int a=0; a<3; a++) {
@@ -156,6 +157,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         Intent intent = null;
         RequestParams params = new RequestParams();
         params.put("type", 0);
+        params.put("foret_id", id);
         params.put("pg", 1);
         params.put("size", 10);
         switch (v.getId()) {
@@ -166,7 +168,8 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 button2.setTextColor(Color.GRAY);
                 button3.setTypeface(null);
                 button3.setTextColor(Color.GRAY);
-                client.post("http://34.72.240.24:8085/foret/search/etcBoardListRecentPage.do", params, response1);
+                params.put("inquiry_type", 1);
+                client.post("http://34.72.240.24:8085/foret/search/boardList.do", params, response1);
                 break;
             case R.id.button2 : //추천순
                 button2.setTextColor(Color.parseColor("#22997b"));
@@ -175,7 +178,8 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 button1.setTextColor(Color.GRAY);
                 button3.setTypeface(null);
                 button3.setTextColor(Color.GRAY);
-                client.post("http://34.72.240.24:8085/foret/search/etcBoardListLikePage.do", params, response1);
+                params.put("inquiry_type", 3);
+                client.post("http://34.72.240.24:8085/foret/search/boardList.do", params, response1);
                 break;
             case R.id.button3 : //댓글순
                 button3.setTextColor(Color.parseColor("#22997b"));
@@ -184,7 +188,8 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 button2.setTextColor(Color.GRAY);
                 button1.setTypeface(null);
                 button1.setTextColor(Color.GRAY);
-                client.post("http://34.72.240.24:8085/foret/search/etcBoardListCommentPage.do", params, response1);
+                params.put("inquiry_type", 4);
+                client.post("http://34.72.240.24:8085/foret/search/boardList.do", params, response1);
                 break;
             case R.id.button4 :
                 intent = new Intent(activity, WriteFreeActivity.class);
