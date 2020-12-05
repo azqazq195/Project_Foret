@@ -3,6 +3,7 @@ package com.example.foret_app_prototype.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -29,6 +30,7 @@ import com.example.foret_app_prototype.activity.login.SessionManager;
 import com.example.foret_app_prototype.activity.menu.AppNoticeActivity;
 import com.example.foret_app_prototype.activity.menu.MyInfoActivity;
 import com.example.foret_app_prototype.activity.notify.NotifyFragment;
+import com.example.foret_app_prototype.activity.notify.Token;
 import com.example.foret_app_prototype.activity.search.SearchFragment;
 import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.MemberDTO;
@@ -44,6 +46,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -84,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     FirebaseUser currntuser;
     Context context;
     String message;
+    String mUID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,13 +116,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         drawer_text4 = findViewById(R.id.drawer_text4); //가입일
         profile = findViewById(R.id.profile); //햄버거메뉴에 들어갈 프로필사진
 
-        /*View view = (LinearLayout)findViewById(R.id.linearLayout22);
-        drawer_text1 =(TextView) view.findViewById(R.id.drawer_text1); //회원닉네임
-        drawer_text2 =(TextView) view.findViewById(R.id.drawer_text2); //이메일
-        drawer_text3 = (TextView)view.findViewById(R.id.drawer_text3); //멤머 아이디
-        drawer_text4 = (TextView)view.findViewById(R.id.drawer_text4); //가입일
-        profile =(ImageView) view.findViewById(R.id.profile); //햄버거메뉴에 들어갈 프로필사진
-         */
         nav_bottom.setOnNavigationItemSelectedListener(this);
         nav_drawer.setNavigationItemSelectedListener(this::onNavigationItemSelected);
         nav_bottom.setItemIconTintList(null);
@@ -149,6 +146,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         button_drawcancel.setOnClickListener(this);
 
 
+    }
+
+    //안드로이드 푸쉬알림을 위한 추가
+    public void updateToken(String token){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token mToken = new Token(token);
+        ref.child(mUID).setValue(mToken);
     }
 
     @Override
@@ -323,6 +327,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             //로그인 아닌상태
             Toast.makeText(context, "파이어베이스 로그아웃 상태..", Toast.LENGTH_LONG).show();
         } else {
+                mUID = currntuser.getUid();
+            updateToken(FirebaseInstanceId.getInstance().getToken());
+            SharedPreferences sp =getSharedPreferences("SP_USER",MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("Currnt_USERID",mUID);
+            editor.apply();
 //            updateuserActiveStatusOn();
         }
     }
@@ -342,8 +352,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         HashMap<String, Object> onlineStatus = new HashMap<>();
         onlineStatus.put("onlineStatus", "online");
         onlineStatus.put("listlogined_date", "현재 접속중");
-        onlineStatus.put("nickname", memberDTO.getNickname()); //닉네임이랑
-        onlineStatus.put("user_id", memberDTO.getPassword()); //비밀번호 바뀔 떄  파이어 베이스 진행함.
+        onlineStatus.put("nickname", memberDTO.getNickname()); //닉네임 최신화
+        onlineStatus.put("user_id", memberDTO.getPassword()); //비밀번호 최신화
         userAcitive.updateChildren(onlineStatus);
     }
 
