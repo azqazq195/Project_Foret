@@ -65,8 +65,8 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
     AsyncHttpClient client;
     ForetResponse foretResponse;
-    //String url = "http://34.72.240.24::8085/foret/foret_insert.do";
-    String url = "http://192.168.0.180:8085/foret/foret/foret_insert.do";
+    String url = "http://34.72.240.24:8085/foret/foret/foret_insert.do";
+    //String url = "http://192.168.0.180:8085/foret/foret/foret_insert.do";
     ImageView image_View_picture, button_cancel;
     EditText editText_name, editText_member, editText_intro;
     Button button_complete, button_picture;
@@ -509,11 +509,11 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                     HashMap<String, Object> hashMap = new HashMap<>();
                                     hashMap.put("GroupName", foret.getName());
                                     hashMap.put("GroupPhoto", foret.getForet_photo());
-                                    hashMap.put("GroupLeader", user.getNickname()); //안들어가있음
+                                    hashMap.put("GroupLeader", user.getUid()); //안들어가있음
                                     hashMap.put("GroupDescription", foret.getIntroduce());
                                     //hashMap.put("GroupId", ""+foret.getGroup_no());
                                     hashMap.put("GroupMaxMember", "" + foret.getMax_member());
-                                    hashMap.put("GroupCurrentJoinedMember", 1);
+                                    hashMap.put("GroupCurrentJoinedMember", "1");
                                     hashMap.put("Group_date_issued", foret.getReg_date());
 
                                     //그룹 항목 만들기
@@ -528,7 +528,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                             hashMap1.put("uid", "" + firebaseAuth.getCurrentUser().getUid());
                                             hashMap1.put("joinedDate", "" + System.currentTimeMillis());
 
-                                            ref.child("participants").child(user.getNickname()).setValue(hashMap1).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            ref.child("participants").child(user.getUid()).setValue(hashMap1).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     Toast.makeText(context, "포레와 채팅방 생성 성공!", Toast.LENGTH_LONG).show();

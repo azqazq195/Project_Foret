@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
+    android:id="@+id/mebuformain"
     android:background="#D8D8D8">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,13 +34,13 @@
                 android:orientation="horizontal">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/image"
+                    android:id="@+id/imageFormain"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:src="@drawable/iu" />
 
                 <TextView
-                    android:id="@+id/drawer_text1"
+                    android:id="@+id/drawer_text1Formain"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -64,7 +65,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/drawer_text2"
+                        android:id="@+id/drawer_text2Formain"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -78,7 +79,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/drawer_text3"
+                    android:id="@+id/drawer_text3formain"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
@@ -86,7 +87,7 @@
                     android:text="이메일 주소" />
 
                 <TextView
-                    android:id="@+id/drawer_text4"
+                    android:id="@+id/drawer_text4formain"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"

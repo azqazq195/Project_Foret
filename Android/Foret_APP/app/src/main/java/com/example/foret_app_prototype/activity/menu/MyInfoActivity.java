@@ -3,6 +3,7 @@ package com.example.foret_app_prototype.activity.menu;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +22,15 @@ import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.login.SplashActivity;
 import com.example.foret_app_prototype.model.MemberDTO;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -52,12 +62,13 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
+
         textView1 = findViewById(R.id.textView1);
         textView2 = findViewById(R.id.textView2);
         textView3 = findViewById(R.id.textView3);
         textView4 = findViewById(R.id.textView4);
         textView5 = findViewById(R.id.textView5);
-        textView6 = findViewById(R.id.textView6);
+        textView6 = findViewById(R.id.textView_region);
         textView7 = findViewById(R.id.textView7);
         button_out = findViewById(R.id.button_out);
         profile = findViewById(R.id.profile);
@@ -72,13 +83,16 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void setData(MemberDTO memberDTO) {
+
+
         region = (memberDTO.getRegion_si().toString()+","+memberDTO.getRegion_gu().toString()).replace("[", "").replace("]","");
         for (int a=0; a<memberDTO.getTag().size(); a++) {
             tag += "#"+memberDTO.getTag().get(a)+" ";
         }
+
         textView1.setText(memberDTO.getNickname());
         textView2.setText(memberDTO.getEmail());
-        textView3.setText(memberDTO.getId());
+        textView3.setText(memberDTO.getId()+"");
         textView4.setText(memberDTO.getBirth());
         textView5.setText(memberDTO.getReg_date());
         textView6.setText(region);
@@ -144,6 +158,8 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
                 case RESULT_OK :
                     memberDTO = (MemberDTO) data.getSerializableExtra("memberDTO");
                     setData(memberDTO);
+
+
                     break;
                 case RESULT_CANCELED : //아무것도 안함
                     break;
@@ -163,17 +179,87 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
                     intent = new Intent(MyInfoActivity.this, SplashActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                    //파이어 베이스 제거
+                    //removeFirebase();
+
                     startActivity(intent);
                     finish();
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
+
+
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(MyInfoActivity.this, "회원탈퇴 500에러뜸", Toast.LENGTH_SHORT).show();
+        }
+        //파이어 베이스 모두제거
+        private void removeFirebase() {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+            //개인아이디 삭제
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+            ref.child(user.getUid()).removeValue();
+
+            //내가 개인채팅 삭제
+            DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference("ChatsList");
+            ref1.child(user.getUid()).removeValue();
+
+            //상대방채팅에 나 삭제
+            DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("ChatsList");
+            ref2.removeEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot ds : snapshot.getChildren()){
+                        if(ds.getRef().equals(user.getUid())){
+                            ds.child(user.getUid()).getRef().removeValue();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
+
+            //그룹에서 삭제
+            DatabaseReference ref3 = FirebaseDatabase.getInstance().getReference("ChatsList");
+            ref3.removeEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot ds : snapshot.getChildren()){
+                        if(ds.child("participants").child(memberDTO.getNickname()).exists()){
+                            // ds.child("participants").child(memberDTO.getNickname()).removeValue();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
+
+
+            //파이어베이스에서 삭제
+            user.delete()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("TAG", "User account deleted.");
+
+
+
+
+
+                            }
+                        }
+                    });
         }
     }
 
