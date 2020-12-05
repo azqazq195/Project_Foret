@@ -5,35 +5,34 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
-import com.example.foret_app_prototype.model.Foret;
-import com.example.foret_app_prototype.model.ForetDTO;
+import com.example.foret_app_prototype.model.HomeForetDTO;
 
 import java.util.List;
 
 public class ForetAdapter extends PagerAdapter {
     private Activity activity;
-    private List<ForetDTO> foretDTOList;
+    private List<HomeForetDTO> homeForetDTOList;
+//    private List<ForetDTO> foretDTOList;
 
     // 리스너 객체 참조를 저장하는 변수
     private OnClickListener clickListener = null;
 
-    public ForetAdapter(Activity activity, List<ForetDTO> foretDTOList) {
+    public ForetAdapter(Activity activity, List<HomeForetDTO> homeForetDTOList) {
         this.activity = activity;
-        this.foretDTOList = foretDTOList;
+        this.homeForetDTOList = homeForetDTOList;
     }
 
     // List 객체에 저장된 데이터 개수 리턴
     @Override
     public int getCount() {
         Log.d("[TEST]", "getCount() 호출 ");
-        return foretDTOList.size();
+        return homeForetDTOList.size();
     }
 
     @Override
@@ -51,24 +50,20 @@ public class ForetAdapter extends PagerAdapter {
         // main_fragment_home_foret_thum.xml에 설정된 클래스 객체 생성
         View itemView = activity.getLayoutInflater().inflate(R.layout.fragment_main_home_foret_thum, null);
         // 한 페이지에 보여줄 데이터 1개 꺼내기
-        final ForetDTO foretDTO = foretDTOList.get(position);
+        final HomeForetDTO homeForetDTO = homeForetDTOList.get(position);
 
         ImageView image = itemView.findViewById(R.id.image);
-        TextView title = itemView.findViewById(R.id.title);
-        TextView desc = itemView.findViewById(R.id.desc);
 
-        Glide.with(activity).load(foretDTO.getForet_photo())
-                .placeholder(R.drawable.foret_logo)
+        Glide.with(activity).load(homeForetDTO.getPhoto())
+                .placeholder(R.drawable.foret_logo) // 이미지가 없으면 기본 사진
                 .into(image);
-        title.setText(foretDTO.getForet_name());
-        desc.setText(foretDTO.getIntroduce());
 
         // 이벤트 설정
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (clickListener != null) {
-                    clickListener.onClick(v, foretDTO);
+                    clickListener.onClick(v, homeForetDTO);
                 }
             }
         });
@@ -86,12 +81,12 @@ public class ForetAdapter extends PagerAdapter {
         container.removeView((View)object);
     }
 
-        public interface OnClickListener {
-            void onClick(View v, ForetDTO foretDTO);
-        }
+    public interface OnClickListener {
+        void onClick(View v, HomeForetDTO homeForetDTO);
+    }
 
-        // OnClickListener 객체 참조를 어댑터에 전달하는 메서드
-        public void setOnClickListener(OnClickListener clickListener) {
-            this.clickListener = clickListener;
-        }
+    // OnClickListener 객체 참조를 어댑터에 전달하는 메서드
+    public void setOnClickListener(OnClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
 }

@@ -56,6 +56,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
     }
 
+    //채팅방으로 보내주는 명령
     private void sendNormalNotification(RemoteMessage remoteMessage) {
         String user = remoteMessage.getData().get("user");
         String icon = remoteMessage.getData().get("icon");
@@ -87,7 +88,6 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         notificationManager.notify(j, builder.build());
 
     }
-
     private void sendOAndAboveNotification(RemoteMessage remoteMessage) {
         String user = remoteMessage.getData().get("user");          //보낸사람
         String icon = remoteMessage.getData().get("icon");          //아이콘
@@ -114,4 +114,10 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         }
         notification1.getManager().notify(j,builder.build());
     }
+    
+    //포레로
+    
+    //익명게시판으로
+    
+    //등등
 }

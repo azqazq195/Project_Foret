@@ -18,12 +18,22 @@ import androidx.fragment.app.Fragment;
 
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
+import com.example.foret_app_prototype.adapter.notification.NotificationAdapter;
+import com.example.foret_app_prototype.adapter.notification.NotificationAdapter2;
+import com.example.foret_app_prototype.model.ModelChatList;
+import com.example.foret_app_prototype.model.ModelNotify;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotifyFragment extends Fragment implements View.OnClickListener {
 
     androidx.appcompat.widget.Toolbar toolbar;
     MainActivity activity;
     ListView listView;
+    List<ModelNotify> notifyList;
+    NotificationAdapter2 adapter;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,17 +48,30 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
         listView = rootView.findViewById(R.id.listView);
         View footer = getLayoutInflater().inflate(R.layout.footer, null, false);
         listView.addFooterView(footer);
-        LinearLayout layout = (LinearLayout)footer.findViewById(R.id.layout);
-        /*
-        layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(activity, "누르면 항목 추가되는 기능 구현 계획", Toast.LENGTH_SHORT).show();
-            }
-        });
+        //LinearLayout layout = (LinearLayout)footer.findViewById(R.id.layout);
+        notifyList = new ArrayList<>();
+        adapter = new NotificationAdapter2(getContext(),R.layout.item_row_notification,notifyList);
+        //listView.setAdapter(adapter);
 
-         */
+        getItem();
         return rootView;
+    }
+    //        int GROUP_NEW_ITEM = 0;            //내 포레 새글
+//        int MESSAGE_NEW_ITEM = 1;          //새로운 메세지
+//        int PUBLIC_NOTICE_NEW_ITEM = 2;    //마스터 공지
+//        int ANONYMOUS_BOARD_NEW_ITEM = 3;  //내가 쓴 글의 댓글
+//        int REPLIED_NEW_ITEM = 4;          //내가 댓글의 대댓글
+//        int NEW_ITEM1 = 5;                 //임시 타입 1
+//        int NEW_ITEM2 = 6;                 //임시 타입 2
+//        int NEW_ITEM3 = 7;                 //임시 타입 3
+//        int NEW_ITEM4 = 8;                 //임시 타입 4
+    private void getItem() {
+        notifyList.add(new ModelNotify("GROUP_NEW_ITEM","그룹 새글이 등록됨","11시 1분",""+R.drawable.ic_launcher_foreground));
+        notifyList.add(new ModelNotify("PUBLIC_NOTICE_NEW_ITEM","공지가 등록됨","11시 2분",""+R.drawable.ic_launcher_foreground));
+        notifyList.add(new ModelNotify("MESSAGE_NEW_ITEM","새로운 메세지가 있음","11시 3분",""+R.drawable.ic_launcher_foreground));
+        notifyList.add(new ModelNotify("ANONYMOUS_BOARD_NEW_ITEM","익명게시판 댓글이 등록됨","11시 4분",""+R.drawable.ic_launcher_foreground));
+
+
     }
 
     @Override

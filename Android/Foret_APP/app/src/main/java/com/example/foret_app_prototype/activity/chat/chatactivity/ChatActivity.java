@@ -135,8 +135,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setLayoutManager(linearLayoutManager);
 
 
-        //알림 설정
-        apiService = Client.getRetrofit("https://fcm.googleapis.com").create(APIService.class);
+        //푸쉬 알림 생성
+        apiService = Client.getRetrofit("https://fcm.googleapis.com/").create(APIService.class);
 
 
         //파이어 베이스 인스턴스
@@ -267,6 +267,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 String message = messageEt.getText().toString().trim();
                 //입력검사
                 if (message.equals("") && message == null) {
+                    return;
                     //터치 무시
                 } else {
                     sendMessage(message);
@@ -400,18 +401,23 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    //설정
+    // 알림 발송 설정.
     private void sendNotification(String hisUid, String nickname, String message) {
         DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
-        Query query = allTokens.orderByKey().equalTo(hisUid);
+        Query query = allTokens.orderByKey().equalTo(hisUid); //상대 찾기
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot ds : snapshot.getChildren()){
+                    //상대 토큰값 토큰화 하기
                     Token token = ds.getValue(Token.class);
-                    Data data = new Data(myUid,my_nickname+" : "+message,"New Message",hisUid,R.drawable.foret_logo);
 
+                    //데이터 셋팅
+                    Data data = new Data(myUid,nickname+" : "+message,"New Message",hisUid,R.drawable.foret_logo);
+
+                    //보내는 사람 셋팅
                     Sender sender = new Sender(data, token.getToken());
+                    //발송
                     apiService.sendNotification(sender)
                             .enqueue(new Callback<Response>() {
                                 @Override

@@ -11,25 +11,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.board.ReadForetBoardActivity;
-import com.example.foret_app_prototype.model.Foret;
-import com.example.foret_app_prototype.model.ForetBoard;
-import com.example.foret_app_prototype.model.ForetBoardDTO;
-import com.example.foret_app_prototype.model.Member;
+import com.example.foret_app_prototype.model.HomeForetBoardDTO;
 
-import java.io.Serializable;
 import java.util.List;
 
 public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.ViewHolder> {
     private Activity activity;
-    private List<ForetBoardDTO> foretBoardDTOList;
+    private List<HomeForetBoardDTO> homeForetBoardDTOList;
     private ViewHolder viewHolder;
 
-    public ForetBoardAdapter(Activity activity, List<ForetBoardDTO> foretBoardDTOList) {
+    public ForetBoardAdapter(Activity activity, List<HomeForetBoardDTO> homeForetBoardDTOList) {
         this.activity = activity;
-        this.foretBoardDTOList = foretBoardDTOList;
+        this.homeForetBoardDTOList = homeForetBoardDTOList;
     }
 
     @NonNull
@@ -44,35 +39,17 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ForetBoardDTO foretBoardDTO = foretBoardDTOList.get(position);
+        HomeForetBoardDTO homeForetBoardDTO = homeForetBoardDTOList.get(position);
 
-        // 1 : 공지사항, 2 : 포레 공지사항, 3 : 포레 일정 게시판, 4 : 포레 게시판, 0 : 익명 게시판
-        switch (foretBoardDTO.getType()) {
-            case 0:
-                viewHolder.type.setText("[익명 게시판]");
-                break;
-            case 1:
-                viewHolder.type.setText("[공지사항]");
-                break;
-            case 2:
-                viewHolder.type.setText("[포레 공지사항]");
-                break;
-            case 3:
-                viewHolder.type.setText("[포레 일정]");
-                break;
-            case 4:
-                viewHolder.type.setText("[일반]");
-                break;
-        }
-        viewHolder.subject.setText(foretBoardDTO.getSubject());
-        viewHolder.date.setText(foretBoardDTO.getReg_date());
+        viewHolder.subject.setText(homeForetBoardDTO.getSubject());
+        viewHolder.date.setText(homeForetBoardDTO.getReg_date());
 
         // 아이템 클릭 이벤트 처리.
         viewHolder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ReadForetBoardActivity.class);
-                intent.putExtra("foretBoardDTO", foretBoardDTO);
+                intent.putExtra("homeForetBoardDTO", homeForetBoardDTO);
                 activity.startActivity(intent);
             }
         });
@@ -80,21 +57,20 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
 
     @Override
     public int getItemCount() {
-        return foretBoardDTOList.size();
+        return homeForetBoardDTOList.size();
     }
 
-    public void setItems(List<ForetBoardDTO> items) {
-        this.foretBoardDTOList = items;
+    public void setItems(List<HomeForetBoardDTO> items) {
+        this.homeForetBoardDTOList = items;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView type, subject, date;
+        TextView subject, date;
         LinearLayout layout;
 
         ViewHolder(View itemView) {
             super(itemView);
 
-            type = itemView.findViewById(R.id.type);
             subject = itemView.findViewById(R.id.subject);
             date = itemView.findViewById(R.id.date);
             layout = itemView.findViewById(R.id.layout);

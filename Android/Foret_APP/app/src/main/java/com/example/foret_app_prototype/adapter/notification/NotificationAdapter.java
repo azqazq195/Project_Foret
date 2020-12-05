@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +19,7 @@ import com.example.foret_app_prototype.model.ModelNotify;
 import com.example.foret_app_prototype.model.ModelUser;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -64,10 +66,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.textViewContent.setText(message);
         holder.textViewFromWhere.setText(model.getType());
         holder.textViewTime.setText(time);
-        holder.messageLayout.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //화면 이동
+                Toast.makeText(context,"해당화면으로 이동",Toast.LENGTH_LONG).show();
             }
         });
 
