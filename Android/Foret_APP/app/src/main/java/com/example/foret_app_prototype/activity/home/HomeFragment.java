@@ -109,7 +109,7 @@ public class HomeFragment extends Fragment
 
         viewPager = rootView.findViewById(R.id.viewPager);
         button1 = rootView.findViewById(R.id.button1);
-        button2 = rootView.findViewById(R.id.button2);
+        //button2 = rootView.findViewById(R.id.button2);
         textView_name = rootView.findViewById(R.id.textView_name);
         recyclerView1 = rootView.findViewById(R.id.recyclerView1);
         recyclerView2 = rootView.findViewById(R.id.recyclerView2);
@@ -142,7 +142,7 @@ public class HomeFragment extends Fragment
 
         // 버튼 이벤트
         button1.setOnClickListener(this);
-        button2.setOnClickListener(this);
+        //button2.setOnClickListener(this);
 
         return rootView;
     }
@@ -303,10 +303,10 @@ public class HomeFragment extends Fragment
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, searchFragment).commit();
                 activity.getSupportFragmentManager().beginTransaction().remove(this).commit();
                 break;
-            case R.id.button2: // 화살표
-                intent = new Intent(activity, ListForetBoardActivity.class);
-                startActivity(intent);
-                break;
+            //case R.id.button2: // 화살표
+            //    intent = new Intent(activity, ListForetBoardActivity.class);
+            //    startActivity(intent);
+            //    break;
         }
     }
 

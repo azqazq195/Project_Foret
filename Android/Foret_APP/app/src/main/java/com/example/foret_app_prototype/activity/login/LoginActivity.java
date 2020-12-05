@@ -40,11 +40,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private boolean saveLoginData;
     private String email;
     private String pwd;
-
+    int id;
     AsyncHttpClient client;
     HttpResponse response;
-    //String url = "http://34.72.240.24:8085/foret/search/member.do";
-    String url = "http://34.72.240.24:8085/foret/search/member.do";
+    String url = "http://34.72.240.24:8085/foret/search/member_login.do";
+    //String url = "http://192.168.219.100:8085/foret/search/member.do";
     Button button0;
     TextView button3, button4;
     EditText emailEditText, passwordEditText;
@@ -117,8 +117,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void moveToMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        intent.putExtra("email",email);
-        intent.putExtra("pwd",pwd);
+        intent.putExtra("id",id);
+
         startActivity(intent);
         finish();
     }
@@ -134,7 +134,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(RT.equals("OK")) {
                     //파이어 베이스
                     joinedMember(email,pwd);
-
+                    id = json.getInt("id");
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     MemberDTO memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);

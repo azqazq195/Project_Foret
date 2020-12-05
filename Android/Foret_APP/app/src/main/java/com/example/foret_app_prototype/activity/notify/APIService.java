@@ -9,7 +9,7 @@ public interface APIService {
 
     @Headers({
             "Content-Type:application/json",
-            "Authorization:Key=AAAApZYwcIo:APA91bHRTpr7vt3RRq198o_j2cqCKrZs-ff6omgEGT7OjPDhTbv9-hWeXzUi0S5OkzjW86cCXoujTZ69Uk4lJEn94BDTY5Llq4DY0yhE7K7c9WIpTc8OsMqc_j0LJV7MIC1y-b6V2IRB"
+            "Authorization:key=AAAApZYwcIo:APA91bHRTpr7vt3RRq198o_j2cqCKrZs-ff6omgEGT7OjPDhTbv9-hWeXzUi0S5OkzjW86cCXoujTZ69Uk4lJEn94BDTY5Llq4DY0yhE7K7c9WIpTc8OsMqc_j0LJV7MIC1y-b6V2IRB"
     })
 
     @POST("fcm/send")

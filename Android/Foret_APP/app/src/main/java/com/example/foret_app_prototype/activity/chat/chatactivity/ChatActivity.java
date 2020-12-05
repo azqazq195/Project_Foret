@@ -134,6 +134,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
+
         //알림 설정
         apiService = Client.getRetrofit("https://fcm.googleapis.com").create(APIService.class);
 

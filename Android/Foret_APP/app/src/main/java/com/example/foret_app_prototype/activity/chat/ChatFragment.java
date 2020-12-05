@@ -200,18 +200,18 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     private void loadGroupChatList() {
 
         groupChatLists = new ArrayList<>();
-        Log.e("[test]","curruntUser.getUid()?"+curruntUser.getUid());
+        //Log.e("[test]","curruntUser.getUid()?"+curruntUser.getUid());
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
            for(DataSnapshot ds : snapshot.getChildren()){
 
-               Log.e("[test]","ds.getValue())?"+ds.child("uid").getValue());
+               //Log.e("[test]","ds.getValue())?"+ds.child("uid").getValue());
 
                if(curruntUser.getUid().equals(ds.child("uid").getValue())){
                    member_id = ds.child("nickname").getValue()+"";
-                   Log.e("[test]","member_id"+member_id);
+                   //Log.e("[test]","member_id"+member_id);
                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
                    reference.addValueEventListener(new ValueEventListener() {
                        @Override
@@ -221,8 +221,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                                //여기 확인 필요 - 현재 유저가 해당 그룹의 인원일 떄
                                //if (!ds.child("participants").child(member_id).exists()) {
                                if (ds.child("participants").child(curruntUser.getUid()).exists()) {
-                                   Log.e("[test]","ds.child(\"participants\").child(curruntUser.getUid()) : "+ds.child("participants").child(curruntUser.getUid()).toString());
-                                   Log.e("[test]","ds.getValue?"+ds.getValue());
+                                   //Log.e("[test]","ds.child(\"participants\").child(curruntUser.getUid()) : "+ds.child("participants").child(curruntUser.getUid()).toString());
+                                   //Log.e("[test]","ds.getValue?"+ds.getValue());
                                    ModelGroupChatList model = ds.getValue(ModelGroupChatList.class);
                                    groupChatLists.add(model);
                                }

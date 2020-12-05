@@ -45,5 +45,6 @@
     <!-- 안드로이드 푸쉬를 위해 추가 -->
     <string name="default_notification_channel_id">Channel ID</string>
     <string name="default_notification_channel_name" translatable="true">Test</string>
+    <string name="msg_token_fmt" translatable="false">FCM registration Token: %s</string>
 
 </resources>

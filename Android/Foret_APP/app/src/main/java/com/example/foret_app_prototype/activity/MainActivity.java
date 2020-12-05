@@ -47,6 +47,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -94,8 +95,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
-        String email1 = getIntent().getStringExtra("email");
-        String pwd = getIntent().getStringExtra("pwd");
 
         context = this;
         homeFragment = new HomeFragment();
@@ -121,18 +120,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         nav_bottom.setItemIconTintList(null);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, freeFragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, homeFragment).commit();
         }
 
         client = new AsyncHttpClient();
         response = new HttpResponse();
         sessionManager = new SessionManager(this);
-        String email = sessionManager.getSessionEmail();
-        String password = sessionManager.getSessionPassword();
+
+        int id = Integer.parseInt(getIntent().getStringExtra("id"));
 
         RequestParams params = new RequestParams();
-        params.put("email", email);
-        params.put("password", password);
+        params.put("id", id);
+
 
         final int DEFAULT_TIME = 40 * 1000;
         client.setConnectTimeout(DEFAULT_TIME);
@@ -140,12 +139,34 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         client.setTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
         client.post(url, params, response);
-
         button_out.setOnClickListener(this);
         button_out2.setOnClickListener(this);
         button_drawcancel.setOnClickListener(this);
 
+        try {
+            String token = FirebaseInstanceId.getInstance().getToken();
+            Log.e("[test]","device token : "+token);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
 
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e("[test]", "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        String token = task.getResult();
+
+                        // Log and toast
+                        String msg = getString(R.string.msg_token_fmt, token);
+                        Log.d("TAG", msg);
+                       // Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     //안드로이드 푸쉬알림을 위한 추가
@@ -329,9 +350,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         } else {
                 mUID = currntuser.getUid();
             updateToken(FirebaseInstanceId.getInstance().getToken());
+            //현재 로그인된 유저 uid를 저장하고 미리 공유하는 참조를 저장
             SharedPreferences sp =getSharedPreferences("SP_USER",MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
-            editor.putString("Currnt_USERID",mUID);
+            editor.putString("Current_USERID",mUID);
             editor.apply();
 //            updateuserActiveStatusOn();
         }

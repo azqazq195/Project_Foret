@@ -39,12 +39,15 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
         View footer = getLayoutInflater().inflate(R.layout.footer, null, false);
         listView.addFooterView(footer);
         LinearLayout layout = (LinearLayout)footer.findViewById(R.id.layout);
+        /*
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(activity, "누르면 항목 추가되는 기능 구현 계획", Toast.LENGTH_SHORT).show();
             }
         });
+
+         */
         return rootView;
     }
 
