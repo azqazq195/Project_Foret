@@ -89,7 +89,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         textView_date = findViewById(R.id.textView_date);
         textView_seq = findViewById(R.id.textView_seq);
         textView_reply = findViewById(R.id.textView_reply); //OO님께 댓글 작성중입니다 창뜨기
-        textView_comment = findViewById(R.id.textView_comment);
+        textView_comment = findViewById(R.id.textView_comment_count);
         textView_content = findViewById(R.id.textView_content);
         likeButton = findViewById(R.id.likeButton);
         button_cancel = findViewById(R.id.button_cancel); //답글달기 취소

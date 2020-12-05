@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         nav_bottom.setItemIconTintList(null);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, homeFragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, freeFragment).commit();
         }
 
         client = new AsyncHttpClient();
