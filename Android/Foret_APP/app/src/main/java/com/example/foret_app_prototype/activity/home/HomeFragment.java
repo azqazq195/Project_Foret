@@ -88,11 +88,21 @@ public class HomeFragment extends Fragment
     ForetBoardAdapter foretBoardAdapter;
     NewBoardFeedAdapter newBoardFeedAdapter;
 
+
+    String[] leader = {"문성하", "임선미", "전상만", "전성환", "이인제"};
+    String[] member = {"문성하", "임선미", "전상만", "전성환", "이인제"};
+    String[] region_si = {"서울시", "성남시", "서울시", "서울시", "서울시"};
+    String[] region_gu = {"관악구", "분당구", "강남구 ", "구로구", "성동구"};
+    String[] foret_tag = {"#Java ", "#Spring ", "#Android ", "#SQL ", "#영어"};
+
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         toolbar = rootView.findViewById(R.id.home_toolbar);
-        activity = (MainActivity)getActivity();
+        activity = (MainActivity) getActivity();
+
+        addForet();
 
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle("");
@@ -111,7 +121,7 @@ public class HomeFragment extends Fragment
         getMember(); // 회원 정보 가져오기
 
         // 뷰페이저(포레)
-        foretDTOList = new ArrayList<>();
+//        foretDTOList = new ArrayList<>();
         // 포레추가할 코드 <-
         foretAdapter = new ForetAdapter(activity, foretDTOList);
 
@@ -122,8 +132,8 @@ public class HomeFragment extends Fragment
         colors = new Integer[foretDTOList.size()];
         Integer[] colors_temp = new Integer[foretDTOList.size()];
 
-        for(int i=0; i<colors_temp.length; i++) {
-            colors_temp[i] = getResources().getColor(R.color.color+(i+1));
+        for (int i = 0; i < colors_temp.length; i++) {
+            colors_temp[i] = getResources().getColor(R.color.color + (i + 1));
             colors[i] = colors_temp[i];
         }
         viewPager.setOnPageChangeListener(this);
@@ -138,6 +148,38 @@ public class HomeFragment extends Fragment
         return rootView;
     }
 
+
+    private void addForet() {
+        foretDTOList = new ArrayList<>();
+
+        List<String> member_list = new ArrayList<>();
+        List<String> si_list = new ArrayList<>();
+        List<String> gu_list = new ArrayList<>();
+        List<String> tag_list = new ArrayList<>();
+
+        for (int i = 0; i < leader.length; i++) {
+            member_list.add(member[i]);
+            si_list.add(region_si[i]);
+            gu_list.add(region_gu[i]);
+            tag_list.add(foret_tag[i]);
+        }
+        for (int a = 0; a < 5; a++) {
+            ForetDTO foretDTO = new ForetDTO();
+            foretDTO.setForet_name("프로그래밍 스터디 포레 " + (a + 1));
+            foretDTO.setIntroduce("프로그래밍 스터디 포레 " + (a + 1) + " 소개");
+            foretDTO.setMax_member(10);
+            foretDTO.setReg_date("2020.11." + (a + 1));
+            foretDTO.setForet_tag(tag_list);
+            foretDTO.setForet_member(member_list);
+            foretDTO.setForet_leader(leader[a]);
+            foretDTO.setForet_region_si(si_list);
+            foretDTO.setForet_region_gu(gu_list);
+            foretDTO.setForet_photo("https://www.google.com/search?q=%EC%95%84%EC%9D%B4%EC%9C%A0&source=lnms&tbm=isch&sa=X&ved=2ahUKEwiOw7Xnj7TtAhXL62EKHasdArIQ_AUoAXoECAUQAw&biw=1920&bih=937#imgrc=1dKx6vBOwCxVWM");
+            foretDTOList.add(foretDTO);
+
+        }
+    }
+
     private void getMember() {
         SessionManager sessionManager = new SessionManager(getContext());
         String email = sessionManager.getSessionEmail();
@@ -149,7 +191,7 @@ public class HomeFragment extends Fragment
         RequestParams params = new RequestParams();
         params.put("email", email);
         params.put("password", password);
-        client.post(url, params, mainFragmentResponse);
+        //client.post(url, params, mainFragmentResponse);
     }
 
     @Override
@@ -168,18 +210,18 @@ public class HomeFragment extends Fragment
 
     private void setView() {
         // 공지사항
-        foretBoardAdapter = new ForetBoardAdapter(getActivity(), foretBoardDTOList);
-        recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView1.setAdapter(foretBoardAdapter);
+        //foretBoardAdapter = new ForetBoardAdapter(getActivity(), foretBoardDTOList);
+        //recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity()));
+        //recyclerView1.setAdapter(foretBoardAdapter);
 
         // 일정
-        recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView2.setAdapter(foretBoardAdapter);
+        //recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
+        //recyclerView2.setAdapter(foretBoardAdapter);
 
         // 새글 피드
-        newBoardFeedAdapter = new NewBoardFeedAdapter(getActivity(), foretBoardDTOList);
-        recyclerView3.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView3.setAdapter(newBoardFeedAdapter);
+        //newBoardFeedAdapter = new NewBoardFeedAdapter(getActivity(), foretBoardDTOList);
+        //recyclerView3.setLayoutManager(new LinearLayoutManager(getActivity()));
+        //recyclerView3.setAdapter(newBoardFeedAdapter);
     }
 
     @Override
@@ -191,7 +233,7 @@ public class HomeFragment extends Fragment
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.menu) {
+        if (item.getItemId() == R.id.menu) {
             DrawerLayout container = activity.findViewById(R.id.container);
             container.openDrawer(GravityCompat.END);
         }
@@ -202,7 +244,7 @@ public class HomeFragment extends Fragment
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         Log.d("[TEST]", "onPageScrolled 호출 : " + position);
-        if (position < (foretAdapter.getCount() -1) && position < (colors.length - 1)) {
+        if (position < (foretAdapter.getCount() - 1) && position < (colors.length - 1)) {
             viewPager.setBackgroundColor(
                     (Integer) evaluator.evaluate(
                             positionOffset,
@@ -210,8 +252,7 @@ public class HomeFragment extends Fragment
                             colors[position + 1]
                     )
             );
-        }
-        else {
+        } else {
             viewPager.setBackgroundColor(colors[colors.length - 1]);
         }
         foretDTO = foretDTOList.get(position);
@@ -251,19 +292,19 @@ public class HomeFragment extends Fragment
         client = new AsyncHttpClient();
         foretBoardResponse = new ForetBoardResponse();
         RequestParams params = new RequestParams();
-        params.put("foret_id", page_position+1);
-        client.post(url, params, foretBoardResponse);
+        params.put("foret_id", page_position + 1);
+        //client.post(url, params, foretBoardResponse);
         setView();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button1 : // 더많포레 -> 서치로 이동
+            case R.id.button1: // 더많포레 -> 서치로 이동
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, searchFragment).commit();
                 activity.getSupportFragmentManager().beginTransaction().remove(this).commit();
                 break;
-            case R.id.button2 : // 화살표
+            case R.id.button2: // 화살표
                 intent = new Intent(activity, ListForetBoardActivity.class);
                 startActivity(intent);
                 break;
@@ -285,7 +326,7 @@ public class HomeFragment extends Fragment
             foretResponse = new ForetResponse();
             RequestParams params = new RequestParams();
             params.put("member_id", memberDTO.getId());
-            client.post(url, params, foretResponse);
+          //  client.post(url, params, foretResponse);
 
         }
 
@@ -296,7 +337,7 @@ public class HomeFragment extends Fragment
             try {
                 JSONObject json = new JSONObject(str);
                 String RT = json.getString("RT");
-                if(RT.equals("OK")) {
+                if (RT.equals("OK")) {
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
@@ -308,6 +349,7 @@ public class HomeFragment extends Fragment
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(getActivity(), "MainFragmentResponse 통신 실패", Toast.LENGTH_SHORT).show();
@@ -339,10 +381,10 @@ public class HomeFragment extends Fragment
             try {
                 JSONObject json = new JSONObject(str);
                 String RT = json.getString("RT");
-                if(RT.equals("OK")) {
+                if (RT.equals("OK")) {
                     JSONArray foret = json.getJSONArray("foret");
                     JSONObject temp = foret.getJSONObject(0);
-                    for(int i=0; i<foret.length(); i++) {
+                    for (int i = 0; i < foret.length(); i++) {
                         foretDTO = gson.fromJson(temp.toString(), ForetDTO.class);
                         foretDTOList.add(foretDTO);
                     }
@@ -367,10 +409,12 @@ public class HomeFragment extends Fragment
         public void onStart() {
             Log.d("[TEST]", "ForetBoardResponse onStart() 호출");
         }
+
         @Override
         public void onFinish() {
             Log.d("[TEST]", "ForetBoardResponse onFinish() 호출");
         }
+
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
             foretBoardDTOList = new ArrayList<>();
@@ -379,10 +423,10 @@ public class HomeFragment extends Fragment
             try {
                 JSONObject json = new JSONObject(str);
                 String RT = json.getString("RT");
-                if(RT.equals("OK")) {
+                if (RT.equals("OK")) {
                     JSONArray board = json.getJSONArray("board");
                     JSONObject temp = board.getJSONObject(0);
-                    for(int i=0; i<board.length(); i++) {
+                    for (int i = 0; i < board.length(); i++) {
                         foretBoardDTO = gson.fromJson(temp.toString(), ForetBoardDTO.class);
                         foretBoardDTOList.add(foretBoardDTO);
                     }
@@ -395,6 +439,7 @@ public class HomeFragment extends Fragment
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(getActivity(), "ForetBoardResponse 통신 실패", Toast.LENGTH_SHORT).show();

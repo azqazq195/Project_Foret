@@ -114,9 +114,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         recyclerViewpersonal = rootView.findViewById(R.id.recyclerViewForPersonal);
         reCycleViewGroup = rootView.findViewById(R.id.recyclerViewForGroup);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-
-
         context = container.getContext();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(container.getContext());
         linearLayoutManager.setStackFromEnd(true);
@@ -223,7 +220,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                            for (DataSnapshot ds : snapshot.getChildren()) {
                                //여기 확인 필요 - 현재 유저가 해당 그룹의 인원일 떄
                                //if (!ds.child("participants").child(member_id).exists()) {
-                               if (ds.child("participants").child(member_id).exists()) {
+                               if (ds.child("participants").child(curruntUser.getUid()).exists()) {
+                                   Log.e("[test]","ds.child(\"participants\").child(curruntUser.getUid()) : "+ds.child("participants").child(curruntUser.getUid()).toString());
+                                   Log.e("[test]","ds.getValue?"+ds.getValue());
                                    ModelGroupChatList model = ds.getValue(ModelGroupChatList.class);
                                    groupChatLists.add(model);
                                }

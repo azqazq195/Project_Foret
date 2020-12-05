@@ -31,8 +31,10 @@ import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.activity.login.GuideActivity;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
+import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.MemberDTO;
 import com.google.android.gms.common.api.Response;
 import com.loopj.android.http.AsyncHttpClient;
@@ -44,6 +46,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -62,6 +65,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     String select_tag = "";
     String str = "";
     String tag_str_result = "";
+    String show = "";
     List<String> region_si;
     List<String> region_gu;
     List<String> member_tag;
@@ -71,6 +75,10 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        region_gu = new ArrayList<>();
+        region_si = new ArrayList<>();
+        member_tag = new ArrayList<>();
         setContentView(R.layout.activity_edit_my_info);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,9 +88,9 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
 
         textView1 = findViewById(R.id.textView1);
-        textView2 = findViewById(R.id.textView1);
+        textView2 = findViewById(R.id.textView2);
         button1 = findViewById(R.id.button1);
-        button2 = findViewById(R.id.button1);
+        button2 = findViewById(R.id.button2);
         editText1 = findViewById(R.id.editText1);
         editText2 = findViewById(R.id.editText2);
         editText3 = findViewById(R.id.editText3);
@@ -107,7 +115,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(editText2.getText().toString().trim().equals(editText3.getText().toString().trim())) {
+                if (editText2.getText().toString().trim().equals(editText3.getText().toString().trim())) {
                     textView_confirm.setTextColor(Color.BLUE);
                     textView_confirm.setText("비밀번호가 일치합니다.");
                 }
@@ -117,8 +125,9 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void dataSetting() {
+
         textView1.setText(memberDTO.getEmail());
-        textView2.setText(memberDTO.getId());
+        textView2.setText(memberDTO.getId() + "");
         editText1.setText(memberDTO.getNickname());
         button1.setText(getIntent().getStringExtra("region"));
         button2.setText(getIntent().getStringExtra("tag"));
@@ -135,17 +144,18 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     @Override //메뉴 이벤트 처리
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.modify :
-                if(editText2.getText().toString().trim().equals("")||editText3.getText().toString().trim().equals("")) {
+            case R.id.modify:
+                if (editText2.getText().toString().trim().equals("") || editText3.getText().toString().trim().equals("")) {
                     Toast.makeText(this, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
                     return false;
                 }
-                if(!editText2.getText().toString().trim().equals(editText3.getText().toString().trim())) {
+                if (!editText2.getText().toString().trim().equals(editText3.getText().toString().trim())) {
                     return false;
                 }
+                memberDTO.setPassword(editText2.getText().toString().trim());
                 requestModify();
                 break;
-            case android.R.id.home :
+            case android.R.id.home:
                 setResult(RESULT_CANCELED);
                 finish();
                 break;
@@ -156,22 +166,25 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.profile :
+            case R.id.profile:
                 showSelect();
                 break;
-            case R.id.button1 :
+            case R.id.button1:
                 regionDialog();
                 break;
-            case R.id.button2 :
+            case R.id.button2:
                 tagDialog();
                 break;
         }
     }
 
-    private void regionDialog() {
+    public void regionDialog() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
         View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
         builder.setTitle("지역을 선택해주세요.");
+
+        str = "";
+        show = "";
 
         Spinner spinner_si = region_view.findViewById(R.id.spinner_si);
         Spinner spinner_gu = region_view.findViewById(R.id.spinner_gu);
@@ -183,38 +196,48 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         spinner_si.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("[TEST]", "region_si position => " + position);
+                select_si = (String) parent.getSelectedItem();
                 if (position != 0 && !select_si.equals("")) {
                     Log.d("[TEST]", "select_si => " + select_si);
                     region_si.add(select_si);
                 }
+
                 ArrayAdapter guAdapter;
                 switch (position) {
                     case 1:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.seuol_gu, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.seuol_gu,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 2:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeonggi_si, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeonggi_si,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 3:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daejeon_gu, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daejeon_gu,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 4:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gangwon_si, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gangwon_si,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 5:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gwangju_gu, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gwangju_gu,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 6:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.busan_gu, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.busan_gu,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 7:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeju_si, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeju_si,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                 }
@@ -230,19 +253,18 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         spinner_gu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("[TEST]", "position => " + position);
+                Log.d("[TEST]", "region_gu position => " + position);
                 select_gu = (String) parent.getSelectedItem();
                 if (position != 0 && !select_gu.equals("")) {
                     Log.d("[TEST]", "select_gu => " + select_gu);
                     region_gu.add(select_gu);
-                    str += select_si + ", " + select_gu + ", ";
-                    int str_length = str.length(); //스트링 길이
-                    tag_str_result = str.substring(1, str_length);
-                    selected_view.setText(tag_str_result);
+                    str += select_si + " " + select_gu + "\n";
+                    selected_view.setText(str);
                     spinner_si.setSelection(0);
                     spinner_gu.setSelection(0);
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -252,8 +274,16 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //확인 버튼 누르면
-                button1.setText(tag_str_result);
+                Log.d("[TEST]", "region_si.size() => " + region_si.size());
+                Log.d("[TEST]", "region_gu.size() => " + region_gu.size());
+                // 확인 버튼 누르면
+                for (int a = 0; a < region_si.size(); a++) {
+                    show += region_si.get(a) + " " + region_gu.get(a) + "\n";
+                    Log.d("[TEST]", "region_si.get(a) => " + region_si.get(a));
+                    Log.d("[TEST]", "region_gu.get(a) => " + region_gu.get(a));
+                }
+                button1.setText(show);
+
             }
         });
         builder.setNegativeButton("취소", null);
@@ -277,10 +307,11 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         spinner_tag.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position != 0) {
+                if (position != 0) {
                     select_tag = (String) parent.getSelectedItem();
                     member_tag.add(select_tag);
-                    str += "#" + select_tag + " ";
+                    str += "#" + select_tag + "\n";
+                    show += str;
                     selected_view.setText(str);
                     spinner_tag.setSelection(0);
                 }
@@ -295,7 +326,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                button2.setText(str);
+                button2.setText(show);
             }
         });
         builder.setNegativeButton("취소", null);
@@ -306,7 +337,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void showSelect() {
-        final String [] menu = {"새로 촬영하기", "갤러리에서 가져오기"};
+        final String[] menu = {"새로 촬영하기", "갤러리에서 가져오기"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setItems(menu, new DialogInterface.OnClickListener() {
             @Override
@@ -314,21 +345,21 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                 switch (which) {
                     case 0: //새로 촬영하기-카메라 호출
                         filePath = PhotoHelper.getInstance().getNewPhotoPath(); //저장할 사진 경로
-                        Log.d("[TEST]", "photoPath = "+filePath);
+                        Log.d("[TEST]", "photoPath = " + filePath);
 
                         File file = new File(filePath);
                         Uri uri = null;
 
                         //카메라앱 호출을 위한 암묵적 인텐트 (action과 uri가 필요하다)
                         intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             uri = FileProvider.getUriForFile(EditMyInfoActivity.this, getApplicationContext().getPackageName() + ".fileprovider", file);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         } else {
                             uri = Uri.fromFile(file);
                         }
-                        Log.d("[TEST]", "uri : "+uri.toString());
+                        Log.d("[TEST]", "uri : " + uri.toString());
 
                         //저장할 경로를 파라미터로 설정
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
@@ -354,7 +385,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_OK) {
+        if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case 200:
                     Toast.makeText(this, "사진 첨부 완료", Toast.LENGTH_SHORT).show();
@@ -364,44 +395,76 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                     sendBroadcast(intent);
                     Glide.with(this).load(filePath).into(profile);
                     break;
-                case 300 :
+                case 300:
                     String uri = data.getData().toString();
-                    String fileName = uri.substring(uri.lastIndexOf("/")+1);
-                    Log.d("[TEST]", "fileName = "+fileName);
-                    filePath= FileUtils.getPath(this, data.getData());
-                    Log.d("[TEST]", "filePath = "+filePath);
-                    Toast.makeText(this, fileName+"을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
+                    String fileName = uri.substring(uri.lastIndexOf("/") + 1);
+                    Log.d("[TEST]", "fileName = " + fileName);
+                    filePath = FileUtils.getPath(this, data.getData());
+                    Log.d("[TEST]", "filePath = " + filePath);
+                    Toast.makeText(this, fileName + "을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
                     Glide.with(this).load(filePath).into(profile);
             }
         }
     }
 
     private void requestModify() {
+        RequestParams params = new RequestParams();
+
+        //실제 태그 작동시 확인해야함
         String[] str_si = new String[region_si.size()];
         String[] str_gu = new String[region_gu.size()];
-
+        memberDTO.setRegion_gu(region_si);
+        memberDTO.setRegion_si(region_gu);
         for (int a = 0; a < str_si.length; a++) {
             str_si[a] = region_si.get(a);
             str_gu[a] = region_gu.get(a);
+
+            if (a == 0) {
+                params.put("region_si", "서울시");
+                params.put("region_gu", "강남구");
+            } else {
+                params.add("region_si", "성남시");
+                params.add("region_gu", "분당구");
+            }
+
         }
+        memberDTO.setTag(member_tag);
         String[] str_tag = new String[member_tag.size()];
         for (int a = 0; a < str_tag.length; a++) {
             str_tag[a] = member_tag.get(a);
+
+            if (a == 0) {
+                params.put("tag", "태그1");
+            } else {
+                params.add("tag", "태그2");
+            }
         }
+
+        String tag="";
+        String region = (memberDTO.getRegion_si().toString()+","+memberDTO.getRegion_gu().toString()).replace("[", "").replace("]","");
+        for (int a=0; a<memberDTO.getTag().size(); a++) {
+            tag += "#"+memberDTO.getTag().get(a)+" ";
+        }
+
+
         memberDTO.setPassword(editText2.getText().toString().trim());
         memberDTO.setNickname(editText1.getText().toString().trim());
-        memberDTO.setRegion_si(region_si);
-        memberDTO.setRegion_gu(region_gu);
-        memberDTO.setTag(member_tag);
-        RequestParams params = new RequestParams();
+        //memberDTO.setRegion_si(region_si);
+        //memberDTO.setRegion_gu(region_gu);
+        //memberDTO.setTag(member_tag);
+
         params.put("name", memberDTO.getName());
         params.put("email", memberDTO.getEmail());
         params.put("birth", memberDTO.getBirth());
-        params.put("region_si", str_si);
-        params.put("region_gu", str_gu);
-        params.put("tag", str_tag);
+        params.put("nickname", memberDTO.getNickname());
+        params.put("password", memberDTO.getPassword());
+
+
+        //params.put("region_si", str_si);
+        //params.put("region_gu", str_gu);
+        //params.put("tag", str_tag);
         params.put("id", memberDTO.getId());
-        if(filePath != null) {
+        if (filePath != null) {
             try {
                 params.put("photo", new File(filePath));
             } catch (FileNotFoundException e) {
@@ -409,7 +472,15 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
             }
         }
         params.setForceMultipartEntityContentType(true);
-        client.post("http://34.72.240.24:8085/foret/member/member_modify.do", params, response);
+
+        final int DEFAULT_TIME = 50 * 1000;
+        client.setConnectTimeout(DEFAULT_TIME);
+        client.setResponseTimeout(DEFAULT_TIME);
+        client.setTimeout(DEFAULT_TIME);
+        client.setResponseTimeout(DEFAULT_TIME);
+
+        ProgressDialogHelper.getInstance().getProgressbar(this, "가입 진행중.");
+        client.post("http://192.168.219.100:8085/foret/member/member_modify.do", params, response);
     }
 
     class MyInfoEditResponse extends AsyncHttpResponseHandler {
@@ -418,8 +489,9 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
             String str_json = new String(responseBody);
             try {
+                ProgressDialogHelper.getInstance().removeProgressbar();
                 JSONObject json = new JSONObject(str_json);
-                if(json.getString("memberRT").equals("OK") && json.getString("memberRegionRT").equals("OK")
+                if (json.getString("memberRT").equals("OK") && json.getString("memberRegionRT").equals("OK")
                         && json.getString("memberTagRT").equals("OK") && json.getString("memberPhotoRT").equals("OK")) {
                     Toast.makeText(EditMyInfoActivity.this, "내 정보 수정이 완료 되었습니다.", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent();
@@ -436,6 +508,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            ProgressDialogHelper.getInstance().removeProgressbar();
             Toast.makeText(EditMyInfoActivity.this, "수정하기 500에러 뜸", Toast.LENGTH_SHORT).show();
         }
     }
