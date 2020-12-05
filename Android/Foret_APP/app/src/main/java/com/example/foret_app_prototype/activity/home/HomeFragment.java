@@ -34,6 +34,8 @@ import com.example.foret_app_prototype.model.ForetBoardDTO;
 import com.example.foret_app_prototype.model.HomeForetBoardDTO;
 import com.example.foret_app_prototype.model.HomeForetDTO;
 import com.example.foret_app_prototype.model.MemberDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -68,6 +70,7 @@ public class HomeFragment extends Fragment
 
     // 뷰페이저 (포레)
     ViewPager viewPager;
+    @JsonIgnore
     HomeForetDTO homeForetDTO;
     List<HomeForetDTO> homeForetDTOList;
     HomeForetBoardDTO homeForetBoardDTO;
@@ -98,6 +101,8 @@ public class HomeFragment extends Fragment
 //        addForet();
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle("");
+        homeForetDTOList = new ArrayList<>();
+        homeForetBoardDTOList = new ArrayList<>();
         setHasOptionsMenu(true);
 
         viewPager = rootView.findViewById(R.id.viewPager);
@@ -113,6 +118,7 @@ public class HomeFragment extends Fragment
         getHomeData();
         Log.d("[TEST]", "getHomeData() 종료");
 
+        homeForetDTOList = new ArrayList<>();
         // 뷰페이저(포레)
         foretAdapter = new ForetAdapter(activity, homeForetDTOList);
 
@@ -369,8 +375,7 @@ public class HomeFragment extends Fragment
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            homeForetDTOList = new ArrayList<>();
-            homeForetBoardDTOList = new ArrayList<>();
+
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
@@ -382,10 +387,12 @@ public class HomeFragment extends Fragment
                         JSONObject temp = foret.getJSONObject(i);
                         homeForetDTO = new HomeForetDTO();
                         homeForetDTO.setName(temp.getString("name"));
-                        homeForetDTO.setPhoto(temp.getString("photo"));
+                        if(temp.getString("photo")!=null||temp.getString("photo").equals("")){
+                            homeForetDTO.setPhoto(temp.getString("photo"));
+                        }
                         homeForetDTO.setId(temp.getInt("id"));
 
-                        JSONArray board = json.getJSONArray("board");
+                        JSONArray board = temp.getJSONArray("board");
                         for(int a=0; a>board.length(); a++) {
                             JSONObject temp2 = board.getJSONObject(i);
                             homeForetBoardDTO = new HomeForetBoardDTO();

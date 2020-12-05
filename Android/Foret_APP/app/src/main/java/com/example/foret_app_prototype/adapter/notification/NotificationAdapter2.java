@@ -39,12 +39,12 @@ public class NotificationAdapter2 extends ArrayAdapter<ModelNotify> {
 
         if (item != null) {
             ImageView imageView = convertView.findViewById(R.id.imageViewPhoto);
-            TextView textViewtype = convertView.findViewById(R.id.imageViewPhoto);
-            TextView textViewContent = convertView.findViewById(R.id.imageViewPhoto);
-            TextView textViewTime = convertView.findViewById(R.id.imageViewPhoto);
+            TextView textViewtype = convertView.findViewById(R.id.textViewFromWhere);
+            TextView textViewContent = convertView.findViewById(R.id.textViewContent);
+            TextView textViewTime = convertView.findViewById(R.id.textViewTime);
 
             //이미지셋팅
-            Glide.with(activity).load(item.getIamge()).into(imageView);
+            Glide.with(convertView).load(item.getIamge()).into(imageView);
             textViewContent.setText(item.getMessage());
             textViewTime.setText(CalendarHelper.getInstance().getRelativeHourAndDaysAndWeek(item.getTime()));
             textViewtype.setText(item.getType());

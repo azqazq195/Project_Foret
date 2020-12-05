@@ -33,6 +33,7 @@ import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.notify.APIService;
 import com.example.foret_app_prototype.activity.notify.Client;
 import com.example.foret_app_prototype.activity.notify.Data;
+import com.example.foret_app_prototype.activity.notify.NotifyFragment;
 import com.example.foret_app_prototype.activity.notify.Response;
 import com.example.foret_app_prototype.activity.notify.Sender;
 import com.example.foret_app_prototype.activity.notify.Token;
@@ -378,7 +379,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         messageEt.setText("");
         recyclerView.smoothScrollToPosition(adapter.getItemCount());
 
-
+        updateNewItem("MESSAGE_NEW_ITEM ",myUid,hisUid,message,""+System.currentTimeMillis());
         String msg = message;
         //설정
         DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
@@ -401,6 +402,20 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    //새글데이터
+    public void updateNewItem(String type,String sender,String receiver, String content ,String time){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notify");
+
+        HashMap<String,String> hashMap = new HashMap<>();
+        hashMap.put("type",type);
+        hashMap.put("sender",sender);
+        hashMap.put("receiver",receiver);
+        hashMap.put("content",content);
+        hashMap.put("time",time);
+
+        ref.push().setValue(hashMap);
+    }
+
     // 알림 발송 설정.
     private void sendNotification(String hisUid, String nickname, String message) {
         DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
@@ -408,6 +423,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+
                 for(DataSnapshot ds : snapshot.getChildren()){
                     //상대 토큰값 토큰화 하기
                     Token token = ds.getValue(Token.class);
