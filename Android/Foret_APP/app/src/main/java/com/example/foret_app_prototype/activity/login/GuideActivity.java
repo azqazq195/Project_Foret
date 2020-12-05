@@ -61,6 +61,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -111,6 +112,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     Context context;
     String downloadUri;
     int member_id;
+    String deviceToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -539,7 +541,19 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 params.add("tag", "태그2");
             }
         }
-        String deviceToken = "test";
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e("[test]", "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+                        deviceToken = task.getResult();
+                    }
+                });
+
         params.put("device_Token", deviceToken);
         Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
         String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
@@ -678,7 +692,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    // 파베에 채팅 이미지 보내기기
+    // 파베에 내 이미지 보내기기
     private void sendImageMessage(Uri image_rui) {
         Log.e("[test]", "이미지 등록 시작");
 
@@ -689,7 +703,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_rui);
             ByteArrayOutputStream baos = null;
             baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, baos);
             byte[] data = baos.toByteArray();
             StorageReference ref = FirebaseStorage.getInstance().getReference()
                     .child(fileNameAndPath + image_rui.getLastPathSegment());

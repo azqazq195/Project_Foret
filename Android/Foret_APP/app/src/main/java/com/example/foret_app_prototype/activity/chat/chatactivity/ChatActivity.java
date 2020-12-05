@@ -30,11 +30,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.activity.notify.APIService;
+import com.example.foret_app_prototype.activity.notify.Client;
+import com.example.foret_app_prototype.activity.notify.Data;
+import com.example.foret_app_prototype.activity.notify.Response;
+import com.example.foret_app_prototype.activity.notify.Sender;
+import com.example.foret_app_prototype.activity.notify.Token;
 import com.example.foret_app_prototype.adapter.chat.ChatAdapter;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.ModelChat;
+import com.example.foret_app_prototype.model.ModelUser;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -58,6 +65,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
 
     RecyclerView recyclerView;
@@ -65,8 +75,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     TextView nameTv, userStatusTv;
     EditText messageEt;
     ImageButton sendBtn, sendItemBtn;
-
-
 
     String photoRoot;
     String myUid;
@@ -97,6 +105,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     //이미지 담길 uri
     Uri image_rui = null;
 
+    //알림설정
+    APIService apiService;
+    boolean notify = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +133,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
+
+        //알림 설정
+        apiService = Client.getRetrofit("https://fcm.googleapis.com").create(APIService.class);
+
 
         //파이어 베이스 인스턴스
         firebaseAuth = FirebaseAuth.getInstance();
@@ -254,10 +269,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     //터치 무시
                 } else {
                     sendMessage(message);
+                    //새로운 게시물 여부 알림
+                    notify = true;
                 }
                 break;
             case R.id.attachButton:
                 showItemSelectListDialog();
+                //새로운 게시물 여부 알림
+                notify = true;
                 break;
 
         }
@@ -356,6 +375,62 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         //에딧 텍스트 초기화
         messageEt.setText("");
         recyclerView.smoothScrollToPosition(adapter.getItemCount());
+
+
+        String msg = message;
+        //설정
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ModelUser user = snapshot.getValue(ModelUser.class);
+
+                if(notify){
+                    sendNotification(hisUid,user.getNickname(),message);
+                }
+                notify = false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    //설정
+    private void sendNotification(String hisUid, String nickname, String message) {
+        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = allTokens.orderByKey().equalTo(hisUid);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren()){
+                    Token token = ds.getValue(Token.class);
+                    Data data = new Data(myUid,my_nickname+" : "+message,"New Message",hisUid,R.drawable.foret_logo);
+
+                    Sender sender = new Sender(data, token.getToken());
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<Response>() {
+                                @Override
+                                public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                                    Toast.makeText(ChatActivity.this,""+response.message(),Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onFailure(Call<Response> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     //유저 접송 상태
