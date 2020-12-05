@@ -3,7 +3,6 @@ package com.example.foret_app_prototype.adapter.free;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +20,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foret_app_prototype.R;
-import com.example.foret_app_prototype.activity.free.ReadFreeActivity;
 import com.example.foret_app_prototype.model.ForetBoardComment;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -73,6 +71,7 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
         } else {
             holder.layout.setVisibility(View.GONE);
         }
+       // holder.layout.setPadding();
         holder.textView1.setText(comment.getWriter());
         holder.textView2.setText(comment.getContent());
         holder.textView3.setText(comment.getReg_date());

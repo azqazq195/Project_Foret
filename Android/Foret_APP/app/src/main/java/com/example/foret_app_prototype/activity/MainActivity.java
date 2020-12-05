@@ -17,7 +17,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -32,13 +31,11 @@ import com.example.foret_app_prototype.activity.menu.MyInfoActivity;
 import com.example.foret_app_prototype.activity.notify.NotifyFragment;
 import com.example.foret_app_prototype.activity.notify.Token;
 import com.example.foret_app_prototype.activity.search.SearchFragment;
-import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.MemberDTO;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -47,6 +44,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -94,8 +92,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
-        String email1 = getIntent().getStringExtra("email");
-        String pwd = getIntent().getStringExtra("pwd");
 
         context = this;
         homeFragment = new HomeFragment();
@@ -121,18 +117,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         nav_bottom.setItemIconTintList(null);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, freeFragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, homeFragment).commit();
         }
 
         client = new AsyncHttpClient();
         response = new HttpResponse();
         sessionManager = new SessionManager(this);
-        String email = sessionManager.getSessionEmail();
-        String password = sessionManager.getSessionPassword();
+
+        //String id = getIntent().getStringExtra("id");
 
         RequestParams params = new RequestParams();
-        params.put("email", email);
-        params.put("password", password);
+        params.put("id", 100);
+
 
         final int DEFAULT_TIME = 40 * 1000;
         client.setConnectTimeout(DEFAULT_TIME);
@@ -140,12 +136,34 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         client.setTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
         client.post(url, params, response);
-
         button_out.setOnClickListener(this);
         button_out2.setOnClickListener(this);
         button_drawcancel.setOnClickListener(this);
 
+        try {
+            String token = FirebaseInstanceId.getInstance().getToken();
+            Log.e("[test]","device token : "+token);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
 
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e("[test]", "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        String token = task.getResult();
+
+                        // Log and toast
+                        String msg = getString(R.string.msg_token_fmt, token);
+                        Log.d("TAG", msg);
+                        // Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     //안드로이드 푸쉬알림을 위한 추가
@@ -327,11 +345,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             //로그인 아닌상태
             Toast.makeText(context, "파이어베이스 로그아웃 상태..", Toast.LENGTH_LONG).show();
         } else {
-                mUID = currntuser.getUid();
+            mUID = currntuser.getUid();
             updateToken(FirebaseInstanceId.getInstance().getToken());
+            //현재 로그인된 유저 uid를 저장하고 미리 공유하는 참조를 저장
             SharedPreferences sp =getSharedPreferences("SP_USER",MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
-            editor.putString("Currnt_USERID",mUID);
+            editor.putString("Current_USERID",mUID);
             editor.apply();
 //            updateuserActiveStatusOn();
         }

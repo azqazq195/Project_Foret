@@ -61,7 +61,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
     List<ForetBoard> list;
     List<JSONArray> like;
 
-    int id;
+    int id=100;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,7 +88,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         like = new ArrayList<JSONArray>();
 
         SessionManager sessionManager = new SessionManager(activity);
-        id = sessionManager.getSession();
+     //   id = sessionManager.getSession();
 
         recyclerView2.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false));
 
@@ -224,12 +224,11 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                         foretBoard.setWriter(String.valueOf(object.getInt("writer")));
                         foretBoard.setContent(object.getString("content"));
                         list.add(foretBoard);
-                        Log.e("TEST", "진입테스트8"+list.size());
                     }
-                    Log.e("[TEST]", list.size()+"");
                     RequestParams params = new RequestParams();
                     params.put("id", id);
-                    final int DEFAULT_TIME = 20*1000;
+                    Log.e("[SUNMI]", list.size()+"");
+                    final int DEFAULT_TIME = 50*1000;
                     client.setConnectTimeout(DEFAULT_TIME);
                     client.setResponseTimeout(DEFAULT_TIME);
                     client.setTimeout(DEFAULT_TIME);
@@ -257,29 +256,20 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 if(json.getString("RT").equals("OK")){
                     JSONArray member = json.getJSONArray("member");
                     JSONObject object = member.getJSONObject(0);
-                    Log.e("[TEST]", "진입테스트2");
                     JSONArray like_comment = object.getJSONArray("like_comment");
-                    Log.e("[TEST]", "진입테스트3"+like_comment.length());
                     like.add(like_comment);
-                    Log.e("[TEST]", "진입테스트4"+like.toString());
                     for (int a=0; a<list.size(); a++) {
-                        Log.e("TEST", "진입테스트8"+list.size());
                         ForetBoard foretBoard = list.get(a);
                         int seq = foretBoard.getId();
-                        Log.e("[TEST]", "진입테스트6" + foretBoard.getId());
                         if (like.contains(seq)) {
                             foretBoard.setLike(true);
-                            Log.e("[TEST]", "진입테스트7" + foretBoard.isLike());
                         } else {
                             foretBoard.setLike(false);
-                            Log.e("[TEST]", "진입테스트7" + foretBoard.isLike());
                         }
                         list.set(a, foretBoard);
-                        Log.e("TEST", "진입테스트8"+list.size());
                     }
                     adapter = new ListFreeBoardAdapter(list, activity, id);
                     recyclerView2.setAdapter(adapter);
-                    Log.e("TEST", "진입테스트9"+list.size());
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
