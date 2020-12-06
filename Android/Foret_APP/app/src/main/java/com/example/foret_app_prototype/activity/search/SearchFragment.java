@@ -289,7 +289,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         activity.startActivity(intent);
     }
 
-    //검색결과 레이아웃에 출력된 것을 누르면 이동
+    //검색결과 서치 레이아웃에 출력된 것을 누르면 이동
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ForetDTO foretDTO = searchAdapter.getItem(position);
