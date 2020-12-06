@@ -19,10 +19,10 @@ import java.util.List;
 
 public class RecyclerAdapter2 extends RecyclerView.Adapter<RecyclerAdapter2.Adapter2> {
 
-    List<Test> list;
+    List<String> list;
     Activity activity;
 
-    public RecyclerAdapter2(List<Test> list, Context context) {
+    public RecyclerAdapter2(List<String> list, Context context) {
         this.list = list;
         activity = (Activity)context;
     }
@@ -36,8 +36,8 @@ public class RecyclerAdapter2 extends RecyclerView.Adapter<RecyclerAdapter2.Adap
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerAdapter2.Adapter2 holder, int position) {
-        Test test = list.get(position);
-        holder.button.setText(test.getTest1());
+        String test = list.get(position);
+        holder.button.setText("#"+test);
     }
 
     @Override

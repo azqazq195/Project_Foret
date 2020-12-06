@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.model.ForetDTO;
 
@@ -32,9 +33,9 @@ public class SearchAdapter extends ArrayAdapter<ForetDTO> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if(convertView == null) {
-            convertView = activity.getLayoutInflater().inflate(resource, parent, false);
+            convertView = activity.getLayoutInflater().inflate(resource, null);
         }
-        ForetDTO foret = new ForetDTO();
+        ForetDTO foret = getItem(position);
         if(foret != null) {
             String [] tag_name = foret.getForet_tag().toArray(new String[foret.getForet_tag().size()]);
             String [] si = foret.getForet_region_si().toArray(new String[foret.getForet_region_si().size()]);
@@ -51,6 +52,7 @@ public class SearchAdapter extends ArrayAdapter<ForetDTO> {
             textView3.setText(foret.getIntroduce());
             textView4.setText(foret.getReg_date());
             textView5.setText(Arrays.toString(si)+Arrays.toString(gu));
+            Glide.with(convertView).load(foret.getForet_photo()).into(imageView);
         }
         return convertView;
     }

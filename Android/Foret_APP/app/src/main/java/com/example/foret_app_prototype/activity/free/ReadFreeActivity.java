@@ -229,7 +229,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         params.put("board_id", foretBoard.getId());
         params.put("writer", memberID);
         params.put("content", editText_comment.getText().toString().trim());
-        client.post("http://34.72.240.24:8085/foret/comment/recomment_insert.do", params, writeCommentResponse);
+        client.post("http://34.72.240.24:8085/foret/comment/comment_insert.do", params, writeCommentResponse);
     }
 
     //답글버튼 눌렀을 때

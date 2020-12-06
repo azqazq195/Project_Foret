@@ -271,6 +271,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
+                    searchFragment = new SearchFragment(memberDTO);
 
                     LoginActivity loginActivity = (LoginActivity)LoginActivity.loginActivity;
                     // 세션에 담아서 로그인 페이지로
