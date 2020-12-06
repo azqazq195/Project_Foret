@@ -18,11 +18,11 @@ import com.example.foret_app_prototype.model.HomeForetBoardDTO;
 
 import java.util.List;
 
+// 메인 프래그먼트에서 사용
 public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Activity activity;
     private List<HomeForetBoardDTO> homeForetBoardDTOList;
     private ViewHolder viewHolder;
-
 
     public NewBoardFeedAdapter(Activity activity, List<HomeForetBoardDTO> homeForetBoardDTOList) {
         this.activity = activity;
@@ -60,12 +60,19 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return homeForetBoardDTOList.size();
+        if(homeForetBoardDTOList.size() > 5) {
+            return 5;
+        } else {
+            return homeForetBoardDTOList.size();
+        }
+    }
+
+    public void setItems(List<HomeForetBoardDTO> items) {
+        this.homeForetBoardDTOList = items;
     }
 
     public class ViewHolder  extends RecyclerView.ViewHolder {
         TextView  textView2, textView3, textView4;
-        HomeForetBoardDTO homeForetBoardDTO;
         FrameLayout layout;
 
         public ViewHolder (@NonNull View itemView) {
@@ -75,10 +82,6 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             textView3 = itemView.findViewById(R.id.textView3);
             textView4 = itemView.findViewById(R.id.textView4);
             layout = itemView.findViewById(R.id.layout);
-
-            textView2.setText(homeForetBoardDTO.getSubject());
-            textView3.setText(homeForetBoardDTO.getContent());
-            textView4.setText(homeForetBoardDTO.getReg_date());
         }
     }
 }

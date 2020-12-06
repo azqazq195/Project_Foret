@@ -17,6 +17,7 @@ import com.example.foret_app_prototype.model.HomeForetBoardDTO;
 
 import java.util.List;
 
+// 홈프래그먼트에서 사용
 public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.ViewHolder> {
     private Activity activity;
     private List<HomeForetBoardDTO> homeForetBoardDTOList;
@@ -57,7 +58,11 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
 
     @Override
     public int getItemCount() {
-        return homeForetBoardDTOList.size();
+        if(homeForetBoardDTOList.size() > 3) {
+            return 3;
+        } else {
+            return homeForetBoardDTOList.size();
+        }
     }
 
     public void setItems(List<HomeForetBoardDTO> items) {

@@ -3,29 +3,30 @@ package com.example.foret_app_prototype.model;
 import java.io.Serializable;
 import java.util.List;
 
+// HomeFragment 사용
 public class HomeForetDTO implements Serializable {
-    private static String RT;
-    private static int foretTotal;
+    private int foretTotal;
 
     private int id;
     private String name;
     private String photo;
-    private List<HomeForetBoardDTO> board;
+    private HomeForetBoardDTO homeForetBoardDTO[];
+    private List<HomeForetBoardDTO> homeForetBoardDTOList;
 
-    public static String getRT() {
-        return RT;
+    public List<HomeForetBoardDTO> getHomeForetBoardDTOList() {
+        return homeForetBoardDTOList;
     }
 
-    public static void setRT(String RT) {
-        HomeForetDTO.RT = RT;
+    public void setHomeForetBoardDTOList(List<HomeForetBoardDTO> homeForetBoardDTOList) {
+        this.homeForetBoardDTOList = homeForetBoardDTOList;
     }
 
-    public static int getForetTotal() {
+    public int getForetTotal() {
         return foretTotal;
     }
 
-    public static void setForetTotal(int foretTotal) {
-        HomeForetDTO.foretTotal = foretTotal;
+    public void setForetTotal(int foretTotal) {
+        this.foretTotal = foretTotal;
     }
 
     public int getId() {
@@ -52,11 +53,11 @@ public class HomeForetDTO implements Serializable {
         this.photo = photo;
     }
 
-    public List<HomeForetBoardDTO> getBoard() {
-        return board;
+    public HomeForetBoardDTO[] getHomeForetBoardDTO() {
+        return homeForetBoardDTO;
     }
 
-    public void setBoard(List<HomeForetBoardDTO> board) {
-        this.board = board;
+    public void setHomeForetBoardDTO(HomeForetBoardDTO[] homeForetBoardDTO) {
+        this.homeForetBoardDTO = homeForetBoardDTO;
     }
 }

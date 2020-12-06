@@ -33,8 +33,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.activity.foret.MakeForetActivity;
+import com.example.foret_app_prototype.activity.foret.ViewForetActivity;
 import com.example.foret_app_prototype.adapter.RecyclerAdapter2;
 import com.example.foret_app_prototype.adapter.RecyclerAdapter3;
+import com.example.foret_app_prototype.adapter.search.SearchAdapter;
+import com.example.foret_app_prototype.model.ForetDTO;
 import com.example.foret_app_prototype.model.Test;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.loopj.android.http.AsyncHttpClient;
@@ -61,8 +64,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     Button button2, button3, button4, button5, button6, button7, button8;
     RecyclerView recyclerView1, recyclerView2;
     FloatingActionButton button9;
-    List<Test> list1;
-    List<Test> list2;
+    SearchAdapter searchAdapter;
     RecyclerAdapter2 adapter2;
     RecyclerAdapter3 adapter3;
     Context context;
@@ -70,6 +72,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     TextView button_searchGO;
     ListView search_listView;
     List<String> autoCompleteList; //자동완성 데이터를 넣어줄 리스트
+    List<ForetDTO> search_resultList;
     //Button button;
     InputMethodManager inputMethodManager; //키보드 컨트롤 매니저
     Intent intent;
@@ -84,8 +87,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        list1 = new ArrayList<>();
-        list2 = new ArrayList<>();
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
         toolbar = (androidx.appcompat.widget.Toolbar) rootView.findViewById(R.id.search_toolbar);
         activity = (MainActivity) getActivity();
@@ -113,6 +114,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         search_listView = rootView.findViewById(R.id.search_list); //검색 결과가 출력될 리스트뷰
         tag_name = new ArrayList<>();
         foret_name = new ArrayList<>();
+        search_resultList = new ArrayList<>();
+        searchAdapter = new SearchAdapter(activity, R.layout.recycle_item3, search_resultList);
+
 
         autoCompleteList = new ArrayList<String>(); //자동완성에 사용할 데이터
 
@@ -132,6 +136,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
 
         recyclerView1.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false));
         recyclerView2.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false));
+        search_listView.setAdapter(searchAdapter);
 
         testData1();
         testData2();
@@ -145,6 +150,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         button7.setOnClickListener(this);
         button8.setOnClickListener(this);
         button9.setOnClickListener(this);
+        search_listView.setOnItemClickListener(this);
 
         button_back.setOnClickListener(this);
 
@@ -171,9 +177,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
             test.setTest3("여러분 화이팅 합시다 할수있어요!!");
             test.setTest4("20-12-02");
             test.setTest5("지역 : 성수동, 용산구");
-            list2.add(test);
-        }
-        adapter3 = new RecyclerAdapter3(list2, activity);
+          //  list2.add(test);
+        }//
+       // adapter3 = new RecyclerAdapter3(list2, activity);
         recyclerView2.setAdapter(adapter3);
     }
 
@@ -182,9 +188,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         for (int a = 0; a < testArray.length; a++) {
             Test test = new Test();
             test.setTest1(testArray[a]);
-            list1.add(test);
+         //   list1.add(test);
         }
-        adapter2 = new RecyclerAdapter2(list1, activity);
+       // adapter2 = new RecyclerAdapter2(list1, activity);
         recyclerView1.setAdapter(adapter2);
     }
 
@@ -286,7 +292,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     //검색결과 레이아웃에 출력된 것을 누르면 이동
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        ForetDTO foretDTO = searchAdapter.getItem(position);
+        Intent intent = new Intent(activity, ViewForetActivity.class);
+        intent.putExtra("foret_id", foretDTO.getForet_id());
+        startActivity(intent);
     }
 
     @Override

@@ -2,7 +2,8 @@ package com.example.foret_app_prototype.model;
 
 import java.io.Serializable;
 
-public class HomeForetBoardDTO  implements Serializable {
+// HomeFragment 사용
+public class HomeForetBoardDTO implements Serializable {
     private int id;
     private String reg_date;
     private String edit_date;

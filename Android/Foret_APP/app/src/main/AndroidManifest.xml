@@ -33,7 +33,8 @@
         <activity android:name=".activity.chat.chatactivity.GroupChatActivity" />
         <activity android:name=".activity.chat.chatactivity.ChatActivity" />
         <activity android:name=".activity.chat.chatactivity.VideoViewActivity" />
-        <activity android:name=".activity.login.GuideActivity" />
+        <activity android:name=".activity.login.GuideActivity">
+        </activity>
         <activity android:name=".activity.foret.board.ListForetBoardActivity" />
         <activity android:name=".activity.foret.EditForetActivity" />
         <activity android:name=".activity.foret.board.ReadForetBoardActivity" />

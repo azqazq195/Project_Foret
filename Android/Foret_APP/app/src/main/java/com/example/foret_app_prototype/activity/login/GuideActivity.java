@@ -67,6 +67,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -84,13 +85,22 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     String select_si = "";
     String select_gu = "";
     String select_tag = "";
+
+    String last_selected_tag = "";
+    List<String> selected_tag;
+    String last_selected_si = "";
+    String last_selected_gu = "";
     String str = "";
     String show = "";
+    boolean ischecked = false;
 
     List<String> region_si;
     List<String> region_gu;
     List<String> tag_name;
     List<String> member_tag;
+    List<String> tag_list;
+
+    Map<String, String> region_list; //구, 시
 
     String name, nickname, birth, email, pw2;
     File file;
@@ -145,6 +155,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         region_gu = new ArrayList<>();
         tag_name = new ArrayList<>();
         member_tag = new ArrayList<>();
+        region_list = new HashMap<>(); //구, 시
+        tag_list = new ArrayList<>();
 
       //  profile.setImageResource(R.drawable.foret); // 사진이 출력이 안되서 초기세팅해줌
 
@@ -189,23 +201,23 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 switch (afterBUTTONCount) {
                     case 1:
                         layout1.setVisibility(View.VISIBLE);
-                        layout2.setVisibility(View.GONE);
-                        button1.setVisibility(View.GONE);
+                        layout2.setVisibility(View.INVISIBLE);
+                        button1.setVisibility(View.INVISIBLE);
                         afterBUTTONCount = afterBUTTONCount - 1;
                         break;
                     case 2:
                         layout2.setVisibility(View.VISIBLE);
-                        layout3.setVisibility(View.GONE);
+                        layout3.setVisibility(View.INVISIBLE);
                         afterBUTTONCount = afterBUTTONCount - 1;
                         break;
                     case 3:
                         layout3.setVisibility(View.VISIBLE);
-                        layout4.setVisibility(View.GONE);
+                        layout4.setVisibility(View.INVISIBLE);
                         afterBUTTONCount = afterBUTTONCount - 1;
                         break;
                     case 4:
                         layout4.setVisibility(View.VISIBLE);
-                        layout5.setVisibility(View.GONE);
+                        layout5.setVisibility(View.INVISIBLE);
                         afterBUTTONCount = afterBUTTONCount - 1;
                         break;
                 }
@@ -213,27 +225,27 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             case R.id.button2: // 다음
                 switch (afterBUTTONCount) {
                     case 0:
-                        layout1.setVisibility(View.GONE);
+                        layout1.setVisibility(View.INVISIBLE);
                         layout2.setVisibility(View.VISIBLE);
                         button1.setVisibility(View.VISIBLE);
                         afterBUTTONCount++;
                         break;
                     case 1:
-                        layout2.setVisibility(View.GONE);
+                        layout2.setVisibility(View.INVISIBLE);
                         layout3.setVisibility(View.VISIBLE);
                         afterBUTTONCount++;
                         break;
                     case 2:
-                        layout3.setVisibility(View.GONE);
+                        layout3.setVisibility(View.INVISIBLE);
                         layout4.setVisibility(View.VISIBLE);
                         afterBUTTONCount++;
                         break;
                     case 3:
-                        layout4.setVisibility(View.GONE);
+                        layout4.setVisibility(View.INVISIBLE);
                         layout5.setVisibility(View.VISIBLE);
                         afterBUTTONCount++;
-                        button1.setVisibility(View.GONE);
-                        button2.setVisibility(View.GONE);
+                        button1.setVisibility(View.VISIBLE);
+                        button2.setVisibility(View.INVISIBLE);
                         break;
                 }
                 break;
@@ -266,6 +278,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
         str = "";
         show = "";
+        ischecked = false;
 
         Spinner spinner_si = region_view.findViewById(R.id.spinner_si);
         Spinner spinner_gu = region_view.findViewById(R.id.spinner_gu);
@@ -278,11 +291,16 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("[TEST]", "region_si position => " + position);
-                select_si = (String) parent.getSelectedItem();
+                String select_si = (String) parent.getSelectedItem();
                 if (position != 0 && !select_si.equals("")) {
                     Log.d("[TEST]", "select_si => " + select_si);
-                    region_si.add(select_si);
+                    last_selected_si = select_si;
+                    spinner_gu.setVisibility(View.VISIBLE);
+                    ischecked = false;
+                } else {
+                    spinner_gu.setVisibility(View.INVISIBLE);
                 }
+                Log.d("[TEST]", "gu_check => " + ischecked);
 
                 ArrayAdapter guAdapter;
                 switch (position) {
@@ -322,12 +340,11 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                         spinner_gu.setAdapter(guAdapter);
                         break;
                 }
-                spinner_gu.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                selected_view.setText("최소 한개의 지역을 등록하세요.");
+
             }
         });
 
@@ -335,16 +352,20 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("[TEST]", "region_gu position => " + position);
-                select_gu = (String) parent.getSelectedItem();
+                String select_gu = (String) parent.getSelectedItem();
                 if (position != 0 && !select_gu.equals("")) {
                     Log.d("[TEST]", "select_gu => " + select_gu);
-                    region_gu.add(select_gu);
-                    str += select_si + " " + select_gu + "\n";
+                    last_selected_gu = select_gu;
+                    str += last_selected_si + " " + last_selected_gu + "\n";
                     selected_view.setText(str);
                     spinner_si.setSelection(0);
                     spinner_gu.setSelection(0);
+                    ischecked = true;
                 }
+                Log.d("[TEST]", "gu_check => " + ischecked);
             }
+
+
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -355,16 +376,26 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Log.d("[TEST]", "region_si.size() => " + region_si.size());
-                Log.d("[TEST]", "region_gu.size() => " + region_gu.size());
                 // 확인 버튼 누르면
-                for (int a = 0; a < region_si.size(); a++) {
-                    show += region_si.get(a) + " " + region_gu.get(a) + "\n";
-                    Log.d("[TEST]", "region_si.get(a) => " + region_si.get(a));
-                    Log.d("[TEST]", "region_gu.get(a) => " + region_gu.get(a));
+                if(ischecked) {
+                    region_si.add(last_selected_si);
+                    region_gu.add(last_selected_gu);
+                    Log.d("[TEST]", "region_si.size() => " + region_si.size());
+                    Log.d("[TEST]", "region_gu.size() => " + region_gu.size());
+
+                    for (int a=0; a<region_si.size(); a++) {
+                        show += region_si.get(a) + " " + region_gu.get(a) + "\n";
+                        Log.d("[TEST]", "region_si.get(a) => " + region_si.get(a));
+                        Log.d("[TEST]", "region_gu.get(a) => " + region_gu.get(a));
+                    }
+                    textView_region.setText(show);
+                    textView_region.setVisibility(View.VISIBLE);
+
+                } else if(region_si.size() == 0) {
+                    Toast.makeText(GuideActivity.this, "최소 1개의 지역을 선택해주세요.", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-                textView_region.setText(show);
-                textView_region.setVisibility(View.VISIBLE);
+
             }
         });
         builder.setNegativeButton("취소", null);
@@ -377,14 +408,19 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     public void tagDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
-        builder.setMessage("태그를 골라주세요.");
+        builder.setMessage("태그를 선택해주세요.");
 
         str = "";
         show = "";
+        ischecked = false;
+        selected_tag = new ArrayList<>();
 
         Spinner spinner_tag = region_view.findViewById(R.id.spinner_tag);
         TextView selected_view = region_view.findViewById(R.id.selected_view);
+
+        ArrayAdapter adapter = new ArrayAdapter<>(getApplicationContext(),android.R.layout.simple_spinner_dropdown_item, tag_list);
         spinner_tag.setVisibility(View.VISIBLE);
+        spinner_tag.setAdapter(adapter);
 
         spinner_tag.setSelection(0);
 
@@ -392,13 +428,15 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != 0) {
-                    select_tag = (String) parent.getSelectedItem();
-                    member_tag.add(select_tag);
-                    Log.d("[TEST]", "foret_tag.size() => " + member_tag.size());
+                    Log.d("[TEST]", "position => " + position);
+                    String select_tag = (String) parent.getSelectedItem();
+                    selected_tag.add(select_tag);
                     str += "#" + select_tag + " ";
                     selected_view.setText(str);
                     spinner_tag.setSelection(0);
+                    ischecked = true;
                 }
+                Log.d("[TEST]", "ischecked => " + ischecked);
             }
 
             @Override
@@ -411,15 +449,24 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 확인 버튼 누르면
-                for (int a = 0; a < member_tag.size(); a++) {
-                    show += "#" + member_tag.get(a) + " ";
-                    Log.d("[TEST]", "foret_tag.get(a) => " + member_tag.get(a));
+                if(ischecked) {
+                    member_tag = selected_tag;
+                    Log.d("[TEST]", "member_tag.size() => " + member_tag.size());
+
+                    for (int a=0; a<member_tag.size(); a++) {
+                        show += "#" + member_tag.get(a) + " ";
+                        Log.d("[TEST]", "foret_tag.get(a) => " + member_tag.get(a));
+                    }
+                    textView_tag.setText(show);
+                    textView_tag.setVisibility(View.VISIBLE);
+                    ischecked = false;
+                } else if(member_tag.size() == 0) {
+                    Toast.makeText(GuideActivity.this, "최소 1개의 태그를 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }
-                textView_tag.setText(show);
-                textView_tag.setVisibility(View.VISIBLE);
+
             }
         });
-        builder.setNegativeButton("취소", null);
+        builder.setNegativeButton("취소",null);
 
         builder.setView(region_view);
         AlertDialog alertDialog = builder.create();
@@ -754,6 +801,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            List<String> si = new ArrayList<>();
+            List<String> gu = new ArrayList<>();
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
@@ -761,9 +810,9 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                     JSONArray region = json.getJSONArray("region");
                     for (int a=0; a<region.length(); a++) {
                         JSONObject object = region.getJSONObject(a);
-                        region_si.add(object.getString("region_si"));
-                        region_gu.add(object.getString("region_gu"));
+                        region_list.put(object.getString("region_gu"), object.getString("region_si"));
                     }
+                    Log.e("[Regin_List]", region_list.get("성동구"));
                 }
 
             } catch (JSONException e) {
@@ -787,8 +836,9 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                     JSONArray tag = json.getJSONArray("tag");
                     for (int a=0; a<tag.length(); a++) {
                         JSONObject object = tag.getJSONObject(a);
-                        tag_name.add(object.getString("tag_name"));
+                        tag_list.add(object.getString("tag_name"));
                     }
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
