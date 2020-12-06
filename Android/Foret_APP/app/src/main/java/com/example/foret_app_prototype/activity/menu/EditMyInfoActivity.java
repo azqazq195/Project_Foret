@@ -31,6 +31,7 @@ import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.activity.login.GuideActivity;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.helper.ProgressDialogHelper;
@@ -61,19 +62,22 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     Intent intent;
     String select_si = "";
     String select_gu = "";
-    String select_tag = "";
+    //String select_tag = "";
     String str = "";
     String tag_str_result = "";
     String show = "";
+    List<String> selected_tag;
     List<String> region_si;
     List<String> region_gu;
     List<String> member_tag;
     List<String> tag_name;
-
+    List<String> tag_list;
+    boolean ischecked = false;
     AsyncHttpClient client;
+
+
     MyInfoEditResponse response;
-    RegionListResponse2 regionListResponse;
-    TagListResponse2 tagListResponse;
+    TagListResponse tagListResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,17 +104,16 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         textView_confirm = findViewById(R.id.textView_confirm);
         profile = findViewById(R.id.profile);
         client = new AsyncHttpClient();
-        response = new MyInfoEditResponse();
-        regionListResponse = new RegionListResponse2();
-        tagListResponse = new TagListResponse2();
-
+        //response = new MyInfoEditResponse();
+        tagListResponse = new TagListResponse();
+        tag_list = new ArrayList<>();
         region_si = new ArrayList<>();
         region_gu = new ArrayList<>();
         member_tag = new ArrayList<>();
         tag_name = new ArrayList<>();
 
         //각 지역, 태그 리스트에 DB에 저장된 목록 저장
-        client.post("http://34.72.240.24:8085/foret/region/region_list.do", regionListResponse);
+        //client.post("http://34.72.240.24:8085/foret/region/region_list.do", regionListResponse);
         client.post("http://34.72.240.24:8085/foret/tag/tag_list.do", tagListResponse);
 
         dataSetting();
@@ -145,7 +148,9 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         editText1.setText(memberDTO.getNickname());
         button1.setText(getIntent().getStringExtra("region"));
         button2.setText(getIntent().getStringExtra("tag"));
-        Glide.with(this).load(memberDTO.getPhoto()).into(profile);
+        Glide.with(this).load(memberDTO.getPhoto()).
+                fallback(R.drawable.icon2)
+                .into(profile);
     }
 
     @Override //메뉴 설정
@@ -311,10 +316,18 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
         View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
         builder.setMessage("태그를 골라주세요.");
+
         str = "";
+        show = "";
+        ischecked = false;
+        selected_tag = new ArrayList<>();
+
         Spinner spinner_tag = region_view.findViewById(R.id.spinner_tag);
         TextView selected_view = region_view.findViewById(R.id.selected_view);
+
+        ArrayAdapter adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, tag_list);
         spinner_tag.setVisibility(View.VISIBLE);
+        spinner_tag.setAdapter(adapter);
 
         spinner_tag.setSelection(0);
 
@@ -322,12 +335,13 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != 0) {
-                    select_tag = (String) parent.getSelectedItem();
-                    member_tag.add(select_tag);
-                    str += "#" + select_tag + "\n";
-                    show += str;
+                    Log.d("[TEST]", "position => " + position);
+                    String select_tag = (String) parent.getSelectedItem();
+                    selected_tag.add(select_tag);
+                    str += "#" + select_tag + " ";
                     selected_view.setText(str);
                     spinner_tag.setSelection(0);
+                    ischecked = true;
                 }
             }
 
@@ -340,7 +354,22 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                button2.setText(show);
+                // 확인 버튼 누르면
+                if (ischecked) {
+                    member_tag = selected_tag;
+                    Log.d("[TEST]", "member_tag.size() => " + member_tag.size());
+
+                    for (int a = 0; a < member_tag.size(); a++) {
+                        show += "#" + member_tag.get(a) + " ";
+                        Log.d("[TEST]", "foret_tag.get(a) => " + member_tag.get(a));
+                    }
+                    button2.setText(show);
+                    button2.setVisibility(View.VISIBLE);
+                    ischecked = false;
+                } else if (member_tag.size() == 0) {
+                    Toast.makeText(EditMyInfoActivity.this, "최소 1개의 태그를 선택해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         builder.setNegativeButton("취소", null);
@@ -427,48 +456,45 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         //실제 태그 작동시 확인해야함
         String[] str_si = new String[region_si.size()];
         String[] str_gu = new String[region_gu.size()];
-        memberDTO.setRegion_gu(region_si);
-        memberDTO.setRegion_si(region_gu);
+
         for (int a = 0; a < str_si.length; a++) {
             str_si[a] = region_si.get(a);
             str_gu[a] = region_gu.get(a);
-
             if (a == 0) {
-                params.put("region_si", "서울시");
-                params.put("region_gu", "강남구");
+                params.put("region_si", str_si[a]);
+                params.put("region_gu", str_gu[a]);
+                Log.e("[test]", "리전?" + str_si[a] + "," + str_gu[a]);
             } else {
-                params.add("region_si", "성남시");
-                params.add("region_gu", "분당구");
+                params.add("region_si", str_si[a]);
+                params.add("region_gu", str_gu[a]);
+                Log.e("[test]", "리전?" + str_si[a] + "," + str_gu[a]);
             }
 
         }
-        memberDTO.setTag(member_tag);
         String[] str_tag = new String[member_tag.size()];
         for (int a = 0; a < str_tag.length; a++) {
             str_tag[a] = member_tag.get(a);
-
             if (a == 0) {
-                params.put("tag", "태그1");
+                params.put("tag", str_tag[a]);
+                Log.e("[test]","태그??"+str_tag[a]);
             } else {
-                params.add("tag", "태그2");
+                params.add("tag", str_tag[a]);
+                Log.e("[test]","태그??"+str_tag[a]);
             }
         }
 
-        String tag="";
-        String region = (memberDTO.getRegion_si().toString()+","+memberDTO.getRegion_gu().toString()).replace("[", "").replace("]","");
-        for (int a=0; a<memberDTO.getTag().size(); a++) {
-            tag += "#"+memberDTO.getTag().get(a)+" ";
+        String tag = "";
+        String region = (memberDTO.getRegion_si().toString() + "," + memberDTO.getRegion_gu().toString()).replace("[", "").replace("]", "");
+        for (int a = 0; a < memberDTO.getTag().size(); a++) {
+            tag += "#" + memberDTO.getTag().get(a) + " ";
         }
 
 
         memberDTO.setPassword(editText2.getText().toString().trim());
         memberDTO.setNickname(editText1.getText().toString().trim());
-        //memberDTO.setRegion_si(region_si);
-        //memberDTO.setRegion_gu(region_gu);
-        //memberDTO.setTag(member_tag);
 
         params.put("name", memberDTO.getName());
-        params.put("email", memberDTO.getEmail());
+        //params.put("email", memberDTO.getEmail());
         params.put("birth", memberDTO.getBirth());
         params.put("nickname", memberDTO.getNickname());
         params.put("password", memberDTO.getPassword());
@@ -493,8 +519,8 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         client.setTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
 
-        ProgressDialogHelper.getInstance().getProgressbar(this, "가입 진행중.");
-        client.post("http://192.168.219.100:8085/foret/member/member_modify.do", params, response);
+        ProgressDialogHelper.getInstance().getProgressbar(this, "정보 수정 진행중.");
+        client.post("http://34.72.240.24:8085:8085/foret/member/member_modify.do", params, response);
     }
 
     class MyInfoEditResponse extends AsyncHttpResponseHandler {
@@ -534,9 +560,9 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                if(json.getInt("total") != 0) {
+                if (json.getInt("total") != 0) {
                     JSONArray region = json.getJSONArray("region");
-                    for (int a=0; a<region.length(); a++) {
+                    for (int a = 0; a < region.length(); a++) {
                         JSONObject object = region.getJSONObject(a);
                         region_si.add(object.getString("region_si"));
                         region_gu.add(object.getString("region_gu"));
@@ -547,12 +573,14 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(EditMyInfoActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
         }
     }
 
+    //서버애서 태그 받아오기
     class TagListResponse extends AsyncHttpResponseHandler {
 
         @Override
@@ -560,12 +588,13 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                if(json.getInt("total") != 0) {
+                if (json.getInt("total") != 0) {
                     JSONArray tag = json.getJSONArray("tag");
-                    for (int a=0; a<tag.length(); a++) {
+                    for (int a = 0; a < tag.length(); a++) {
                         JSONObject object = tag.getJSONObject(a);
-                        member_tag.add(object.getString("tag_name"));
+                        tag_list.add(object.getString("tag_name"));
                     }
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -578,54 +607,4 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    class RegionListResponse2 extends AsyncHttpResponseHandler {
-
-        @Override
-        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            String str = new String(responseBody);
-            try {
-                JSONObject json = new JSONObject(str);
-                if(json.getInt("total") != 0) {
-                    JSONArray region = json.getJSONArray("region");
-                    for (int a=0; a<region.length(); a++) {
-                        JSONObject object = region.getJSONObject(a);
-                        region_si.add(object.getString("region_si"));
-                        region_gu.add(object.getString("region_gu"));
-                    }
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        @Override
-        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(EditMyInfoActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    class TagListResponse2 extends AsyncHttpResponseHandler {
-
-        @Override
-        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            String str = new String(responseBody);
-            try {
-                JSONObject json = new JSONObject(str);
-                if(json.getInt("total") != 0) {
-                    JSONArray tag = json.getJSONArray("tag");
-                    for (int a=0; a<tag.length(); a++) {
-                        JSONObject object = tag.getJSONObject(a);
-                        tag_name.add(object.getString("tag_name"));
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(EditMyInfoActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
-        }
-    }
 }
