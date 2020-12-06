@@ -18,7 +18,7 @@ public class ProgressDialogHelper {
     public void getProgressbar(Context context, String message){
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage(message);
-        progressDialog.show();
+//        progressDialog.show();
     }
 
     public void removeProgressbar(){

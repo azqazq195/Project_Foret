@@ -1,12 +1,5 @@
 package com.example.foret_app_prototype.activity.foret.board;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -21,20 +14,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
-import com.example.foret_app_prototype.activity.foret.MakeForetActivity;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.model.Foret;
-import com.example.foret_app_prototype.model.ForetBoard;
 import com.example.foret_app_prototype.model.Member;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -44,7 +41,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -56,7 +52,6 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
     TextView textView_writer;
     Spinner spinner;
     ImageView imageView0, imageView1, imageView2, imageView3, imageView4;
-    Button button;
 
     File file;
     String filePath = null;
@@ -119,9 +114,6 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
         imageView2 = findViewById(R.id.imageView2);
         imageView3 = findViewById(R.id.imageView3);
         imageView4 = findViewById(R.id.imageView4);
-        button = findViewById(R.id.button);
-
-        button.setOnClickListener(this);
     }
 
     @Override
@@ -192,7 +184,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
+        /*switch (v.getId()) {
             case R.id.button:
                 if(image_count == 5) {
                     Toast.makeText(this, "최대 5개까지 등록할 수 있습니다.", Toast.LENGTH_SHORT).show();
@@ -201,7 +193,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
                 permissionCheck();
                 showSelect();
                 break;
-        }
+        }*/
     }
 
     private void showSelect() {

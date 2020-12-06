@@ -25,7 +25,9 @@
         <activity android:name=".activity.menu.AppNoticeActivity" />
         <activity android:name=".activity.menu.MyInfoActivity" />
         <activity android:name=".activity.SearchLayoutActivity" />
-        <activity android:name=".activity.free.ReadFreeActivity"/>
+        <activity android:name=".activity.free.ReadFreeActivity"
+            android:windowSoftInputMode="adjustResize"
+            />
         <activity android:name=".activity.chat.chatactivity.GroupChatCreatectivity" />
         <activity android:name=".activity.chat.chatactivity.GroupJoinActivity" />
         <activity android:name=".activity.chat.chatactivity.GroupChatActivity" />
@@ -72,7 +74,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
 
         <provider
             android:name="androidx.core.content.FileProvider"
