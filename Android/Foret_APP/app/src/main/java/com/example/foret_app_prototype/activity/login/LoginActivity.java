@@ -45,7 +45,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     AsyncHttpClient client;
     HttpResponse response;
     String url = "http://34.72.240.24:8085/foret/search/member_login.do";
-    //String url = "http://192.168.219.100:8085/foret/search/member.do";
     Button button0;
     TextView button3, button4;
     EditText emailEditText, passwordEditText;
@@ -100,9 +99,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 email = emailEditText.getText().toString().trim();
                 pwd = passwordEditText.getText().toString().trim();
 
+                Log.e("[test]",email+"/"+pwd);
+
                 RequestParams params = new RequestParams();
-                params.put("email", emailEditText.getText().toString().trim());
-                params.put("password", passwordEditText.getText().toString().trim());
+                params.put("email", email);
+                params.put("password", pwd);
                 ProgressDialogHelper.getInstance().getProgressbar(this, "로그인 진행중");
                 client.post(url, params, response);
                 break;
@@ -120,7 +121,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void moveToMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("id",id);
-
         startActivity(intent);
         finish();
     }
@@ -137,15 +137,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     //파이어 베이스
                     joinedMember(email,pwd);
                     id = json.getString("id");
-                    /*
-                    JSONArray member = json.getJSONArray("member");
-                    JSONObject temp = member.getJSONObject(0);
-                    MemberDTO memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
-                    // 세션에 담아서 로그인 페이지로
-                    SessionManager sessionManager = new SessionManager(LoginActivity.this);
-                    sessionManager.saveSession(memberDTO);
 
-                     */
                     Log.e("[test]","성공진입/"+statusCode);
                     ProgressDialogHelper.getInstance().removeProgressbar();
 
