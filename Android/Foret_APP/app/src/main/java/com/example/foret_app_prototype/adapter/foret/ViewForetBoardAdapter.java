@@ -14,16 +14,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.board.ReadForetBoardActivity;
 import com.example.foret_app_prototype.model.ForetBoardDTO;
+import com.example.foret_app_prototype.model.MemberDTO;
 
+import java.io.Serializable;
 import java.util.List;
 
+// 뷰포레에서 사용
 public class ViewForetBoardAdapter extends RecyclerView.Adapter<ViewForetBoardAdapter.ViewHolder> {
     private Activity activity;
+    private MemberDTO memberDTO;
     private List<ForetBoardDTO> foretBoardDTOList;
     private ViewHolder viewHolder;
 
-    public ViewForetBoardAdapter(Activity activity, List<ForetBoardDTO> foretBoardDTOList) {
+    public ViewForetBoardAdapter(Activity activity, MemberDTO memberDTO, List<ForetBoardDTO> foretBoardDTOList) {
         this.activity = activity;
+        this.memberDTO = memberDTO;
         this.foretBoardDTOList = foretBoardDTOList;
     }
 
@@ -42,14 +47,19 @@ public class ViewForetBoardAdapter extends RecyclerView.Adapter<ViewForetBoardAd
         ForetBoardDTO foretBoardDTO = foretBoardDTOList.get(position);
 
         viewHolder.subject.setText(foretBoardDTO.getSubject());
-        viewHolder.date.setText(foretBoardDTO.getReg_date());
+        if(foretBoardDTO.getReg_date() != null) {
+            String date = foretBoardDTO.getReg_date().substring(0, 10);
+            viewHolder.date.setText(date);
+        }
 
         // 아이템 클릭 이벤트 처리.
         viewHolder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ReadForetBoardActivity.class);
+                intent.putExtra("memberDTO", memberDTO);
                 intent.putExtra("foretBoardDTO", foretBoardDTO);
+                intent.putExtra("foretBoardDTOList", (Serializable) foretBoardDTOList);
                 activity.startActivity(intent);
             }
         });
@@ -57,7 +67,11 @@ public class ViewForetBoardAdapter extends RecyclerView.Adapter<ViewForetBoardAd
 
     @Override
     public int getItemCount() {
-        return foretBoardDTOList.size();
+        if(foretBoardDTOList.size() > 3) {
+            return 3;
+        } else {
+            return foretBoardDTOList.size();
+        }
     }
 
     public void setItems(List<ForetBoardDTO> items) {
@@ -77,3 +91,4 @@ public class ViewForetBoardAdapter extends RecyclerView.Adapter<ViewForetBoardAd
         }
     }
 }
+

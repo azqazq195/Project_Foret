@@ -1,13 +1,10 @@
 package com.example.foret_app_prototype.activity.foret.board;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.FileProvider;
-
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,19 +14,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
-import com.example.foret_app_prototype.activity.foret.EditForetActivity;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
-import com.example.foret_app_prototype.model.ForetBoard;
-import com.example.foret_app_prototype.model.Member;
+import com.example.foret_app_prototype.model.ForetBoardDTO;
+import com.example.foret_app_prototype.model.MemberDTO;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -44,8 +47,8 @@ import cz.msebera.android.httpclient.Header;
 public class EditForetBoardActivity extends AppCompatActivity
         implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     // 데이터
-    Member member;
-    ForetBoard foretBoard;
+    MemberDTO memberDTO;
+    ForetBoardDTO foretBoardDTO;
 
     AsyncHttpClient client;
     EditForetBoardResponse editForetBoardResponse;
@@ -55,14 +58,16 @@ public class EditForetBoardActivity extends AppCompatActivity
     Spinner spinner_board_type;
     TextView textView_writer;
     EditText editText_subject, editText_content;
-    ImageView[] imageView = new ImageView[5];
+    ImageView imageView0, imageView1, imageView2, imageView3, imageView4;
+    Button button12;
 
     // 스피너 인덱스
     int selectedIndex = 0;
 
-    Intent intent = null;
-    String filePath = null;
+    Intent intent;
+    String filePath;
 
+    int type = 0;
     int image_count = 0;
     String[] str_boardImage = new String[5];
 
@@ -76,7 +81,8 @@ public class EditForetBoardActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowTitleEnabled(false); // 기존 타이틀 제거
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 뒤로가기 버튼
 
-        foretBoard = (ForetBoard) getIntent().getSerializableExtra("foretBoard");
+        foretBoardDTO = (ForetBoardDTO) getIntent().getSerializableExtra("foretBoardDTO");
+        memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
 
         getFindbyId(); // 객체 초기화
 
@@ -85,17 +91,53 @@ public class EditForetBoardActivity extends AppCompatActivity
     }
 
     private void dataSetting() {
-        spinner_board_type.setSelection((foretBoard.getType()-1));
-        textView_writer.setText(foretBoard.getWriter());
-        editText_subject.setText(foretBoard.getSubject());
-        editText_content.setText(foretBoard.getContent());
-//        if(foretBoard.getBoard_photo().equals("")) { // 사진이 있으면
-//            for(int a=0; a<foretBoard.getBoard_photo().length; a++) {
-//                Glide.with(this).load(foretBoard.getBoard_photo()[a]).into(imageView[a]);
-//            }
-//        }
-        for(int i=0; i<foretBoard.getBoard_photo().length; i++) {
-            imageView[i].setImageResource(foretBoard.getBoradImage());
+        if(foretBoardDTO.getType() == 2) {
+            type = 1;
+        } else if (foretBoardDTO.getType() == 4) {
+            type = 2;
+        } else {
+            type = 4;
+        }
+        spinner_board_type.setSelection(type);
+        textView_writer.setText(memberDTO.getNickname());
+        editText_subject.setText(foretBoardDTO.getSubject());
+        editText_content.setText(foretBoardDTO.getContent());
+        if(foretBoardDTO.getPhoto().length > 0) { // 사진이 있으면
+            for(int a=0; a<foretBoardDTO.getPhoto().length; a++) {
+                str_boardImage[a] = foretBoardDTO.getPhoto()[a];
+            }
+        }
+        switch (str_boardImage.length) {
+            case 1:
+                Glide.with(this).load(foretBoardDTO.getPhoto()[0]).into(imageView0);
+                image_count = 1;
+                break;
+            case 2:
+                Glide.with(this).load(foretBoardDTO.getPhoto()[0]).into(imageView0);
+                Glide.with(this).load(foretBoardDTO.getPhoto()[1]).into(imageView1);
+                image_count = 2;
+                break;
+            case 3:
+                Glide.with(this).load(foretBoardDTO.getPhoto()[0]).into(imageView0);
+                Glide.with(this).load(foretBoardDTO.getPhoto()[1]).into(imageView1);
+                Glide.with(this).load(foretBoardDTO.getPhoto()[2]).into(imageView2);
+                image_count = 3;
+                break;
+            case 4:
+                Glide.with(this).load(foretBoardDTO.getPhoto()[0]).into(imageView0);
+                Glide.with(this).load(foretBoardDTO.getPhoto()[1]).into(imageView1);
+                Glide.with(this).load(foretBoardDTO.getPhoto()[2]).into(imageView2);
+                Glide.with(this).load(foretBoardDTO.getPhoto()[3]).into(imageView3);
+                image_count = 4;
+                break;
+            case 5:
+                Glide.with(this).load(foretBoardDTO.getPhoto()[0]).into(imageView0);
+                Glide.with(this).load(foretBoardDTO.getPhoto()[1]).into(imageView1);
+                Glide.with(this).load(foretBoardDTO.getPhoto()[2]).into(imageView2);
+                Glide.with(this).load(foretBoardDTO.getPhoto()[3]).into(imageView3);
+                Glide.with(this).load(foretBoardDTO.getPhoto()[4]).into(imageView4);
+                image_count = 5;
+                break;
         }
     }
 
@@ -104,41 +146,58 @@ public class EditForetBoardActivity extends AppCompatActivity
         textView_writer = findViewById(R.id.textView_writer);
         editText_subject = findViewById(R.id.editText_subject);
         editText_content = findViewById(R.id.editText_content);
-        imageView[0] = findViewById(R.id.imageView0);
-        imageView[1] = findViewById(R.id.imageView1);
-        imageView[2] = findViewById(R.id.imageView2);
-        imageView[3] = findViewById(R.id.imageView3);
-        imageView[4] = findViewById(R.id.imageView4);
-        for (int i=0; i<imageView.length; i++) {
-            Log.d("[TEST]", "imageView.length => " + imageView.length);
-            Log.d("[TEST]", "foretBoard.getBoard_photo().length => " + foretBoard.getBoard_photo().length);
-            imageView[i].setOnClickListener(this);
-        }
+        imageView0 = findViewById(R.id.imageView0);
+        imageView1 = findViewById(R.id.imageView1);
+        imageView2 = findViewById(R.id.imageView2);
+        imageView3 = findViewById(R.id.imageView3);
+        imageView4 = findViewById(R.id.imageView4);
+        button12 = findViewById(R.id.button12);
+
+        button12.setOnClickListener(this);
+        imageView0.setOnClickListener(this);
+        imageView1.setOnClickListener(this);
+        imageView2.setOnClickListener(this);
+        imageView3.setOnClickListener(this);
+        imageView4.setOnClickListener(this);
+
         spinner_board_type.setOnItemSelectedListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.imageView0:
-                image_count = 0;
+            case R.id.button12:
+                if(image_count == 5) {
+                    Toast.makeText(this, "최대 5개까지 등록할 수 있습니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                permissionCheck();
                 showSelect();
+                break;
+            case R.id.imageView0:
+                if(image_count == 1) {
+                    deleteImage();
+                }
                 break;
             case R.id.imageView1:
-                image_count = 1;
-                showSelect();
+                if(image_count == 2) {
+                    deleteImage();
+                }
                 break;
             case R.id.imageView2:
-                image_count = 2;
-                showSelect();
+                if(image_count == 3) {
+                    deleteImage();
+                }
                 break;
             case R.id.imageView3:
-                image_count = 3;
-                showSelect();
+                if(image_count == 4) {
+                    deleteImage();
+                }
                 break;
             case R.id.imageView4:
-                image_count = 4;
-                showSelect();
+                if(image_count == 5) {
+                    deleteImage();
+                }
                 break;
         }
     }
@@ -146,8 +205,14 @@ public class EditForetBoardActivity extends AppCompatActivity
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         //spinner의 선택된 위치 가져오기
-        selectedIndex = (spinner_board_type.getSelectedItemPosition()+1);
-        Log.d("[TEST]", "selectedIndex+1 => " + (selectedIndex+1));
+        if(spinner_board_type.getSelectedItemPosition() == 0) {
+            Toast.makeText(this, "게시판 타입을 선택해주세요.", Toast.LENGTH_SHORT).show();
+        } else if(spinner_board_type.getSelectedItemPosition() == 1) {
+            selectedIndex = 2;
+        } else if(spinner_board_type.getSelectedItemPosition() == 2) {
+            selectedIndex = 4;
+        }
+        Log.d("[TEST]", "selectedIndex+1 => " + (selectedIndex));
     }
 
     private void modify() {
@@ -156,25 +221,30 @@ public class EditForetBoardActivity extends AppCompatActivity
         if(subject.equals("")) {
             Toast.makeText(this, "제목을 입력하세요.", Toast.LENGTH_SHORT).show();
             return;
-        }
-        if(content.equals("")) {
+        } else if(content.equals("")) {
             Toast.makeText(this, "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        } else if(selectedIndex == 0) {
+            Toast.makeText(this, "게시판 타입을 선택해주세요.", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        url = "http://34.72.240.24:8085/foret/board/board_modify.do";
         client = new AsyncHttpClient();
         editForetBoardResponse = new EditForetBoardResponse();
         RequestParams params = new RequestParams();
 
-        params.put("id", foretBoard.getId());
-        params.put("writer", member.getId());
-//        params.put("foret_id", foret.getId());
-        params.put("type", spinner_board_type);
-//        params.put("hit", hit);
+        params.put("id", foretBoardDTO.getId());
+        params.put("writer", memberDTO.getId());
+        params.put("type", selectedIndex);
         params.put("subject", subject);
         params.put("content", content);
-        if(str_boardImage.length != 0) {
-            params.put("photo", str_boardImage);
+
+        if(image_count > 0) {
+            for(int a=0; a<str_boardImage.length; a++) {
+                params.put("photo", str_boardImage[a]);
+                Log.d("[TEST]", "포토 테스트 => " + str_boardImage[a]);
+            }
         }
         client.post(url, params, editForetBoardResponse);
     }
@@ -287,6 +357,23 @@ public class EditForetBoardActivity extends AppCompatActivity
         }
     }
 
+    private void permissionCheck() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.INTERNET,
+                                Manifest.permission.ACCESS_MEDIA_LOCATION,
+                                Manifest.permission.CAMERA}, 100);
+            }
+        }
+    }
+
     // 메뉴 추가
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -298,24 +385,66 @@ public class EditForetBoardActivity extends AppCompatActivity
     private void insertImage() {
         if(image_count == 0) {
             str_boardImage[0] = filePath;
-            Glide.with(this).load(filePath).into(imageView[0]);
+            Glide.with(this).load(filePath).into(imageView0);
+            image_count = 1;
         } else if (image_count == 1) {
             str_boardImage[1] = filePath;
-            Glide.with(this).load(filePath).into(imageView[1]);
+            Glide.with(this).load(filePath).into(imageView1);
+            image_count = 2;
         } else if (image_count == 2) {
             str_boardImage[2] = filePath;
-            Glide.with(this).load(filePath).into(imageView[2]);
+            Glide.with(this).load(filePath).into(imageView2);
+            image_count = 3;
         } else if (image_count == 3) {
             str_boardImage[3] = filePath;
-            Glide.with(this).load(filePath).into(imageView[3]);
+            Glide.with(this).load(filePath).into(imageView3);
+            image_count = 4;
         } else if (image_count == 4) {
             str_boardImage[4] = filePath;
-            Glide.with(this).load(filePath).into(imageView[4]);
+            Glide.with(this).load(filePath).into(imageView4);
+            image_count = 5;
+        }
+        Log.d("[TEST]", "str_boardImage.length() => " + str_boardImage.length);
+    }
+
+    private void deleteImage() {
+        if(image_count == 5) {
+            str_boardImage[4] = "";
+            imageView4.setImageResource(R.drawable.picture);
+            image_count = 4;
+        } else if (image_count == 4) {
+            str_boardImage[3] = "";
+            imageView3.setImageResource(R.drawable.picture);
+            image_count = 3;
+        } else if (image_count == 3) {
+            str_boardImage[2] = "";
+            imageView2.setImageResource(R.drawable.picture);
+            image_count = 2;
+        } else if (image_count == 2) {
+            str_boardImage[1] = "";
+            imageView1.setImageResource(R.drawable.picture);
+            image_count = 1;
+        } else if (image_count == 1) {
+            str_boardImage[0] = "";
+            imageView0.setImageResource(R.drawable.picture);
+            image_count = 0;
         }
         Log.d("[TEST]", "str_boardImage.length() => " + str_boardImage.length);
     }
 
     class EditForetBoardResponse extends AsyncHttpResponseHandler {
+        @Override
+        public void onStart() {
+            super.onStart();
+            Log.d("[TEST]", "EditForetBoardResponse onStart() 호출");
+        }
+
+        @Override
+        public void onFinish() {
+            super.onFinish();
+            Log.d("[TEST]", "EditForetBoardResponse onFinish() 호출");
+        }
+
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
             String str = new String(responseBody);
@@ -333,7 +462,7 @@ public class EditForetBoardActivity extends AppCompatActivity
         }
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(EditForetBoardActivity.this, "통신 실패", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EditForetBoardActivity.this, "EditForetBoardResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
 }

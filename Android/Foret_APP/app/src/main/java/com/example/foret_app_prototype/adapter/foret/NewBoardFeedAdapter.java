@@ -15,17 +15,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.board.ReadForetBoardActivity;
 import com.example.foret_app_prototype.model.HomeForetBoardDTO;
+import com.example.foret_app_prototype.model.MemberDTO;
 
 import java.util.List;
 
 // 메인 프래그먼트에서 사용
 public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Activity activity;
+    private MemberDTO memberDTO;
     private List<HomeForetBoardDTO> homeForetBoardDTOList;
     private ViewHolder viewHolder;
 
-    public NewBoardFeedAdapter(Activity activity, List<HomeForetBoardDTO> homeForetBoardDTOList) {
+    public NewBoardFeedAdapter(Activity activity, MemberDTO memberDTO, List<HomeForetBoardDTO> homeForetBoardDTOList) {
         this.activity = activity;
+        this.memberDTO = memberDTO;
         this.homeForetBoardDTOList = homeForetBoardDTOList;
     }
 
@@ -45,7 +48,10 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         viewHolder.textView2.setText(homeForetBoardDTO.getSubject());
         viewHolder.textView3.setText(homeForetBoardDTO.getContent());
+
+//            String date = homeForetBoardDTO.getReg_date().substring(0, 10);
         viewHolder.textView4.setText(homeForetBoardDTO.getReg_date());
+
 
         // 아이템 클릭 이벤트 처리.
         viewHolder.layout.setOnClickListener(new View.OnClickListener() {
@@ -53,6 +59,7 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ReadForetBoardActivity.class);
                 intent.putExtra("homeForetBoardDTO", homeForetBoardDTO);
+                intent.putExtra("memberDTO", memberDTO);
                 activity.startActivity(intent);
             }
         });

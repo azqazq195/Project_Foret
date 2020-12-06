@@ -22,10 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.board.WriteForetBoardActivity;
-
+import com.example.foret_app_prototype.adapter.foret.BoardViewAdapter;
 import com.example.foret_app_prototype.adapter.foret.ViewForetBoardAdapter;
 import com.example.foret_app_prototype.model.ForetBoardDTO;
 import com.example.foret_app_prototype.model.ForetDTO;
+import com.example.foret_app_prototype.model.ForetViewDTO;
 import com.example.foret_app_prototype.model.MemberDTO;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
@@ -45,11 +46,14 @@ import cz.msebera.android.httpclient.Header;
 
 public class ViewForetActivity extends AppCompatActivity implements View.OnClickListener {
     MemberDTO memberDTO;
-    ForetDTO foretDTO;
+    int foret_id;
+
+    ForetViewDTO foretViewDTO;
     ForetBoardDTO foretBoardDTO;
     List<ForetBoardDTO> foretBoardDTOList;
 
     ViewForetBoardAdapter viewForetBoardAdapter;
+    BoardViewAdapter boardViewAdapter;
 
     Toolbar toolbar;
     Intent intent;
@@ -59,17 +63,17 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     Button button1, button2, button3;
     ImageView imageView_profile;
     LinearLayout noti_layout, board_layout;
-    FloatingActionButton fab_add;
+    FloatingActionButton write_fab_add;
 
     String url;
     AsyncHttpClient client;
     ViewForetResponse viewForetResponse;
     MemberResponse memberResponse;
+    NoticeResponse noticeResponse;
     BoardResponse boardResponse;
     JoinResponse joinResponse;
     LeaveResponse leaveResponse;
 
-    String foret_id = "";
     // 공지사항 페이징
     int noti_pg = 1;
     final int noti_size = 3;
@@ -78,7 +82,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     int board_pg = 1;
     final int board_size = 5;
 
-    int GRADE = 0; // 포레에 가입한 멤버/마스터/가입안함 구분 코드(0=가입안함, 1=가입함, 2=마스터)
+    String rank = ""; // guest = 가입안함, member = 가입함, leader = 리더
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,53 +94,49 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        foret_id = getIntent().getStringExtra("foret_id");
         getFindId(); // 객체 초기화
         addFab(); // 플로팅 버튼
 
-        getMember(); // 회원 정보 가져오기
-
-        int foret_id = getIntent().getIntExtra("foret_id" , foretDTO.getForet_id());
-        foretDTO.setForet_id(foret_id);
-
-        //GRADE = getIntent().getIntExtra("GRADE", 0);
-
-        if(GRADE == 0) { // 포레 가입전 - 가입하기
-            button1.setVisibility(View.VISIBLE);
-        } else if(GRADE == 1) { // 가입한 상태 - 탈퇴하기
-            button2.setVisibility(View.VISIBLE);
-            noti_layout.setVisibility(View.VISIBLE);
-            board_layout.setVisibility(View.VISIBLE);
-        } else if(GRADE == 2) { // 마스터 - 수정하기
-            button3.setVisibility(View.VISIBLE);
-            noti_layout.setVisibility(View.VISIBLE);
-            board_layout.setVisibility(View.VISIBLE);
-        }
-
-        dataSetting(); // 데이터 세팅
+        foret_id = getIntent().getIntExtra("foret_id", 0);
+        Log.d("[TEST]", "넘어온 포레 아디 => " + foret_id);
+        memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
+        Log.d("[TEST]", "넘어온 회원 아디 => " + memberDTO.getId());
+        Log.d("[TEST]", "넘어온 회원 아디 => " + memberDTO.getNickname());
 
 
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        getMember(); // 회원 정보 가져오기
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+//        getForet(); // 포레 정보
+        getNotice();
+        getBoard();
+
         board_list.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
+            public void onScrollStateChanged(@NonNull RecyclerView board_list, int newState) {
+                super.onScrollStateChanged(board_list, newState);
+                Log.d("[TEST]", "onScrollStateChanged 호출 => " + newState);
             }
 
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                int lastPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-                int totalCount = recyclerView.getAdapter().getItemCount();
+            public void onScrolled(@NonNull RecyclerView board_list, int dx, int dy) {
+                super.onScrolled(board_list, dx, dy);
+                Log.d("[TEST]", "onScrolled 호출 => " + dx + " / " +  dy);
+                int lastPosition = ((LinearLayoutManager) board_list.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                int totalCount = board_list.getAdapter().getItemCount();
 
                 if(lastPosition == totalCount){
                     board_pg++;
                     getBoard();
+                    Log.d("[TEST]", "board_pg 호출 => " + board_pg);
                 }
             }
         });
@@ -145,12 +145,14 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
 
     // 플로팅 버튼
     private void addFab() {
-        fab_add = findViewById(R.id.fab_add);
-        fab_add.bringToFront();
-        fab_add.setOnClickListener(new View.OnClickListener() {
+        write_fab_add = findViewById(R.id.fab_add3);
+        write_fab_add.bringToFront();
+        write_fab_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 intent = new Intent(ViewForetActivity.this, WriteForetBoardActivity.class);
+                intent.putExtra("foret_id", foret_id);
+                intent.putExtra("memberDTO", memberDTO);
                 startActivity(intent);
             }
         });
@@ -166,25 +168,26 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void getForet() {
-        url = "http://34.72.240.24:8085/foret/search/member.do";
+        url = "http://34.72.240.24:8085/foret/search/foretSelect.do";
         client = new AsyncHttpClient();
         viewForetResponse = new ViewForetResponse();
         RequestParams params = new RequestParams();
-        params.put("id", memberDTO.getId());
+        params.put("foret_id", foret_id);
+        params.put("member_id", memberDTO.getId());
         client.post(url, params, viewForetResponse);
     }
 
     private void getNotice() {
         url = "http://34.72.240.24:8085/foret/search/boardList.do";
         client = new AsyncHttpClient();
-        boardResponse = new BoardResponse();
+        noticeResponse = new NoticeResponse();
         RequestParams params = new RequestParams();
         params.put("type", 2);
         params.put("foret_id", foret_id);
         params.put("pg", noti_pg);
         params.put("size", noti_size);
         params.put("inquiry_type", 1);
-        client.post(url, params, boardResponse);
+        client.post(url, params, noticeResponse);
     }
 
     private void getBoard() {
@@ -237,6 +240,9 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         textView_intro = findViewById(R.id.textView_intro);
         listView_notice = findViewById(R.id.listView_notice);
         board_list = findViewById(R.id.board_list);
+        noti_layout = findViewById(R.id.noti_layout);
+        board_layout = findViewById(R.id.board_layout);
+        foretBoardDTOList = new ArrayList<>();
 
         button1.setOnClickListener(this); // 가입하기
         button2.setOnClickListener(this); // 탈퇴하기
@@ -246,43 +252,40 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void dataSetting() {
-        if(foretDTO.getForet_photo().equals("") || foretDTO.getForet_photo().equals(null)) {
-            Glide.with(this).load(foretDTO.getForet_photo()).into(imageView_profile);
-        }
-        textView_foretName.setText(foretDTO.getForet_name());
-        String[] str_tag = new String[foretDTO.getForet_tag().size()];
-        for(int i=0; i<foretDTO.getForet_tag().size(); i++) {
-            str_tag[i] = "#" + foretDTO.getForet_tag().get(i) + " ";
+        Glide.with(this).load(foretViewDTO.getPhoto()).
+                placeholder(R.drawable.sss).into(imageView_profile);
+
+        textView_foretName.setText(foretViewDTO.getName());
+        String[] str_tag = new String[foretViewDTO.getForet_tag().size()];
+        for (int i = 0; i < foretViewDTO.getForet_tag().size(); i++) {
+            str_tag[i] = "#" + foretViewDTO.getForet_tag().get(i) + " ";
         }
         textView_tag.setText(Arrays.toString(str_tag));
-        String[] str_si = new String[foretDTO.getForet_region_si().size()];
-        String[] str_gu = new String[foretDTO.getForet_region_gu().size()];
+        String[] str_si = new String[foretViewDTO.getForet_region_si().size()];
+        String[] str_gu = new String[foretViewDTO.getForet_region_gu().size()];
         String str_region = "";
-        for(int i=0; i<foretDTO.getForet_region_si().size(); i++) {
-            str_si[i] = foretDTO.getForet_region_si().get(i);
-            str_gu[i] = foretDTO.getForet_region_gu().get(i);
+        for (int i = 0; i < foretViewDTO.getForet_region_si().size(); i++) {
+            str_si[i] = foretViewDTO.getForet_region_si().get(i);
+            str_gu[i] = foretViewDTO.getForet_region_gu().get(i);
             str_region += str_si[i] + " " + str_gu[i] + ", ";
         }
-        textView_region.setText(str_region.substring(0, str_region.length()-2));
-        textView_member.setText(foretDTO.getForet_member().size() + "/" + foretDTO.getMax_member());
-        textView_master.setText("포레 리더 : " + foretDTO.getForet_leader());
-        textView_date.setText(foretDTO.getReg_date());
-        textView_intro.setText(foretDTO.getIntroduce());
+        textView_region.setText(str_region.substring(0, str_region.length() - 2));
+        textView_member.setText(foretViewDTO.getMember().size() + "/" + foretViewDTO.getMax_member());
+        textView_master.setText("포레 리더 : " + memberDTO.getNickname());
+        String date = foretViewDTO.getReg_date().substring(0, 10);
+        textView_date.setText(date);
+        textView_intro.setText(foretViewDTO.getIntroduce());
+    }
 
-        viewForetBoardAdapter = new ViewForetBoardAdapter(this, foretBoardDTOList);
+    private void setBoard() {
+        viewForetBoardAdapter = new ViewForetBoardAdapter(this, memberDTO, foretBoardDTOList);
         listView_notice.setLayoutManager(new LinearLayoutManager(this));
         listView_notice.setAdapter(viewForetBoardAdapter);
 
+        boardViewAdapter = new BoardViewAdapter(this, memberDTO, foretBoardDTOList);
         board_list.setLayoutManager(new LinearLayoutManager(this));
-        board_list.setAdapter(viewForetBoardAdapter);
+        board_list.setAdapter(boardViewAdapter);
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater menuInflater = getMenuInflater();
-//        menuInflater.inflate(R.menu.basic_toolbar, menu);
-//        return super.onCreateOptionsMenu(menu);
-//    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -305,12 +308,20 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.button3 : // 가입하고 있고, 관리자일 때 -> 수정하기 화면으로 이동
                 intent = new Intent(this, EditForetActivity.class);
-                intent.putExtra("foretDTO", foretDTO);
+                intent.putExtra("foretViewDTO", foretViewDTO);
+                intent.putExtra("memberDTO", memberDTO);
                 startActivity(intent);
                 break;
             case R.id.button10: // 공지사항 다음
                 noti_pg++;
                 getNotice();
+                if(noti_pg > 1) {
+                    button11.setVisibility(View.VISIBLE);
+                } else if(viewForetBoardAdapter.getItemCount() < 3) {
+                    button11.setVisibility(View.INVISIBLE);
+                } else if(viewForetBoardAdapter.getItemCount() == 3) {
+                    button11.setVisibility(View.VISIBLE);
+                }
                 break;
             case R.id.button11: // 공지사항 이전
                 noti_pg--;
@@ -330,8 +341,6 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             public void onClick(DialogInterface dialog, int which) {
                 // 포레 가입
                 foretJoin();
-                button2.setVisibility(View.VISIBLE);
-                button1.setVisibility(View.GONE);
             }
         });
         builder.setNegativeButton("취소", null);
@@ -348,8 +357,6 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             public void onClick(DialogInterface dialog, int which) {
                 // 포레 탈퇴
                 foretLeave();
-                button2.setVisibility(View.VISIBLE);
-                button1.setVisibility(View.GONE);
             }
         });
         builder.setNegativeButton("취소", null);
@@ -369,6 +376,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         public void onFinish() {
             super.onFinish();
             Log.d("[TEST]", "MemeberResponse onStart() 호출");
+            getForet();
         }
 
         @Override
@@ -382,6 +390,14 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
+                    Log.d("[member]", "아디 가져옴 ==== " + memberDTO.getId());
+                    Log.d("[member]", "닉넴 가져옴 ==== " + memberDTO.getNickname());
+                    Log.d("[member]", "이름 가져옴 ==== " + memberDTO.getName());
+                    Log.d("[member]", "생일 가져옴 ==== " + memberDTO.getBirth());
+                    Log.d("[member]", "사진 가져옴 ==== " + memberDTO.getPhoto());
+                    Log.d("[member]", "이멜 가져옴 ==== " + memberDTO.getEmail());
+                    Log.d("[member]", "비번 가져옴 ==== " + memberDTO.getPassword());
+                    Log.d("[member]", "가입일 가져옴 ==== " + memberDTO.getReg_date());
                     Log.d("[TEST]", "회원정보 가져옴");
                 } else {
                     Log.d("[TEST]", "회원정보 못가져옴");
@@ -408,16 +424,141 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         public void onFinish() {
             super.onFinish();
             Log.d("[TEST]", "ViewForetResponse onFinish() 호출");
+
+            rank = foretViewDTO.getRank();
+            if(rank.equals("guest")) { // 포레 가입전 - 가입하기
+                button1.setVisibility(View.VISIBLE);
+                noti_layout.setVisibility(View.GONE);
+                board_layout.setVisibility(View.GONE);
+            } else if(rank.equals("member")) { // 가입한 상태 - 탈퇴하기
+                button2.setVisibility(View.VISIBLE);
+                noti_layout.setVisibility(View.VISIBLE);
+                board_layout.setVisibility(View.VISIBLE);
+            } else if(rank.equals("leader")) { // 리더 - 수정하기
+                button3.setVisibility(View.VISIBLE);
+                noti_layout.setVisibility(View.VISIBLE);
+                board_layout.setVisibility(View.VISIBLE);
+            } else {
+                Toast.makeText(ViewForetActivity.this, "언노운", Toast.LENGTH_SHORT).show();
+            }
+            dataSetting();
+
         }
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            // 포레 데이터 받는 제이슨
+            String str = new String(responseBody);
+            Gson gson = new Gson();
+            try {
+                JSONObject json = new JSONObject(str);
+                String RT = json.getString("RT");
+
+                if (RT.equals("OK")) {
+                    JSONArray foret = json.getJSONArray("foret");
+                    JSONObject temp = foret.getJSONObject(0);
+                    foretViewDTO = new ForetViewDTO();
+                    foretViewDTO = gson.fromJson(temp.toString(), ForetViewDTO.class);
+
+                    JSONArray region_si = temp.getJSONArray("region_si");
+                    List<String> si_list = new ArrayList<>();
+                    for(int i=0; i<region_si.length(); i++) {
+                        String str_si = String.valueOf(region_si.get(i));
+                        si_list.add(str_si);
+                    }
+                    foretViewDTO.setForet_region_si(si_list);
+
+                    JSONArray region_gu = temp.getJSONArray("region_gu");
+                    List<String> gu_list = new ArrayList<>();
+                    for(int i=0; i<region_gu.length(); i++) {
+                        String str_gu = String.valueOf(region_gu.get(i));
+                        gu_list.add(str_gu);
+                    }
+                    foretViewDTO.setForet_region_gu(gu_list);
+
+                    JSONArray tag = temp.getJSONArray("tag");
+                    List<String> tag_list = new ArrayList<>();
+                    for(int i=0; i<tag.length(); i++) {
+                        String str_tag = String.valueOf(tag.get(i));
+                        tag_list.add(str_tag);
+                    }
+                    foretViewDTO.setForet_tag(tag_list);
+
+                    JSONArray member = temp.getJSONArray("member");
+                    List<Integer> member_list = new ArrayList<>();
+                    for(int i=0; i<member.length(); i++) {
+                        int mem = (int)member.get(i);
+                        member_list.add(mem);
+                    }
+                    foretViewDTO.setMember(member_list);
+
+                    foretViewDTO.setRank(json.getString("rank"));
+                    Log.d("[TEST]", "포레정보 가져옴");
+                    Log.d("[TEST]", "foretDTO.getId => " + foretViewDTO.getId());
+                    Log.d("[TEST]", "foretDTO.getPhoto => " + foretViewDTO.getPhoto());
+                    Log.d("[TEST]", "foretDTO.getName => " + foretViewDTO.getName());
+                    Log.d("[TEST]", "foretDTO.getIntroduce => " + foretViewDTO.getIntroduce());
+                    Log.d("[TEST]", "foretDTO.getLeader_id => " + foretViewDTO.getLeader_id());
+                    Log.d("[TEST]", "foretDTO.getForet_region_gu => " + foretViewDTO.getForet_region_gu().size());
+                    Log.d("[TEST]", "foretDTO.getForet_region_si => " + foretViewDTO.getForet_region_si().size());
+                    Log.d("[TEST]", "foretDTO.getForet_tag => " + foretViewDTO.getForet_tag().size());
+                    Log.d("[TEST]", "foretDTO.getRank => " + foretViewDTO.getRank());
+                } else {
+                    Log.d("[TEST]", "포레정보 못가져옴");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(ViewForetActivity.this, "ViewForetResponse 통신 실패", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class NoticeResponse extends AsyncHttpResponseHandler {
+        @Override
+        public void onStart() {
+            Log.d("[TEST]", "NoticeResponse onStart() 호출");
+        }
+
+        @Override
+        public void onFinish() {
+            Log.d("[TEST]", "NoticeResponse onFinish() 호출");
+            viewForetBoardAdapter = new ViewForetBoardAdapter(ViewForetActivity.this, memberDTO, foretBoardDTOList);
+            listView_notice.setLayoutManager(new LinearLayoutManager(ViewForetActivity.this));
+            listView_notice.setAdapter(viewForetBoardAdapter);
+            viewForetBoardAdapter.setItems(foretBoardDTOList);
+
+        }
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            foretBoardDTOList = new ArrayList<>();
+            String str = new String(responseBody);
+            Gson gson = new Gson();
+            try {
+                JSONObject json = new JSONObject(str);
+                String RT = json.getString("RT");
+                if(RT.equals("OK")) {
+                    JSONArray board = json.getJSONArray("board");
+                    JSONObject temp = board.getJSONObject(0);
+                    for(int i=0; i<board.length(); i++) {
+                        foretBoardDTO = gson.fromJson(temp.toString(), ForetBoardDTO.class);
+                        foretBoardDTOList.add(foretBoardDTO);
+                    }
+                    Log.d("[TEST]", "foretBoardDTOList.size() => " + foretBoardDTOList.size());
+                    Log.d("[TEST]", "포레 게시판 리스트 가져옴");
+                } else {
+                    Log.d("[TEST]", "포레 게시판 리스트 못가져옴");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(ViewForetActivity.this, "NoticeResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -430,6 +571,11 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void onFinish() {
             Log.d("[TEST]", "BoardResponse onFinish() 호출");
+            boardViewAdapter = new BoardViewAdapter(ViewForetActivity.this, memberDTO, foretBoardDTOList);
+            board_list.setLayoutManager(new LinearLayoutManager(ViewForetActivity.this));
+            board_list.setAdapter(boardViewAdapter);
+            boardViewAdapter.setItems(foretBoardDTOList);
+
         }
 
         @Override
@@ -484,6 +630,10 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                 if (foretMemberRT.equals("OK")) {
                     Toast.makeText(ViewForetActivity.this, "포레에 가입했습니다.", Toast.LENGTH_SHORT).show();
                     Log.d("[TEST]", "가입 성공");
+                    button2.setVisibility(View.VISIBLE);
+                    button1.setVisibility(View.GONE);
+                    noti_layout.setVisibility(View.VISIBLE);
+                    board_layout.setVisibility(View.VISIBLE);
                 } else {
                     Log.d("[TEST]", "가입 실패");
                 }
@@ -520,6 +670,10 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                 if (foretMemberRT.equals("OK")) {
                     Toast.makeText(ViewForetActivity.this, "포레를 탈퇴했습니다.", Toast.LENGTH_SHORT).show();
                     Log.d("[TEST]", "탈퇴 성공");
+                    button2.setVisibility(View.VISIBLE);
+                    button1.setVisibility(View.GONE);
+                    noti_layout.setVisibility(View.GONE);
+                    board_layout.setVisibility(View.GONE);
                 } else {
                     Log.d("[TEST]", "탈퇴 실패");
                 }

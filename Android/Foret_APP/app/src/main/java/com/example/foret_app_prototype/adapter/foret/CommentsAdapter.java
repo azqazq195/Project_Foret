@@ -1,5 +1,6 @@
 package com.example.foret_app_prototype.adapter.foret;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,17 +10,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
-import com.example.foret_app_prototype.model.ForetBoardComment;
+import com.example.foret_app_prototype.model.FBCommentDTO;
+import com.example.foret_app_prototype.model.MemberDTO;
 
 import java.util.List;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder> {
-    List<ForetBoardComment> foretBoardCommentList;
+    Activity activity;
+    MemberDTO memberDTO;
+    List<FBCommentDTO> commentList;
     ViewHolder viewHolder;
 
-    public CommentsAdapter(List<ForetBoardComment> foretBoardCommentList) {
-        this.foretBoardCommentList = foretBoardCommentList;
+    public CommentsAdapter(Activity activity, MemberDTO memberDTO, List<FBCommentDTO> commentList) {
+        this.activity = activity;
+        this.memberDTO = memberDTO;
+        this.commentList = commentList;
     }
 
     @NonNull
@@ -34,21 +41,25 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ForetBoardComment item = foretBoardCommentList.get(position);
+        FBCommentDTO item = commentList.get(position);
 
-        viewHolder.image_writer.setImageResource(item.getWriter_image());
-        viewHolder.commentName.setText(item.getWriter());
-        viewHolder.commentDate.setText(item.getReg_date());
+        if (!item.getWriter_photo().equals("") && item.getWriter_photo() != null) {
+            Glide.with(activity).load(item.getWriter_photo()).
+                    placeholder(R.drawable.sss).into(viewHolder.image_writer);
+        }
+        viewHolder.commentName.setText(item.getWriter_nickname());
+        String date = item.getReg_date().substring(0, 10);
+        viewHolder.commentDate.setText(date);
         viewHolder.commentContent.setText(item.getContent());
     }
 
     @Override
     public int getItemCount() {
-        return foretBoardCommentList.size();
+        return commentList.size();
     }
 
-    public void  setItems(List<ForetBoardComment> items) {
-        this.foretBoardCommentList = items;
+    public void  setItems(List<FBCommentDTO> items) {
+        this.commentList = items;
     }
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView image_writer;

@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
-import com.example.foret_app_prototype.activity.foret.board.ListForetBoardActivity;
 import com.example.foret_app_prototype.adapter.foret.ForetBoardAdapter;
 import com.example.foret_app_prototype.model.Foret;
 import com.example.foret_app_prototype.model.ForetBoard;

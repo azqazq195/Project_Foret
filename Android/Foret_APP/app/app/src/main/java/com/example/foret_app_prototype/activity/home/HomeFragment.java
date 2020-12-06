@@ -27,7 +27,6 @@ import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.activity.foret.ViewForetActivity;
 //import com.example.foret_app_prototype.activity.foret.board.ListForetBoardActivity;
-import com.example.foret_app_prototype.activity.foret.board.ListForetBoardActivity;
 import com.example.foret_app_prototype.activity.foret.board.ReadForetBoardActivity;
 import com.example.foret_app_prototype.activity.login.SessionManager;
 import com.example.foret_app_prototype.activity.search.SearchFragment;
