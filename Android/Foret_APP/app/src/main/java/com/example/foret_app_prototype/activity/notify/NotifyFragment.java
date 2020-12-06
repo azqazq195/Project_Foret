@@ -1,5 +1,6 @@
 package com.example.foret_app_prototype.activity.notify;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,8 +40,11 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
     ListView listView;
     List<ModelNotify> notifyList;
     NotificationAdapter2 adapter;
-
-
+    String type;
+    String sender ;
+    String time ;
+    String content;
+    Context context;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,53 +54,49 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle(null);
         setHasOptionsMenu(true);
+        context = rootView.getContext();
 
         listView = rootView.findViewById(R.id.listView);
         View footer = getLayoutInflater().inflate(R.layout.footer, null, false);
         listView.addFooterView(footer);
         //LinearLayout layout = (LinearLayout)footer.findViewById(R.id.layout);
-        notifyList = new ArrayList<>();
-        adapter = new NotificationAdapter2(getContext(), R.layout.item_row_notification, notifyList);
-        listView.setAdapter(adapter);
+
+
+
 
         getItem();
         return rootView;
     }
 
-    //        int GROUP_NEW_ITEM = 0;            //내 포레 새글
-//        int MESSAGE_NEW_ITEM = 1;          //새로운 메세지
-//        int PUBLIC_NOTICE_NEW_ITEM = 2;    //마스터 공지
-//        int ANONYMOUS_BOARD_NEW_ITEM = 3;  //내가 쓴 글의 댓글
-//        int REPLIED_NEW_ITEM = 4;          //내가 댓글의 대댓글
-//        int NEW_ITEM1 = 5;                 //임시 타입 1
-//        int NEW_ITEM2 = 6;                 //임시 타입 2
-//        int NEW_ITEM3 = 7;                 //임시 타입 3
-//        int NEW_ITEM4 = 8;                 //임시 타입 4
     private void getItem() {
+        notifyList = new ArrayList<>();
+        notifyList.clear();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notify");
-
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notify").child(user.getUid());
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    Log.e("[test]", "ds ?" + ds.getRef());
-                    Log.e("[test]", "snapshot.child(\"sender\").getValue() ?" + snapshot.child("sender").getValue());
-                    Log.e("[test]", "user.getUid() ?" + user.getUid());
-                    if (ds.child("sender").getValue().equals(user.getUid())) {
-                        //if(snapshot.child("receiver").getValue().equals(user.getUid())){
-                        Log.e("[test]","트루 진입");
+                    ModelNotify item = ds.getValue(ModelNotify.class);
+                    Log.e("[test]", "ref??" + ref.getRef());
+                    Log.e("[test]", "item???" + item.toString());
+                    /*f (ds.child("sender").getValue().equals(user.getUid())) {
+                      if(ds.child("receiver").getValue().equals(user.getUid())){
                         Log.e("[test]","ds.get벨류?"+ds.getValue());
-                        String type = ""+ds.child("type").getValue();
-                        String sender = ""+ds.child("sender").getValue();
-                        String time = ""+ds.child("time").getValue();
-                        String content = ""+ds.child("content").getValue();
+                         type = ""+ds.child("type").getValue();
+                         sender = ""+ds.child("sender").getValue();
+                         time = ""+ds.child("time").getValue();
+                         content = ""+ds.child("content").getValue();
                         Log.e("[test]","content?"+content);
-                        notifyList.add(new ModelNotify(type,content,time,""+R.drawable.ic_launcher_foreground));
+                        }
+                        */
 
-                    }
+
+                    adapter = new NotificationAdapter2(context, R.layout.item_row_notification, notifyList);
+                    listView.setAdapter(adapter);
+
+                    //notifyList.add(new ModelNotify(type,content,time,""+R.drawable.ic_launcher_foreground));
                 }
             }
             @Override
@@ -134,4 +134,9 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("[test]",notifyList.size()+"");
+    }
 }

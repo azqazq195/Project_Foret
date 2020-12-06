@@ -405,15 +405,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     //새글데이터
     public void updateNewItem(String type,String sender,String receiver, String content ,String time){
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notify");
-
-        HashMap<String,String> hashMap = new HashMap<>();
+        HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put("type",type);
         hashMap.put("sender",sender);
         hashMap.put("receiver",receiver);
         hashMap.put("content",content);
         hashMap.put("time",time);
+        hashMap.put("isSeen",false);
 
-        ref.push().setValue(hashMap);
+        ref.child(receiver).push().setValue(hashMap);
     }
 
     // 알림 발송 설정.

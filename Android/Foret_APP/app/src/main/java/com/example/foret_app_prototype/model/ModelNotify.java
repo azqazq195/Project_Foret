@@ -1,17 +1,22 @@
 package com.example.foret_app_prototype.model;
 
+import com.google.firebase.database.PropertyName;
+
 public class ModelNotify {
 
-    String type, message, time,iamge;
+    String type, content, time,sender,receiver;
+    boolean isSeen;
 
     public ModelNotify() {
     }
 
-    public ModelNotify(String type, String message, String time, String iamge) {
+    public ModelNotify(String type, String content, String time, String sender, String receiver, boolean isSeen) {
         this.type = type;
-        this.message = message;
+        this.content = content;
         this.time = time;
-        this.iamge = iamge;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.isSeen = isSeen;
     }
 
     public String getType() {
@@ -22,12 +27,12 @@ public class ModelNotify {
         this.type = type;
     }
 
-    public String getMessage() {
-        return message;
+    public String getContent() {
+        return content;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getTime() {
@@ -38,11 +43,27 @@ public class ModelNotify {
         this.time = time;
     }
 
-    public String getIamge() {
-        return iamge;
+    public String getSender() {
+        return sender;
     }
 
-    public void setIamge(String iamge) {
-        this.iamge = iamge;
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+    @PropertyName("isSeen")
+    public boolean isSeen() {
+        return isSeen;
+    }
+
+    public void setSeen(boolean seen) {
+        isSeen = seen;
     }
 }
