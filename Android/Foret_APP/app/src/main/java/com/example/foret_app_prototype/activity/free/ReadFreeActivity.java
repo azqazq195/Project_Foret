@@ -266,6 +266,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
     public void onDeleteButtonClick(boolean delete) {
         if(delete) {
             comment_count --;
+            textView_comment.setText(String.valueOf(comment_count));
         }
     }
 

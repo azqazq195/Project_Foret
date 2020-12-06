@@ -77,14 +77,12 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
         } else {
             holder.layout.setVisibility(View.GONE);
         }
-        holder.textView1.setText(comment.getWriter());
         holder.textView2.setText(comment.getContent());
         holder.textView3.setText(comment.getReg_date());
         holder.button1.setOnClickListener(new View.OnClickListener() { //답글쓰기
             @Override
             public void onClick(View v) {
                 String target = comment.getWriter();
-
                 commentClickListener.onReplyButtonClick(v, target, true);
             }
         });
@@ -154,7 +152,7 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
             public void onClick(DialogInterface dialog, int which) {
                     list.remove(positon);
                     notifyItemRemoved(positon);
-                    if(list.size()!=0) {
+                    if(list.size() > 0) {
                     notifyItemRangeChanged(positon, list.size() - 1);
                     }
                     commentClickListener.onDeleteButtonClick(true);
