@@ -2,14 +2,14 @@ package com.example.foret_app_prototype.activity.notify;
 
 public class Data {
 
-    private String user,message,title,sent;
+    private String user,body,title,sent;
     private Integer icon;
     public Data() {
     }
 
-    public Data(String user, String message, String title, String sent, Integer icon) {
+    public Data(String user, String body, String title, String sent, Integer icon) {
         this.user = user;
-        this.message = message;
+        this.body = body;
         this.title = title;
         this.sent = sent;
         this.icon = icon;
@@ -24,11 +24,11 @@ public class Data {
     }
 
     public String getMessage() {
-        return message;
+        return body;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessage(String body) {
+        this.body = body;
     }
 
     public String getTitle() {

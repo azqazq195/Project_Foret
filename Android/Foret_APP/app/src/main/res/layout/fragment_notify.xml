@@ -30,6 +30,7 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <!--android:entries="@array/notice" -->
     <ListView
         android:id="@+id/listView"
         android:layout_width="0dp"
@@ -38,7 +39,6 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="20dp"
-        android:entries="@array/notice"
         android:footerDividersEnabled="true"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"

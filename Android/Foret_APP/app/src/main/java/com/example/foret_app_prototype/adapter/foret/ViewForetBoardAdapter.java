@@ -13,18 +13,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.board.ReadForetBoardActivity;
-import com.example.foret_app_prototype.model.HomeForetBoardDTO;
+import com.example.foret_app_prototype.model.ForetBoardDTO;
 
 import java.util.List;
 
-public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.ViewHolder> {
+public class ViewForetBoardAdapter extends RecyclerView.Adapter<ViewForetBoardAdapter.ViewHolder> {
     private Activity activity;
-    private List<HomeForetBoardDTO> homeForetBoardDTOList;
+    private List<ForetBoardDTO> foretBoardDTOList;
     private ViewHolder viewHolder;
 
-    public ForetBoardAdapter(Activity activity, List<HomeForetBoardDTO> homeForetBoardDTOList) {
+    public ViewForetBoardAdapter(Activity activity, List<ForetBoardDTO> foretBoardDTOList) {
         this.activity = activity;
-        this.homeForetBoardDTOList = homeForetBoardDTOList;
+        this.foretBoardDTOList = foretBoardDTOList;
     }
 
     @NonNull
@@ -39,17 +39,17 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        HomeForetBoardDTO homeForetBoardDTO = homeForetBoardDTOList.get(position);
+        ForetBoardDTO foretBoardDTO = foretBoardDTOList.get(position);
 
-        viewHolder.subject.setText(homeForetBoardDTO.getSubject());
-        viewHolder.date.setText(homeForetBoardDTO.getReg_date());
+        viewHolder.subject.setText(foretBoardDTO.getSubject());
+        viewHolder.date.setText(foretBoardDTO.getReg_date());
 
         // 아이템 클릭 이벤트 처리.
         viewHolder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ReadForetBoardActivity.class);
-                intent.putExtra("homeForetBoardDTO", homeForetBoardDTO);
+                intent.putExtra("foretBoardDTO", foretBoardDTO);
                 activity.startActivity(intent);
             }
         });
@@ -57,11 +57,11 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
 
     @Override
     public int getItemCount() {
-        return homeForetBoardDTOList.size();
+        return foretBoardDTOList.size();
     }
 
-    public void setItems(List<HomeForetBoardDTO> items) {
-        this.homeForetBoardDTOList = items;
+    public void setItems(List<ForetBoardDTO> items) {
+        this.foretBoardDTOList = items;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

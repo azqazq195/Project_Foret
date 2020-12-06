@@ -36,6 +36,8 @@ import cz.msebera.android.httpclient.Header;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public static LoginActivity loginActivity;
+
     private boolean saveLoginData;
     private String email;
     private String pwd;
@@ -54,6 +56,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        loginActivity = LoginActivity.this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         button0 = findViewById(R.id.button0);
@@ -134,12 +137,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     //파이어 베이스
                     joinedMember(email,pwd);
                     id = json.getString("id");
+                    /*
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     MemberDTO memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
                     // 세션에 담아서 로그인 페이지로
                     SessionManager sessionManager = new SessionManager(LoginActivity.this);
                     sessionManager.saveSession(memberDTO);
+
+                     */
                     Log.e("[test]","성공진입/"+statusCode);
                     ProgressDialogHelper.getInstance().removeProgressbar();
 

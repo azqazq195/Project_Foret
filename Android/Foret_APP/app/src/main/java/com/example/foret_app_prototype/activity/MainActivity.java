@@ -25,6 +25,7 @@ import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.chat.ChatFragment;
 import com.example.foret_app_prototype.activity.free.FreeFragment;
 import com.example.foret_app_prototype.activity.home.HomeFragment;
+import com.example.foret_app_prototype.activity.login.LoginActivity;
 import com.example.foret_app_prototype.activity.login.SessionManager;
 import com.example.foret_app_prototype.activity.menu.AppNoticeActivity;
 import com.example.foret_app_prototype.activity.menu.MyInfoActivity;
@@ -58,6 +59,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpResponse;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     Context context;
     String message;
     String mUID;
+    String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,10 +127,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         response = new HttpResponse();
         sessionManager = new SessionManager(this);
 
-        //String id = getIntent().getStringExtra("id");
+        id = getIntent().getStringExtra("id");
+        if(id==null||id.equals("")){
+            id = ""+sessionManager.getSession();
+        }
 
         RequestParams params = new RequestParams();
-        params.put("id", 100);
+        params.put("id", id);
 
 
         final int DEFAULT_TIME = 40 * 1000;
@@ -140,30 +146,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         button_out2.setOnClickListener(this);
         button_drawcancel.setOnClickListener(this);
 
-        try {
-            String token = FirebaseInstanceId.getInstance().getToken();
-            Log.e("[test]","device token : "+token);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("[test]", "Fetching FCM registration token failed", task.getException());
-                            return;
-                        }
-
-                        String token = task.getResult();
-
-                        // Log and toast
-                        String msg = getString(R.string.msg_token_fmt, token);
-                        Log.d("TAG", msg);
-                        // Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
     //안드로이드 푸쉬알림을 위한 추가
@@ -264,7 +246,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
                 if (user == null) {
                     Toast.makeText(context, "로그아웃 됨", Toast.LENGTH_LONG).show();
-                    finish();
+                    startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                    MainActivity.this.finish();
+
                 }
             }
         });
@@ -289,6 +273,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
+
+                    LoginActivity loginActivity = (LoginActivity)LoginActivity.loginActivity;
+                    // 세션에 담아서 로그인 페이지로
+                    SessionManager sessionManager = new SessionManager(loginActivity);
+                    sessionManager.saveSession(memberDTO);
 
                     // 데이터 셋팅 HERE ----------------
                     Toast.makeText(MainActivity.this, memberDTO.toString(), Toast.LENGTH_SHORT).show();
@@ -345,8 +334,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             //로그인 아닌상태
             Toast.makeText(context, "파이어베이스 로그아웃 상태..", Toast.LENGTH_LONG).show();
         } else {
-            mUID = currntuser.getUid();
-            updateToken(FirebaseInstanceId.getInstance().getToken());
+                mUID = currntuser.getUid();
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnCompleteListener(new OnCompleteListener<String>() {
+                        @Override
+                        public void onComplete(@NonNull Task<String> task) {
+                            if (!task.isSuccessful()) {
+                                Log.e("[test]", "Fetching FCM registration token failed", task.getException());
+                                return;
+                            }
+
+                            String token = task.getResult();
+                            updateToken(token);
+                        }
+                    });
+            //updateToken(FirebaseInstanceId.getInstance().getToken());
             //현재 로그인된 유저 uid를 저장하고 미리 공유하는 참조를 저장
             SharedPreferences sp =getSharedPreferences("SP_USER",MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();

@@ -18,16 +18,11 @@ public class FirebaseService extends FirebaseInstanceIdService {
             updateToken(tokoenRefresth);
         }
     }
-
+        //토큰을 데이터에 저장해두기.
     private void updateToken(String tokoenRefresth) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
-
         Token token = new Token(tokoenRefresth);
-
         ref.child(user.getUid()).setValue(token);
-
-
-
     }
 }

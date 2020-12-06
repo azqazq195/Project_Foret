@@ -33,6 +33,7 @@ import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.notify.APIService;
 import com.example.foret_app_prototype.activity.notify.Client;
 import com.example.foret_app_prototype.activity.notify.Data;
+import com.example.foret_app_prototype.activity.notify.NotifyFragment;
 import com.example.foret_app_prototype.activity.notify.Response;
 import com.example.foret_app_prototype.activity.notify.Sender;
 import com.example.foret_app_prototype.activity.notify.Token;
@@ -134,8 +135,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        //알림 설정
-        apiService = Client.getRetrofit("https://fcm.googleapis.com").create(APIService.class);
+
+        //푸쉬 알림 생성
+        apiService = Client.getRetrofit("https://fcm.googleapis.com/").create(APIService.class);
 
 
         //파이어 베이스 인스턴스
@@ -266,6 +268,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 String message = messageEt.getText().toString().trim();
                 //입력검사
                 if (message.equals("") && message == null) {
+                    return;
                     //터치 무시
                 } else {
                     sendMessage(message);
@@ -376,7 +379,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         messageEt.setText("");
         recyclerView.smoothScrollToPosition(adapter.getItemCount());
 
-
+        updateNewItem("MESSAGE_NEW_ITEM ",myUid,hisUid,message,""+System.currentTimeMillis());
         String msg = message;
         //설정
         DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
@@ -399,18 +402,39 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    //설정
+    //새글데이터
+    public void updateNewItem(String type,String sender,String receiver, String content ,String time){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notify");
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("type",type);
+        hashMap.put("sender",sender);
+        hashMap.put("receiver",receiver);
+        hashMap.put("content",content);
+        hashMap.put("time",time);
+        hashMap.put("isSeen",false);
+
+        ref.child(receiver).push().setValue(hashMap);
+    }
+
+    // 알림 발송 설정.
     private void sendNotification(String hisUid, String nickname, String message) {
         DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
-        Query query = allTokens.orderByKey().equalTo(hisUid);
+        Query query = allTokens.orderByKey().equalTo(hisUid); //상대 찾기
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot ds : snapshot.getChildren()){
-                    Token token = ds.getValue(Token.class);
-                    Data data = new Data(myUid,my_nickname+" : "+message,"New Message",hisUid,R.drawable.foret_logo);
 
+
+                for(DataSnapshot ds : snapshot.getChildren()){
+                    //상대 토큰값 토큰화 하기
+                    Token token = ds.getValue(Token.class);
+
+                    //데이터 셋팅
+                    Data data = new Data(myUid,nickname+" : "+message,"New Message",hisUid,R.drawable.foret_logo);
+
+                    //보내는 사람 셋팅
                     Sender sender = new Sender(data, token.getToken());
+                    //발송
                     apiService.sendNotification(sender)
                             .enqueue(new Callback<Response>() {
                                 @Override

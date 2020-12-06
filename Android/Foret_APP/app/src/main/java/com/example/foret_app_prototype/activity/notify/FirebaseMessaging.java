@@ -38,13 +38,13 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
         //현재 유저정보를 미리 공유된 참조로 얻기
         SharedPreferences sp = getSharedPreferences("SP_USER", MODE_PRIVATE);
-        String savedCurrnetUser = sp.getString("Currnt_USERID", "None");
+        String savedCurrentUser = sp.getString("Current_USERID", "None");
 
         String sent = remoteMessage.getData().get("sent");
         String user = remoteMessage.getData().get("user");
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         if (fUser != null && sent.equals(fUser.getUid())) {
-            if (!savedCurrnetUser.equals(user)) {
+            if (!savedCurrentUser.equals(user)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     sendOAndAboveNotification(remoteMessage);
 
@@ -56,11 +56,12 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
     }
 
+    //채팅방으로 보내주는 명령
     private void sendNormalNotification(RemoteMessage remoteMessage) {
         String user = remoteMessage.getData().get("user");
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
-        String message = remoteMessage.getData().get("message");
+        String body = remoteMessage.getData().get("body");
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int i = Integer.parseInt(user.replaceAll("[\\D]", ""));
@@ -74,7 +75,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         Uri defSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(Integer.parseInt(icon))
-                .setContentText(message)
+                .setContentText(body)
                 .setContentTitle(title)
                 .setAutoCancel(true)
                 .setSound(defSoundUri)
@@ -87,12 +88,11 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         notificationManager.notify(j, builder.build());
 
     }
-
     private void sendOAndAboveNotification(RemoteMessage remoteMessage) {
         String user = remoteMessage.getData().get("user");          //보낸사람
         String icon = remoteMessage.getData().get("icon");          //아이콘
         String title = remoteMessage.getData().get("title");        //타입 개인메세지/그룹메세지/새글/댓글 등
-        String message = remoteMessage.getData().get("message");    //내용 -> 새로운 메세지가 등록되었습니다.
+        String body = remoteMessage.getData().get("body");    //내용 -> 새로운 메세지가 등록되었습니다.
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int i = Integer.parseInt(user.replaceAll("[\\D]", ""));
@@ -106,7 +106,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         Uri defSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         OreoAndAboveNotification notification1 = new OreoAndAboveNotification(this);
-        Notification.Builder builder = notification1.getONotifications(title, message, pIntent, defSoundUri, icon);
+        Notification.Builder builder = notification1.getONotifications(title, body, pIntent, defSoundUri, icon);
 
         int j = 0;
         if (i > 0) {
@@ -114,4 +114,10 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         }
         notification1.getManager().notify(j,builder.build());
     }
+    
+    //포레로
+    
+    //익명게시판으로
+    
+    //등등
 }

@@ -109,6 +109,18 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
         client = new AsyncHttpClient();
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e("[test]", "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+                        Log.e("[test]", "deviceToken?"+deviceToken);
+                        deviceToken = task.getResult();
+                    }
+                });
         activity = this;
         context = this;
         button0 = findViewById(R.id.button0); // 건너뛰기
@@ -520,11 +532,11 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             str_si[a] = region_si.get(a);
             str_gu[a] = region_gu.get(a);
             if(a==0){
-                params.put("region_si","서울시" );
-                params.put("region_gu", "강남구");
+                params.put("region_si",str_si[a] );
+                params.put("region_gu", str_gu[a]);
             }else {
-                params.add("region_si", "성남시");
-                params.add("region_gu", "분당구");
+                params.add("region_si", str_si[a]);
+                params.add("region_gu", str_gu[a]);
             }
 
         }
@@ -533,23 +545,13 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             str_tag[a] = member_tag.get(a);
 
             if(a==0){
-                params.put("tag","태그1" );
+                params.put("tag",str_tag[a] );
             }else {
-                params.add("tag", "태그2");
+                params.add("tag",str_tag[a]);
             }
         }
 
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("[test]", "Fetching FCM registration token failed", task.getException());
-                            return;
-                        }
-                        deviceToken = task.getResult();
-                    }
-                });
+
 
         params.put("device_Token", deviceToken);
         Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
@@ -623,7 +625,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Log.e("[test]", "온페일 진입");
+            Log.e("[test]", "온페일 진입"+statusCode);
             Toast.makeText(activity, "통신실패, 원인 : " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }

@@ -21,4 +21,8 @@
     <color name="color3">#6C4BA6</color>
     <color name="color4">#4F9852</color>
     <color name="color5">#217FAA</color>
+
+    <!-- 읽음 안릭음 컬러-->
+    <color name="read">#FFD5CB76</color>
+    <color name="unread">#88FCFEFF</color>
 </resources>
