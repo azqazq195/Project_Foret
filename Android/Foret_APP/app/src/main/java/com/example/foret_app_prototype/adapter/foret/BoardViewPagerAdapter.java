@@ -9,23 +9,28 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
-import com.example.foret_app_prototype.model.ForetBoard;
+import com.example.foret_app_prototype.model.ForetBoardDTO;
+import com.example.foret_app_prototype.model.MemberDTO;
 
 import java.util.List;
 
+//보드뷰 어답터에서사용/ 리드포레보드사용
 public class BoardViewPagerAdapter extends PagerAdapter {
     private Activity activity;
-    private List<ForetBoard> foretBoardList;
+    private MemberDTO memberDTO;
+    private List<ForetBoardDTO> foretBoardDTOList;
 
-    public BoardViewPagerAdapter(Activity activity, List<ForetBoard> foretBoardList) {
+    public BoardViewPagerAdapter(Activity activity, MemberDTO memberDTO, List<ForetBoardDTO> foretBoardDTOList) {
         this.activity = activity;
-        this.foretBoardList = foretBoardList;
+        this.memberDTO = memberDTO;
+        this.foretBoardDTOList = foretBoardDTOList;
     }
 
     @Override
     public int getCount() {
-        return foretBoardList.size();
+        return foretBoardDTOList.size();
     }
 
     @Override
@@ -43,14 +48,12 @@ public class BoardViewPagerAdapter extends PagerAdapter {
         // main_fragment_home_foret_thum.xml에 설정된 클래스 객체 생성
         View itemView = activity.getLayoutInflater().inflate(R.layout.board_view_pager, null);
         // 한 페이지에 보여줄 데이터 1개 꺼내기
-        final ForetBoard foretBoard = foretBoardList.get(position);
+        final ForetBoardDTO foretBoardDTO = foretBoardDTOList.get(position);
 
         ImageView board_view_pager = itemView.findViewById(R.id.board_view_pager);
 
-//        Glide.with(activity).load(foretBoard.getBoard_photo())
-//                .placeholder(R.drawable.noimage)
-//                .into(board_view_pager);
-        board_view_pager.setImageResource(foretBoard.getBoradImage());
+        Glide.with(activity).load(foretBoardDTO.getPhoto())
+                .placeholder(R.drawable.sss).into(board_view_pager);
 
         // 컨테이너에 추가 (viewPager에 등록)
         container.addView(itemView, 0);

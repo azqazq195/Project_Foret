@@ -48,15 +48,6 @@
                 android:textColor="#000000"
                 android:textSize="15sp" />
 
-            <TextView
-                android:id="@+id/type"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="170dp"
-                android:layout_marginTop="20dp"
-                android:gravity="right"
-                android:text="type" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -153,7 +144,7 @@
                     android:layout_marginTop="3dp"
                     android:layout_marginRight="15dp"
                     android:singleLine="false"
-                    android:text="내용"
+                    android:text="내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="#E6000000" />
 
@@ -167,16 +158,6 @@
                     android:text="댓글 몇개 모두 보기"
                     android:textColor="#B3000000"
                     android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/comment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:layout_marginBottom="3dp"
-                    android:text="댓글 작성자"
-                    android:textColor="#000000" />
 
                 <TextView
                     android:id="@+id/date"
