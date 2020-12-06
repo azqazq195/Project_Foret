@@ -142,7 +142,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         button_complete.setOnClickListener(this);
         button_region.setOnClickListener(this);
         button_tag.setOnClickListener(this);
-
+        selected_tag = new ArrayList<>();
         firebaseAuth = FirebaseAuth.getInstance();
 
         client = new AsyncHttpClient();
@@ -375,7 +375,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         spinner_tag.setAdapter(adapter);
 
         spinner_tag.setSelection(0);
-        //dd
+
         spinner_tag.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -419,23 +419,6 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             }
         });
 
-
-
-
-        //ss
-
-
-        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //확인 버튼 누르면
-                for (int a = 0; a < foret_tag.size(); a++) {
-                    show += "#" + foret_tag.get(a) + " ";
-                    Log.d("[TEST]", "foret_tag.get(a) => " + foret_tag.get(a));
-                }
-                button_tag.setText(show);
-            }
-        });
         builder.setNegativeButton("취소", null);
 
         builder.setView(region_view);
