@@ -62,37 +62,25 @@ public class NotificationAdapter2 extends ArrayAdapter<ModelNotify> {
                 layout.setBackgroundColor(getContext().getResources().getColor(R.color.read));
             }
 
-            switch (item.getType()) {
-                case "GROUP_NEW_ITEM":
-                    Glide.with(convertView).load(R.drawable.icon_foret).into(imageView);
-                    textViewtype.setText("내 포레 새글 알림");
-                    break;
-                case "MESSAGE_NEW_ITEM":
-                    Glide.with(convertView).load(R.drawable.icon_chat).into(imageView);
-                    textViewtype.setText("내 채팅에 새글 알림");
-                    break;
-                case "PUBLIC_NOTICE_NEW_ITEM":
-                    Glide.with(convertView).load(R.drawable.icon_board).into(imageView);
-                    textViewtype.setText("새 공지사항 알림");
-                    break;
-                case "ANONYMOUS_BOARD_NEW_ITEM":
-                    Glide.with(convertView).load(R.drawable.icon_reply).into(imageView);
-                    textViewtype.setText("내 게시판에 댓글알림");
-                    break;
-                case "REPLIED_NEW_ITEM":
-                    Glide.with(convertView).load(R.drawable.foreticon).into(imageView);
-                    textViewtype.setText("새 글 알림");
-                    break;
-                case "NEW_ITEM1":
-                case "NEW_ITEM2":
-                case "NEW_ITEM3":
-                case "NEW_ITEM4":
-                    Glide.with(convertView).load(R.drawable.foret).into(imageView);
-                    textViewtype.setText("새로운 글 등록됨");
-                    break;
+            if(item.getType().equals("GROUP_NEW_ITEM")){
+                Glide.with(convertView).load(R.drawable.icon_foret).into(imageView);
+                textViewtype.setText("내 포레 새글 알림");
+
+            }else if(item.getType().equals("MESSAGE_NEW_ITEM")){
+                Glide.with(convertView).load(R.drawable.icon_chat).into(imageView);
+                textViewtype.setText("내 채팅에 새글 알림");
+
+            }else if(item.getType().equals("PUBLIC_NOTICE_NEW_ITEM")){
+                Glide.with(convertView).load(R.drawable.icon_board).into(imageView);
+                textViewtype.setText("새 공지사항 알림");
+            }else if(item.getType().equals("ANONYMOUS_BOARD_NEW_ITEM")){
+                Glide.with(convertView).load(R.drawable.icon_reply).into(imageView);
+                textViewtype.setText("내 게시판에 댓글알림");
+            }else{
+                Glide.with(convertView).load(R.drawable.foreticon).into(imageView);
+                textViewtype.setText("새 글 알림");
             }
 
-            //이미지셋팅
 
             textViewContent.setText(item.getContent());
             textViewTime.setText(CalendarHelper.getInstance().getRelativeHourAndDaysAndWeek(item.getTime()));

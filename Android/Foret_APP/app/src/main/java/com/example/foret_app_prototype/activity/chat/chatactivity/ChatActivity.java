@@ -379,7 +379,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         messageEt.setText("");
         recyclerView.smoothScrollToPosition(adapter.getItemCount());
 
-        updateNewItem("MESSAGE_NEW_ITEM ",myUid,hisUid,message,""+System.currentTimeMillis());
+        updateNewItem("MESSAGE_NEW_ITEM",myUid,hisUid,message,""+System.currentTimeMillis());
         String msg = message;
         //설정
         DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
@@ -439,7 +439,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             .enqueue(new Callback<Response>() {
                                 @Override
                                 public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
-                                    Toast.makeText(ChatActivity.this,""+response.message(),Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(ChatActivity.this,""+response.message(),Toast.LENGTH_LONG).show();
                                 }
 
                                 @Override

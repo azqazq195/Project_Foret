@@ -31,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class NotifyFragment extends Fragment implements View.OnClickListener {
@@ -65,7 +66,33 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
 
 
         getItem();
+        setReaded();
         return rootView;
+    }
+
+    private void setReaded() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notify").child(user.getUid());
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    boolean a = ds.child("isSeen").getValue(Boolean.class);
+                    if(!a){
+
+                        DatabaseReference userReading = FirebaseDatabase.getInstance().getReference("Notify").child(user.getUid());
+                        HashMap<String, Object> read = new HashMap<>();
+                        read.put("isSeen", true);
+                        userReading.child(ds.getKey()).updateChildren(read);
+                    }
+
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void getItem() {
@@ -79,23 +106,11 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     ModelNotify item = ds.getValue(ModelNotify.class);
-                    Log.e("[test]", "ref??" + ref.getRef());
                     Log.e("[test]", "item???" + item.toString());
-                    /*f (ds.child("sender").getValue().equals(user.getUid())) {
-                      if(ds.child("receiver").getValue().equals(user.getUid())){
-                        Log.e("[test]","ds.get벨류?"+ds.getValue());
-                         type = ""+ds.child("type").getValue();
-                         sender = ""+ds.child("sender").getValue();
-                         time = ""+ds.child("time").getValue();
-                         content = ""+ds.child("content").getValue();
-                        Log.e("[test]","content?"+content);
-                        }
-                        */
-
 
                     adapter = new NotificationAdapter2(context, R.layout.item_row_notification, notifyList);
                     listView.setAdapter(adapter);
-
+                    notifyList.add(item);
                     //notifyList.add(new ModelNotify(type,content,time,""+R.drawable.ic_launcher_foreground));
                 }
             }
@@ -104,12 +119,6 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
 
             }
         });
-
-        //notifyList.add(new ModelNotify("GROUP_NEW_ITEM", "그룹 새글이 등록됨", "" + System.currentTimeMillis(), "" + R.drawable.ic_launcher_foreground));
-        //notifyList.add(new ModelNotify("PUBLIC_NOTICE_NEW_ITEM", "공지가 등록됨", "" + System.currentTimeMillis(), "" + R.drawable.ic_launcher_foreground));
-        //notifyList.add(new ModelNotify("MESSAGE_NEW_ITEM", "새로운 메세지가 있음", "" + System.currentTimeMillis(), "" + R.drawable.ic_launcher_foreground));
-        //notifyList.add(new ModelNotify("ANONYMOUS_BOARD_NEW_ITEM", "익명게시판 댓글이 등록됨", "" + System.currentTimeMillis(), "" + R.drawable.ic_launcher_foreground));
-
 
     }
 
