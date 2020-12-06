@@ -50,11 +50,7 @@ public class GroupJoinActivity extends AppCompatActivity {
         // Log.d("[test]","초대 창 진입");
 
         userRv = findViewById(R.id.userRv);
-        //actionBar = getSupportActionBar();
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //actionBar.setTitle("addNewbi");
-        //actionBar.setDisplayHomeAsUpEnabled(true);
-        //actionBar.setDisplayShowHomeEnabled(true);
+
         context = this;
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -99,7 +95,7 @@ public class GroupJoinActivity extends AppCompatActivity {
                         public void onItemClick(View v, int position) {
                             ModelUser modelUser = userList.get(position);
                             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
-                            ref.child(groudName).child("participants").child(modelUser.getUser_id()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            ref.child(groudName).child("participants").child(modelUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     if (snapshot.exists()) {
@@ -202,7 +198,7 @@ public class GroupJoinActivity extends AppCompatActivity {
     //멤버 삭제
     private void removThisMember(ModelUser modelUser) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
-        ref.child(groudName).child("participants").child(modelUser.getUser_id()).removeValue()
+        ref.child(groudName).child("participants").child(modelUser.getUid()).removeValue()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -226,7 +222,7 @@ public class GroupJoinActivity extends AppCompatActivity {
         hashMap.put("participantName", modelUser.getNickname());
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
-        ref.child(groudName).child("participants").child(modelUser.getUser_id()).setValue(hashMap)
+        ref.child(groudName).child("participants").child(modelUser.getUid()).setValue(hashMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

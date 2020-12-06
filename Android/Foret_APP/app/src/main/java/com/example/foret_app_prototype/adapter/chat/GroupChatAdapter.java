@@ -107,7 +107,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.MyVi
         holder.timeTv.setText(time);
         try {
             Glide.with(context).load(senderPhoto)
-                    .fallback(R.drawable.ic_launcher_foreground)
+                    .fallback(R.drawable.icon_foret)
                     .into(holder.photo);
         } catch (Exception e) {
 

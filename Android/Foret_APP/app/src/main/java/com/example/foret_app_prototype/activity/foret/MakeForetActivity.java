@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import com.example.foret_app_prototype.model.Member;
 import com.example.foret_app_prototype.model.ModelUser;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -46,6 +48,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -53,7 +58,9 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +104,8 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     int max_member;
     String introduce;
     Context context;
+    String downloadUri;
+    Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -405,7 +414,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                         Log.d("[TEST]", "photoPath = " + filePath);
 
                         file = new File(filePath);
-                        Uri uri = null;
+                        uri = null;
 
                         //카메라앱 호출을 위한 암묵적 인텐트 (action과 uri가 필요하다)
                         intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -453,8 +462,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                     Glide.with(this).load(filePath).into(image_View_picture);
                     break;
                 case 300:
-                    String uri = data.getData().toString();
-                    String fileName = uri.substring(uri.lastIndexOf("/") + 1);
+                    String uri1 = data.getData().toString();
+                    uri = data.getData();
+                    String fileName = uri1.substring(uri1.lastIndexOf("/") + 1);
                     Log.d("[TEST]", "fileName = " + fileName);
                     filePath = FileUtils.getPath(this, data.getData());
                     Log.d("[TEST]", "filePath = " + filePath);
@@ -489,6 +499,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                     foret.setReg_date(makeForetTime);
                     DatabaseReference userName = FirebaseDatabase.getInstance().getReference("Users");
                     Log.e("[test]","포레 생성중");
+                    sendImageMessage(uri);
                     userName.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -508,7 +519,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                     Log.e("[test]"," 자료들 확인 : "+foret.getName()+foret.getIntroduce());
                                     HashMap<String, Object> hashMap = new HashMap<>();
                                     hashMap.put("GroupName", foret.getName());
-                                    hashMap.put("GroupPhoto", foret.getForet_photo());
+                                    hashMap.put("GroupPhoto",downloadUri );
                                     hashMap.put("GroupLeader", user.getUid()); //안들어가있음
                                     hashMap.put("GroupDescription", foret.getIntroduce());
                                     //hashMap.put("GroupId", ""+foret.getGroup_no());
@@ -581,6 +592,48 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             Log.e("[test]", error.getMessage()+"/ "+statusCode);
         }
 
+
+    }
+
+
+    //이미지 보내기
+    private void sendImageMessage(Uri image_rui) {
+        ProgressDialogHelper.getInstance().getProgressbar(this, "사진을 전송중입니다..");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        String timeStamp = "" + System.currentTimeMillis();
+        String fileNameAndPath = "GroupImages/" + "post_" + timeStamp + " by " + user.getUid() + " file : ";
+
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_rui);
+            ByteArrayOutputStream baos = null;
+            baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+            StorageReference ref = FirebaseStorage.getInstance().getReference().child(fileNameAndPath + image_rui.getLastPathSegment());
+            ref.putBytes(data)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            ProgressDialogHelper.getInstance().removeProgressbar();
+                            Toast.makeText(context, "업로드 성공", Toast.LENGTH_LONG).show();
+                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                            while (!uriTask.isSuccessful()) ;
+                             downloadUri = uriTask.getResult().toString();
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            ProgressDialogHelper.getInstance().removeProgressbar();
+                            Toast.makeText(context, "업로드 실패", Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }

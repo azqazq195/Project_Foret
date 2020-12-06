@@ -267,7 +267,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.sendBtn:
                 String message = messageEt.getText().toString().trim();
                 //입력검사
-                if (message.equals("") && message == null) {
+                if (message.equals("") || message == null) {
                     return;
                     //터치 무시
                 } else {
@@ -655,6 +655,28 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                     databaseReference.child("Chats").push().setValue(hashMap);
 
+
+                    updateNewItem("MESSAGE_NEW_ITEM",myUid,hisUid,"동영상이 전송되었습니다.",""+System.currentTimeMillis());
+                    String msg = "동영상이 전송되었습니다";
+                    //설정
+                    DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+                    database.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            ModelUser user = snapshot.getValue(ModelUser.class);
+
+                            if(notify){
+                                sendNotification(hisUid,user.getNickname(),msg);
+                            }
+                            notify = false;
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                    
                 }
             }
         });
@@ -701,6 +723,27 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                 hashMap.put("isSeen", false);
 
                                 databaseReference.child("Chats").push().setValue(hashMap);
+                                
+                                updateNewItem("MESSAGE_NEW_ITEM",myUid,hisUid,"사진이 전송되었습니다.",""+System.currentTimeMillis());
+                                String msg = "사진이 전송되었습니다";
+                                //설정
+                                DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+                                database.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        ModelUser user = snapshot.getValue(ModelUser.class);
+
+                                        if(notify){
+                                            sendNotification(hisUid,user.getNickname(),msg);
+                                        }
+                                        notify = false;
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
 
                             }
                         }

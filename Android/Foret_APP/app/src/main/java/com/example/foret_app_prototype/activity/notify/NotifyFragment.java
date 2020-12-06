@@ -102,9 +102,7 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     ModelNotify item = ds.getValue(ModelNotify.class);
-                    //Log.e("[test]", "item???" + item.toString());
 
-                    //adapter = new NotificationAdapter2(context, R.layout.item_row_notification, notifyList);
                     adapter = new NotificationAdapter2(context, R.layout.item_row_notification, notifyList,thisFragment);
                     listView.setAdapter(adapter);
                     notifyList.add(item);
@@ -142,5 +140,6 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
+        getItem();
     }
 }

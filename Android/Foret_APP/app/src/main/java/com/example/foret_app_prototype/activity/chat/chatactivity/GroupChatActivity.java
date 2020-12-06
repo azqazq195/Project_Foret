@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -58,9 +59,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class GroupChatActivity extends AppCompatActivity implements View.OnClickListener {
 
-    String grounId, grounName,grounLeader;
+    String grounId, grounName, grounLeader;
 
-    Toolbar toolbar;
     CircleImageView groupImage;
     TextView groupName;
     EditText messageEt;
@@ -72,7 +72,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     List<String> list;
 
     int countSeen;
-    String timestamp;
+
     String myPhotoUri;
 
     List<ModelGroupChat> groupChatList;
@@ -95,7 +95,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         grounName = getIntent().getStringExtra("grounName");
         grounId = getIntent().getStringExtra("grounId");
 
-//        toolbar = findViewById(R.id.toolbar);
         groupImage = findViewById(R.id.groupImage);
         groupName = findViewById(R.id.groupName);
         messageEt = findViewById(R.id.messagaEt);
@@ -103,7 +102,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         sendBtn = findViewById(R.id.sendBtn);
         buttonInvite = findViewById(R.id.buttonInvite);
         buttonInvite.setVisibility(View.GONE);
-        //setSupportActionBar(toolbar);
+
 
 
         chat_recyclerView = findViewById(R.id.chat_recyclerView);
@@ -127,11 +126,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-    /*
-    private void setSupportActionBar(Toolbar toolbar) {
-    }
-
-     */
 
     private void loadAmILeader() {
         //Log.e("[test]","로드 리더체크 진입");
@@ -140,10 +134,11 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         ref.child(grounName).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ModelGroupChatList model= snapshot.getValue(ModelGroupChatList.class);
+                ModelGroupChatList model = snapshot.getValue(ModelGroupChatList.class);
                 grounLeader = model.getGroupLeader();
                 //  Log.e("[test]","grounLeader값?"+grounLeader);
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -153,27 +148,22 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         ref.child(grounName).child("participants").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for ( DataSnapshot ds : snapshot.getChildren()) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if(ds.child("uid").getValue().equals(user.getUid())){
-                        String myNickname = ""+ds.child("participantName").getValue();
-                        // Log.e("[test]","myNickname?"+myNickname);
-
-                        //    Log.e("[test]","내가 리더인가? 트루이면 진입, 아니면 못진입");
-                        if(myNickname.equals(grounLeader)){
-//                            //리더라면?
-                            buttonInvite.setVisibility(View.VISIBLE);
-                            buttonInvite.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(context, GroupJoinActivity.class);
-                                    intent.putExtra("groudId",grounId);
-                                    intent.putExtra("grounName",grounName);
-                                    intent.putExtra("grounLeader",grounLeader);
-                                    startActivity(intent);
-                                }
-                            });
-                        }
+                    //if(ds.child("uid").getValue().equals(user.getUid())){
+                    if (ds.getKey().equals(user.getUid())) {
+                        String myNickname = "" + ds.child("participantName").getValue();
+                        buttonInvite.setVisibility(View.VISIBLE);
+                        buttonInvite.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(context, GroupJoinActivity.class);
+                                intent.putExtra("groudId", grounId);
+                                intent.putExtra("grounName", grounName);
+                                intent.putExtra("grounLeader", grounLeader);
+                                startActivity(intent);
+                            }
+                        });
                     }
                 }
 
@@ -200,7 +190,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                     //   Log.e("[test]", chat.getSender());
                     groupChatList.add(chat);
 
-                    chatAdapter = new GroupChatAdapter(GroupChatActivity.this, groupChatList,grounName);
+                    chatAdapter = new GroupChatAdapter(GroupChatActivity.this, groupChatList, grounName);
                     chat_recyclerView.setAdapter(chatAdapter);
                 }
 
@@ -222,10 +212,11 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.sendBtn:
                 String message = messageEt.getText().toString().trim();
-                if (message.equals("") && message == null) {
+                if (message.equals("") || message == null) {
                     //터치 무시
                 } else {
                     sendMessage(message);
+                    messageEt.setText("");
                 }
                 break;
 
@@ -277,6 +268,9 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onFailure(@NonNull Exception exception) {
                 Toast.makeText(activity, "불러오기 실패", Toast.LENGTH_LONG).show();
+                Glide.with(activity)
+                        .load(R.drawable.icon_foret)
+                        .into(groupImage);
             }
         });
     }
@@ -288,16 +282,21 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    //Log.e("[test]", " ds레퍼런스??" + ds.getRef());
-                    ModelGroupChatList model = ds.getValue(ModelGroupChatList.class);
-                    if (model.getGroupName().equals(grounName)) {
+                    if (ds.child("GroupName").getValue().equals(grounName)) {
                         String convert = "" + ds.child("GroupCurrentJoinedMember").getValue();
+                      //  Log.e("[test]", "ds.child(\"GroupCurrentJoinedMember\").getValue()?" + ds.child("GroupCurrentJoinedMember").getValue());
                         countSeen = Integer.parseInt(convert);
-                        //timestamp = "" + ds.child("timestamp");
+                        HashMap<String, Object> update = new HashMap<>();
+                        update.put("GroupCurrentJoinedMember", "" + ds.child("participants").getChildrenCount());
+                        reference.child(grounName).updateChildren(update);
+                        /*
+                        String participant = "" + ds.getChildrenCount();
+                        Log.e("[test]","participant?" +participant);
+                        Log.e("[test]","countSeen?" +countSeen);
 
-                        String participant = "" + ds.child("participants").child("123001").child("participantName").getValue();
                         list.add(participant);
-
+                        Log.e("[test]","현재 인원?" + list.size());
+                                                */
                     }
                 }
             }
@@ -309,7 +308,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         });
 
     }
-
 
     //아이템 선택
     private void showItemSelectListDialog() {
@@ -522,7 +520,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         //성공
-                                        Toast.makeText(activity, "동영상 업로드 성공", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(activity, "사진 업로드 성공", Toast.LENGTH_LONG).show();
 
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {

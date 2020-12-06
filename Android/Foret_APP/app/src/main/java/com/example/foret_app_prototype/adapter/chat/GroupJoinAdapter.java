@@ -127,7 +127,7 @@ public class GroupJoinAdapter extends RecyclerView.Adapter<GroupJoinAdapter.MyHo
 
         //Log.e("[test]","그룹원 상태값 가져오기 함수 진입 현재 유저"+modelUser.getNickname());
         //Log.e("[test]","현재 status?" + holderm.statusTv.getText());
-        ref.child(groupName).child("participants").child(modelUser.getUser_id())
+        ref.child(groupName).child("participants").child(modelUser.getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
