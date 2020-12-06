@@ -67,7 +67,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
     List<Integer> like_plus;
     List<Integer> like_minus;
 
-    int id=100;
+    int id;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,7 +98,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         like_minus = new ArrayList<>();
 
         SessionManager sessionManager = new SessionManager(activity);
-     //   id = sessionManager.getSession();
+        id = sessionManager.getSession();
 
         recyclerView2.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false));
 
@@ -160,24 +160,24 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 params.put("inquiry_type", 1);
                 client.post("http://34.72.240.24:8085/foret/search/boardList.do", params, response1);
                 break;
-            case R.id.button2 : //추천순
+            case R.id.button2 : //댓글순
                 button2.setTextColor(Color.parseColor("#22997b"));
                 button2.setTypeface(Typeface.DEFAULT_BOLD);
                 button1.setTypeface(null);
                 button1.setTextColor(Color.GRAY);
                 button3.setTypeface(null);
                 button3.setTextColor(Color.GRAY);
-                params.put("inquiry_type", 3);
+                params.put("inquiry_type", 4);
                 client.post("http://34.72.240.24:8085/foret/search/boardList.do", params, response1);
                 break;
-            case R.id.button3 : //댓글순
+            case R.id.button3 : //추천순
                 button3.setTextColor(Color.parseColor("#22997b"));
                 button3.setTypeface(Typeface.DEFAULT_BOLD);
                 button2.setTypeface(null);
                 button2.setTextColor(Color.GRAY);
                 button1.setTypeface(null);
                 button1.setTextColor(Color.GRAY);
-                params.put("inquiry_type", 4);
+                params.put("inquiry_type", 3);
                 client.post("http://34.72.240.24:8085/foret/search/boardList.do", params, response1);
                 break;
             case R.id.button4 :

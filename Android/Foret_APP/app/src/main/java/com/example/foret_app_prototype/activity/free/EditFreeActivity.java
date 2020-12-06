@@ -29,7 +29,7 @@ public class EditFreeActivity extends AppCompatActivity {
     Toolbar toolbar;
     EditText editText_content, editText_subject;
     TextView textView_writer;
-    int id = 101;
+    int id ;
     AsyncHttpClient client;
     FreeBoardEditResponse response;
     ForetBoard foretBoard;
@@ -54,7 +54,7 @@ public class EditFreeActivity extends AppCompatActivity {
         textView_writer.setText("작성자 : "+foretBoard.getId());
 
         SessionManager sessionManager = new SessionManager(this);
-     //   id = sessionManager.getSession();
+        id = sessionManager.getSession();
         client = new AsyncHttpClient();
         response = new FreeBoardEditResponse();
 

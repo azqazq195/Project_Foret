@@ -53,12 +53,11 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
     RecyclerView comment_listView;
     Button button_input; //답글 달기 버튼
 
-    int memberID=100;
+    int memberID;
     Intent intent;
     AsyncHttpClient client;
     ViewFreeBoardResponse viewResponse;
     InsertCommentResponse writeCommentResponse;
-    InsertReCommentResponse writeReplyResponse;
     ViewFreeBoardResponse readBoardResponse;
     LikeChangeResponse likeChangeResponse;
     DeleteBoardResponse deleteBoardResponse;
@@ -71,7 +70,6 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
     int like_count;
     int comment_count;
     InputMethodManager inputMethodManager;
-    int position;
     String target;
     boolean replying = false;
     int initial_likecount; //내가 처음 글을 봤을 때의 라이크 개수 저장 변수
@@ -103,17 +101,16 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
 
         inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         SessionManager sessionManager = new SessionManager(this);
-        //memberID = sessionManager.getSession();
+        memberID = sessionManager.getSession();
 
         commentlist = new ArrayList<>();
         client = new AsyncHttpClient();
         viewResponse = new ViewFreeBoardResponse();
         writeCommentResponse = new InsertCommentResponse();
-        writeReplyResponse = new InsertReCommentResponse();
         readBoardResponse = new ViewFreeBoardResponse();
         likeChangeResponse = new LikeChangeResponse();
         deleteBoardResponse = new DeleteBoardResponse();
-        
+
         foretBoard = (ForetBoard) getIntent().getSerializableExtra("foretBoard");
         initial_likecount = foretBoard.getLike_count(); //초반 라이크 수 저장
         like_count = foretBoard.getLike_count();
@@ -156,8 +153,10 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.edit_toolbar, menu);
+        if(String.valueOf(memberID).equals(foretBoard.getWriter())) {
+            MenuInflater menuInflater = getMenuInflater();
+            menuInflater.inflate(R.menu.edit_toolbar, menu);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -220,31 +219,30 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
-    private void inputComment() {
+    private void inputComment() { //댓글 쓰기
+        foretBoardComment = new ForetBoardComment();
+        foretBoardComment.setWriter(String.valueOf(memberID));
+        foretBoardComment.setContent(editText_comment.getText().toString().trim());
+        foretBoardComment.setBoard_id(foretBoard.getId());
         RequestParams params = new RequestParams();
         String url = "";
         params.put("board_id", foretBoard.getId());
         params.put("writer", memberID);
         params.put("content", editText_comment.getText().toString().trim());
-        if(!replying) { //대댓글쓰기
-            params.put("comment_id", foretBoardComment.getGroup_no());
-            client.post("http://34.72.240.24:8085/foret/comment/comment_insert.do", params, writeCommentResponse);
-        } else {
-            client.post("http://34.72.240.24:8085/foret/comment/recomment_insert.do", params, writeReplyResponse);
-        }
+        client.post("http://34.72.240.24:8085/foret/comment/recomment_insert.do", params, writeCommentResponse);
     }
 
     //답글버튼 눌렀을 때
     @Override
-    public void onReplyButtonClick(View v, String target, int position, boolean reply) {
+    public void onReplyButtonClick(View v, String target, boolean reply) {
         if(reply) {
             textView_reply.setText(target + "님에게 답글 작성중 입니다.");
             editText_comment.setText("@" + target + " ");
             textView_reply.setVisibility(View.VISIBLE);
             button_cancel.setVisibility(View.VISIBLE);
-            this.position = position;
             this.target = target;
             replying = true;
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
     }
 
@@ -257,7 +255,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
             editText_comment.setVisibility(View.GONE);
             button_input.setVisibility(View.GONE);
         } else {
-            textView_reply.setVisibility(View.VISIBLE);
+            //textView_reply.setVisibility(View.VISIBLE);
             button_cancel.setVisibility(View.VISIBLE);
             editText_comment.setVisibility(View.VISIBLE);
             button_input.setVisibility(View.VISIBLE);
@@ -307,7 +305,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
                    foretBoard.setReg_date(object.getString("reg_date"));
                    foretBoard.setComment_count(object.getInt("board_comment"));
                    setDataBoard(foretBoard);
-                   if(object.getJSONArray("comment") !=null) {
+                   if(object.getJSONArray("comment").length() != 0) {
                        JSONArray comment = object.getJSONArray("comment");
                            for (int a = 0; a < comment.length(); a++) {
                                JSONObject commnetOject = comment.getJSONObject(a);
@@ -316,7 +314,12 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
                                foretBoardComment.setReg_date(commnetOject.getString("reg_date"));
                                foretBoardComment.setGroup_no(commnetOject.getInt("group_no"));
                                foretBoardComment.setWriter(String.valueOf(commnetOject.getInt("writer")));
-                               foretBoardComment.setGrade(commnetOject.getString("content"));
+                               foretBoardComment.setContent(commnetOject.getString("content"));
+                               if (foretBoardComment.getId() == foretBoardComment.getGroup_no()) {
+                                   foretBoardComment.setParent(true);
+                               } else {
+                                   foretBoardComment.setParent(false);
+                               }
                                commentlist.add(foretBoardComment);
                            }
                        adapter = new CommentListFreeBoardAdapter(commentlist, ReadFreeActivity.this, memberID);
@@ -367,7 +370,15 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
                 JSONObject json = new JSONObject(str);
                 if(json.getString("commentRT").equals("OK")) {
                     Toast.makeText(ReadFreeActivity.this, "댓글 작성 성공", Toast.LENGTH_SHORT).show();
-                    //후 서버 다시 요청->리스트 정렬
+                    Log.e("[TEST1]", commentlist.size()+"");
+                    commentlist.add(foretBoardComment);
+                    Log.e("[TEST2]", commentlist.size()+"");
+                    editText_comment.setText("");
+                    inputMethodManager.hideSoftInputFromWindow(editText_comment.getWindowToken(), 0);
+                    adapter = new CommentListFreeBoardAdapter(commentlist, ReadFreeActivity.this, memberID);
+                    Log.e("[TEST3]", commentlist.size()+"");
+                    comment_listView.setAdapter(adapter);
+                    comment_listView.scrollToPosition(commentlist.size());
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -380,43 +391,15 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
-    class InsertReCommentResponse extends AsyncHttpResponseHandler {
-
-        @Override
-        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            String str = new String(responseBody);
-            try {
-                JSONObject json = new JSONObject(str);
-                if(json.getString("commentRT").equals("OK")) {
-                    Toast.makeText(ReadFreeActivity.this, "답글 작성 성공", Toast.LENGTH_SHORT).show();
-                    inputMethodManager.hideSoftInputFromWindow(editText_comment.getWindowToken(), 0);
-                    //후 서버 다시 요청->리스트 정렬
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(ReadFreeActivity.this, "답글 작성 실패", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     class LikeChangeResponse extends AsyncHttpResponseHandler {
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            Log.e("[진입]", 4+"");
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
                 if(json.getString("memberRT").equals("OK")) {
-                    Log.e("[진입]", 5+"");
                     Toast.makeText(ReadFreeActivity.this, "좋아요 상태 저장 성공", Toast.LENGTH_SHORT).show();
-                    Log.e("[진입]", 6+"");
-                    Log.e("[확인]", foretBoard.getId()+"");
-                    Log.e("[확인]", memberID+"");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

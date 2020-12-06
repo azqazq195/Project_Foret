@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.model.ForetBoardComment;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +48,9 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
         this.list = list;
         this.activity = (Activity)context;
         this.memberID = memberID;
+        client = new AsyncHttpClient();
+        modifyResponse = new ModifyCommentResponse();
+        deleteResponse = new DeleteCommentResponse();
     }
 
     public void setCommentClickListener(CommentClickListener commentClickListener) {
@@ -55,9 +60,6 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
     @NonNull
     @Override
     public CommentView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        client = new AsyncHttpClient();
-        modifyResponse = new ModifyCommentResponse();
-        deleteResponse = new DeleteCommentResponse();
         inputMethodManager = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         View holderView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comment, parent, false);
         return new CommentView(holderView);
@@ -66,12 +68,15 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
     @Override
     public void onBindViewHolder(@NonNull CommentView holder, int position) {
         ForetBoardComment comment = list.get(position);
+        holder.textView1.setText(comment.getWriter());
         if (String.valueOf(memberID).equals(comment.getWriter())) {
             holder.layout.setVisibility(View.VISIBLE);
+            holder.imageView6.setVisibility(View.INVISIBLE);
+            holder.button1.setVisibility(View.INVISIBLE);
+            holder.textView1.setText("내가 작성한 댓글");
         } else {
             holder.layout.setVisibility(View.GONE);
         }
-       // holder.layout.setPadding();
         holder.textView1.setText(comment.getWriter());
         holder.textView2.setText(comment.getContent());
         holder.textView3.setText(comment.getReg_date());
@@ -79,7 +84,8 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
             @Override
             public void onClick(View v) {
                 String target = comment.getWriter();
-                commentClickListener.onReplyButtonClick(v, target, position, true);
+
+                commentClickListener.onReplyButtonClick(v, target, true);
             }
         });
         holder.button2.setOnClickListener(new View.OnClickListener() { //수정하기 //엔터 누를시 수정한다
@@ -99,7 +105,7 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
         holder.button3.setOnClickListener(new View.OnClickListener() { //삭제하기
             @Override
             public void onClick(View v) {
-                showDialog(holder, list, position);
+                showDialog(holder, list, position, comment.getId());
             }
         });
         holder.button4.setOnClickListener(new View.OnClickListener() { //수정취소
@@ -116,12 +122,23 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
         holder.editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                RequestParams params = new RequestParams();
+                params.put("comment_id", comment.getId());
+                params.put("content", holder.editText.getText().toString());
                 switch (actionId) {
                     case EditorInfo.IME_ACTION_SEND : //수정하기
-                        Toast.makeText(activity, "엔터쳤을때", Toast.LENGTH_SHORT).show();
+                        client.post("http://34.72.240.24:8085/foret/comment/comment_modify.do", params, modifyResponse);
+                        holder.textView2.setText(holder.editText.getText().toString().trim());
+                        holder.textView2.setVisibility(View.VISIBLE);
+                        holder.editText.setVisibility(View.GONE);
+                        holder.button4.setVisibility(View.GONE);
+                        inputMethodManager.hideSoftInputFromWindow(holder.editText.getWindowToken(), 0);
+                        boolean modify = false;
+                        commentClickListener.onModifyButtonClick(v, modify);
                         break;
                     default :
                         Toast.makeText(activity, "엔터쳤을때", Toast.LENGTH_SHORT).show();
+                        client.post("http://34.72.240.24:8085/foret/comment/comment_modify.do", params, modifyResponse);
                         break;
                 }
                 return false;
@@ -129,16 +146,21 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
         });
     }
 
-    private void showDialog(CommentView holder, List<ForetBoardComment> list, int positon) {
+    private void showDialog(CommentView holder, List<ForetBoardComment> list, int positon, int commentID) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage("삭제 하시겠습니까?");
         builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                list.remove(positon);
-                notifyItemRemoved(positon);
-                notifyItemRangeChanged(positon, list.size()-1);
-                commentClickListener.onDeleteButtonClick(true);
+                    list.remove(positon);
+                    notifyItemRemoved(positon);
+                    if(list.size()!=0) {
+                    notifyItemRangeChanged(positon, list.size() - 1);
+                    }
+                    commentClickListener.onDeleteButtonClick(true);
+                    RequestParams params = new RequestParams();
+                    params.put("comment_id", commentID);
+                    client.post("http://34.72.240.24:8085/foret/comment/comment_delete.do", params, deleteResponse);
             }
         });
         builder.setNegativeButton("취소", null);
@@ -158,6 +180,7 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
         LinearLayout layout;
         EditText editText;
         FrameLayout commentLayout;
+        ImageView imageView6;
 
         public CommentView(@NonNull View itemView) {
             super(itemView);
@@ -174,12 +197,13 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
             layout.setVisibility(View.GONE);
             editText.setVisibility(View.GONE);
             button4.setVisibility(View.GONE);
+            imageView6 = itemView.findViewById(R.id.imageView6);
 
         }
     }
 
     public interface CommentClickListener {
-        public void onReplyButtonClick(View v, String target, int position, boolean reply);
+        public void onReplyButtonClick(View v, String target, boolean reply);
         public void onModifyButtonClick(View v, boolean modify);
         public void onDeleteButtonClick(boolean delete);
     }

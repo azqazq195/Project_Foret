@@ -18,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -33,8 +34,6 @@ import com.example.foret_app_prototype.model.ForetBoardDTO;
 import com.example.foret_app_prototype.model.HomeForetBoardDTO;
 import com.example.foret_app_prototype.model.HomeForetDTO;
 import com.example.foret_app_prototype.model.MemberDTO;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -69,7 +68,7 @@ public class HomeFragment extends Fragment
 
     // 뷰페이저 (포레)
     ViewPager viewPager;
-    @JsonIgnore
+   // @JsonIgnore
     HomeForetDTO homeForetDTO;
     List<HomeForetDTO> homeForetDTOList;
     HomeForetBoardDTO homeForetBoardDTO;
@@ -241,7 +240,7 @@ public class HomeFragment extends Fragment
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.normal_toolbar, menu);
+        inflater.inflate(R.menu.normal_toolbar2, menu);
     }
 
     @Override
