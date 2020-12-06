@@ -346,10 +346,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     //어뎁터설정
                     adapter = new ChatAdapter(ChatActivity.this, chatList, photoRoot);
-                    adapter.notifyDataSetChanged();
+                    //adapter.notifyDataSetChanged();
 
                     //뷰 설정
                     recyclerView.setAdapter(adapter);
+                    recyclerView.scrollToPosition(chatList.size());
+
                 }
                 //recyclerView.smoothScrollToPosition(adapter.getItemCount());
             }
@@ -377,7 +379,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         databaseReference.child("Chats").push().setValue(hashMap);
         //에딧 텍스트 초기화
         messageEt.setText("");
-        recyclerView.smoothScrollToPosition(adapter.getItemCount());
+
 
         updateNewItem("MESSAGE_NEW_ITEM",myUid,hisUid,message,""+System.currentTimeMillis());
         String msg = message;
@@ -613,7 +615,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     //비디오 보내기
     private void sendVideo(File file) {
-
+        notify = true;
         ProgressDialogHelper.getInstance().getProgressbar(this, "비디오 전송중입니다..");
 
         String timeStamp = "" + System.currentTimeMillis();
@@ -685,6 +687,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     //이미지 보내기
     private void sendImageMessage(Uri image_rui) {
+        notify = true;
         ProgressDialogHelper.getInstance().getProgressbar(this, "사진을 전송중입니다..");
 
         String timeStamp = "" + System.currentTimeMillis();

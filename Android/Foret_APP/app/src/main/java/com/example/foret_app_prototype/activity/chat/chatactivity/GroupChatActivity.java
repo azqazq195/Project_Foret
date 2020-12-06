@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -28,12 +29,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.activity.notify.APIService;
+import com.example.foret_app_prototype.activity.notify.Client;
+import com.example.foret_app_prototype.activity.notify.Data;
+import com.example.foret_app_prototype.activity.notify.Response;
+import com.example.foret_app_prototype.activity.notify.Sender;
+import com.example.foret_app_prototype.activity.notify.Token;
 import com.example.foret_app_prototype.adapter.chat.GroupChatAdapter;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.ModelGroupChat;
 import com.example.foret_app_prototype.model.ModelGroupChatList;
+import com.example.foret_app_prototype.model.ModelUser;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -43,6 +51,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -54,8 +63,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class GroupChatActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -86,6 +98,14 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     //이미지 담길 uri
     Uri image_rui = null;
 
+    FirebaseAuth firebaseAuth;
+    //알림설정
+    APIService apiService;
+    boolean notify = false;
+
+    String myUid;
+    String hisUid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +124,9 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         buttonInvite.setVisibility(View.GONE);
 
 
+        //푸쉬 알림 생성
+        apiService = Client.getRetrofit("https://fcm.googleapis.com/").create(APIService.class);
+
 
         chat_recyclerView = findViewById(R.id.chat_recyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -115,6 +138,8 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         sendBtn.setOnClickListener(this);
         attachButton.setOnClickListener(this);
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        myUid = firebaseAuth.getCurrentUser().getUid();
         //데이터 셋팅
         getImageFromFirebaseStorage();
         groupName.setText(grounName);
@@ -192,6 +217,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
 
                     chatAdapter = new GroupChatAdapter(GroupChatActivity.this, groupChatList, grounName);
                     chat_recyclerView.setAdapter(chatAdapter);
+                    chat_recyclerView.scrollToPosition(groupChatList.size());
                 }
 
             }
@@ -209,6 +235,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         switch (v.getId()) {
             case R.id.attachButton:
                 showItemSelectListDialog();
+
                 break;
             case R.id.sendBtn:
                 String message = messageEt.getText().toString().trim();
@@ -217,6 +244,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                 } else {
                     sendMessage(message);
                     messageEt.setText("");
+                    notify = true;
                 }
                 break;
 
@@ -242,6 +270,48 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             public void onSuccess(Void aVoid) {
                 //성공
                 messageEt.setText("");
+
+                hisUid = "";
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
+                ref.child(grounName).child("participants").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot ds : snapshot.getChildren()){
+                            hisUid = ds.getKey();
+                            //
+                            if(!myUid.equals(ds.getKey())){
+                                updateNewItem("MESSAGE_NEW_ITEM",myUid,hisUid,message,""+System.currentTimeMillis());
+                                String msg = message;
+                                //설정
+                                DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+                                database.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        ModelUser user = snapshot.getValue(ModelUser.class);
+
+                                        if(notify){
+                                            //sendNotification(hisUid,user.getNickname(),message);
+                                        }
+                                        notify = false;
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+
+
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -415,9 +485,11 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+
+
     //비디오 보내기
     private void sendVideo(File file) {
-
+        notify = true;
         ProgressDialogHelper.getInstance().getProgressbar(this, "비디오 전송중입니다..");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String timeStamp = "" + System.currentTimeMillis();
@@ -480,6 +552,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
 
     //이미지 보내기
     private void sendImageMessage(Uri image_rui) {
+        notify = true;
         ProgressDialogHelper.getInstance().getProgressbar(this, "사진을 전송중입니다..");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -547,4 +620,116 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         }
 
     }
+
+
+    //새글데이터
+    public void updateNewItem(String type,String sender,String receiver, String content ,String time){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notify");
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("type",type);
+        hashMap.put("sender",sender);
+        hashMap.put("receiver",receiver);
+        hashMap.put("content",content);
+        hashMap.put("time",time);
+        hashMap.put("isSeen",false);
+
+        ref.child(receiver).push().setValue(hashMap);
+    }
+
+    // 알림 발송 설정.
+    private void sendNotification(String hisUid, String nickname, String message) {
+        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = allTokens.orderByKey().equalTo(hisUid); //상대 찾기
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+
+                for(DataSnapshot ds : snapshot.getChildren()){
+                    //상대 토큰값 토큰화 하기
+                    Token token = ds.getValue(Token.class);
+
+                    //데이터 셋팅
+                    Data data = new Data(myUid,nickname+" : "+message,"New Message",hisUid,R.drawable.foret_logo);
+
+                    //보내는 사람 셋팅
+                    Sender sender = new Sender(data, token.getToken());
+                    //발송
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<Response>() {
+                                @Override
+                                public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                                    //Toast.makeText(ChatActivity.this,""+response.message(),Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onFailure(Call<Response> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
+
+    //유저 접송 상태
+    private void checkUserStatus() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            //유저가 로그인한 상태
+            updateuserActiveStatusOn();
+        } else {
+            //유저가 로그인 안한 상태
+            Toast.makeText(this, "오프라인 상태입니다.", Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
+
+
+    @Override
+    protected void onStart() {
+        checkUserStatus();
+        super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        updateuserActiveStatusOff();
+    }
+
+    //온라인 상태 만들기
+    private void updateuserActiveStatusOn() {
+        FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
+        final String userUid = currentUseruser.getUid();
+        DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
+        HashMap<String, Object> onlineStatus = new HashMap<>();
+        onlineStatus.put("onlineStatus", "online");
+        onlineStatus.put("listlogined_date", "현재 접속중");
+        userAcitive.updateChildren(onlineStatus);
+    }
+    //오프라인 상태 만들기
+    private void updateuserActiveStatusOff() {
+        FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
+        final String userUid = currentUseruser.getUid();
+        DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
+        HashMap<String, Object> onlineStatus = new HashMap<>();
+        onlineStatus.put("onlineStatus", "offline");
+
+        java.util.Calendar cal = java.util.Calendar.getInstance(Locale.KOREAN);
+        cal.setTimeInMillis(Long.parseLong(String.valueOf(System.currentTimeMillis())));
+        String dateTime = DateFormat.format("yy/MM/dd hh:mm aa", cal).toString();
+
+        onlineStatus.put("listlogined_date", "Last Seen at : " + dateTime);
+        userAcitive.updateChildren(onlineStatus);
+    }
+
+
 }

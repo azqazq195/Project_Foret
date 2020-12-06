@@ -29,6 +29,7 @@ import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.activity.login.SessionManager;
 import com.example.foret_app_prototype.adapter.free.ListFreeBoardAdapter;
+import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.ForetBoard;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
@@ -120,7 +121,9 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         params.put("inquiry_type", 1);
         params.put("pg", 1);
         params.put("size", 10);
+
         client.post("http://34.72.240.24:8085/foret/search/boardList.do", params, response1);
+        ProgressDialogHelper.getInstance().getProgressbar(getContext(),"잠시만 기다려주세요.");
     }
 
     @Override
@@ -159,6 +162,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 button3.setTextColor(Color.GRAY);
                 params.put("inquiry_type", 1);
                 client.post("http://34.72.240.24:8085/foret/search/boardList.do", params, response1);
+                ProgressDialogHelper.getInstance().getProgressbar(getContext(),"잠시만 기다려주세요.");
                 break;
             case R.id.button2 : //댓글순
                 button2.setTextColor(Color.parseColor("#22997b"));
@@ -169,6 +173,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 button3.setTextColor(Color.GRAY);
                 params.put("inquiry_type", 4);
                 client.post("http://34.72.240.24:8085/foret/search/boardList.do", params, response1);
+                ProgressDialogHelper.getInstance().getProgressbar(getContext(),"잠시만 기다려주세요.");
                 break;
             case R.id.button3 : //추천순
                 button3.setTextColor(Color.parseColor("#22997b"));
@@ -179,6 +184,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                 button1.setTextColor(Color.GRAY);
                 params.put("inquiry_type", 3);
                 client.post("http://34.72.240.24:8085/foret/search/boardList.do", params, response1);
+                ProgressDialogHelper.getInstance().getProgressbar(getContext(),"잠시만 기다려주세요.");
                 break;
             case R.id.button4 :
                 intent = new Intent(activity, WriteFreeActivity.class);
@@ -264,6 +270,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                     client.post("http://34.72.240.24:8085/foret/search/member.do", params, response2);
                 }
             } catch (JSONException e) {
+                ProgressDialogHelper.getInstance().removeProgressbar();
                 e.printStackTrace();
             }
         }
@@ -271,6 +278,7 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(activity, "목록을 불러 올 수 없습니다", Toast.LENGTH_SHORT).show();
+            ProgressDialogHelper.getInstance().removeProgressbar();
         }
     }
 
@@ -302,15 +310,18 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
                     adapter = new ListFreeBoardAdapter(list, activity, id);
                     recyclerView2.setAdapter(adapter);
                     //adapter.setOnClick(FreeFragment.this);
+                    ProgressDialogHelper.getInstance().removeProgressbar();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                ProgressDialogHelper.getInstance().removeProgressbar();
             }
         }
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(activity, "댓글 목록을 불러 올 수 없습니다", Toast.LENGTH_SHORT).show();
+            ProgressDialogHelper.getInstance().removeProgressbar();
         }
     }
 
