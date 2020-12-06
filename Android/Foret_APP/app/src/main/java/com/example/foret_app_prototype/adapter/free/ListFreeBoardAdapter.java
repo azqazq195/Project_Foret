@@ -3,15 +3,11 @@ package com.example.foret_app_prototype.adapter.free;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
@@ -29,7 +25,7 @@ public class ListFreeBoardAdapter extends RecyclerView.Adapter<ListFreeBoardAdap
     Activity activity;
     int member_id;
     int like_count;
-    FreeBoardOnClickListener onClick=null;
+   // FreeBoardOnClickListener onClick=null;
     boolean singline = true;
 
     public ListFreeBoardAdapter(List<ForetBoard> list, Context context, int member_id) {
@@ -38,9 +34,9 @@ public class ListFreeBoardAdapter extends RecyclerView.Adapter<ListFreeBoardAdap
         this.member_id = member_id;
     }
 
-    public void setOnClick(FreeBoardOnClickListener onClick) {
+/*    public void setOnClick(FreeBoardOnClickListener onClick) {
         this.onClick = onClick;
-    }
+    }*/
 
     @NonNull
     @Override
@@ -61,7 +57,9 @@ public class ListFreeBoardAdapter extends RecyclerView.Adapter<ListFreeBoardAdap
         holder.textView6.setText(foretBoard.getComment_count()+"");
         holder.textView7.setText(foretBoard.getReg_date());
         if(foretBoard.isLike()) {
-            holder.button_like.isChecked();
+            holder.button_like.setChecked(true);
+        } else {
+            holder.button_like.setChecked(false);
         }
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +69,7 @@ public class ListFreeBoardAdapter extends RecyclerView.Adapter<ListFreeBoardAdap
                 activity.startActivity(intent);
             }
         });
-        holder.button_like.setOnClickListener(new View.OnClickListener() {
+        /*holder.button_like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(holder.button_like.isChecked()) {
@@ -81,9 +79,14 @@ public class ListFreeBoardAdapter extends RecyclerView.Adapter<ListFreeBoardAdap
                     like_count--;
                     holder.textView5.setText(like_count+"");
                 }
-                onClick.onlikeClick(v, like_count);
             }
         });
+        holder.button_like.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                onClick.onlikeClick(buttonView, like_count, foretBoard.getId(), foretBoard.getLike_count());
+            }
+        });*/
         holder.textView4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,7 +126,7 @@ public class ListFreeBoardAdapter extends RecyclerView.Adapter<ListFreeBoardAdap
         }
     }
 
-    public interface FreeBoardOnClickListener {
-        public void onlikeClick(View v, int likeCount);
-    }
+/*    public interface FreeBoardOnClickListener {
+        public void onlikeClick(View v, int count, int board_id, int original_likecount);
+    }*/
 }

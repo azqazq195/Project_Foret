@@ -25,7 +25,9 @@
         <activity android:name=".activity.menu.AppNoticeActivity" />
         <activity android:name=".activity.menu.MyInfoActivity" />
         <activity android:name=".activity.SearchLayoutActivity" />
-        <activity android:name=".activity.free.ReadFreeActivity"/>
+        <activity android:name=".activity.free.ReadFreeActivity"
+            android:windowSoftInputMode="adjustPan"
+            />
         <activity android:name=".activity.chat.chatactivity.GroupChatCreatectivity" />
         <activity android:name=".activity.chat.chatactivity.GroupJoinActivity" />
         <activity android:name=".activity.chat.chatactivity.GroupChatActivity" />

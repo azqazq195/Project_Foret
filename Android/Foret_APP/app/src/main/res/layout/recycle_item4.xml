@@ -69,6 +69,7 @@
                     android:layout_height="30dp"
                     android:layout_weight="0"
                     android:background="@drawable/like_selector"
+                    android:clickable="false"
                     android:text="ToggleButton"
                     android:textOff=" "
                     android:textOn=" " />
