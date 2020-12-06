@@ -23,6 +23,6 @@
     <color name="color5">#217FAA</color>
 
     <!-- 읽음 안릭음 컬러-->
-    <color name="read">#FFD5CB76</color>
+    <color name="read">#F8F1B0</color>
     <color name="unread">#88FCFEFF</color>
 </resources>

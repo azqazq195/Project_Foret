@@ -184,9 +184,9 @@ public class HomeFragment extends Fragment
         SessionManager sessionManager = new SessionManager(getContext());
 
         String id = ""+sessionManager.getSession();
-        //params.put("id", id);
+        params.put("id", id);
         //params.put("id", memberDTO.getId());
-        params.put("id", "1");
+        //params.put("id", "1");
         client.post(url, params, memberResponse);
     }
 

@@ -11,9 +11,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.activity.chat.ChatFragment;
+import com.example.foret_app_prototype.activity.free.FreeFragment;
+import com.example.foret_app_prototype.activity.home.HomeFragment;
 import com.example.foret_app_prototype.helper.CalendarHelper;
 import com.example.foret_app_prototype.model.ModelNotify;
 
@@ -34,11 +38,13 @@ public class NotificationAdapter2 extends ArrayAdapter<ModelNotify> {
 
     Activity activity;
     int resource;
+    Fragment fragment;
 
-    public NotificationAdapter2(@NonNull Context context, int resource, @NonNull List<ModelNotify> objects) {
+    public NotificationAdapter2(@NonNull Context context, int resource, @NonNull List<ModelNotify> objects,Fragment fragment) {
         super(context, resource, objects);
         activity = (Activity) context;
         this.resource = resource;
+        this.fragment = fragment;
     }
 
     @NonNull
@@ -65,29 +71,55 @@ public class NotificationAdapter2 extends ArrayAdapter<ModelNotify> {
             if(item.getType().equals("GROUP_NEW_ITEM")){
                 Glide.with(convertView).load(R.drawable.icon_foret).into(imageView);
                 textViewtype.setText("내 포레 새글 알림");
+                layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fragment.getFragmentManager().beginTransaction().replace(R.id.containerLayout, new HomeFragment()).commit();
+                    }
+                });
 
             }else if(item.getType().equals("MESSAGE_NEW_ITEM")){
                 Glide.with(convertView).load(R.drawable.icon_chat).into(imageView);
                 textViewtype.setText("내 채팅에 새글 알림");
+                layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fragment.getFragmentManager().beginTransaction().replace(R.id.containerLayout, new ChatFragment()).commit();
+                    }
+                });
 
             }else if(item.getType().equals("PUBLIC_NOTICE_NEW_ITEM")){
                 Glide.with(convertView).load(R.drawable.icon_board).into(imageView);
                 textViewtype.setText("새 공지사항 알림");
+                layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fragment.getFragmentManager().beginTransaction().replace(R.id.containerLayout, new HomeFragment()).commit();
+                    }
+                });
             }else if(item.getType().equals("ANONYMOUS_BOARD_NEW_ITEM")){
                 Glide.with(convertView).load(R.drawable.icon_reply).into(imageView);
                 textViewtype.setText("내 게시판에 댓글알림");
+                layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fragment.getFragmentManager().beginTransaction().replace(R.id.containerLayout, new FreeFragment()).commit();
+                    }
+                });
             }else{
                 Glide.with(convertView).load(R.drawable.foreticon).into(imageView);
                 textViewtype.setText("새 글 알림");
+                layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //fragment.getFragmentManager().beginTransaction().replace(R.id.containerLayout, new ChatFragment()).commit();
+                    }
+                });
             }
-
-
             textViewContent.setText(item.getContent());
             textViewTime.setText(CalendarHelper.getInstance().getRelativeHourAndDaysAndWeek(item.getTime()));
 
         }
-
-
         return convertView;
 
     }

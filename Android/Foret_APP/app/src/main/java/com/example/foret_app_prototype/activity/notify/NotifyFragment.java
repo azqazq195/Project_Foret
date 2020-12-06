@@ -46,6 +46,7 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
     String time ;
     String content;
     Context context;
+    Fragment thisFragment;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -56,14 +57,12 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
         activity.getSupportActionBar().setTitle(null);
         setHasOptionsMenu(true);
         context = rootView.getContext();
+        thisFragment = this;
 
         listView = rootView.findViewById(R.id.listView);
         View footer = getLayoutInflater().inflate(R.layout.footer, null, false);
         listView.addFooterView(footer);
         //LinearLayout layout = (LinearLayout)footer.findViewById(R.id.layout);
-
-
-
 
         getItem();
         setReaded();
@@ -79,18 +78,15 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     boolean a = ds.child("isSeen").getValue(Boolean.class);
                     if(!a){
-
                         DatabaseReference userReading = FirebaseDatabase.getInstance().getReference("Notify").child(user.getUid());
                         HashMap<String, Object> read = new HashMap<>();
                         read.put("isSeen", true);
                         userReading.child(ds.getKey()).updateChildren(read);
                     }
-
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
@@ -106,12 +102,12 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     ModelNotify item = ds.getValue(ModelNotify.class);
-                    Log.e("[test]", "item???" + item.toString());
+                    //Log.e("[test]", "item???" + item.toString());
 
-                    adapter = new NotificationAdapter2(context, R.layout.item_row_notification, notifyList);
+                    //adapter = new NotificationAdapter2(context, R.layout.item_row_notification, notifyList);
+                    adapter = new NotificationAdapter2(context, R.layout.item_row_notification, notifyList,thisFragment);
                     listView.setAdapter(adapter);
                     notifyList.add(item);
-                    //notifyList.add(new ModelNotify(type,content,time,""+R.drawable.ic_launcher_foreground));
                 }
             }
             @Override
@@ -146,6 +142,5 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        Log.e("[test]",notifyList.size()+"");
     }
 }

@@ -376,6 +376,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         HashMap<String, Object> onlineStatus = new HashMap<>();
         onlineStatus.put("onlineStatus", "online");
         onlineStatus.put("listlogined_date", "현재 접속중");
+        onlineStatus.put("id", memberDTO.getId());
         onlineStatus.put("nickname", memberDTO.getNickname()); //닉네임 최신화
         onlineStatus.put("user_id", memberDTO.getPassword()); //비밀번호 최신화
         userAcitive.updateChildren(onlineStatus);

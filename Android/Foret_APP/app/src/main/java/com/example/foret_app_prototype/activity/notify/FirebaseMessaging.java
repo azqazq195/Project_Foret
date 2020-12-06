@@ -14,8 +14,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.Fragment;
 
 import com.example.foret_app_prototype.activity.chat.chatactivity.ChatActivity;
+import com.example.foret_app_prototype.activity.login.SessionManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -65,7 +67,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int i = Integer.parseInt(user.replaceAll("[\\D]", ""));
-        Intent intent = new Intent(this, ChatActivity.class);
+        Intent intent = new Intent(this, NotifyFragment.class);
         Bundle bundle = new Bundle();
         bundle.putString("hisUid", user);
         intent.putExtras(bundle);
@@ -96,7 +98,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int i = Integer.parseInt(user.replaceAll("[\\D]", ""));
-        Intent intent = new Intent(this, ChatActivity.class);   //activity위치 바꿔주는거
+        Intent intent = new Intent(this, NotifyFragment.class);   //activity위치 바꿔주는거
         Bundle bundle = new Bundle();
         bundle.putString("hisUid", user);
         intent.putExtras(bundle);
