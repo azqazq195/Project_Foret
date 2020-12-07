@@ -128,7 +128,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                             return;
                         }
                         deviceToken = task.getResult();
-                        Log.e("[test]", "deviceToken?"+deviceToken);
+                        Log.e("[test]", "deviceToken?" + deviceToken);
                     }
                 });
         activity = this;
@@ -584,11 +584,11 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             if (a == 0) {
                 params.put("region_si", str_si[a]);
                 params.put("region_gu", str_gu[a]);
-                Log.e("[test]","리전?"+str_si[a]+","+str_gu[a]);
+                Log.e("[test]", "리전?" + str_si[a] + "," + str_gu[a]);
             } else {
                 params.add("region_si", str_si[a]);
                 params.add("region_gu", str_gu[a]);
-                Log.e("[test]","리전?"+str_si[a]+","+str_gu[a]);
+                Log.e("[test]", "리전?" + str_si[a] + "," + str_gu[a]);
             }
 
         }
@@ -598,10 +598,10 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
             if (a == 0) {
                 params.put("tag", str_tag[a]);
-                Log.e("[test]","태그??"+str_tag[a]);
+                Log.e("[test]", "태그??" + str_tag[a]);
             } else {
                 params.add("tag", str_tag[a]);
-                Log.e("[test]","태그??"+str_tag[a]);
+                Log.e("[test]", "태그??" + str_tag[a]);
             }
         }
 
@@ -646,7 +646,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 String memberTagRT = json.getString("memberTagRT");
                 String memberRegionRT = json.getString("memberRegionRT");
                 String memberPhotoRT = json.getString("memberPhotoRT");
-                member_id = Integer.parseInt(json.getString("member_id"));
+                member_id = Integer.parseInt(json.getString("id"));
 
                 if (memberRT.equals("OK")) {
                     Toast.makeText(
@@ -726,7 +726,16 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                             sessionManager.saveSession(memberDTO);
 
                             //파이어 베이스 이미지 생성
-                            sendImageMessage(uri);
+                            if (uri.equals("") || uri == null) {
+                                ProgressDialogHelper.getInstance().removeProgressbar();
+                                intent = new Intent(GuideActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                sendImageMessage(uri);
+                            }
+
+
                         } else {
                             Log.e("TAG", "createUserWithEmail:failure", task.getException());
                             Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show();

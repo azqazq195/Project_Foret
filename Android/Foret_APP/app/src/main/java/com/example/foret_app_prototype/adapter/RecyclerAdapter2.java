@@ -7,13 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.activity.search.SearchFragment;
 import com.example.foret_app_prototype.activity.search.SearchResultActivity;
 import com.example.foret_app_prototype.model.Test;
+import com.loopj.android.http.RequestParams;
 
 import java.util.List;
 
@@ -21,10 +24,12 @@ public class RecyclerAdapter2 extends RecyclerView.Adapter<RecyclerAdapter2.Adap
 
     List<String> list;
     Activity activity;
+    SearchFragment parent;
 
-    public RecyclerAdapter2(List<String> list, Context context) {
+    public RecyclerAdapter2(List<String> list, Context context, SearchFragment searchFragment) {
         this.list = list;
-        activity = (Activity)context;
+        activity = (Activity) context;
+        parent = searchFragment;
     }
 
     @NonNull
@@ -37,7 +42,15 @@ public class RecyclerAdapter2 extends RecyclerView.Adapter<RecyclerAdapter2.Adap
     @Override
     public void onBindViewHolder(@NonNull RecyclerAdapter2.Adapter2 holder, int position) {
         String test = list.get(position);
-        holder.button.setText("#"+test);
+        holder.button.setText("#" + test);
+        holder.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(activity,test+"클릭",Toast.LENGTH_SHORT).show();
+                parent.search_keyword(test);
+            }
+        });
+
     }
 
     @Override
@@ -52,13 +65,6 @@ public class RecyclerAdapter2 extends RecyclerView.Adapter<RecyclerAdapter2.Adap
         public Adapter2(@NonNull View itemView) {
             super(itemView);
             button = itemView.findViewById(R.id.button);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(activity, SearchResultActivity.class);
-                    activity.startActivity(intent);
-                }
-            });
         }
     }
 }
