@@ -63,6 +63,7 @@ public class MemberController {
 	    json.put("memberTagRT", memberTagRT);
 	    json.put("memberRegionRT", memberRegionRT);
 	    json.put("memberPhotoRT", memberPhotoRT);
+	    json.put("id", member_id);
 	      
 	    System.out.println("-- 함수 종료 : member_insert.do --\n");
 	    return modelAndView(json);
@@ -160,6 +161,7 @@ public class MemberController {
 		String password = request.getParameter("password");
 	    String nickname = request.getParameter("nickname");
 	    String birth = request.getParameter("birth");
+	    String deviceToken = request.getParameter("deviceToken");
 	    // 멤버 작성
 	    MemberDTO memberDTO = new MemberDTO();
 	    memberDTO.setName(name);
@@ -167,6 +169,7 @@ public class MemberController {
 	    memberDTO.setPassword(password);
 	    memberDTO.setNickname(nickname);
 	    memberDTO.setBirth(birth);
+	    memberDTO.setDeviceToken(deviceToken);
 	    
 	    memberService.memberWrite(memberDTO);
 	    member_id = memberDTO.getId();
@@ -230,7 +233,6 @@ public class MemberController {
 		// 기본 정보
 		int id = haveId(request.getParameter("id"));
 		String name = request.getParameter("name");
-		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 	    String nickname = request.getParameter("nickname");
 	    String birth = request.getParameter("birth");
@@ -238,7 +240,6 @@ public class MemberController {
 	    MemberDTO memberDTO = new MemberDTO();
 	    memberDTO.setId(id);
 	    memberDTO.setName(name);
-	    memberDTO.setEmail(email);
 	    memberDTO.setPassword(password);
 	    memberDTO.setNickname(nickname);
 	    memberDTO.setBirth(birth);

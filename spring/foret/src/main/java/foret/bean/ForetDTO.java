@@ -6,7 +6,7 @@ public class ForetDTO {
 	private String name;
 	private String introduce;
 	private int max_member;
-	private String date;
+	private String reg_date;
 	private String photo;
 	private String[] tag;
 	private String[] region_si;
@@ -43,11 +43,11 @@ public class ForetDTO {
 	public void setMax_member(int max_member) {
 		this.max_member = max_member;
 	}
-	public String getDate() {
-		return date;
+	public String getReg_date() {
+		return reg_date;
 	}
-	public void setDate(String date) {
-		this.date = date;
+	public void setReg_date(String reg_date) {
+		this.reg_date = reg_date;
 	}
 	public String getPhoto() {
 		return photo;

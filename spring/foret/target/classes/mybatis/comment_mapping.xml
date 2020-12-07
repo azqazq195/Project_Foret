@@ -5,7 +5,7 @@
 <mapper namespace="mybatis.commentMapper">
 	<!-- 댓글 -->
 	<!-- 댓글 추가 -->
-	<insert id="commentWrite" parameterType="commentDTO">
+	<insert id="commentWrite" parameterType="commentDTO" useGeneratedKeys="true" keyColumn="id,reg_date" keyProperty="id,reg_date">
 		INSERT INTO board_comment 
 		VALUES      (seq_board_comment_id.nextval, 
 		             #{board_id}, 
@@ -39,14 +39,14 @@
 	
 	<!-- 대댓글 -->
 	<!-- 대댓글 추가 -->
-	<insert id="reCommentWrite" parameterType="commentDTO">
-				INSERT INTO board_comment 
+	<insert id="reCommentWrite" parameterType="commentDTO" useGeneratedKeys="true" keyColumn="id,reg_date" keyProperty="id,reg_date">
+		INSERT INTO board_comment 
 		VALUES      (seq_board_comment_id.nextval, 
 		             #{board_id}, 
 		             #{writer}, 
 		             #{content}, 
 		             sysdate, 
-		             #{id})
+		             #{group_no})
 	</insert>
 	<!-- 대댓글 수정 -->
 	<update id="reCommentModify" parameterType="commentDTO">

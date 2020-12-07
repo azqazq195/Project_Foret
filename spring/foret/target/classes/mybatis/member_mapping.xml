@@ -14,14 +14,12 @@
 		            #{nickname}, 
 		            #{birth}, 
 		            sysdate,
-		            #{deviceToken}
-		            ) 
+		            #{deviceToken}) 
 	</insert>
 	<!-- 멤버 수정 -->
 	<update id="memberModify" parameterType="memberDTO" >
 		UPDATE member
-		SET    name = #{name},
-		       email = #{email}, 
+		SET    name = #{name}, 
 		       password = #{password}, 
 		       nickname = #{nickname}, 
 		       birth = #{birth}

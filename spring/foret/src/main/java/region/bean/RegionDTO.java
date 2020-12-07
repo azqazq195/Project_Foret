@@ -6,13 +6,14 @@ public class RegionDTO {
 	private String region_gu;
 	private String si;
 	private String gu;
-	private int rank;
+	private int cnt;
 
-	public int getRank() {
-		return rank;
+	
+	public int getCnt() {
+		return cnt;
 	}
-	public void setRank(int rank) {
-		this.rank = rank;
+	public void setCnt(int cnt) {
+		this.cnt = cnt;
 	}
 	public int getRegion_id() {
 		return region_id;

@@ -107,7 +107,8 @@ public class TagController {
 		System.out.println("-- 함수 실행 : tag_rank --");
 		request.setCharacterEncoding("UTF-8");
 		
-		List<TagDTO> list = tagService.tagRank(); 
+		int rank = haveId(request.getParameter("rank"));
+		List<TagDTO> list = tagService.tagRank(rank); 
 		
 		int total = list.size();
 		
@@ -117,7 +118,7 @@ public class TagController {
 	    JSONArray array = new JSONArray();
 	    for(TagDTO tagDTO : list) {
 	    	JSONObject temp = new JSONObject();
-	    	temp.put("rank", tagDTO.getRank());
+	    	temp.put("cnt", tagDTO.getCnt());
 	    	temp.put("tag_id", tagDTO.getTag_id());
 	    	temp.put("tag_name", tagDTO.getTag_name());
 	    	array.put(temp);
@@ -130,5 +131,16 @@ public class TagController {
 	    modelAndView.setViewName("tag.jsp");
 	    System.out.println("-- 함수 종료 : tag_rank --");
 	    return modelAndView;
+	}
+	
+	public int haveId(String id) {
+		System.out.println("함수 실행 : haveId");
+		if(id == null || id.equals("")) {
+			System.out.println("함수 종료 : haveId");
+			return 0;
+		} else {
+			System.out.println("함수 종료 : haveId");
+			return Integer.parseInt(id);
+		}
 	}
 }
