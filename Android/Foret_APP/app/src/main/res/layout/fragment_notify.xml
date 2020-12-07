@@ -46,8 +46,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView23"
-        app:layout_constraintVertical_bias="0.016"
-        tools:listfooter="@layout/footer" />
+        app:layout_constraintVertical_bias="0.016" />
 
     <TextView
         android:id="@+id/textView23"

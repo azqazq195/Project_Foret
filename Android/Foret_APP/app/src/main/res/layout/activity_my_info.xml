@@ -10,13 +10,14 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
+        android:background="@color/foret4"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/modify_menu">
+        app:menu="@menu/modify_menu"
+        app:subtitleTextColor="#FFFFFF">
 
         <TextView
             android:id="@+id/foretTitle"
@@ -26,6 +27,8 @@
             android:singleLine="true"
             android:text="내 정보"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
             tools:layout_editor_absoluteX="168dp"
             tools:layout_editor_absoluteY="18dp" />
 

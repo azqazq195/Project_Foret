@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:completionThreshold="1"
-            android:hint="이름/태그"
+            android:hint="이름/태그/지역"
             android:imeOptions="actionSearch"
             android:inputType="text" />
 

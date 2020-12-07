@@ -12,7 +12,7 @@
     <color name="foret3">#FF007398</color>
     <color name="foret4">#FF22997b</color>
     <color name="foret5">#FFf2ffed</color>
-    <color name="board">#FFFAFAFA</color>
+    <color name="board">#FFFFFFFF</color>
     <color name="text">#FF474747</color>
     <!-- 뷰페이저 애니메이션 컬러 -->
     <color name="color">#FFFFFF</color>
