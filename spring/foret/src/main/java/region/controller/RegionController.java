@@ -110,7 +110,8 @@ public class RegionController {
 	public ModelAndView regionRank(HttpServletRequest request) throws Exception {
 		request.setCharacterEncoding("UTF-8");
 		
-		List<RegionDTO> list = regionService.regionRank();
+		int rank = haveId(request.getParameter("rank"));
+		List<RegionDTO> list = regionService.regionRank(rank);
 		
 		int total = list.size();
 		
@@ -120,10 +121,10 @@ public class RegionController {
 	    JSONArray array = new JSONArray();
 	    for(RegionDTO regionDTO : list) {
 	    	JSONObject temp = new JSONObject();
-	    	temp.put("rank", regionDTO.getRank());
+	    	temp.put("cnt", regionDTO.getCnt());
 	    	temp.put("region_id", regionDTO.getRegion_id());
-	    	temp.put("region_si", regionDTO.getSi());
-	    	temp.put("region_gu", regionDTO.getGu());
+	    	temp.put("region_si", regionDTO.getRegion_si());
+	    	temp.put("region_gu", regionDTO.getRegion_gu());
 	    	array.put(temp);
 	    }
 	    json.put("region", array);
@@ -134,5 +135,16 @@ public class RegionController {
 	    modelAndView.setViewName("region.jsp");
 	       
 	    return modelAndView;
+	}
+	
+	public int haveId(String id) {
+		System.out.println("함수 실행 : haveId");
+		if(id == null || id.equals("")) {
+			System.out.println("함수 종료 : haveId");
+			return 0;
+		} else {
+			System.out.println("함수 종료 : haveId");
+			return Integer.parseInt(id);
+		}
 	}
 }

@@ -28,7 +28,14 @@
 		<!-- 지역 태그 사진 정보 -->
 		<typeAlias type="tag.bean.TagDTO" alias="tagDTO"/>
 		<typeAlias type="region.bean.RegionDTO" alias="regionDTO"/>
-		<typeAlias type="photo.bean.PhotoDTO" alias="PhotoDTO"/>
+		<typeAlias type="photo.bean.PhotoDTO" alias="photoDTO"/>
+		
+		<!-- 조회용 DTO -->
+		<typeAlias type="search.bean.MemberALLDTO" alias="memberALLDTO"/>
+		<typeAlias type="search.bean.BoardALLDTO" alias="boardALLDTO"/>
+		<typeAlias type="search.bean.ForetALLDTO" alias="foretALLDTO"/>
+		<typeAlias type="search.bean.KeywordDTO" alias="keywordDTO"/>
+		
 	</typeAliases>
 	
 	<!-- sql mapper 설정 -->

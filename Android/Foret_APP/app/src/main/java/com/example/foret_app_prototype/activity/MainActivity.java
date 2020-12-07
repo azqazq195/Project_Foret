@@ -27,6 +27,7 @@ import com.example.foret_app_prototype.activity.free.FreeFragment;
 import com.example.foret_app_prototype.activity.home.HomeFragment;
 import com.example.foret_app_prototype.activity.login.LoginActivity;
 import com.example.foret_app_prototype.activity.login.SessionManager;
+import com.example.foret_app_prototype.activity.menu.AppGuideActivity;
 import com.example.foret_app_prototype.activity.menu.AppNoticeActivity;
 import com.example.foret_app_prototype.activity.menu.MyInfoActivity;
 import com.example.foret_app_prototype.activity.notify.NotifyFragment;
@@ -130,16 +131,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             id = ""+sessionManager.getSession();
         }
 
-        RequestParams params = new RequestParams();
-        params.put("id", id);
-
-
         final int DEFAULT_TIME = 40 * 1000;
         client.setConnectTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
         client.setTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
+        RequestParams params = new RequestParams();
+        params.put("id", id);
         client.post(url, params, response);
+        
         button_out.setOnClickListener(this);
         button_out2.setOnClickListener(this);
         button_drawcancel.setOnClickListener(this);
@@ -181,7 +181,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 startActivity(intent);
                 break;
             case R.id.drawer_help: //햄버거 도움말
-                Toast.makeText(this, "레이아웃으로 도움말 설명할거 레이아웃 5장", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "레이아웃으로 도움말 설명할거 레이아웃 5장", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, AppGuideActivity.class));
                 break;
             case R.id.drawer_foret: //햄버거 foret ->그냥 넣어놈
                 break;
@@ -279,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     sessionManager.saveSession(memberDTO);
 
                     // 데이터 셋팅 HERE ----------------
-                    Toast.makeText(MainActivity.this, memberDTO.toString(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, memberDTO.toString(), Toast.LENGTH_SHORT).show();
 
                     fillTextView(R.id.drawer_text1, memberDTO.getNickname());
                     fillTextView(R.id.drawer_text2, memberDTO.getEmail());
@@ -312,6 +313,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onResume() {
         super.onResume();
+
+        //데이터 다시 받아오기
+        final int DEFAULT_TIME = 40 * 1000;
+        client.setConnectTimeout(DEFAULT_TIME);
+        client.setResponseTimeout(DEFAULT_TIME);
+        client.setTimeout(DEFAULT_TIME);
+        client.setResponseTimeout(DEFAULT_TIME);
+        RequestParams params = new RequestParams();
+        params.put("id", id);
+        client.post(url, params, response);
+        
         currntuser = FirebaseAuth.getInstance().getCurrentUser();
         Log.e("[test]", FirebaseAuth.getInstance().getCurrentUser() + "");
         if (currntuser == null) {
@@ -332,13 +344,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             updateToken(token);
                         }
                     });
-            //updateToken(FirebaseInstanceId.getInstance().getToken());
-            //현재 로그인된 유저 uid를 저장하고 미리 공유하는 참조를 저장
+
             SharedPreferences sp =getSharedPreferences("SP_USER",MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("Current_USERID",mUID);
             editor.apply();
-//            updateuserActiveStatusOn();
+
         }
     }
 
@@ -394,5 +405,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 .into(iv);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        updateuserActiveStatusOff();
+    }
 }

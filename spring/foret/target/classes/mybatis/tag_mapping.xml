@@ -26,9 +26,11 @@
 		ORDER  BY tag_id ASC 
 	</select>
 	<!-- 태그 랭크 -->
-	<select id="tagRank" resultType="tagDTO">
-		SELECT * 
-		FROM   V_TAG_RANK
+	<select id="tagRank" parameterType="int" resultType="tagDTO">
+		<![CDATA[
+			SELECT * 
+			FROM   V_TAG_RANK  where rank <= #{rank}
+		]]>
 	</select>
 	
 	<!-- 태그 id 가져오기 -->

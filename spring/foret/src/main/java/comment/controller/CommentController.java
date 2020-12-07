@@ -21,11 +21,13 @@ public class CommentController {
 		request.setCharacterEncoding("UTF-8");
 		
 		String commentRT = "FAIL";
-
-		commentRT = getResult(insertComment(request));
+		CommentDTO commentDTO = insertComment(request);
+		commentRT = getResult(commentDTO.getId());
 		
 		JSONObject json = new JSONObject();
 		json.put("commentRT", commentRT);
+		json.put("id", commentDTO.getId());
+		json.put("reg_date", commentDTO.getReg_date());
 		
 		System.out.println("-- 함수 종료 : comment_insert.do --\n");
 		return modelAndView(json);
@@ -67,11 +69,13 @@ public class CommentController {
 		request.setCharacterEncoding("UTF-8");
 		
 		String commentRT = "FAIL";
-
-		commentRT = getResult(insertReComment(request));
+		CommentDTO commentDTO = insertReComment(request);
+		commentRT = getResult(commentDTO.getId());
 		
 		JSONObject json = new JSONObject();
 		json.put("commentRT", commentRT);
+		json.put("id", commentDTO.getId());
+		json.put("reg_date", commentDTO.getReg_date());
 		
 		System.out.println("-- 함수 종료 : recomment_insert.do --\n");
 		return modelAndView(json);
@@ -105,7 +109,7 @@ public class CommentController {
 		return modelAndView(json);
 	}
 	
-	public int insertComment(HttpServletRequest request) {
+	public CommentDTO insertComment(HttpServletRequest request) {
 		System.out.println("함수 실행 : insertComment");
 		int result = 0;
 		
@@ -118,11 +122,11 @@ public class CommentController {
 		commentDTO.setWriter(writer);
 		commentDTO.setContent(content);
 		
-		result = commentService.commentWrite(commentDTO);
+		commentService.commentWrite(commentDTO);	
 		System.out.println("함수 종료 : insertComment");
-		return result;
+		return commentDTO;
 	}
-	public int insertReComment(HttpServletRequest request) {
+	public CommentDTO insertReComment(HttpServletRequest request) {
 		System.out.println("함수 실행 : insertReComment");
 		int result = 0;
 		
@@ -132,14 +136,14 @@ public class CommentController {
 		String content = request.getParameter("content");
 		
 		CommentDTO commentDTO = new CommentDTO();
-		commentDTO.setId(comment_id);
+		commentDTO.setGroup_no(comment_id);
 		commentDTO.setBoard_id(board_id);
 		commentDTO.setWriter(writer);
 		commentDTO.setContent(content);
 		
-		result = commentService.reCommentWrite(commentDTO);
+		commentService.reCommentWrite(commentDTO);	
 		System.out.println("함수 종료 : insertReComment");
-		return result;
+		return commentDTO;
 	}
 	
 	public int modifyComment(HttpServletRequest request) {

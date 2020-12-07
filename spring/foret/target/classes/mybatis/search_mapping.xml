@@ -9,32 +9,307 @@
 	</select>
 	<!-- 멤버 로그인 -->
 	<select id="memberLogin" parameterType="java.util.Map" resultType="int">
-		select * from V_MEMBER_AND_PHOTO where email = #{email} and password = #{password}
+		select id from member where email = #{email} and password = #{password}
 	</select>
 	
 	<!-- 내 정보 조회 -->
 	<!-- 멤버 조회 -->
-	<select id="memberSelect" parameterType="String" resultType="memberDTO">
+	<select id="memberSelectId" parameterType="int" resultType="memberALLDTO">
+		SELECT * 
+		FROM   V_MEMBER_ALL 
+		WHERE  id = #{id}
+	</select>
+	<select id="memberSelectEmail" parameterType="String" resultType="memberDTO">
 		select * from V_MEMBER_AND_PHOTO where email = #{email}
 	</select>
+	<!-- 홈 프레그먼트 조회 -->
+	<select id="homeSelect" parameterType="int" resultType="BoardALLDTO">
+		<![CDATA[
+			SELECT 
+			v_board_all.id as id,
+			v_board_all.writer as writer,
+			v_board_all.foret_id as foret_id,
+			v_board_all.type as type,
+			v_board_all.hit as hit,
+			v_board_all.subject as subject,
+			v_board_all.content as content,
+			v_board_all.reg_date as reg_date,
+			v_board_all.edit_date as edit_date,
+			v_board_all.board_like as board_like,
+			v_board_all.board_comment as board_comment,
+			v_board_all.photo as board_photo,
+			v_foret_and_photo.name as foret_name,
+			v_foret_and_photo.photo as foret_photo
+			FROM   v_board_all 
+			left outer join v_foret_and_photo
+			on v_board_all.foret_id = v_foret_and_photo.id
+			WHERE  v_board_all.id IN (SELECT id 
+			              FROM   (SELECT Row_number() 
+			                               OVER( 
+			                                 partition BY board.foret_id, board.type 
+			                                 ORDER BY board.foret_id ASC, board.type ASC, 
+			                               board.id 
+			                               DESC ) 
+			                             row_num 
+			                                     , 
+			                             board.* 
+			                      FROM   board 
+			                      ORDER  BY board.foret_id ASC, 
+			                                board.type ASC, 
+			                                board.id DESC) 
+			              WHERE  foret_id IN(SELECT foret_id 
+			                                 FROM   v_member_f 
+			                                 WHERE  id = #{id}) 
+			                     AND row_num <= 3) 
+			ORDER  BY v_board_all.foret_id ASC, 
+			          v_board_all.type ASC, 
+			          v_board_all.id DESC,
+			          v_board_all.photo ASC
+		]]>
+	</select>
 	<!-- 태그 조회 -->
-	<select id="memberTagSelect" parameterType="int" resultType="MemberTagDTO">
+	<select id="memberTagSelect" parameterType="int" resultType="memberTagDTO">
 		select * from V_MEMBER_T where id = #{member_id}
 	</select>
 	<!-- 지역 조회 -->
-	<select id="memberRegionSelect" parameterType="int" resultType="MemberRegionDTO">
+	<select id="memberRegionSelect" parameterType="int" resultType="memberRegionDTO">
 		select * from V_MEMBER_R where id = #{member_id}
 	</select>
 	<!-- 보드 좋아요 조회 -->
-	<select id="memberBoardLikeSelect" parameterType="int" resultType="MemberLikeDTO">
+	<select id="memberBoardLikeSelect" parameterType="int" resultType="memberLikeDTO">
 		select * from like_board where id = #{member_id}
 	</select>
 	<!-- 댓글 좋아요 조회 -->
-	<select id="memberCommentLikeSelect" parameterType="int" resultType="MemberLikeDTO">
+	<select id="memberCommentLikeSelect" parameterType="int" resultType="memberLikeDTO">
 		select * from like_comment where id = #{member_id}
 	</select>
 	<!-- 멤버 포레 조회 -->
-	<select id="memberForetSelect" parameterType="int" resultType="MemberForetDTO">
+	<select id="memberForetSelect" parameterType="int" resultType="memberForetDTO">
 		select * from V_MEMBER_F where id = #{member_id}
+	</select>
+	
+	<!-- 포레 조회 -->
+	<!-- 포레 랭크 조회 -->
+	<select id="foretRank" parameterType="int" resultType="foretALLDTO">
+	<![CDATA[
+		SELECT * 
+		FROM  (SELECT Dense_rank() 
+		                OVER( 
+		                  ORDER BY cnt.cnt DESC nulls last, v_foret_all.id ) row_num, 
+		              v_foret_all.*, 
+		              cnt.cnt 
+		       FROM   v_foret_all 
+		              LEFT OUTER JOIN (SELECT board.foret_id, 
+		                                      Count(*) AS cnt 
+		                               FROM   board 
+		                               WHERE  type != 0 
+		                                      AND type != 1 
+		                               GROUP  BY foret_id) cnt 
+		                           ON v_foret_all.id = cnt.foret_id) 
+		WHERE  row_num <= #{rank} 
+		]]>
+	</select>
+	<!-- 포레 조회 -->
+	<select id="foretSelect" parameterType="int" resultType="foretALLDTO">
+		select * from V_FORET_ALL where id = #{id}
+	</select>
+	<!-- 태그 조회 -->
+	<select id="foretTagSelect" parameterType="int" resultType="foretTagDTO">
+		select * from V_FORET_T where id = #{foret_id}
+	</select>
+	<!-- 지역 조회 -->
+	<select id="foretRegionSelect" parameterType="int" resultType="foretRegionDTO">
+		select * from V_FORET_R where id = #{foret_id}
+	</select>
+	<!-- 멤버 조회 -->
+	<select id="foretMemberSelect" parameterType="int" resultType="foretMemberDTO">
+		select * from foret_member where foret_id = #{foret_id}
+	</select>
+	
+	<!-- 홈 프레그 먼트 -->
+	<select id="homeFragement" parameterType="int" resultType="boardDTO">
+
+	</select>
+	
+	<!-- 보드 댓글 불러오기 -->
+	<select id="commentList" parameterType="int" resultType="commentDTO">
+		SELECT * 
+		FROM   board_comment 
+		WHERE  board_id = #{board_id} 
+		ORDER  BY group_no ASC, 
+		          id ASC
+	</select>
+	
+	<!-- 포레 검색 -->
+	<!-- 이름 검색 -->
+	<select id="foretSearchName" parameterType="String" resultType="foretDTO">
+		SELECT * 
+		FROM   v_foret_all 
+		WHERE  id IN (SELECT id 
+		              FROM   v_foret_all 
+		              WHERE  NAME = #{name})
+	</select>
+	<!-- 태그 검색 -->
+	<select id="foretSearchTag" parameterType="String" resultType="foretTagDTO">
+		SELECT * 
+		FROM   v_foret_all 
+		WHERE  id IN (SELECT id 
+		              FROM   v_foret_all 
+		              WHERE  tag_name = #{tag_name}) 
+	</select>
+	<!-- 지역 검색 -->
+	<select id="foretSearchRegion" parameterType="String" resultType="foretRegionDTO">
+		SELECT * 
+		FROM   v_foret_all 
+		WHERE  id IN (SELECT id 
+		              FROM   v_foret_all 
+		              WHERE  si = #{region_si} 
+		                AND  gu = #{region_gu})
+	</select>
+	<!-- 키워드 검색 -->
+	<select id="foretkeywordSearch" parameterType="java.util.Map" resultType="foretALLDTO">
+		SELECT * 
+		FROM   v_foret_all 
+		       LEFT OUTER JOIN (SELECT board.foret_id, 
+		                               Count(*) AS cnt 
+		                        FROM   board 
+		                        WHERE  type != 0 
+		                               AND type != 1 
+		                        GROUP  BY foret_id) cnt 
+		                    ON v_foret_all.id = cnt.foret_id 
+		WHERE  id IN (SELECT id 
+		              FROM   v_foret_all WHERE 
+		              <if test="type.equals('name')">
+		              	name = #{name}	
+		              </if>
+		              <if test="type.equals('tag')">
+		              	tag_name = #{name}
+		              </if>
+		              <if test="type.equals('region_si')">
+		              	si = #{name}
+		              </if>
+		              <if test="type.equals('region_gu')">
+		              	gu = #{name}
+		              </if>
+		              )
+		ORDER  BY cnt DESC nulls last, 
+		          id DESC
+	</select>
+	<!-- 키워드 가져오기 -->
+	<select id="searchKeyword" resultType="keywordDTO">
+		select * from V_SEARCH_KEYWORD
+	</select>
+	
+	<!-- 보드 조회 -->
+	<!-- 보드 선택 -->
+	<select id="boardSelect" parameterType="int" resultType="boardALLDTO">
+		SELECT v_board_all.id, 
+		       v_board_all.writer, 
+		       tempBoard.nickname          AS writer_nickname, 
+		       tempBoard.photo             AS writer_photo, 
+		       v_board_all.foret_id, 
+		       v_board_all.type, 
+		       v_board_all.hit, 
+		       v_board_all.subject, 
+		       v_board_all.content, 
+		       v_board_all.reg_date, 
+		       v_board_all.edit_date, 
+		       v_board_all.board_like, 
+		       v_board_all.board_comment, 
+		       v_board_all.photo, 
+		       tempComment.id              AS comment_id, 
+		       tempComment.writer          AS comment_writer, 
+		       tempComment.writer_nickname AS comment_writer_nickname, 
+		       tempComment.writer_photo    AS comment_writer_photo, 
+		       tempComment.content         AS comment_content, 
+		       tempComment.reg_date        AS comment_reg_date, 
+		       tempComment.group_no        AS comment_group_no 
+		FROM   v_board_all 
+		       LEFT OUTER JOIN (SELECT board_comment.id, 
+		                               board_comment.board_id, 
+		                               board_comment.writer, 
+		                               temp.NAME     AS writer_name, 
+		                               temp.nickname AS writer_nickname, 
+		                               temp.photo    AS writer_photo, 
+		                               board_comment.content, 
+		                               board_comment.reg_date, 
+		                               board_comment.group_no 
+		                        FROM   board_comment 
+		                               LEFT OUTER JOIN (SELECT member.id, 
+		                                                       member.NAME, 
+		                                                       member.nickname, 
+		                                                       member_photo.filename AS 
+		                                                       photo 
+		                                                FROM   member 
+		                               LEFT OUTER JOIN member_photo 
+		                                            ON 
+		                               member.id = member_photo.id) 
+		                                               temp 
+		                                            ON board_comment.writer = temp.id) 
+		                                          tempComment 
+		                    ON v_board_all.id = tempComment.board_id 
+		       LEFT OUTER JOIN (SELECT member.id, 
+		                               member.NAME, 
+		                               member.nickname, 
+		                               member_photo.filename AS photo 
+		                        FROM   member 
+		                               LEFT OUTER JOIN member_photo 
+		                                            ON member.id = member_photo.id) 
+		                       tempBoard 
+		                    ON v_board_all.writer = tempBoard.id 
+		WHERE  v_board_all.id = #{id} 
+		ORDER  BY v_board_all.id DESC, 
+		          tempComment.group_no ASC, 
+		          tempComment.id
+	</select>
+	<!-- 보드 전체 조회 -->
+	<select id="boardList" parameterType="java.util.Map" resultType="boardALLDTO">
+			select * from v_board_all
+			<if test="foret_id == 0">
+				where foret_id is null and type = #{type}
+			</if> 
+			<if test="foret_id != 0">
+				where foret_id = #{foret_id} and type = #{type}
+			</if> 
+			<if test="inquiry_type == 1">
+				order by id desc
+			</if>
+			<if test="inquiry_type == 2">
+				order by hit desc, id desc
+			</if>
+			<if test="inquiry_type == 3">
+				order by board_like desc nulls last, id desc
+			</if>
+			<if test="inquiry_type == 4">
+				order by board_comment desc nulls last, id desc
+			</if>
+	</select>
+	<!-- 보드 페이지 조회 -->
+	<select id="boardListPage" parameterType="java.util.Map" resultType="boardALLDTO">
+		SELECT * 
+		FROM   (SELECT Dense_rank() 
+		                 OVER( 
+								<if test="inquiry_type == 1">
+									order by id desc
+								</if>
+								<if test="inquiry_type == 2">
+									order by hit desc, id desc
+								</if>
+								<if test="inquiry_type == 3">
+									order by board_like desc nulls last, id desc
+								</if>
+								<if test="inquiry_type == 4">
+									order by board_comment desc nulls last, id desc
+								</if>	                   
+	 						) num, v_board_all.* 
+		        	FROM   v_board_all 
+		        <if test="foret_id == 0">
+					where foret_id is null and type = #{type}
+				</if> 
+				<if test="foret_id != 0">
+					where foret_id = #{foret_id} and type = #{type}
+				</if> 
+		        ) temp 
+		WHERE  temp.num BETWEEN #{startNum} AND #{endNum}
 	</select>
 </mapper>

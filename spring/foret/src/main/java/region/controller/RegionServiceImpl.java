@@ -58,8 +58,8 @@ public class RegionServiceImpl implements RegionService{
 	}
 
 	@Override
-	public List<RegionDTO> regionRank() {
-		return regionDAO.regionRank();
+	public List<RegionDTO> regionRank(int rank) {
+		return regionDAO.regionRank(rank);
 	}
 
 

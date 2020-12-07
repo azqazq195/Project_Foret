@@ -179,7 +179,7 @@ public class ReadFreeActivity extends AppCompatActivity
         }
 
         // 타켓설정
-        takeReceiver = textView_writer.getText().toString();
+        takeReceiver =foretBoard.getWriter();
         originalReciver = takeReceiver;
     }
 

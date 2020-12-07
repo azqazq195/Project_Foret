@@ -3,6 +3,7 @@ package com.example.foret_app_prototype.activity.foret;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,13 +23,30 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.board.WriteForetBoardActivity;
+import com.example.foret_app_prototype.activity.notify.APIService;
+import com.example.foret_app_prototype.activity.notify.Client;
+import com.example.foret_app_prototype.activity.notify.Data;
+import com.example.foret_app_prototype.activity.notify.Response;
+import com.example.foret_app_prototype.activity.notify.Sender;
+import com.example.foret_app_prototype.activity.notify.Token;
 import com.example.foret_app_prototype.adapter.foret.BoardViewAdapter;
 import com.example.foret_app_prototype.adapter.foret.ViewForetBoardAdapter;
 import com.example.foret_app_prototype.model.ForetBoardDTO;
 import com.example.foret_app_prototype.model.ForetDTO;
 import com.example.foret_app_prototype.model.ForetViewDTO;
 import com.example.foret_app_prototype.model.MemberDTO;
+import com.example.foret_app_prototype.model.ModelUser;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -40,9 +58,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class ViewForetActivity extends AppCompatActivity implements View.OnClickListener {
     MemberDTO memberDTO;
@@ -84,6 +106,14 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
 
     String rank = ""; // guest = 가입안함, member = 가입함, leader = 리더
 
+    String foretname;
+    String myNickName;
+
+    APIService apiService;
+    boolean notify = false;
+    String hisUid, myUid;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,11 +127,16 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         getFindId(); // 객체 초기화
         addFab(); // 플로팅 버튼
 
+
         foret_id = getIntent().getIntExtra("foret_id", 0);
         Log.d("[TEST]", "넘어온 포레 아디 => " + foret_id);
         memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
         Log.d("[TEST]", "넘어온 회원 아디 => " + memberDTO.getId());
         Log.d("[TEST]", "넘어온 회원 아디 => " + memberDTO.getNickname());
+        myNickName = memberDTO.getNickname();
+
+        // 푸쉬 알림 생성
+        apiService = Client.getRetrofit("https://fcm.googleapis.com/").create(APIService.class);
 
 
     }
@@ -118,6 +153,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
 //        getForet(); // 포레 정보
         getNotice();
         getBoard();
+        checkUserStatus();
 
         board_list.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -129,11 +165,11 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onScrolled(@NonNull RecyclerView board_list, int dx, int dy) {
                 super.onScrolled(board_list, dx, dy);
-                Log.d("[TEST]", "onScrolled 호출 => " + dx + " / " +  dy);
+                Log.d("[TEST]", "onScrolled 호출 => " + dx + " / " + dy);
                 int lastPosition = ((LinearLayoutManager) board_list.getLayoutManager()).findLastCompletelyVisibleItemPosition();
                 int totalCount = board_list.getAdapter().getItemCount();
 
-                if(lastPosition == totalCount){
+                if (lastPosition == totalCount) {
                     board_pg++;
                     getBoard();
                     Log.d("[TEST]", "board_pg 호출 => " + board_pg);
@@ -147,12 +183,14 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     private void addFab() {
         write_fab_add = findViewById(R.id.fab_add3);
         write_fab_add.bringToFront();
+        write_fab_add.setVisibility(View.GONE);
         write_fab_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 intent = new Intent(ViewForetActivity.this, WriteForetBoardActivity.class);
                 intent.putExtra("foret_id", foret_id);
                 intent.putExtra("memberDTO", memberDTO);
+                intent.putExtra("foretname", foretname);
                 startActivity(intent);
             }
         });
@@ -275,6 +313,9 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         String date = foretViewDTO.getReg_date().substring(0, 10);
         textView_date.setText(date);
         textView_intro.setText(foretViewDTO.getIntroduce());
+
+        //파이어 베이스용
+        foretname = foretViewDTO.getName();
     }
 
     private void setBoard() {
@@ -290,7 +331,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home :
+            case android.R.id.home:
                 finish();
                 break;
         }
@@ -300,13 +341,13 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button1 : // 가입하고 있지 않을 때 -> 가입하기버튼 누를시 가입
+            case R.id.button1: // 가입하고 있지 않을 때 -> 가입하기버튼 누를시 가입
                 joinDialog();
                 break;
-            case R.id.button2 : // 가입하고 있을 때 -> 회원탈퇴
+            case R.id.button2: // 가입하고 있을 때 -> 회원탈퇴
                 leaveDialog();
                 break;
-            case R.id.button3 : // 가입하고 있고, 관리자일 때 -> 수정하기 화면으로 이동
+            case R.id.button3: // 가입하고 있고, 관리자일 때 -> 수정하기 화면으로 이동
                 intent = new Intent(this, EditForetActivity.class);
                 intent.putExtra("foretViewDTO", foretViewDTO);
                 intent.putExtra("memberDTO", memberDTO);
@@ -315,18 +356,18 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             case R.id.button10: // 공지사항 다음
                 noti_pg++;
                 getNotice();
-                if(noti_pg > 1) {
+                if (noti_pg > 1) {
                     button11.setVisibility(View.VISIBLE);
-                } else if(viewForetBoardAdapter.getItemCount() < 3) {
+                } else if (viewForetBoardAdapter.getItemCount() < 3) {
                     button11.setVisibility(View.INVISIBLE);
-                } else if(viewForetBoardAdapter.getItemCount() == 3) {
+                } else if (viewForetBoardAdapter.getItemCount() == 3) {
                     button11.setVisibility(View.VISIBLE);
                 }
                 break;
             case R.id.button11: // 공지사항 이전
                 noti_pg--;
                 getNotice();
-                if(noti_pg == 1) {
+                if (noti_pg == 1) {
                     button11.setVisibility(View.INVISIBLE);
                 }
                 break;
@@ -426,18 +467,21 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             Log.d("[TEST]", "ViewForetResponse onFinish() 호출");
 
             rank = foretViewDTO.getRank();
-            if(rank.equals("guest")) { // 포레 가입전 - 가입하기
+            if (rank.equals("guest")) { // 포레 가입전 - 가입하기
                 button1.setVisibility(View.VISIBLE);
                 noti_layout.setVisibility(View.GONE);
                 board_layout.setVisibility(View.GONE);
-            } else if(rank.equals("member")) { // 가입한 상태 - 탈퇴하기
+                write_fab_add.setVisibility(View.GONE);
+            } else if (rank.equals("member")) { // 가입한 상태 - 탈퇴하기
                 button2.setVisibility(View.VISIBLE);
                 noti_layout.setVisibility(View.VISIBLE);
                 board_layout.setVisibility(View.VISIBLE);
-            } else if(rank.equals("leader")) { // 리더 - 수정하기
+                write_fab_add.setVisibility(View.VISIBLE);
+            } else if (rank.equals("leader")) { // 리더 - 수정하기
                 button3.setVisibility(View.VISIBLE);
                 noti_layout.setVisibility(View.VISIBLE);
                 board_layout.setVisibility(View.VISIBLE);
+                write_fab_add.setVisibility(View.VISIBLE);
             } else {
                 Toast.makeText(ViewForetActivity.this, "언노운", Toast.LENGTH_SHORT).show();
             }
@@ -461,7 +505,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
 
                     JSONArray region_si = temp.getJSONArray("region_si");
                     List<String> si_list = new ArrayList<>();
-                    for(int i=0; i<region_si.length(); i++) {
+                    for (int i = 0; i < region_si.length(); i++) {
                         String str_si = String.valueOf(region_si.get(i));
                         si_list.add(str_si);
                     }
@@ -469,7 +513,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
 
                     JSONArray region_gu = temp.getJSONArray("region_gu");
                     List<String> gu_list = new ArrayList<>();
-                    for(int i=0; i<region_gu.length(); i++) {
+                    for (int i = 0; i < region_gu.length(); i++) {
                         String str_gu = String.valueOf(region_gu.get(i));
                         gu_list.add(str_gu);
                     }
@@ -477,7 +521,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
 
                     JSONArray tag = temp.getJSONArray("tag");
                     List<String> tag_list = new ArrayList<>();
-                    for(int i=0; i<tag.length(); i++) {
+                    for (int i = 0; i < tag.length(); i++) {
                         String str_tag = String.valueOf(tag.get(i));
                         tag_list.add(str_tag);
                     }
@@ -485,8 +529,8 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
 
                     JSONArray member = temp.getJSONArray("member");
                     List<Integer> member_list = new ArrayList<>();
-                    for(int i=0; i<member.length(); i++) {
-                        int mem = (int)member.get(i);
+                    for (int i = 0; i < member.length(); i++) {
+                        int mem = (int) member.get(i);
                         member_list.add(mem);
                     }
                     foretViewDTO.setMember(member_list);
@@ -540,10 +584,10 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             try {
                 JSONObject json = new JSONObject(str);
                 String RT = json.getString("RT");
-                if(RT.equals("OK")) {
+                if (RT.equals("OK")) {
                     JSONArray board = json.getJSONArray("board");
                     JSONObject temp = board.getJSONObject(0);
-                    for(int i=0; i<board.length(); i++) {
+                    for (int i = 0; i < board.length(); i++) {
                         foretBoardDTO = gson.fromJson(temp.toString(), ForetBoardDTO.class);
                         foretBoardDTOList.add(foretBoardDTO);
                     }
@@ -556,6 +600,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(ViewForetActivity.this, "NoticeResponse 통신 실패", Toast.LENGTH_SHORT).show();
@@ -586,10 +631,10 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             try {
                 JSONObject json = new JSONObject(str);
                 String RT = json.getString("RT");
-                if(RT.equals("OK")) {
+                if (RT.equals("OK")) {
                     JSONArray board = json.getJSONArray("board");
                     JSONObject temp = board.getJSONObject(0);
-                    for(int i=0; i<board.length(); i++) {
+                    for (int i = 0; i < board.length(); i++) {
                         foretBoardDTO = gson.fromJson(temp.toString(), ForetBoardDTO.class);
                         foretBoardDTOList.add(foretBoardDTO);
                     }
@@ -602,6 +647,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(ViewForetActivity.this, "BoardResponse 통신 실패", Toast.LENGTH_SHORT).show();
@@ -632,8 +678,79 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                     Log.d("[TEST]", "가입 성공");
                     button2.setVisibility(View.VISIBLE);
                     button1.setVisibility(View.GONE);
+                    write_fab_add.setVisibility(View.VISIBLE);
                     noti_layout.setVisibility(View.VISIBLE);
                     board_layout.setVisibility(View.VISIBLE);
+
+                    //파이어 베이스 연동
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    myUid = user.getUid();
+                    String timestamp = "" + System.currentTimeMillis();
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    hashMap.put("uid", myUid);
+                    hashMap.put("joinedDate", timestamp);
+                    hashMap.put("participantName", myNickName);
+
+                    hisUid = "";
+
+
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
+                    ref.child(foretname).child("participants").child(user.getUid()).setValue(hashMap)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(ViewForetActivity.this, "채팅방 생성 성공", Toast.LENGTH_LONG).show();
+
+                                    DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("Groups");
+                                    ref2.child(foretname).child("participants").addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            for (DataSnapshot ds : snapshot.getChildren()) {
+                                                hisUid = ds.getKey();
+                                                //
+                                                notify = true;
+                                                if (!myUid.equals(ds.getKey())) {
+                                                    //알림설정
+                                                    updateNewItem("GROUP_NEW_ITEM", myUid, hisUid, "새로운 멤버가 가입하였습니다.", "" + System.currentTimeMillis());
+                                                    String msg = "신규 Foret 멤버 가입! 환영해주세요";
+                                                    //설정
+                                                    DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+                                                    database.addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                            ModelUser user = snapshot.getValue(ModelUser.class);
+
+                                                            if (notify) {
+                                                                sendNotification(hisUid,user.getNickname(),msg);
+                                                            }
+                                                            notify = false;
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+
+
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(ViewForetActivity.this, "채팅방 등록 실패" + e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            });
+
                 } else {
                     Log.d("[TEST]", "가입 실패");
                 }
@@ -686,5 +803,103 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(ViewForetActivity.this, "LeaveResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    // 온라인 상태 만들기
+    private void updateuserActiveStatusOn() {
+        FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
+        final String userUid = currentUseruser.getUid();
+        DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
+        HashMap<String, Object> onlineStatus = new HashMap<>();
+        onlineStatus.put("onlineStatus", "online");
+        onlineStatus.put("listlogined_date", "현재 접속중");
+        userAcitive.updateChildren(onlineStatus);
+    }
+
+    // 오프라인 상태 만들기
+    private void updateuserActiveStatusOff() {
+        FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
+        final String userUid = currentUseruser.getUid();
+        DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
+        HashMap<String, Object> onlineStatus = new HashMap<>();
+        onlineStatus.put("onlineStatus", "offline");
+
+        java.util.Calendar cal = java.util.Calendar.getInstance(Locale.KOREAN);
+        cal.setTimeInMillis(Long.parseLong(String.valueOf(System.currentTimeMillis())));
+        String dateTime = DateFormat.format("yy/MM/dd hh:mm aa", cal).toString();
+
+        onlineStatus.put("listlogined_date", "Last Seen at : " + dateTime);
+        userAcitive.updateChildren(onlineStatus);
+    }
+
+    // 유저 접송 상태
+    private void checkUserStatus() {
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            updateuserActiveStatusOn();
+        } else {
+            // 유저가 로그인 안한 상태
+            Toast.makeText(this, "오프라인 상태입니다.", Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
+
+    // 새글데이터
+    public void updateNewItem(String type, String sender, String receiver, String content, String time) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notify");
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("type", type);
+        hashMap.put("sender", sender);
+        hashMap.put("receiver", receiver);
+        hashMap.put("content", content);
+        hashMap.put("time", time);
+        hashMap.put("isSeen", false);
+
+        ref.child(receiver).push().setValue(hashMap);
+    }
+
+    // 알림 발송 설정.
+    private void sendNotification(String hisUid, String nickname, String message) {
+        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = allTokens.orderByKey().equalTo(hisUid); // 상대 찾기
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    // 상대 토큰값 토큰화 하기
+                    Token token = ds.getValue(Token.class);
+
+                    // 데이터 셋팅
+                    Data data = new Data(myUid, message, foretname+"의 포레 알림", hisUid,
+                            R.drawable.foret_logo);
+
+                    // 보내는 사람 셋팅
+                    Sender sender = new Sender(data, token.getToken());
+                    // 발송
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<Response>() {
+                                @Override
+                                public void onResponse(
+                                        Call<Response> call,
+                                        retrofit2.Response<com.example.foret_app_prototype.activity.notify.Response> response) {
+                                    // Toast.makeText(ChatActivity.this,""+response.message(),Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onFailure(Call<Response> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

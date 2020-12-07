@@ -290,7 +290,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                                         ModelUser user = snapshot.getValue(ModelUser.class);
 
                                         if(notify){
-                                            //sendNotification(hisUid,user.getNickname(),message);
+                                            sendNotification(hisUid,user.getNickname(),message);
                                         }
                                         notify = false;
                                     }

@@ -57,8 +57,8 @@ public class TagServiceImpl implements TagService{
 	}
 
 	@Override
-	public List<TagDTO> tagRank() {
-		return tagDAO.tagRank();
+	public List<TagDTO> tagRank(int rank) {
+		return tagDAO.tagRank(rank);
 	}
 
 }

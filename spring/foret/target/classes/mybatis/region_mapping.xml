@@ -26,8 +26,10 @@
 		select * from region order by region_id asc
 	</select>
 	<!-- 지역 랭크 목록 -->
-	<select id="regionRank" resultType="regionDTO">
-		select * from V_REGION_RANK
+	<select id="regionRank" parameterType="int" resultType="regionDTO">
+		<![CDATA[
+			select * from V_REGION_RANK  where rank <= #{rank}
+		]]>
 	</select>
 
 	<!-- 지역 id 가져오기 -->

@@ -6,11 +6,25 @@ public class BoardDTO {
 	private int foret_id;
 	private int type;
 	private int hit;
+	private int board_like;
+	private int board_comment;
 	private String subject;
 	private String content;
 	private String reg_date;
 	private String edit_date;
-	
+
+	public int getBoard_like() {
+		return board_like;
+	}
+	public void setBoard_like(int board_like) {
+		this.board_like = board_like;
+	}
+	public int getBoard_comment() {
+		return board_comment;
+	}
+	public void setBoard_comment(int board_comment) {
+		this.board_comment = board_comment;
+	}
 	public int getId() {
 		return id;
 	}

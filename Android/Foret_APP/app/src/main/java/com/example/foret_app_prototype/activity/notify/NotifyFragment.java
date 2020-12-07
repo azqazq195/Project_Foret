@@ -42,10 +42,7 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
     ListView listView;
     List<ModelNotify> notifyList;
     NotificationAdapter2 adapter;
-    String type;
-    String sender ;
-    String time ;
-    String content;
+
     Context context;
     Fragment thisFragment;
     @Override
@@ -61,11 +58,11 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
         thisFragment = this;
 
         listView = rootView.findViewById(R.id.listView);
+
        /* View footer = getLayoutInflater().inflate(R.layout.footer, null, false);
         listView.addFooterView(footer);*/
-        //LinearLayout layout = (LinearLayout)footer.findViewById(R.id.layout);
 
-        getItem();
+        //LinearLayout layout = (LinearLayout)footer.findViewById(R.id.layout);
         setReaded();
         return rootView;
     }
@@ -102,6 +99,7 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                notifyList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     ModelNotify item = ds.getValue(ModelNotify.class);
 

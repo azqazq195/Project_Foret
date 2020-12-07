@@ -24,8 +24,8 @@ public class TagDAO {
 	public List<TagDTO> tagList() {
 		return sqlSession.selectList("mybatis.tagMapper.tagList");
 	}
-	public List<TagDTO> tagRank() {
-		return sqlSession.selectList("mybatis.tagMapper.tagRank");
+	public List<TagDTO> tagRank(int rank) {
+		return sqlSession.selectList("mybatis.tagMapper.tagRank", rank);
 	}
 	
 	public List<TagDTO> getTagId(List<TagDTO> list) {
