@@ -122,23 +122,24 @@
                         android:id="@+id/button10"
                         android:layout_width="40dp"
                         android:layout_height="30dp"
+                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginBottom="5dp"
                         android:gravity="bottom|center"
                         android:text="다음"
-                        app:layout_constraintBottom_toTopOf="@+id/listView_notice"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/noti_layout" />
 
                     <TextView
                         android:id="@+id/button11"
                         android:layout_width="40dp"
                         android:layout_height="30dp"
+                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="5dp"
                         android:gravity="bottom|center"
                         android:text="이전"
-                        app:layout_constraintBottom_toTopOf="@+id/listView_notice"
-                        app:layout_constraintEnd_toStartOf="@+id/button10" />
+                        android:visibility="invisible"
+                        app:layout_constraintEnd_toStartOf="@+id/button10"
+                        app:layout_constraintTop_toTopOf="@+id/noti_layout" />
 
                     <TextView
                         android:id="@+id/textView_foretName"

@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity
 
         nav_bottom.setOnNavigationItemSelectedListener(this);
         nav_drawer.setNavigationItemSelectedListener(this::onNavigationItemSelected);
-        nav_bottom.setItemIconTintList(null);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, homeFragment).commit();
