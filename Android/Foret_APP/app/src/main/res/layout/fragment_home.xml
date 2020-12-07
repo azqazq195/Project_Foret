@@ -51,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="380dp"
                 android:background="@drawable/gradi2"
-                android:elevation="3dp">
+                android:elevation="10dp">
 
                 <TextView
                     android:id="@+id/textView7"
@@ -123,7 +123,7 @@
                     android:singleLine="true"
                     android:text="포레이름이 들어감 포레이름이 들어감"
                     android:textAlignment="center"
-                    android:textColor="#252525"
+                    android:textColor="#FFFFFF"
                     android:textColorLink="#FFFFFF"
                     android:textSize="32dp"
                     app:layout_constraintEnd_toEndOf="parent"
