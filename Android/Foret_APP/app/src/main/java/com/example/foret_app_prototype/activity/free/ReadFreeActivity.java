@@ -103,6 +103,7 @@ public class ReadFreeActivity extends AppCompatActivity
     String takeMessage;
     String takerSender;
     String takeReceiver;
+    String originalReciver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,6 +173,10 @@ public class ReadFreeActivity extends AppCompatActivity
         if (foretBoard.isLike()) {
             likeButton.setChecked(true);
         }
+
+        // 타켓설정
+        takeReceiver = textView_writer.getText().toString();
+        originalReciver = takeReceiver;
     }
 
     @Override
@@ -360,9 +365,6 @@ public class ReadFreeActivity extends AppCompatActivity
                     foretBoard.setComment_count(object.getInt("board_comment"));
                     setDataBoard(foretBoard);
 
-                    // 알림설정
-                    takeReceiver = object.getString("id");
-
                     if (object.getJSONArray("comment").length() != 0) {
                         JSONArray comment = object.getJSONArray("comment");
                         for (int a = 0; a < comment.length(); a++) {
@@ -440,6 +442,10 @@ public class ReadFreeActivity extends AppCompatActivity
 
                 }
 
+                Log.e("[test]","takeMessage : "+takeMessage);
+                Log.e("[test]","takeReceiver : "+takeReceiver);
+                Log.e("[test]","takerSender : "+takerSender);
+
                 myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 // 노티피케이션 설정
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
@@ -447,9 +453,43 @@ public class ReadFreeActivity extends AppCompatActivity
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot ds : snapshot.getChildren()) {
-                            if (ds.child("iu").equals(takeReceiver)) {
+                            //Log.e("[test]","ds ref?: "+ds.getRef());
+                            //Log.e("[test]","ds id??: "+ds.child("id").getValue());
+                            //Log.e("[test]","ds 트루?: "+ds.child("id").getValue().equals(takeReceiver));
+                            if (ds.child("id").getValue().toString().equals(takeReceiver)) {
                                 // 받는사람
-                                hisUid = ds.child("uid") + "";
+                                hisUid = ds.child("uid").getValue() + "";
+
+                                String message = takeMessage;
+                                Log.e("[test]","myUid"+myUid);
+                                Log.e("[test]","hisUid"+hisUid);
+
+                                updateNewItem("ANONYMOUS_BOARD_NEW_ITEM", myUid, hisUid, message, "" + System.currentTimeMillis());
+
+                                String msg = message;
+                                // 설정
+                                DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+                                database.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        ModelUser user = snapshot.getValue(ModelUser.class);
+
+                                        if (notify) {
+                                            sendNotification(hisUid, user.getNickname(), message);
+                                        }
+                                        notify = false;
+                                        //타켓 초기화
+                                        takeReceiver = originalReciver;
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+
+
+
                             }
 
                         }
@@ -461,28 +501,7 @@ public class ReadFreeActivity extends AppCompatActivity
                     }
                 });
 
-                String message = takeMessage;
-                updateNewItem("ANONYMOUS_BOARD_NEW_ITEM", myUid, hisUid, message, "" + System.currentTimeMillis());
 
-                String msg = message;
-                // 설정
-                DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
-                database.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ModelUser user = snapshot.getValue(ModelUser.class);
-
-                        if (notify) {
-                            sendNotification(hisUid, user.getNickname(), message);
-                        }
-                        notify = false;
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -583,7 +602,7 @@ public class ReadFreeActivity extends AppCompatActivity
                     Token token = ds.getValue(Token.class);
 
                     // 데이터 셋팅
-                    Data data = new Data(myUid, nickname + " : " + message, "New Message", hisUid,
+                    Data data = new Data(myUid, nickname + " : " + message, "익명게시판 댓글알림", hisUid,
                             R.drawable.foret_logo);
 
                     // 보내는 사람 셋팅
