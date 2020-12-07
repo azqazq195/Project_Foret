@@ -49,9 +49,9 @@ public class ListFreeBoardAdapter extends RecyclerView.Adapter<ListFreeBoardAdap
     public void onBindViewHolder(@NonNull ItemView holder, int position) {
         ForetBoard foretBoard = list.get(position);
         like_count = foretBoard.getLike_count();
-        holder.textView1.setText(foretBoard.getId()+"");
+        holder.textView1.setText("글 번호 : "+foretBoard.getId()+"");
         holder.textView2.setText(foretBoard.getSubject());
-        holder.textView3.setText(foretBoard.getWriter());
+        holder.textView3.setText("글쓴이 : "+foretBoard.getWriter());
         holder.textView4.setText(foretBoard.getContent());
         holder.textView5.setText(like_count+"");
         holder.textView6.setText(foretBoard.getComment_count()+"");

@@ -70,9 +70,9 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
         ForetBoardComment comment = list.get(position);
         holder.textView1.setText(comment.getWriter());
         if (String.valueOf(memberID).equals(comment.getWriter())) {
-            holder.layout.setVisibility(View.VISIBLE);
-            holder.imageView6.setVisibility(View.INVISIBLE);
-            holder.button1.setVisibility(View.INVISIBLE);
+            // holder.layout.setVisibility(View.VISIBLE);
+            // holder.imageView6.setVisibility(View.INVISIBLE);
+            // holder.button1.setVisibility(View.INVISIBLE);
             holder.textView1.setText("내가 작성한 댓글");
         } else {
             holder.layout.setVisibility(View.GONE);
@@ -83,7 +83,8 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
             @Override
             public void onClick(View v) {
                 String target = comment.getWriter();
-                commentClickListener.onReplyButtonClick(v, target, true);
+                int group_no = comment.getGroup_no();
+                commentClickListener.onReplyButtonClick(v, target, group_no, position, true);
             }
         });
         holder.button2.setOnClickListener(new View.OnClickListener() { //수정하기 //엔터 누를시 수정한다
@@ -150,15 +151,15 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
         builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                    list.remove(positon);
-                    notifyItemRemoved(positon);
-                    if(list.size() > 0) {
+                list.remove(positon);
+                notifyItemRemoved(positon);
+                if(list.size() > 0) {
                     notifyItemRangeChanged(positon, list.size() - 1);
-                    }
-                    commentClickListener.onDeleteButtonClick(true);
-                    RequestParams params = new RequestParams();
-                    params.put("comment_id", commentID);
-                    client.post("http://34.72.240.24:8085/foret/comment/comment_delete.do", params, deleteResponse);
+                }
+                commentClickListener.onDeleteButtonClick(true);
+                RequestParams params = new RequestParams();
+                params.put("comment_id", commentID);
+                client.post("http://34.72.240.24:8085/foret/comment/comment_delete.do", params, deleteResponse);
             }
         });
         builder.setNegativeButton("취소", null);
@@ -201,7 +202,7 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
     }
 
     public interface CommentClickListener {
-        public void onReplyButtonClick(View v, String target, boolean reply);
+        public void onReplyButtonClick(View v, String target, int group_no, int position, boolean reply);
         public void onModifyButtonClick(View v, boolean modify);
         public void onDeleteButtonClick(boolean delete);
     }
