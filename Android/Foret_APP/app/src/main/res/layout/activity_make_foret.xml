@@ -131,6 +131,7 @@
                     android:ems="10"
                     android:inputType="numberSigned"
                     android:hint="10"
+                    android:text=""
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@color/black"

@@ -217,7 +217,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
 
                     chatAdapter = new GroupChatAdapter(GroupChatActivity.this, groupChatList, grounName);
                     chat_recyclerView.setAdapter(chatAdapter);
-                    chat_recyclerView.scrollToPosition(groupChatList.size());
+                    chat_recyclerView.scrollToPosition(groupChatList.size()-1);
                 }
 
             }
@@ -702,7 +702,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onPause() {
         super.onPause();
-        updateuserActiveStatusOff();
+        //updateuserActiveStatusOff();
     }
 
     //온라인 상태 만들기

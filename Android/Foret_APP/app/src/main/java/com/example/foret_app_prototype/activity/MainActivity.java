@@ -60,7 +60,8 @@ import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity
+        implements BottomNavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     BottomNavigationView nav_bottom;
     HomeFragment homeFragment;
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     AsyncHttpClient client;
     HttpResponse response;
     String url = "http://34.72.240.24:8085/foret/search/member.do";
-    //String url = "http://192.168.0.180:8085/foret/search/member.do";
+    // String url = "http://192.168.0.180:8085/foret/search/member.do";
     TextView button_out, drawer_text1, drawer_text2, drawer_text3, drawer_text4;
     ImageView button_out2, button_drawcancel, profile;
     Intent intent;
@@ -109,18 +110,19 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         searchFragment = new SearchFragment();
         chatFragment = new ChatFragment();
         notifyFragment = new NotifyFragment();
+
         nav_bottom = findViewById(R.id.nav_bottom);
         container = findViewById(R.id.container);
         containerLayout = findViewById(R.id.containerLayout);
         nav_drawer = findViewById(R.id.nav_drawer);
-        button_out = findViewById(R.id.button_out); //햄버거 로그아웃버튼
-        button_out2 = findViewById(R.id.button_out2); //햄버거 로그아웃버튼
-        button_drawcancel = findViewById(R.id.button_drawcancel); //햄버거 닫기
-        drawer_text1 = findViewById(R.id.drawer_text1); //회원닉네임
-        drawer_text2 = findViewById(R.id.drawer_text2); //이메일
-        drawer_text3 = findViewById(R.id.drawer_text3); //멤머 아이디
-        drawer_text4 = findViewById(R.id.drawer_text4); //가입일
-        profile = findViewById(R.id.drawer_profile); //햄버거메뉴에 들어갈 프로필사진
+        button_out = findViewById(R.id.button_out); // 햄버거 로그아웃버튼
+        button_out2 = findViewById(R.id.button_out2); // 햄버거 로그아웃버튼
+        button_drawcancel = findViewById(R.id.button_drawcancel); // 햄버거 닫기
+        drawer_text1 = findViewById(R.id.drawer_text1); // 회원닉네임
+        drawer_text2 = findViewById(R.id.drawer_text2); // 이메일
+        drawer_text3 = findViewById(R.id.drawer_text3); // 멤머 아이디
+        drawer_text4 = findViewById(R.id.drawer_text4); // 가입일
+        profile = findViewById(R.id.drawer_profile); // 햄버거메뉴에 들어갈 프로필사진
 
         nav_bottom.setOnNavigationItemSelectedListener(this);
         nav_drawer.setNavigationItemSelectedListener(this::onNavigationItemSelected);
@@ -135,8 +137,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         sessionManager = new SessionManager(this);
 
         id = getIntent().getStringExtra("id");
-        if(id==null||id.equals("")){
-            id = ""+sessionManager.getSession();
+        if (id == null || id.equals("")) {
+            id = "" + sessionManager.getSession();
         }
 
         final int DEFAULT_TIME = 40 * 1000;
@@ -147,22 +149,22 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         RequestParams params = new RequestParams();
         params.put("id", id);
         client.post(url, params, response);
-        
+
         button_out.setOnClickListener(this);
         button_out2.setOnClickListener(this);
         button_drawcancel.setOnClickListener(this);
 
     }
 
-    //안드로이드 푸쉬알림을 위한 추가
-    public void updateToken(String token){
+    // 안드로이드 푸쉬알림을 위한 추가
+    public void updateToken(String token) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
         Token mToken = new Token(token);
         ref.child(mUID).setValue(mToken);
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) { //네비게이션 드로어 메뉴, 바텀네비게이션 메뉴 둘다 이벤트 처리
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) { // 네비게이션 드로어 메뉴, 바텀네비게이션 메뉴 둘다 이벤트 처리
         switch (item.getItemId()) {
             case R.id.navigation_home:
                 getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, homeFragment).commit();
@@ -179,20 +181,20 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.navigation_notify:
                 getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, notifyFragment).commit();
                 break;
-            case R.id.drawer_notice: //햄버거 공지사항 버튼
+            case R.id.drawer_notice: // 햄버거 공지사항 버튼
                 intent = new Intent(this, AppNoticeActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.drawer_myinfo: //햄버거 내정보
+            case R.id.drawer_myinfo: // 햄버거 내정보
                 intent = new Intent(this, MyInfoActivity.class);
                 intent.putExtra("memberDTO", memberDTO);
                 startActivity(intent);
                 break;
-            case R.id.drawer_help: //햄버거 도움말
-                //Toast.makeText(this, "레이아웃으로 도움말 설명할거 레이아웃 5장", Toast.LENGTH_SHORT).show();
+            case R.id.drawer_help: // 햄버거 도움말
+                // Toast.makeText(this, "레이아웃으로 도움말 설명할거 레이아웃 5장", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, AppGuideActivity.class));
                 break;
-            case R.id.drawer_foret: //햄버거 foret ->그냥 넣어놈
+            case R.id.drawer_foret: // 햄버거 foret ->그냥 넣어놈
                 break;
         }
         return true;
@@ -222,13 +224,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button_out: //로그아웃
+            case R.id.button_out: // 로그아웃
                 logOutDialog();
                 break;
-            case R.id.button_out2: //로그아웃
+            case R.id.button_out2: // 로그아웃
                 logOutDialog();
                 break;
-            case R.id.button_drawcancel: //햄버거 닫기
+            case R.id.button_drawcancel: // 햄버거 닫기
                 container.closeDrawer(GravityCompat.END);
                 break;
         }
@@ -240,12 +242,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         builder.setPositiveButton("로그아웃", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //로그아웃 눌렀을 때 실행되야하는 이벤트->로그아웃처리
+                // 로그아웃 눌렀을 때 실행되야하는 이벤트->로그아웃처리
 
-                //세션 제거
+                // 세션 제거
                 sessionManager.removeSession();
 
-                //파이어 베이스 로그아웃 만들기
+                // 파이어 베이스 로그아웃 만들기
                 FirebaseAuth auth = FirebaseAuth.getInstance();
                 FirebaseUser user = auth.getCurrentUser();
                 updateuserActiveStatusOff();
@@ -253,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
                 if (user == null) {
                     Toast.makeText(context, "로그아웃 됨", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
                     MainActivity.this.finish();
 
                 }
@@ -264,7 +266,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-
 
     class HttpResponse extends AsyncHttpResponseHandler {
         @Override
@@ -280,36 +281,42 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
-                    setMemberDTO(memberDTO);
 
-                    LoginActivity loginActivity = (LoginActivity)LoginActivity.loginActivity;
+                    setMemberDTO(memberDTO);
+                    memberDTO.setPhoto("http://34.72.240.24:8085/foret/storage/" + temp.getString("photo"));
+                    // Bundle bundle = new Bundle();
+                    // bundle.putSerializable("membetDTO",memberDTO);
+                    // searchFragment = new SearchFragment(memberDTO);
+                    // Log.e("[test]","포토 루트?"+memberDTO.getPhoto());
+
+                    LoginActivity loginActivity = (LoginActivity) LoginActivity.loginActivity;
                     // 세션에 담아서 로그인 페이지로
                     SessionManager sessionManager = new SessionManager(loginActivity);
                     sessionManager.saveSession(memberDTO);
 
                     // 데이터 셋팅 HERE ----------------
-                    //Toast.makeText(MainActivity.this, memberDTO.toString(), Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(MainActivity.this, memberDTO.toString(),
+                    // Toast.LENGTH_SHORT).show();
 
                     fillTextView(R.id.drawer_text1, memberDTO.getNickname());
                     fillTextView(R.id.drawer_text2, memberDTO.getEmail());
                     fillTextView(R.id.drawer_text3, memberDTO.getId() + "");
                     fillTextView(R.id.drawer_text4, memberDTO.getReg_date());
                     try {
-                        //사진이 있을 떄
+                        // 사진이 있을 떄
                         intoImage(context, memberDTO.getPhoto(), R.id.drawer_profile);
-                    }catch (Exception e){
-                        //사진이 없을떄
+                    } catch (Exception e) {
+                        // 사진이 없을떄
                         intoImage(context, "", R.id.drawer_profile);
                     }
 
-                    //파이어 베이스 로그인 상태 만들기
+                    // 파이어 베이스 로그인 상태 만들기
                     updateuserActiveStatusOn();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
@@ -322,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onResume() {
         super.onResume();
 
-        //데이터 다시 받아오기
+        // 데이터 다시 받아오기
         final int DEFAULT_TIME = 40 * 1000;
         client.setConnectTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
@@ -331,44 +338,43 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         RequestParams params = new RequestParams();
         params.put("id", id);
         client.post(url, params, response);
-        
+
         currntuser = FirebaseAuth.getInstance().getCurrentUser();
         Log.e("[test]", FirebaseAuth.getInstance().getCurrentUser() + "");
         if (currntuser == null) {
-            //로그인 아닌상태
+            // 로그인 아닌상태
             Toast.makeText(context, "파이어베이스 로그아웃 상태..", Toast.LENGTH_LONG).show();
         } else {
-                mUID = currntuser.getUid();
-            FirebaseMessaging.getInstance().getToken()
-                    .addOnCompleteListener(new OnCompleteListener<String>() {
-                        @Override
-                        public void onComplete(@NonNull Task<String> task) {
-                            if (!task.isSuccessful()) {
-                                Log.e("[test]", "Fetching FCM registration token failed", task.getException());
-                                return;
-                            }
+            mUID = currntuser.getUid();
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                @Override
+                public void onComplete(@NonNull Task<String> task) {
+                    if (!task.isSuccessful()) {
+                        Log.e("[test]", "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
 
-                            String token = task.getResult();
-                            updateToken(token);
-                        }
-                    });
+                    String token = task.getResult();
+                    updateToken(token);
+                }
+            });
 
-            SharedPreferences sp =getSharedPreferences("SP_USER",MODE_PRIVATE);
+            SharedPreferences sp = getSharedPreferences("SP_USER", MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
-            editor.putString("Current_USERID",mUID);
+            editor.putString("Current_USERID", mUID);
             editor.apply();
 
         }
     }
 
-
     @Override
     protected void onStop() {
         super.onStop();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) updateuserActiveStatusOff();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+            updateuserActiveStatusOff();
     }
 
-    //내상태 온라인 만들기
+    // 내상태 온라인 만들기
     private void updateuserActiveStatusOn() {
         FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
         final String userUid = currentUseruser.getUid();
@@ -377,12 +383,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         onlineStatus.put("onlineStatus", "online");
         onlineStatus.put("listlogined_date", "현재 접속중");
         onlineStatus.put("id", memberDTO.getId());
-        onlineStatus.put("nickname", memberDTO.getNickname()); //닉네임 최신화
-        onlineStatus.put("user_id", memberDTO.getPassword()); //비밀번호 최신화
+        onlineStatus.put("nickname", memberDTO.getNickname()); // 닉네임 최신화
+        onlineStatus.put("user_id", memberDTO.getPassword()); // 비밀번호 최신화
         userAcitive.updateChildren(onlineStatus);
     }
 
-    //내상태 오프라인 상태 만들기
+    // 내상태 오프라인 상태 만들기
     private void updateuserActiveStatusOff() {
         FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
         final String userUid = currentUseruser.getUid();
@@ -405,12 +411,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void intoImage(Context context, String message, int profile) {
         ImageView iv = (ImageView) findViewById(profile);
-        if(message.equals("")||message==null){
-            Glide.with(context).load(R.drawable.icon4)
-                    .into(iv);
+        if (message.equals("") || message == null) {
+            Glide.with(context).load(R.drawable.icon4).into(iv);
         }
-        Glide.with(context).load(message).fallback(R.drawable.icon2)
-                .into(iv);
+        Glide.with(context).load(message).fallback(R.drawable.icon2).into(iv);
     }
 
     @Override
@@ -418,4 +422,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onDestroy();
         updateuserActiveStatusOff();
     }
+
+    public MemberDTO getMemberDTO() {
+        return memberDTO;
+    }
+
 }

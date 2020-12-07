@@ -48,6 +48,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="새로운 글이 등록되었습니다."
+            android:maxWidth="250dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textSize="14sp" />
     </LinearLayout>

@@ -355,7 +355,7 @@ public class ReadFreeActivity extends AppCompatActivity
             params.put("board_id", foretBoard.getId());
             params.put("type", 0);
 
-            updateuserActiveStatusOff(); // 오프라인 상태 만들기
+            //updateuserActiveStatusOff(); // 오프라인 상태 만들기
 
             if (initial_likecount > like_count) { // 좋아요 수가 1감소함->좋아요 삭제
                 client.post("http://34.72.240.24:8085/foret/member/member_board_dislike.do", params,

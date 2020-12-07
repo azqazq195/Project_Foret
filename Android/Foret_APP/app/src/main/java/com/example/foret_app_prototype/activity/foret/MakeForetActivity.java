@@ -38,6 +38,7 @@ import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.Foret;
 import com.example.foret_app_prototype.model.Member;
+import com.example.foret_app_prototype.model.MemberDTO;
 import com.example.foret_app_prototype.model.ModelUser;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -62,6 +63,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,7 +85,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     String filePath = null;
     Intent intent;
     File file;
-
+    MemberDTO memberDTO;
     String select_si = "";
     String select_gu = "";
     String select_tag = "";
@@ -131,6 +133,8 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         button_picture = findViewById(R.id.button_picture);
         button_region = findViewById(R.id.button_region);
         button_tag = findViewById(R.id.button_tag);
+
+        memberDTO = (MemberDTO)getIntent().getSerializableExtra("memberDTO");
 
         region_si = new ArrayList<>();
         region_gu = new ArrayList<>();
@@ -235,10 +239,13 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
        // params.put("tag", str_tag);
        // params.put("region_si", str_si);
        // params.put("region_gu", str_gu);
-        if (file != null) {
-            params.put("photo", filePath);
+        try {
+            if (file != null)
+                params.put("photo", file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-
+        params.setForceMultipartEntityContentType(true);
         final int DEFAULT_TIME = 20*1000;
         client.setConnectTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
@@ -526,6 +533,14 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             try {
                 JSONObject json = new JSONObject(str);
                 String rt = json.getString("foretRT");
+                String foretPhotoRT =json.getString("foretPhotoRT");
+                String foretMemberRT =json.getString("foretMemberRT");
+                String foretRegionRT =json.getString("foretRegionRT");
+                String foretTagRT =json.getString("foretTagRT");
+                Toast.makeText(context,"결과? \n foretPhotoRT : "+foretPhotoRT+"\n foretMemberRT : "+foretMemberRT +"\n foretRegionRT : "+foretRegionRT
+                +"\n foretTagRT : "+ foretTagRT,Toast.LENGTH_SHORT).show();
+                Log.e("[test]","결과? foretPhotoRT : "+foretPhotoRT+", foretMemberRT : "+foretMemberRT +", foretRegionRT : "+foretRegionRT
+                        +", foretTagRT : "+ foretTagRT);
                 if (rt.equals("OK")) {
                     //파이어 베이스용 데이터 삽입
                     foret = new Foret();
@@ -592,9 +607,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                                     ProgressDialogHelper.getInstance().removeProgressbar();
 
                                                     Intent intent = new Intent(MakeForetActivity.this, ViewForetActivity.class);
+                                                    intent.putExtra("memberDTO",memberDTO);
                                                     startActivity(intent);
                                                     finish(); // 현재 액티비티 종료
-
 
                                                 }
                                             })
