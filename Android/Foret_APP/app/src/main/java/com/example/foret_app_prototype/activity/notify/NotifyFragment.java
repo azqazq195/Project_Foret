@@ -61,8 +61,8 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
         thisFragment = this;
 
         listView = rootView.findViewById(R.id.listView);
-        View footer = getLayoutInflater().inflate(R.layout.footer, null, false);
-        listView.addFooterView(footer);
+       /* View footer = getLayoutInflater().inflate(R.layout.footer, null, false);
+        listView.addFooterView(footer);*/
         //LinearLayout layout = (LinearLayout)footer.findViewById(R.id.layout);
 
         getItem();

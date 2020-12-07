@@ -6,5 +6,6 @@
         android:id="@+id/modify"
         android:title="수정"
         android:tint="@color/white"
+        android:iconTint="@color/white"
         app:showAsAction="always" />
 </menu>

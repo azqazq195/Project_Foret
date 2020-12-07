@@ -2,15 +2,16 @@
     <!-- Base application theme. -->
     <style name="Theme.Foret_APP_prototype" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryVariant">@color/foret4</item>
+        <item name="colorOnPrimary">@color/foret4</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondary">@color/foret4</item>
+        <item name="colorSecondaryVariant">@color/foret4</item>
+        <item name="colorOnSecondary">@color/foret4</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/foret4</item>
         <!-- Customize your theme here. -->
+        <item name="android:actionMenuTextColor">@drawable/write</item>
     </style>
 
     <style name="NoActionBar">
