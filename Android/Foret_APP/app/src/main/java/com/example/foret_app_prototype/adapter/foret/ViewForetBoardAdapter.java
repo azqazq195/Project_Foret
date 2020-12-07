@@ -58,7 +58,7 @@ public class ViewForetBoardAdapter extends RecyclerView.Adapter<ViewForetBoardAd
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ReadForetBoardActivity.class);
                 intent.putExtra("memberDTO", memberDTO);
-                intent.putExtra("foretBoardDTO", foretBoardDTO);
+                intent.putExtra("board_id", foretBoardDTO.getId());
                 intent.putExtra("foretBoardDTOList", (Serializable) foretBoardDTOList);
                 activity.startActivity(intent);
             }
