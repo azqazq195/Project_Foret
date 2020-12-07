@@ -170,10 +170,10 @@ public class ReadFreeActivity extends AppCompatActivity
         textView_writer.setText("글쓴이 : "+foretBoard.getWriter());
         textView_subject.setText(foretBoard.getSubject());
         textView_content.setText(foretBoard.getContent());
-        textView_like.setText(foretBoard.getLike_count() + "");
+        textView_like.setText("공감("+foretBoard.getLike_count() + ")");
         textView_seq.setText(foretBoard.getId() + "");
         textView_date.setText(foretBoard.getReg_date());
-        textView_comment.setText(foretBoard.getComment_count() + "");
+        textView_comment.setText("댓글("+foretBoard.getComment_count() + ")");
         if (foretBoard.isLike()) {
             likeButton.setChecked(true);
         }
@@ -260,10 +260,10 @@ public class ReadFreeActivity extends AppCompatActivity
             case R.id.likeButton : //좋아요 처리
                 if(likeButton.isChecked()) {
                     like_count++;
-                    textView_like.setText(like_count+"");
+                    textView_like.setText("공감("+like_count+")");
                 } else {
                     like_count--;
-                    textView_like.setText(like_count + "");
+                    textView_like.setText("공감("+like_count + ")");
                 }
                 break;
         }

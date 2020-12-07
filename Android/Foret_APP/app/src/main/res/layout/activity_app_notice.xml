@@ -23,6 +23,7 @@
             android:singleLine="true"
             android:text="공지사항"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textStyle="bold"
             tools:layout_editor_absoluteX="168dp"
             tools:layout_editor_absoluteY="18dp" />
 

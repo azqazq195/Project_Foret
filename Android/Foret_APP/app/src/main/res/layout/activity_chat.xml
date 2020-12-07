@@ -8,6 +8,19 @@
     tools:context=".activity.chat.chatactivity.ChatActivity">
 
     <!--보내는 사람-->
+    <ImageView
+        android:id="@+id/imageView17"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_alignBottom="@+id/chat_recyclerView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="-5dp"
+        android:layout_marginEnd="-13dp"
+        android:layout_marginBottom="-3dp"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/chatback" />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -47,8 +60,10 @@
                 android:id="@+id/userStatusTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
                 android:text="온라인 상태"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="10dp" />
         </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>
@@ -56,6 +71,7 @@
     <!--받는 사람-->
 
     <!-- 보내는 텍스트 창 -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_recyclerView"
         android:layout_width="match_parent"
@@ -64,7 +80,9 @@
         android:layout_below="@id/toolbar"
         android:layout_marginTop="-1dp"
         android:layout_marginBottom="1dp"
-        app:stackFromEnd="true" />
+        app:stackFromEnd="true">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
     <LinearLayout
         android:id="@+id/chatLayout"
