@@ -135,7 +135,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         region_si = new ArrayList<>();
         search_resultList = new ArrayList<>();
         foretDTO = new ForetDTO();
-        searchAdapter = new SearchAdapter(activity, R.layout.recycle_item3, search_resultList);
+        searchAdapter = new SearchAdapter(activity, R.layout.recycle_item3, search_resultList,memberDTO);
 
         SessionManager sessionManager = new SessionManager(activity);
 
@@ -329,6 +329,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
 
     private void goToMakeNewForet() {
         Intent intent = new Intent(activity, MakeForetActivity.class);
+        intent.putExtra("memberDTO",memberDTO);
         activity.startActivity(intent);
     }
 
@@ -338,6 +339,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         ForetDTO foretDTO = searchAdapter.getItem(position);
         Intent intent = new Intent(activity, ViewForetActivity.class);
         intent.putExtra("foret_id", foretDTO.getForet_id());
+        intent.putExtra("memberDTO", memberDTO);
         startActivity(intent);
     }
 

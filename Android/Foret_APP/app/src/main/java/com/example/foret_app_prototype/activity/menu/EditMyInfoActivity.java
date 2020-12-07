@@ -91,7 +91,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        response = new MyInfoEditResponse();
         memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
 
         textView1 = findViewById(R.id.textView1);
@@ -104,7 +104,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         textView_confirm = findViewById(R.id.textView_confirm);
         profile = findViewById(R.id.profile);
         client = new AsyncHttpClient();
-        //response = new MyInfoEditResponse();
+
         tagListResponse = new TagListResponse();
         tag_list = new ArrayList<>();
         region_si = new ArrayList<>();
@@ -463,11 +463,11 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
             if (a == 0) {
                 params.put("region_si", str_si[a]);
                 params.put("region_gu", str_gu[a]);
-                Log.e("[test]", "리전?" + str_si[a] + "," + str_gu[a]);
+            //    Log.e("[test]", "리전?" + str_si[a] + "," + str_gu[a]);
             } else {
                 params.add("region_si", str_si[a]);
                 params.add("region_gu", str_gu[a]);
-                Log.e("[test]", "리전?" + str_si[a] + "," + str_gu[a]);
+           //     Log.e("[test]", "리전?" + str_si[a] + "," + str_gu[a]);
             }
 
         }
@@ -476,10 +476,10 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
             str_tag[a] = member_tag.get(a);
             if (a == 0) {
                 params.put("tag", str_tag[a]);
-                Log.e("[test]","태그??"+str_tag[a]);
+            //    Log.e("[test]","태그??"+str_tag[a]);
             } else {
                 params.add("tag", str_tag[a]);
-                Log.e("[test]","태그??"+str_tag[a]);
+             //   Log.e("[test]","태그??"+str_tag[a]);
             }
         }
 
@@ -490,19 +490,21 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         }
 
 
+
         memberDTO.setPassword(editText2.getText().toString().trim());
         memberDTO.setNickname(editText1.getText().toString().trim());
 
+
+      //  Log.e("[test]","name??"+memberDTO.getName());
+     //   Log.e("[test]","birth??"+memberDTO.getBirth());
+     //   Log.e("[test]","nickname??"+memberDTO.getNickname());
+    //    Log.e("[test]","password??"+ memberDTO.getPassword());
+    //    Log.e("[test]","id??"+memberDTO.getId());
+
         params.put("name", memberDTO.getName());
-        //params.put("email", memberDTO.getEmail());
         params.put("birth", memberDTO.getBirth());
         params.put("nickname", memberDTO.getNickname());
         params.put("password", memberDTO.getPassword());
-
-
-        //params.put("region_si", str_si);
-        //params.put("region_gu", str_gu);
-        //params.put("tag", str_tag);
         params.put("id", memberDTO.getId());
         if (filePath != null) {
             try {
@@ -520,7 +522,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         client.setResponseTimeout(DEFAULT_TIME);
 
         ProgressDialogHelper.getInstance().getProgressbar(this, "정보 수정 진행중.");
-        client.post("http://34.72.240.24:8085:8085/foret/member/member_modify.do", params, response);
+        client.post("http://34.72.240.24:8085/foret/member/member_modify.do", params, response);
     }
 
     class MyInfoEditResponse extends AsyncHttpResponseHandler {
@@ -532,7 +534,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                 ProgressDialogHelper.getInstance().removeProgressbar();
                 JSONObject json = new JSONObject(str_json);
                 if (json.getString("memberRT").equals("OK") && json.getString("memberRegionRT").equals("OK")
-                        && json.getString("memberTagRT").equals("OK") && json.getString("memberPhotoRT").equals("OK")) {
+                        && json.getString("memberTagRT").equals("OK")) {
                     Toast.makeText(EditMyInfoActivity.this, "내 정보 수정이 완료 되었습니다.", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent();
                     intent.putExtra("memberDTO", memberDTO);
@@ -540,6 +542,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                     finish();
                 } else {
                     Toast.makeText(EditMyInfoActivity.this, "내 정보 수정 실패", Toast.LENGTH_SHORT).show();
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

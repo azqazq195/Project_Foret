@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.model.ForetDTO;
+import com.example.foret_app_prototype.model.MemberDTO;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,11 +23,13 @@ public class SearchAdapter extends ArrayAdapter<ForetDTO> {
 
     Activity activity;
     int resource;
+    MemberDTO memberDTO;
 
-    public SearchAdapter(@NonNull Context context, int resource, @NonNull List<ForetDTO> objects) {
+    public SearchAdapter(@NonNull Context context, int resource, @NonNull List<ForetDTO> objects,MemberDTO memberDTO) {
         super(context, resource, objects);
         activity = (Activity)context;
         this.resource = resource;
+        this.memberDTO = memberDTO;
     }
 
     @NonNull

@@ -540,7 +540,10 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                     foret.setReg_date(makeForetTime);
                     DatabaseReference userName = FirebaseDatabase.getInstance().getReference("Users");
                     Log.e("[test]","포레 생성중");
-                    sendImageMessage(uri);
+                    if(!uri.equals("")||uri!=null){
+                        sendImageMessage(uri);
+                    }
+
                     userName.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -560,7 +563,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                     Log.e("[test]"," 자료들 확인 : "+foret.getName()+foret.getIntroduce());
                                     HashMap<String, Object> hashMap = new HashMap<>();
                                     hashMap.put("GroupName", foret.getName());
-                                    hashMap.put("GroupPhoto",downloadUri );
+                                    if(!uri.equals("")||uri!=null){
+                                        hashMap.put("GroupPhoto",downloadUri );
+                                    }
                                     hashMap.put("GroupLeader", user.getUid()); //안들어가있음
                                     hashMap.put("GroupDescription", foret.getIntroduce());
                                     //hashMap.put("GroupId", ""+foret.getGroup_no());
