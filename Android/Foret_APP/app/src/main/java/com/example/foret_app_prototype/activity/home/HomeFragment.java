@@ -25,6 +25,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
 import com.example.foret_app_prototype.activity.foret.ViewForetActivity;
+import com.example.foret_app_prototype.activity.foret.board.ReadForetBoardActivity;
 import com.example.foret_app_prototype.activity.login.SessionManager;
 import com.example.foret_app_prototype.activity.search.SearchFragment;
 import com.example.foret_app_prototype.adapter.foret.ForetAdapter;
@@ -42,6 +43,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +75,9 @@ public class HomeFragment extends Fragment
     HomeForetDTO homeForetDTO;
     List<HomeForetDTO> homeForetDTOList;
     HomeForetBoardDTO homeForetBoardDTO;
-    List<HomeForetBoardDTO> homeForetBoardDTOList;
+    //    List<HomeForetBoardDTO> homeForetBoardDTOList;
+    List<HomeForetBoardDTO> homeNoticeList;
+    List<HomeForetBoardDTO> homeBoardList;
     ForetAdapter foretAdapter;
     Integer[] colors = null;
     ArgbEvaluator evaluator = new ArgbEvaluator();
@@ -101,7 +105,9 @@ public class HomeFragment extends Fragment
         searchFragment = new SearchFragment();
         homeFragment = new HomeFragment();
         homeForetDTOList = new ArrayList<>();
-        homeForetBoardDTOList = new ArrayList<>();
+//        homeForetBoardDTOList = new ArrayList<>();
+        homeNoticeList = new ArrayList<>();
+        homeBoardList = new ArrayList<>();
 
         SessionManager sessionManager = new SessionManager(activity);
         id = sessionManager.getSession();
@@ -113,14 +119,11 @@ public class HomeFragment extends Fragment
 //        memberDTO.setNickname("zi젼성하");
 //        memberDTO.setPhoto("asd");
 
-        getMember(id); // 회원 정보 가져오기
-
         Log.d("[TEST]", "getHomeData() 종료");
 
         // 뷰페이저(포레)
         viewPager = rootView.findViewById(R.id.viewPager);
         viewPager.setOnPageChangeListener(this);
-
 
         // 버튼 이벤트
         button1.setOnClickListener(this);
@@ -131,6 +134,7 @@ public class HomeFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
+        getMember(id); // 회원 정보 가져오기
 
     }
 
@@ -193,24 +197,50 @@ public class HomeFragment extends Fragment
 
     private void setView() {
         // 공지사항
-//        foretBoardAdapter = new ForetBoardAdapter(getActivity(), homeForetBoardDTOList);
-        foretBoardAdapter = new ForetBoardAdapter(getActivity(), memberDTO, homeForetDTO.getHomeForetBoardDTOList());
+        foretBoardAdapter = new ForetBoardAdapter(getActivity(), memberDTO, homeForetDTO.getHomeNoticeList());
         recyclerView1.setHasFixedSize(true);
         recyclerView1.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView1.setAdapter(foretBoardAdapter);
 
-//        foretBoardAdapter.setItems(homeForetBoardDTOList);
-        foretBoardAdapter.setItems(homeForetDTO.getHomeForetBoardDTOList());
+        foretBoardAdapter.setOnClickListener(new ForetBoardAdapter.OnClickListener() {
+            @Override
+            public void onClick(View v, HomeForetBoardDTO homeForetBoardDTO) {
+                if(homeForetBoardDTO.getId() == 0) {
+                    activity.getSupportFragmentManager().beginTransaction().remove(homeFragment).commit();
+                    activity.getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, searchFragment).commit();
+                } else {
+                    Intent intent = new Intent(getActivity(), ReadForetBoardActivity.class);
+                    intent.putExtra("board_id", homeForetBoardDTO.getId());
+                    intent.putExtra("memberDTO", memberDTO);
+                    startActivity(intent);
+                }
+            }
+        });
 
-        // 새글 피드
-        newBoardFeedAdapter = new NewBoardFeedAdapter(getActivity(), memberDTO, homeForetDTO.getHomeForetBoardDTOList());
-//        newBoardFeedAdapter = new NewBoardFeedAdapter(getActivity(), homeForetBoardDTOList);
+//        foretBoardAdapter.setItems(homeForetDTO.getHomeNoticeList());
+
+        // 새글
+        newBoardFeedAdapter = new NewBoardFeedAdapter(getActivity(), memberDTO, homeForetDTO.getHomeBoardList());
         recyclerView3.setHasFixedSize(true);
         recyclerView3.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView3.setAdapter(newBoardFeedAdapter);
 
-//        newBoardFeedAdapter.setItems(homeForetBoardDTOList);
-        newBoardFeedAdapter.setItems(homeForetDTO.getHomeForetBoardDTOList());
+        newBoardFeedAdapter.setOnClickListener(new NewBoardFeedAdapter.OnClickListener() {
+            @Override
+            public void onClick(View v, HomeForetBoardDTO homeForetBoardDTO) {
+                if(homeForetBoardDTO.getId() == 0) {
+                    activity.getSupportFragmentManager().beginTransaction().remove(homeFragment).commit();
+                    activity.getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, searchFragment).commit();
+                } else {
+                    Intent intent = new Intent(getActivity(), ReadForetBoardActivity.class);
+                    intent.putExtra("board_id", homeForetBoardDTO.getId());
+                    intent.putExtra("memberDTO", memberDTO);
+                    startActivity(intent);
+                }
+            }
+        });
+
+//        newBoardFeedAdapter.setItems(homeForetDTO.getHomeBoardList());
     }
 
     @Override
@@ -248,7 +278,8 @@ public class HomeFragment extends Fragment
         homeForetDTO = homeForetDTOList.get(position);
         textView_name.setText(homeForetDTO.getName());
 
-        homeForetDTOList.get(position).getHomeForetBoardDTOList();
+        homeForetDTOList.get(position).getHomeNoticeList();
+        homeForetDTOList.get(position).getHomeBoardList();
         setView();
     }
 
@@ -355,48 +386,66 @@ public class HomeFragment extends Fragment
                         homeForetDTO = new HomeForetDTO();
                         homeForetDTO = gson.fromJson(temp.toString(), HomeForetDTO.class);
 
+                        // 가입한 포레가 없을시 홈에서 보여줄 기본 데이터
+                        if (homeForetDTO.getName() == null) {
+                            homeForetDTO = new HomeForetDTO();
+                            homeForetDTO.setId(0);
+                            homeForetDTO.setName("가입한 포레가 없습니다");
+                            homeForetDTO.setPhoto("https://lh3.googleusercontent.com/proxy/ENLBHF-rHAT6N6RhgkF0ybfvVNynwKS_YkuNTfEXk3zdgEHvkUTzHd0ueG08skKIZhjuxrZEZHSn3r_hubApTyNtuY9pZWF_Aot8rOIGAj2vT45l");
+                            homeForetDTOList.add(homeForetDTO);
+                            homeForetBoardDTO = new HomeForetBoardDTO();
+                            homeForetBoardDTO.setSubject("Join or create Foret");
+                            homeForetBoardDTO.setReg_date(" ");
+                            homeForetBoardDTO.setType(2);
+                            homeNoticeList.add(homeForetBoardDTO);
+                            homeForetBoardDTO = new HomeForetBoardDTO();
+                            homeForetBoardDTO.setSubject("For your study");
+                            homeForetBoardDTO.setContent("Let's do it together");
+                            homeForetBoardDTO.setReg_date(" ");
+                            homeForetBoardDTO.setType(4);
+                            homeBoardList.add(homeForetBoardDTO);
+                            homeForetDTO.setHomeNoticeList(homeNoticeList);
+                            homeForetDTO.setHomeBoardList(homeBoardList);
+                            Log.d("[TEST]", "homeForetDTOList.size() => " + homeForetDTOList.size());
+                            Log.d("[TEST]", "homeForetDTO.getHomeNoticeList().size() => " + homeForetDTO.getHomeNoticeList().size());
+                            Log.d("[TEST]", "homeForetDTO.getHomeBoardList().size() => " + homeForetDTO.getHomeBoardList().size());
+                            return;
+                        }
+
                         JSONArray board = temp.getJSONArray("board");
-                        homeForetBoardDTOList = new ArrayList<>();
+                        homeNoticeList = new ArrayList<>();
+                        homeBoardList = new ArrayList<>();
                         if(board.length() > 0) {
                             for (int a=0; a<board.length(); a++) {
                                 JSONObject temp2 = board.getJSONObject(a);
                                 HomeForetBoardDTO[] homeForetBoardDTO = new HomeForetBoardDTO[board.length()];
                                 homeForetBoardDTO[a] = gson.fromJson(temp2.toString(), HomeForetBoardDTO.class);
-                                Log.d("[TEST]", "homeForetBoardDTO[a] => " + homeForetBoardDTO[a].getSubject());
-                                homeForetBoardDTOList.add(homeForetBoardDTO[a]);
-                                Log.d("[TEST]", "homeForetBoardDTOList.size() => " + homeForetBoardDTOList.size());
-                                Log.d("[TEST]", "포문안 리스트 사이즈 => " + homeForetBoardDTOList.size());
-
+                                Log.d("[TEST]", "homeForetBoardDTO[a] => " + homeForetBoardDTO[a].getType());
+                                if(homeForetBoardDTO[a].getType() == 2) {
+                                    homeNoticeList.add(homeForetBoardDTO[a]);
+                                } else if(homeForetBoardDTO[a].getType() == 4) {
+                                    homeBoardList.add(homeForetBoardDTO[a]);
+                                }
+                                Log.d("[TEST]", "homeNoticeList.size() => " + homeNoticeList.size());
+                                Log.d("[TEST]", "homeBoardList.size() => " + homeBoardList.size());
                             }
-                            homeForetDTO.setHomeForetBoardDTOList(homeForetBoardDTOList);
-                            Log.d("[TEST]", "포문끝나고 setHomeForetBoardDTOList 저장된 사이즈 => " + homeForetDTO.getHomeForetBoardDTOList().size());
-                            Log.d("[TEST]", "homeForetBoardDTOList.size() => " + homeForetBoardDTOList.size());
+                            homeForetDTO.setHomeNoticeList(homeNoticeList);
+                            homeForetDTO.setHomeBoardList(homeBoardList);
                         }
                         homeForetDTOList.add(homeForetDTO);
-                        Log.d("[TEST]", "homeForetDTOList.add(homeForetDTO) 사이즈 => " + homeForetDTOList.size());
-                        Log.d("[TEST]", "homeForetDTO.getHomeForetBoardDTOList().size() 사이즈 => " + homeForetDTO.getHomeForetBoardDTOList().size());
-                        Log.d("[TEST]", "homeForetDTOList.get(i).getName() => " + homeForetDTOList.get(i).getName());
+                        Log.d("[TEST]", "최종 저장된 homeForetDTOList.add(homeForetDTO) 사이즈 => " + homeForetDTOList.size());
+                        Log.d("[TEST]", "최종 저장된 homeNoticeList.size() 사이즈 => " + homeForetDTO.getHomeNoticeList().size());
+                        Log.d("[TEST]", "최종 저장된 homeNoticeList.size() 사이즈 => " + homeForetDTO.getHomeBoardList().size());
                         Log.d("[TEST]", "homeForetDTOList.get(i).getId() => " + homeForetDTOList.get(i).getId());
+                        Log.d("[TEST]", "homeForetDTOList.get(i).getName() => " + homeForetDTOList.get(i).getName());
                     }
                     Log.d("[TEST]", "포레 게시판 리스트 가져옴");
                     Log.d("[TEST]", "homeForetDTOList.size() => " + homeForetDTOList.size());
-                    Log.d("[TEST]", "homeForetDTO.getHomeForetBoardDTOList().size() 사이즈 => " + homeForetDTO.getHomeForetBoardDTOList().size());
+                    Log.d("[TEST]", "homeForetDTO.getHomeNoticeList().size() => " + homeForetDTO.getHomeNoticeList().size());
+                    Log.d("[TEST]", "homeForetDTO.getHomeBoardList().size() => " + homeForetDTO.getHomeBoardList().size());
 //                    Log.d("[TEST]", "homeForetBoardDTOList.size() => " + homeForetBoardDTOList.size());
                 } else {
-                    Log.d("[TEST]", "포레 게시판 리스트 못가져오거나 가입한 포레가 없음");
-                    // 가입한 포레가 없을시 홈에서 보여줄 기본 데이터
-                    homeForetDTO = new HomeForetDTO();
-                    homeForetDTO.setName("가입한 포레가 없습니다");
-                    homeForetDTO.setPhoto("");
-                    homeForetDTOList.add(homeForetDTO);
-                    homeForetBoardDTO = new HomeForetBoardDTO();
-                    homeForetBoardDTO.setSubject("For your study");
-                    homeForetBoardDTO.setContent("Let's do it together");
-                    homeForetBoardDTO.setReg_date("");
-                    homeForetBoardDTOList.add(homeForetBoardDTO);
-                    homeForetDTO.setHomeForetBoardDTOList(homeForetBoardDTOList);
-                    Log.d("[TEST]", "homeForetDTOList.size() => " + homeForetDTOList.size());
-                    Log.d("[TEST]", "homeForetDTO.getHomeForetBoardDTOList().size() => " + homeForetDTO.getHomeForetBoardDTOList().size());
+                    Log.d("[TEST]", "포레 게시판 리스트 가져오지못함");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

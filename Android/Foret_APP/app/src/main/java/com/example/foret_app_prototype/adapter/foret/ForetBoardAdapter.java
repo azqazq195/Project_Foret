@@ -2,6 +2,7 @@ package com.example.foret_app_prototype.adapter.foret;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.board.ReadForetBoardActivity;
+import com.example.foret_app_prototype.activity.search.SearchFragment;
 import com.example.foret_app_prototype.model.HomeForetBoardDTO;
+import com.example.foret_app_prototype.model.HomeForetDTO;
 import com.example.foret_app_prototype.model.MemberDTO;
 
 import java.util.List;
@@ -25,6 +28,8 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
     private List<HomeForetBoardDTO> homeForetBoardDTOList;
     private ViewHolder viewHolder;
 
+    private OnClickListener clickListener = null;
+
     public ForetBoardAdapter(Activity activity, MemberDTO memberDTO, List<HomeForetBoardDTO> homeForetBoardDTOList) {
         this.activity = activity;
         this.memberDTO = memberDTO;
@@ -34,7 +39,9 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View itemView = LayoutInflater.from(parent.getContext()).
+        View itemView;
+
+        itemView = LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.fragment_main_home_board_thum, parent, false);
         viewHolder = new ViewHolder(itemView);
 
@@ -46,20 +53,14 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
         HomeForetBoardDTO homeForetBoardDTO = homeForetBoardDTOList.get(position);
 
         viewHolder.subject.setText(homeForetBoardDTO.getSubject());
-
-
 //            String date = homeForetBoardDTO.getReg_date().substring(0, 10);
         viewHolder.date.setText(homeForetBoardDTO.getReg_date());
-
 
         // 아이템 클릭 이벤트 처리.
         viewHolder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, ReadForetBoardActivity.class);
-                intent.putExtra("board_id", homeForetBoardDTO.getId());
-                intent.putExtra("memberDTO", memberDTO);
-                activity.startActivity(intent);
+                clickListener.onClick(v, homeForetBoardDTO);
             }
         });
     }
@@ -77,6 +78,11 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
         this.homeForetBoardDTOList = items;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return homeForetBoardDTOList.get(position).getType();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView subject, date;
         LinearLayout layout;
@@ -88,5 +94,14 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
             date = itemView.findViewById(R.id.date);
             layout = itemView.findViewById(R.id.layout);
         }
+    }
+
+    public interface OnClickListener {
+        void onClick(View v, HomeForetBoardDTO homeForetBoardDTO);
+    }
+
+    // OnClickListener 객체 참조를 어댑터에 전달하는 메서드
+    public void setOnClickListener(OnClickListener clickListener) {
+        this.clickListener = clickListener;
     }
 }

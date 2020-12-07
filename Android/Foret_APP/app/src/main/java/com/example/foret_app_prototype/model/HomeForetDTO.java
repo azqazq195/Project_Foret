@@ -10,15 +10,23 @@ public class HomeForetDTO implements Serializable {
     private int id;
     private String name;
     private String photo;
-    private HomeForetBoardDTO homeForetBoardDTO[];
-    private List<HomeForetBoardDTO> homeForetBoardDTOList;
+    private List<HomeForetBoardDTO> homeNoticeList;
+    private List<HomeForetBoardDTO> homeBoardList;
 
-    public List<HomeForetBoardDTO> getHomeForetBoardDTOList() {
-        return homeForetBoardDTOList;
+    public List<HomeForetBoardDTO> getHomeNoticeList() {
+        return homeNoticeList;
     }
 
-    public void setHomeForetBoardDTOList(List<HomeForetBoardDTO> homeForetBoardDTOList) {
-        this.homeForetBoardDTOList = homeForetBoardDTOList;
+    public void setHomeNoticeList(List<HomeForetBoardDTO> homeNoticeList) {
+        this.homeNoticeList = homeNoticeList;
+    }
+
+    public List<HomeForetBoardDTO> getHomeBoardList() {
+        return homeBoardList;
+    }
+
+    public void setHomeBoardList(List<HomeForetBoardDTO> homeBoardList) {
+        this.homeBoardList = homeBoardList;
     }
 
     public int getForetTotal() {
@@ -53,11 +61,4 @@ public class HomeForetDTO implements Serializable {
         this.photo = photo;
     }
 
-    public HomeForetBoardDTO[] getHomeForetBoardDTO() {
-        return homeForetBoardDTO;
-    }
-
-    public void setHomeForetBoardDTO(HomeForetBoardDTO[] homeForetBoardDTO) {
-        this.homeForetBoardDTO = homeForetBoardDTO;
-    }
 }

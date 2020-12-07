@@ -26,6 +26,8 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<HomeForetBoardDTO> homeForetBoardDTOList;
     private ViewHolder viewHolder;
 
+    private OnClickListener clickListener = null;
+
     public NewBoardFeedAdapter(Activity activity, MemberDTO memberDTO, List<HomeForetBoardDTO> homeForetBoardDTOList) {
         this.activity = activity;
         this.memberDTO = memberDTO;
@@ -57,10 +59,7 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         viewHolder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, ReadForetBoardActivity.class);
-                intent.putExtra("board_id", homeForetBoardDTO.getId());
-                intent.putExtra("memberDTO", memberDTO);
-                activity.startActivity(intent);
+                clickListener.onClick(v, homeForetBoardDTO);
             }
         });
     }
@@ -90,5 +89,14 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             textView4 = itemView.findViewById(R.id.textView4);
             layout = itemView.findViewById(R.id.layout);
         }
+    }
+
+    public interface OnClickListener {
+        void onClick(View v, HomeForetBoardDTO homeForetBoardDTO);
+    }
+
+    // OnClickListener 객체 참조를 어댑터에 전달하는 메서드
+    public void setOnClickListener(OnClickListener clickListener) {
+        this.clickListener = clickListener;
     }
 }
