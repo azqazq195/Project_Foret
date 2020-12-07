@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.activity.login.GuideActivity;
+import com.example.foret_app_prototype.activity.menu.EditMyInfoActivity;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.model.Foret;
@@ -32,6 +34,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,17 +61,24 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
     Intent intent;
     File file;
     String filePath = null;
-
+    List<String> selected_tag;
     String select_si = "";
     String select_gu = "";
     String select_tag = "";
     String str = "";
     String show = "";
     int max_member_count = 0;
+    boolean ischecked = false;
+
+    List<String> tag_name;
+    List<String> member_tag;
+    List<String> tag_list;
 
     List<String> region_si;
     List<String> region_gu;
     List<String> foret_tag;
+
+    TagListResponse tagListResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,10 +107,12 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
         button_complete = findViewById(R.id.button_complete);
         button_member_edit = findViewById(R.id.button_member_edit);
         editText_intro = findViewById(R.id.editText_intro);
-
+        tagListResponse = new TagListResponse();
         region_si = new ArrayList<>();
         region_gu = new ArrayList<>();
         foret_tag = new ArrayList<>();
+        member_tag = new ArrayList<>();
+        tag_name = new ArrayList<>();
 
         textView1.setOnClickListener(this);
         button_close.setOnClickListener(this);
@@ -435,16 +447,21 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void tagSelectDialog() { //결과 : 태그 정보 텍스트뷰에 출력
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
         View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
         builder.setMessage("태그를 골라주세요.");
 
         str = "";
         show = "";
+        ischecked = false;
+        selected_tag = new ArrayList<>();
 
         Spinner spinner_tag = region_view.findViewById(R.id.spinner_tag);
         TextView selected_view = region_view.findViewById(R.id.selected_view);
+
+        ArrayAdapter adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, tag_list);
         spinner_tag.setVisibility(View.VISIBLE);
+        spinner_tag.setAdapter(adapter);
 
         spinner_tag.setSelection(0);
 
@@ -452,12 +469,13 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != 0) {
-                    select_tag = (String) parent.getSelectedItem();
-                    foret_tag.add(select_tag);
-                    Log.d("[TEST]", "foret_tag.size() => " + foret_tag.size());
+                    Log.d("[TEST]", "position => " + position);
+                    String select_tag = (String) parent.getSelectedItem();
+                    selected_tag.add(select_tag);
                     str += "#" + select_tag + " ";
                     selected_view.setText(str);
                     spinner_tag.setSelection(0);
+                    ischecked = true;
                 }
             }
 
@@ -470,22 +488,28 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //확인 버튼 누르면
-                if(str.equals("")) {
-                    textView_tag.setText("등록된 태그가 없습니다.");
-                } else {
-                    for (int a = 0; a < foret_tag.size(); a++) {
-                        show += "#" + foret_tag.get(a) + " ";
-                        Log.d("[TEST]", "foret_tag.get(a) => " + foret_tag.get(a));
+                // 확인 버튼 누르면
+                if (ischecked) {
+                    member_tag = selected_tag;
+                    Log.d("[TEST]", "member_tag.size() => " + member_tag.size());
+
+                    for (int a = 0; a < member_tag.size(); a++) {
+                        show += "#" + member_tag.get(a) + " ";
+                        Log.d("[TEST]", "foret_tag.get(a) => " + member_tag.get(a));
                     }
                     textView_tag.setText(show);
+                    textView_tag.setVisibility(View.VISIBLE);
+                    ischecked = false;
+                } else if (member_tag.size() == 0) {
+                    Toast.makeText(EditForetActivity.this, "최소 1개의 태그를 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
         builder.setNegativeButton("취소", null);
 
         builder.setView(region_view);
-        AlertDialog alertDialog = builder.create();
+        android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
 
@@ -508,6 +532,33 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(EditForetActivity.this, "통신 실패", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //서버애서 태그 받아오기
+    class TagListResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if (json.getInt("total") != 0) {
+                    JSONArray tag = json.getJSONArray("tag");
+                    for (int a = 0; a < tag.length(); a++) {
+                        JSONObject object = tag.getJSONObject(a);
+                        tag_list.add(object.getString("tag_name"));
+                    }
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(EditForetActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
         }
     }
 

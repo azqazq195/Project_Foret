@@ -26,7 +26,7 @@
             android:layout_marginTop="100dp"
             android:layout_marginRight="40dp"
             android:layout_marginBottom="30dp"
-            app:srcCompat="@drawable/foret" />
+            android:src="@drawable/foret" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -136,7 +136,7 @@
             android:id="@+id/button5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/round"
             android:letterSpacing="-0.05"
             android:padding="3dp"
@@ -152,20 +152,20 @@
             android:id="@+id/profile"
             android:layout_width="120dp"
             android:layout_height="140dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="20dp"
             android:scaleType="centerCrop"
+            android:src="@drawable/test"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button88"
-            tools:srcCompat="@drawable/test" />
+            app:layout_constraintTop_toBottomOf="@+id/button88" />
 
         <TextView
             android:id="@+id/textView17"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
+            android:layout_marginStart="25sp"
             android:layout_marginTop="30dp"
             android:letterSpacing="-0.05"
             android:text="거의 완료 되었어요!"
@@ -198,11 +198,11 @@
             android:layout_marginTop="30dp"
             android:layout_marginEnd="25dp"
             android:letterSpacing="-0.07"
-            android:text="포레에서 활용할 태그들을\n선택해주세요."
+            android:text="포레에서 활용할 태그들을 선택해주세요."
             android:textAlignment="textStart"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/foret4"
-            android:textSize="35dp"
+            android:textSize="35sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
