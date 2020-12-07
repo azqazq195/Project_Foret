@@ -14,18 +14,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.ViewForetActivity;
+import com.example.foret_app_prototype.model.ForetDTO;
 import com.example.foret_app_prototype.model.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class RecyclerAdapter3 extends RecyclerView.Adapter<RecyclerAdapter3.Adapter3> {
 
-    List<Test> list;
+    List<ForetDTO> list;
     Activity activity;
+    View holderView;
 
-    public RecyclerAdapter3(List<Test> list, Context context) {
+    public RecyclerAdapter3(List<ForetDTO> list, Context context) {
         this.list = list;
         this.activity = (Activity)context;
     }
@@ -33,23 +37,28 @@ public class RecyclerAdapter3 extends RecyclerView.Adapter<RecyclerAdapter3.Adap
     @NonNull
     @Override
     public RecyclerAdapter3.Adapter3 onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View holderView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycle_item3, parent, false);
+        holderView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycle_item3, parent, false);
         return new Adapter3(holderView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerAdapter3.Adapter3 holder, int position) {
-        Test test = list.get(position);
-        holder.imageView.setImageResource(test.getResource());
-        holder.textView1.setText(test.getTest1());
-        holder.textView2.setText(test.getTest2());
-        holder.textView3.setText(test.getTest3());
-        holder.textView4.setText(test.getTest4());
-        holder.textView5.setText(test.getTest5());
+        ForetDTO foret = list.get(position);
+        String [] tag_name = foret.getForet_tag().toArray(new String[foret.getForet_tag().size()]);
+        String [] si = foret.getForet_region_si().toArray(new String[foret.getForet_region_si().size()]);
+        String [] gu = foret.getForet_region_gu().toArray(new String[foret.getForet_region_gu().size()]);
+
+        Glide.with(holderView).load(foret.getForet_photo()).into(holder.imageView);
+        holder.textView1.setText(foret.getForet_name());
+        holder.textView2.setText(Arrays.toString(tag_name));
+        holder.textView3.setText(foret.getIntroduce());
+        holder.textView4.setText(foret.getReg_date());
+        holder.textView5.setText(Arrays.toString(si)+Arrays.toString(gu));
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ViewForetActivity.class);
+                intent.putExtra("foret_id", foret.getForet_id());
                 activity.startActivity(intent);
             }
         });

@@ -62,16 +62,17 @@ import cz.msebera.android.httpclient.Header;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class ReadFreeActivity extends AppCompatActivity implements OnClickListener, CommentListFreeBoardAdapter.CommentClickListener {
+public class ReadFreeActivity extends AppCompatActivity
+        implements OnClickListener, CommentListFreeBoardAdapter.CommentClickListener {
 
     Toolbar toolbar_writer, toolbar_noWriter;
-    TextView textView_writer, textView_like, textView_subject, textView_date, textView_seq,
-            textView_reply, textView_content, textView_comment;
+    TextView textView_writer, textView_like, textView_subject, textView_date, textView_seq, textView_reply,
+            textView_content, textView_comment;
     ToggleButton likeButton;
-    ImageView button_cancel; //답글 닫기
+    ImageView button_cancel; // 답글 닫기
     EditText editText_comment;
     RecyclerView comment_listView;
-    Button button_input; //답글 달기 버튼
+    Button button_input; // 답글 달기 버튼
 
     int memberID;
     Intent intent;
@@ -92,9 +93,9 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
     InputMethodManager inputMethodManager;
     String target;
     boolean replying = false;
-    int initial_likecount; //내가 처음 글을 봤을 때의 라이크 개수 저장 변수
+    int initial_likecount; // 내가 처음 글을 봤을 때의 라이크 개수 저장 변수
 
-    //알림설정
+    // 알림설정
     APIService apiService;
     boolean notify = false;
     String myUid;
@@ -103,30 +104,29 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
     String takerSender;
     String takeReceiver;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_free);
-        //툴바 설정
+        // 툴바 설정
         toolbar_writer = findViewById(R.id.toolbar_writer);
         toolbar_noWriter = findViewById(R.id.toolbar_noWriter);
-        setSupportActionBar(toolbar_writer); //테스트용이라 작성자용 툴바만 설정
+        setSupportActionBar(toolbar_writer); // 테스트용이라 작성자용 툴바만 설정
         getSupportActionBar().setTitle(null);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         textView_writer = findViewById(R.id.textView_writer);
-        textView_like = findViewById(R.id.textView_like); //좋아요 개수
+        textView_like = findViewById(R.id.textView_like); // 좋아요 개수
         textView_subject = findViewById(R.id.textView_subject);
         textView_date = findViewById(R.id.textView_date);
         textView_seq = findViewById(R.id.textView_seq);
-        textView_reply = findViewById(R.id.textView_reply); //OO님께 댓글 작성중입니다 창뜨기
+        textView_reply = findViewById(R.id.textView_reply); // OO님께 댓글 작성중입니다 창뜨기
         textView_comment = findViewById(R.id.textView_comment_count);
         textView_content = findViewById(R.id.textView_content);
-        likeButton = findViewById(R.id.likeButton); //좋아요 버튼
-        button_cancel = findViewById(R.id.button_cancel); //답글달기 취소
-        editText_comment = findViewById(R.id.editText_comment); //코멘트창
-        comment_listView = findViewById(R.id.comment_listView); //댓글이 나올 리사이클러뷰
+        likeButton = findViewById(R.id.likeButton); // 좋아요 버튼
+        button_cancel = findViewById(R.id.button_cancel); // 답글달기 취소
+        editText_comment = findViewById(R.id.editText_comment); // 코멘트창
+        comment_listView = findViewById(R.id.comment_listView); // 댓글이 나올 리사이클러뷰
         button_input = findViewById(R.id.button_input);
 
         inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -142,7 +142,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         deleteBoardResponse = new DeleteBoardResponse();
 
         foretBoard = (ForetBoard) getIntent().getSerializableExtra("foretBoard");
-        initial_likecount = foretBoard.getLike_count(); //초반 라이크 수 저장
+        initial_likecount = foretBoard.getLike_count(); // 초반 라이크 수 저장
         like_count = foretBoard.getLike_count();
         comment_count = foretBoard.getComment_count();
 
@@ -151,16 +151,16 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
 
         textView_reply.setVisibility(View.GONE);
         button_cancel.setVisibility(View.GONE);
-        button_cancel.setOnClickListener(this); //답글 작성 취소
-        button_input.setOnClickListener(this); //댓글쓰기 ->서버 리셋할 것
-        likeButton.setOnClickListener(this); //좋아요버튼
+        button_cancel.setOnClickListener(this); // 답글 작성 취소
+        button_input.setOnClickListener(this); // 댓글쓰기 ->서버 리셋할 것
+        likeButton.setOnClickListener(this); // 좋아요버튼
 
-        //푸쉬 알림 생성
+        // 푸쉬 알림 생성
         apiService = Client.getRetrofit("https://fcm.googleapis.com/").create(APIService.class);
 
     }
 
-    //좋아요 수 변화 때문에 반드시 서버에서 데이터 불러오거나 할것
+    // 좋아요 수 변화 때문에 반드시 서버에서 데이터 불러오거나 할것
     private void setDataBoard(ForetBoard foretBoard) {
         textView_writer.setText(foretBoard.getWriter());
         textView_subject.setText(foretBoard.getSubject());
@@ -179,10 +179,9 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         super.onResume();
         commentlist.clear();
 
-        checkUserStatus();//온라인 상태 체크
+        checkUserStatus();// 온라인 상태 체크
 
-
-        //글 불러오기
+        // 글 불러오기
         RequestParams params = new RequestParams();
         params.put("id", foretBoard.getId());
         params.put("type", 0);
@@ -236,16 +235,16 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button_cancel: //답글 작성 취소
+            case R.id.button_cancel: // 답글 작성 취소
                 textView_reply.setVisibility(View.GONE);
                 button_cancel.setVisibility(View.GONE);
                 editText_comment.setText("");
                 replying = false;
                 break;
-            case R.id.button_input: //댓글 쓰기
+            case R.id.button_input: // 댓글 쓰기
                 inputComment();
                 break;
-            case R.id.likeButton: //좋아요 처리
+            case R.id.likeButton: // 좋아요 처리
                 if (likeButton.isChecked()) {
                     like_count++;
                     textView_like.setText(like_count + "");
@@ -257,7 +256,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
-    private void inputComment() { //댓글 쓰기
+    private void inputComment() { // 댓글 쓰기
         foretBoardComment = new ForetBoardComment();
         foretBoardComment.setWriter(String.valueOf(memberID));
         foretBoardComment.setContent(editText_comment.getText().toString().trim());
@@ -269,13 +268,14 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         params.put("content", editText_comment.getText().toString().trim());
         client.post("http://34.72.240.24:8085/foret/comment/recomment_insert.do", params, writeCommentResponse);
 
-        //새로운 게시물 여부 알림
+        // 새로운 게시물 여부 알림
         notify = true;
         takeMessage = editText_comment.getText().toString().trim();
         takerSender = String.valueOf(memberID);
+
     }
 
-    //답글버튼 눌렀을 때
+    // 답글버튼 눌렀을 때
     @Override
     public void onReplyButtonClick(View v, String target, boolean reply) {
         if (reply) {
@@ -287,15 +287,14 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
             replying = true;
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
-
-            //알림설정
+            // 알림설정
             notify = true;
             takeReceiver = target;
 
         }
     }
 
-    //수정버튼 눌렀을 때
+    // 수정버튼 눌렀을 때
     @Override
     public void onModifyButtonClick(View v, boolean modify) {
         if (modify) {
@@ -304,7 +303,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
             editText_comment.setVisibility(View.GONE);
             button_input.setVisibility(View.GONE);
         } else {
-            //textView_reply.setVisibility(View.VISIBLE);
+            // textView_reply.setVisibility(View.VISIBLE);
             button_cancel.setVisibility(View.VISIBLE);
             editText_comment.setVisibility(View.VISIBLE);
             button_input.setVisibility(View.VISIBLE);
@@ -319,30 +318,30 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
-    //좋아요 상태 저장
+    // 좋아요 상태 저장
     @Override
     protected void onPause() {
         super.onPause();
         if (initial_likecount != like_count) {
-            //처음 라이크 수와 달라졌을 때, 좋아요 상태를 저장해야한다. 첫 라이크보다 적어지면(-1) 좋아요 마이너스.(좋아요 삭제)
-            //첫 라이크보다 커지면(+1) 좋아요를 추가한 상태임을 DB에 저장한다.
+            // 처음 라이크 수와 달라졌을 때, 좋아요 상태를 저장해야한다. 첫 라이크보다 적어지면(-1) 좋아요 마이너스.(좋아요 삭제)
+            // 첫 라이크보다 커지면(+1) 좋아요를 추가한 상태임을 DB에 저장한다.
             RequestParams params = new RequestParams();
             params.put("id", memberID);
             params.put("board_id", foretBoard.getId());
             params.put("type", 0);
 
-            updateuserActiveStatusOff(); //오프라인 상태 만들기
+            updateuserActiveStatusOff(); // 오프라인 상태 만들기
 
-
-            if (initial_likecount > like_count) { //좋아요 수가 1감소함->좋아요 삭제
-                client.post("http://34.72.240.24:8085/foret/member/member_board_dislike.do", params, likeChangeResponse);
-            } else { //어차피 초반 if문이 처음 좋아요개수가 같지 않을때 였으므로 else를 쓰면 라이크 수가 증가한 경우만 해당
+            if (initial_likecount > like_count) { // 좋아요 수가 1감소함->좋아요 삭제
+                client.post("http://34.72.240.24:8085/foret/member/member_board_dislike.do", params,
+                        likeChangeResponse);
+            } else { // 어차피 초반 if문이 처음 좋아요개수가 같지 않을때 였으므로 else를 쓰면 라이크 수가 증가한 경우만 해당
                 client.post("http://34.72.240.24:8085/foret/member/member_board_like.do", params, likeChangeResponse);
             }
         }
     }
 
-    class ViewFreeBoardResponse extends AsyncHttpResponseHandler { //글 상세보기기
+    class ViewFreeBoardResponse extends AsyncHttpResponseHandler { // 글 상세보기기
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -361,7 +360,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
                     foretBoard.setComment_count(object.getInt("board_comment"));
                     setDataBoard(foretBoard);
 
-                    //알림설정
+                    // 알림설정
                     takeReceiver = object.getString("id");
 
                     if (object.getJSONArray("comment").length() != 0) {
@@ -420,7 +419,6 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
-
     class InsertCommentResponse extends AsyncHttpResponseHandler {
 
         @Override
@@ -440,19 +438,18 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
                     comment_listView.setAdapter(adapter);
                     comment_listView.scrollToPosition(commentlist.size());
 
-
                 }
 
                 myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                //노티피케이션 설정
+                // 노티피케이션 설정
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
                 ref.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot ds : snapshot.getChildren()){
-                            if(ds.child("iu").equals(takeReceiver)){
-                                //받는사람
-                                hisUid = ds.child("uid")+"";
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            if (ds.child("iu").equals(takeReceiver)) {
+                                // 받는사람
+                                hisUid = ds.child("uid") + "";
                             }
 
                         }
@@ -468,7 +465,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
                 updateNewItem("ANONYMOUS_BOARD_NEW_ITEM", myUid, hisUid, message, "" + System.currentTimeMillis());
 
                 String msg = message;
-                //설정
+                // 설정
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
                 database.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -486,7 +483,6 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
 
                     }
                 });
-
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -520,7 +516,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
-    //온라인 상태 만들기
+    // 온라인 상태 만들기
     private void updateuserActiveStatusOn() {
         FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
         final String userUid = currentUseruser.getUid();
@@ -531,7 +527,7 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         userAcitive.updateChildren(onlineStatus);
     }
 
-    //오프라인 상태 만들기
+    // 오프라인 상태 만들기
     private void updateuserActiveStatusOff() {
         FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
         final String userUid = currentUseruser.getUid();
@@ -547,20 +543,20 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         userAcitive.updateChildren(onlineStatus);
     }
 
-    //유저 접송 상태
+    // 유저 접송 상태
     private void checkUserStatus() {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             updateuserActiveStatusOn();
         } else {
-            //유저가 로그인 안한 상태
+            // 유저가 로그인 안한 상태
             Toast.makeText(this, "오프라인 상태입니다.", Toast.LENGTH_LONG).show();
             finish();
         }
     }
 
-    //새글데이터
+    // 새글데이터
     public void updateNewItem(String type, String sender, String receiver, String content, String time) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notify");
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -574,31 +570,32 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
         ref.child(receiver).push().setValue(hashMap);
     }
 
-
     // 알림 발송 설정.
     private void sendNotification(String hisUid, String nickname, String message) {
         DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
-        Query query = allTokens.orderByKey().equalTo(hisUid); //상대 찾기
+        Query query = allTokens.orderByKey().equalTo(hisUid); // 상대 찾기
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    //상대 토큰값 토큰화 하기
+                    // 상대 토큰값 토큰화 하기
                     Token token = ds.getValue(Token.class);
 
-                    //데이터 셋팅
-                    Data data = new Data(myUid, nickname + " : " + message, "New Message", hisUid, R.drawable.foret_logo);
+                    // 데이터 셋팅
+                    Data data = new Data(myUid, nickname + " : " + message, "New Message", hisUid,
+                            R.drawable.foret_logo);
 
-                    //보내는 사람 셋팅
+                    // 보내는 사람 셋팅
                     Sender sender = new Sender(data, token.getToken());
-                    //발송
+                    // 발송
                     apiService.sendNotification(sender)
                             .enqueue(new Callback<com.example.foret_app_prototype.activity.notify.Response>() {
                                 @Override
-                                public void onResponse(Call<com.example.foret_app_prototype.activity.notify.Response> call, retrofit2.Response<com.example.foret_app_prototype.activity.notify.Response> response) {
-                                    //Toast.makeText(ChatActivity.this,""+response.message(),Toast.LENGTH_LONG).show();
+                                public void onResponse(
+                                        Call<com.example.foret_app_prototype.activity.notify.Response> call,
+                                        retrofit2.Response<com.example.foret_app_prototype.activity.notify.Response> response) {
+                                    // Toast.makeText(ChatActivity.this,""+response.message(),Toast.LENGTH_LONG).show();
                                 }
 
                                 @Override
@@ -615,6 +612,5 @@ public class ReadFreeActivity extends AppCompatActivity implements OnClickListen
             }
         });
     }
-
 
 }

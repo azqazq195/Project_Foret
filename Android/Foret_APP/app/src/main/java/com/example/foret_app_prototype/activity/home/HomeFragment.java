@@ -217,7 +217,7 @@ public class HomeFragment extends Fragment
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.normal_toolbar, menu);
+        inflater.inflate(R.menu.normal_toolbar2, menu);
     }
 
     @Override
