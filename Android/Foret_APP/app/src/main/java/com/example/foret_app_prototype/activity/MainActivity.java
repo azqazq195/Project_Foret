@@ -423,8 +423,5 @@ public class MainActivity extends AppCompatActivity
         updateuserActiveStatusOff();
     }
 
-    public MemberDTO getMemberDTO() {
-        return memberDTO;
-    }
 
 }
