@@ -82,17 +82,16 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     Intent intent;
     int afterBUTTONCount = 0;
 
-    String select_si = "";
-    String select_gu = "";
-    String select_tag = "";
-
-    String last_selected_tag = "";
     List<String> selected_tag;
+    List<String> selected_si;
+    List<String> selected_gu;
     String last_selected_si = "";
     String last_selected_gu = "";
     String str = "";
     String show = "";
     boolean ischecked = false;
+    boolean ischecked2 = false;
+    List<String> str_check;
 
     List<String> region_si;
     List<String> region_gu;
@@ -283,6 +282,10 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         str = "";
         show = "";
         ischecked = false;
+        ischecked2 = false;
+        selected_si = new ArrayList<>();
+        selected_gu = new ArrayList<>();
+        str_check = new ArrayList<>();
 
         Spinner spinner_si = region_view.findViewById(R.id.spinner_si);
         Spinner spinner_gu = region_view.findViewById(R.id.spinner_gu);
@@ -297,14 +300,15 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 Log.d("[TEST]", "region_si position => " + position);
                 String select_si = (String) parent.getSelectedItem();
                 if (position != 0 && !select_si.equals("")) {
-                    Log.d("[TEST]", "select_si => " + select_si);
                     last_selected_si = select_si;
+                    Log.d("[TEST]", "select_si => " + select_si);
                     spinner_gu.setVisibility(View.VISIBLE);
                     ischecked = false;
                 } else {
                     spinner_gu.setVisibility(View.INVISIBLE);
                 }
-                Log.d("[TEST]", "gu_check => " + ischecked);
+                Log.d("[TEST]", "ischecked => " + ischecked);
+                Log.d("[TEST]", "ischecked2 => " + ischecked2);
 
                 ArrayAdapter guAdapter;
                 switch (position) {
@@ -355,19 +359,41 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         spinner_gu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("[TEST]", "region_gu onItemSelected 호출");
                 Log.d("[TEST]", "region_gu position => " + position);
                 String select_gu = (String) parent.getSelectedItem();
-                if (position != 0 && !select_gu.equals("")) {
+                Log.d("[TEST]", "select_gu => " + select_gu);
+                for(int i=0; i<str_check.size(); i++) {
+                    if (str_check.get(i).equals(select_gu)) {
+                        Toast.makeText(GuideActivity.this, "이미 선택한 지역입니다.", Toast.LENGTH_SHORT).show();
+                        spinner_gu.setSelection(0);
+                        return;
+                    }
+                }
+
+                if (position > 0 && !select_gu.equals("")) {
                     Log.d("[TEST]", "select_gu => " + select_gu);
-                    last_selected_gu = select_gu;
-                    str += last_selected_si + " " + last_selected_gu + "\n";
+                    selected_si.add(last_selected_si);
+                    selected_gu.add(select_gu);
+                    str += last_selected_si + " " + select_gu + "\n";
+
                     selected_view.setText(str);
                     spinner_si.setSelection(0);
                     spinner_gu.setSelection(0);
                     ischecked = true;
+                    ischecked2 = true;
+                    str_check.add(select_gu);
                 }
-                Log.d("[TEST]", "gu_check => " + ischecked);
+
+
+                Log.d("[TEST]", "ischecked => " + ischecked);
+                Log.d("[TEST]", "ischecked2 => " + ischecked2);
+                Log.d("[TEST]", "str_check.size() => " + str_check.size());
+                for(int a=0; a<str_check.size(); a++) {
+                    Log.d("[TEST]", "str_check.size() => " + str_check.get(a));
+                }
             }
+
 
 
             @Override
@@ -380,24 +406,24 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 확인 버튼 누르면
-                if (ischecked) {
-                    region_si.add(last_selected_si);
-                    region_gu.add(last_selected_gu);
+                if(ischecked2) {
+                    region_si = selected_si;
+                    region_gu = selected_gu;
                     Log.d("[TEST]", "region_si.size() => " + region_si.size());
                     Log.d("[TEST]", "region_gu.size() => " + region_gu.size());
 
-                    for (int a = 0; a < region_si.size(); a++) {
+                    for (int a=0; a<region_si.size(); a++) {
                         show += region_si.get(a) + " " + region_gu.get(a) + "\n";
                         Log.d("[TEST]", "region_si.get(a) => " + region_si.get(a));
                         Log.d("[TEST]", "region_gu.get(a) => " + region_gu.get(a));
                     }
                     textView_region.setText(show);
                     textView_region.setVisibility(View.VISIBLE);
-
-                } else if (region_si.size() == 0) {
+                } else if(region_si.size() == 0) {
                     Toast.makeText(GuideActivity.this, "최소 1개의 지역을 선택해주세요.", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                last_selected_gu = "";
 
             }
         });
@@ -417,6 +443,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         show = "";
         ischecked = false;
         selected_tag = new ArrayList<>();
+        str_check = new ArrayList<>();
 
         Spinner spinner_tag = region_view.findViewById(R.id.spinner_tag);
         TextView selected_view = region_view.findViewById(R.id.selected_view);
@@ -430,13 +457,21 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         spinner_tag.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("[TEST]", "position => " + position);
+                String select_tag = (String) parent.getSelectedItem();
+                for(int i=0; i<str_check.size(); i++) {
+                    if (str_check.get(i).equals(select_tag)) {
+                        Toast.makeText(GuideActivity.this, "이미 선택한 태그입니다.", Toast.LENGTH_SHORT).show();
+                        spinner_tag.setSelection(0);
+                        return;
+                    }
+                }
                 if (position != 0) {
-                    Log.d("[TEST]", "position => " + position);
-                    String select_tag = (String) parent.getSelectedItem();
                     selected_tag.add(select_tag);
                     str += "#" + select_tag + " ";
                     selected_view.setText(str);
                     spinner_tag.setSelection(0);
+                    str_check.add(select_tag);
                     ischecked = true;
                 }
                 Log.d("[TEST]", "ischecked => " + ischecked);
@@ -452,24 +487,24 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 확인 버튼 누르면
-                if (ischecked) {
+                if(ischecked) {
                     member_tag = selected_tag;
                     Log.d("[TEST]", "member_tag.size() => " + member_tag.size());
 
-                    for (int a = 0; a < member_tag.size(); a++) {
+                    for (int a=0; a<member_tag.size(); a++) {
                         show += "#" + member_tag.get(a) + " ";
                         Log.d("[TEST]", "foret_tag.get(a) => " + member_tag.get(a));
                     }
                     textView_tag.setText(show);
                     textView_tag.setVisibility(View.VISIBLE);
                     ischecked = false;
-                } else if (member_tag.size() == 0) {
+                } else if(member_tag.size() == 0) {
                     Toast.makeText(GuideActivity.this, "최소 1개의 태그를 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
-        builder.setNegativeButton("취소", null);
+        builder.setNegativeButton("취소",null);
 
         builder.setView(region_view);
         AlertDialog alertDialog = builder.create();
