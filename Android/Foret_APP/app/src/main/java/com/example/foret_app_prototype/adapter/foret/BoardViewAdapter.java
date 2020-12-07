@@ -80,7 +80,11 @@ public class BoardViewAdapter extends RecyclerView.Adapter<BoardViewAdapter.View
         viewHolder.subject.setText(foretBoardDTO.getSubject());
         viewHolder.content.setText(foretBoardDTO.getContent());
         viewHolder.comment_count.setText("댓글 " + foretBoardDTO.getBoard_comment() + "개 모두 보기");
-        String date = foretBoardDTO.getReg_date().substring(0, 10);
+        String date= "";
+        if(foretBoardDTO.getReg_date() != null && foretBoardDTO.getReg_date().equals("")){
+            date = foretBoardDTO.getReg_date().substring(0, 10);
+        }
+
         viewHolder.date.setText(date);
 
         if(!foretBoardDTO.getPhoto().equals("") && !foretBoardDTO.getPhoto().equals(null)) {

@@ -190,6 +190,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                 intent = new Intent(ViewForetActivity.this, WriteForetBoardActivity.class);
                 intent.putExtra("foret_id", foret_id);
                 intent.putExtra("memberDTO", memberDTO);
+                intent.putExtra("foretname", foretname);
                 startActivity(intent);
             }
         });
