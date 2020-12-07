@@ -342,5 +342,12 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if( chatlistList.size()==0 &&groupChatLists.size()==0){
+            //Toast.makeText(context,"아직 생성된 채팅이 없네요! +버튼을 눌러 새로운 대화를 시작해 볼까요?",Toast.LENGTH_LONG).show();
 
+        }
+    }
 }

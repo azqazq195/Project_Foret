@@ -725,6 +725,9 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                             memberDTO.setId(member_id);
                             sessionManager.saveSession(memberDTO);
 
+                            //파이어베이스 신규 알림설정
+                            updateNewItem("PUBLIC_NOTICE_NEW_ITEM", uid, uid, "신규 가입을 환영합니다.", "" + System.currentTimeMillis());
+
                             //파이어 베이스 이미지 생성
                             if (uri.equals("") || uri == null) {
                                 ProgressDialogHelper.getInstance().removeProgressbar();
@@ -870,5 +873,18 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(GuideActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
         }
+    }
+    // 새글데이터
+    public void updateNewItem(String type, String sender, String receiver, String content, String time) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notify");
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("type", type);
+        hashMap.put("sender", sender);
+        hashMap.put("receiver", receiver);
+        hashMap.put("content", content);
+        hashMap.put("time", time);
+        hashMap.put("isSeen", false);
+
+        ref.child(receiver).push().setValue(hashMap);
     }
 }

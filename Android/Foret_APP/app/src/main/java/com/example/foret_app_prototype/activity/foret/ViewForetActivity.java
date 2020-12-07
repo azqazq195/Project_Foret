@@ -29,6 +29,7 @@ import com.example.foret_app_prototype.activity.notify.Data;
 import com.example.foret_app_prototype.activity.notify.Response;
 import com.example.foret_app_prototype.activity.notify.Sender;
 import com.example.foret_app_prototype.activity.notify.Token;
+import com.example.foret_app_prototype.activity.search.SearchFragment;
 import com.example.foret_app_prototype.adapter.foret.BoardViewAdapter;
 import com.example.foret_app_prototype.adapter.foret.ViewForetBoardAdapter;
 import com.example.foret_app_prototype.model.ForetBoardDTO;
@@ -112,13 +113,17 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     APIService apiService;
     boolean notify = false;
     String hisUid, myUid;
-
+    //SearchFragment searchFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_foret);
+        memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
+      //  searchFragment = new SearchFragment(memberDTO);
+      //  searchFragment = searchFragment.getSearchFragment();
 
+
+        setContentView(R.layout.activity_view_foret);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -130,7 +135,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
 
         foret_id = getIntent().getIntExtra("foret_id", 0);
         Log.d("[TEST]", "넘어온 포레 아디 => " + foret_id);
-        memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
+
         Log.d("[TEST]", "넘어온 회원 아디 => " + memberDTO.getId());
         Log.d("[TEST]", "넘어온 회원 아디 => " + memberDTO.getNickname());
         myNickName = memberDTO.getNickname();
@@ -290,6 +295,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void dataSetting() {
+        Log.e("[test]","foretViewDTO.getPhoto()?"+foretViewDTO.getPhoto());
         Glide.with(this).load(foretViewDTO.getPhoto()).
                 placeholder(R.drawable.sss).into(imageView_profile);
 
@@ -465,28 +471,6 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         public void onFinish() {
             super.onFinish();
             Log.d("[TEST]", "ViewForetResponse onFinish() 호출");
-
-            rank = foretViewDTO.getRank();
-            if (rank.equals("guest")) { // 포레 가입전 - 가입하기
-                button1.setVisibility(View.VISIBLE);
-                noti_layout.setVisibility(View.GONE);
-                board_layout.setVisibility(View.GONE);
-                write_fab_add.setVisibility(View.GONE);
-            } else if (rank.equals("member")) { // 가입한 상태 - 탈퇴하기
-                button2.setVisibility(View.VISIBLE);
-                noti_layout.setVisibility(View.VISIBLE);
-                board_layout.setVisibility(View.VISIBLE);
-                write_fab_add.setVisibility(View.VISIBLE);
-            } else if (rank.equals("leader")) { // 리더 - 수정하기
-                button3.setVisibility(View.VISIBLE);
-                noti_layout.setVisibility(View.VISIBLE);
-                board_layout.setVisibility(View.VISIBLE);
-                write_fab_add.setVisibility(View.VISIBLE);
-            } else {
-                Toast.makeText(ViewForetActivity.this, "언노운", Toast.LENGTH_SHORT).show();
-            }
-            dataSetting();
-
         }
 
         @Override
@@ -546,6 +530,28 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                     Log.d("[TEST]", "foretDTO.getForet_region_si => " + foretViewDTO.getForet_region_si().size());
                     Log.d("[TEST]", "foretDTO.getForet_tag => " + foretViewDTO.getForet_tag().size());
                     Log.d("[TEST]", "foretDTO.getRank => " + foretViewDTO.getRank());
+
+
+                    rank = foretViewDTO.getRank();
+                    if (rank.equals("guest")) { // 포레 가입전 - 가입하기
+                        button1.setVisibility(View.VISIBLE);
+                        noti_layout.setVisibility(View.GONE);
+                        board_layout.setVisibility(View.GONE);
+                        write_fab_add.setVisibility(View.GONE);
+                    } else if (rank.equals("member")) { // 가입한 상태 - 탈퇴하기
+                        button2.setVisibility(View.VISIBLE);
+                        noti_layout.setVisibility(View.VISIBLE);
+                        board_layout.setVisibility(View.VISIBLE);
+                        write_fab_add.setVisibility(View.VISIBLE);
+                    } else if (rank.equals("leader")) { // 리더 - 수정하기
+                        button3.setVisibility(View.VISIBLE);
+                        noti_layout.setVisibility(View.VISIBLE);
+                        board_layout.setVisibility(View.VISIBLE);
+                        write_fab_add.setVisibility(View.VISIBLE);
+                    } else {
+                        Toast.makeText(ViewForetActivity.this, "언노운", Toast.LENGTH_SHORT).show();
+                    }
+                    dataSetting();
                 } else {
                     Log.d("[TEST]", "포레정보 못가져옴");
                 }
@@ -557,6 +563,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(ViewForetActivity.this, "ViewForetResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Log.e("[test]","ViewForetResponse 통신 실패 오류코드 "+statusCode +"/ error? "+error.getStackTrace());
         }
     }
 

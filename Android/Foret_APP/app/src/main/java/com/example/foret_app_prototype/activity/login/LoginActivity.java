@@ -129,10 +129,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
             String str = new String(responseBody);
-            Gson gson = new Gson();
             try {
                 JSONObject json = new JSONObject(str);
                 String RT = json.getString("RT");
+                Log.e("[test]",RT);
+                Log.e("[test]",json.getString("id"));
+
                 if(RT.equals("OK")) {
                     //파이어 베이스
                     joinedMember(email,pwd);

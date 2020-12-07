@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         searchFragment = new SearchFragment();
         chatFragment = new ChatFragment();
         notifyFragment = new NotifyFragment();
+
         nav_bottom = findViewById(R.id.nav_bottom);
         container = findViewById(R.id.container);
         containerLayout = findViewById(R.id.containerLayout);
@@ -272,7 +273,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
-                    searchFragment = new SearchFragment(memberDTO);
+                    memberDTO.setPhoto("http://34.72.240.24:8085/foret/storage/"+temp.getString("photo"));
+                    //Bundle bundle = new Bundle();
+                    //bundle.putSerializable("membetDTO",memberDTO);
+                    //searchFragment = new SearchFragment(memberDTO);
+                    //Log.e("[test]","포토 루트?"+memberDTO.getPhoto());
 
                     LoginActivity loginActivity = (LoginActivity)LoginActivity.loginActivity;
                     // 세션에 담아서 로그인 페이지로
@@ -410,4 +415,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onDestroy();
         updateuserActiveStatusOff();
     }
+
+    public MemberDTO getMemberDTO(){
+        return memberDTO;
+    }
+
 }

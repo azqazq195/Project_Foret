@@ -24,6 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginLeft="10dp"
+            android:maxWidth="200dp"
             android:text="그룹이름"
             android:layout_toEndOf="@+id/groupImage"
             android:textSize="19dp"

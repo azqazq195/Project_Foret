@@ -1,5 +1,6 @@
 package com.example.foret_app_prototype.activity.search;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -93,6 +94,17 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
 
     AsyncHttpClient client;
 
+    /*
+
+    SearchFragment searchFragment;
+
+    public SearchFragment getSearchFragment() {
+        return searchFragment;
+    }
+    public void setSearchFragment(SearchFragment searchFragment) {
+        this.searchFragment = searchFragment;
+    }
+
     public SearchFragment() {
     }
 
@@ -100,14 +112,20 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         this.memberDTO = memberDTO;
     }
 
+     */
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.e("[test]","SearchFragment 의 onCreateView");
+        //searchFragment = this;
+
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
         toolbar = (androidx.appcompat.widget.Toolbar) rootView.findViewById(R.id.search_toolbar);
         activity = (MainActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle(null);
+        memberDTO = activity.getMemberDTO();
         setHasOptionsMenu(true);
         context = getContext();
         layout_search = rootView.findViewById(R.id.layout_search);
@@ -327,7 +345,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     }
 
     private void goToMakeNewForet() {
-        Intent intent = new Intent(activity, MakeForetActivity.class);
+        Intent intent = new Intent(context, MakeForetActivity.class);
         intent.putExtra("memberDTO",memberDTO);
         activity.startActivity(intent);
     }
@@ -336,7 +354,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ForetDTO foretDTO = searchAdapter.getItem(position);
-        Intent intent = new Intent(activity, ViewForetActivity.class);
+        Intent intent = new Intent(context, ViewForetActivity.class);
         intent.putExtra("foret_id", foretDTO.getForet_id());
         intent.putExtra("memberDTO", memberDTO);
         startActivity(intent);
@@ -381,7 +399,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(activity, "인기 태그 목록 못가져옴", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "인기 태그 목록 못가져옴", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -433,7 +451,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                         search_resultList.add(foretDTO);
                     }
                     Log.e("[test]","memberDTO? " +memberDTO.toString());
-                    adapter3 = new RecyclerAdapter3(search_resultList, activity,memberDTO);
+                    adapter3 = new RecyclerAdapter3(search_resultList, context,memberDTO);
 
 
                     recyclerView2.setAdapter(adapter3);
@@ -445,7 +463,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(activity, "서버통신 에러 추천목록 못가져옴", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "서버통신 에러 추천목록 못가져옴", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -478,7 +496,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                     }
                     Log.e("[자동완성]", autoCompleteList.size()+"");
                 }
-                autoCompleteTextView.setAdapter(new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, autoCompleteList));
+                autoCompleteTextView.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, autoCompleteList));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -486,7 +504,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(activity, "서버통신 에러 태그 이름 못가져옴", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "서버통신 에러 태그 이름 못가져옴", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -537,7 +555,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                         searchAdapter.add(foretDTO);
                         Log.e("어댑터 사이즈", searchAdapter.getCount()+"");
                     }
-                    Toast.makeText(activity, "검색 완료", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "검색 완료", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -546,7 +564,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(activity, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 }

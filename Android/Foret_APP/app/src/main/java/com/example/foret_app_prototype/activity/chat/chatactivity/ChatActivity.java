@@ -350,7 +350,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                     //뷰 설정
                     recyclerView.setAdapter(adapter);
-                    recyclerView.scrollToPosition(chatList.size());
+                    recyclerView.scrollToPosition(chatList.size()-1);
 
                 }
                 //recyclerView.smoothScrollToPosition(adapter.getItemCount());
@@ -481,7 +481,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        updateuserActiveStatusOff();
+        //updateuserActiveStatusOff();
 
         userRefForSeen.removeEventListener(seenListener);
     }
