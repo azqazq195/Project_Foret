@@ -15,12 +15,12 @@
     <color name="board">#FFFFFFFF</color>
     <color name="text">#FF474747</color>
     <!-- 뷰페이저 애니메이션 컬러 -->
-    <color name="color">#FFFFFF</color>
-    <color name="color1">#424549</color>
-    <color name="color2">#7e455e</color>
-    <color name="color3">#6C4BA6</color>
-    <color name="color4">#4F9852</color>
-    <color name="color5">#217FAA</color>
+    <color name="color">#00FFFFFF</color>
+    <color name="color1">#00424549</color>
+    <color name="color2">#007e455e</color>
+    <color name="color3">#006C4BA6</color>
+    <color name="color4">#004F9852</color>
+    <color name="color5">#00217FAA</color>
 
     <!-- 읽음 안릭음 컬러-->
     <color name="read">#F8F1B0</color>

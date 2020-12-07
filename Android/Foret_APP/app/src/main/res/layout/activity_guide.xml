@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     tools:context=".activity.login.GuideActivity">
 
     <LinearLayout
@@ -22,10 +21,10 @@
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:layout_gravity="fill_vertical"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="60dp"
             android:layout_marginRight="40dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="10dp"
             android:src="@drawable/foret" />
     </LinearLayout>
 
@@ -33,7 +32,7 @@
         android:id="@+id/layout5"
         android:layout_width="0dp"
         android:layout_height="389dp"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
@@ -112,7 +111,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="100dp"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -128,7 +127,7 @@
             android:textColor="#000000"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.14"
+            app:layout_constraintHorizontal_bias="0.125"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView17" />
 
@@ -136,7 +135,7 @@
             android:id="@+id/button5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/round"
             android:letterSpacing="-0.05"
             android:padding="3dp"
@@ -145,19 +144,20 @@
             android:textColor="#FFFFFF"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.083"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile" />
+            app:layout_constraintTop_toBottomOf="@+id/button88" />
 
         <ImageView
             android:id="@+id/profile"
-            android:layout_width="120dp"
+            android:layout_width="130dp"
             android:layout_height="140dp"
             android:layout_marginTop="20dp"
             android:scaleType="centerCrop"
             android:src="@drawable/test"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintHorizontal_bias="0.859"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button88" />
 
@@ -184,7 +184,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="100dp"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -246,7 +246,7 @@
                     android:letterSpacing="-0.05"
                     android:text="#공부, #영어, #코딩, #다이어트,#공부, #영어, #코딩, #다이어트,#공부, #영어, #코딩, #다이어트, ..."
                     android:textColor="#000000"
-                    android:textSize="36sp" />
+                    android:textSize="32dp" />
             </LinearLayout>
         </ScrollView>
 
@@ -272,7 +272,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="100dp"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -366,7 +366,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#FFFFFF"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -381,7 +381,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginEnd="20dp"
             android:letterSpacing="-0.07"
-            android:text="안녕하세요,"
+            android:text="안녕하세요."
             android:textAlignment="textStart"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/foret4"
@@ -428,7 +428,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:background="@color/foret4"
             android:text="포레"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -443,7 +443,7 @@
             android:id="@+id/textView12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:letterSpacing="-0.05"
             android:text="에 가입하신 것을"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"

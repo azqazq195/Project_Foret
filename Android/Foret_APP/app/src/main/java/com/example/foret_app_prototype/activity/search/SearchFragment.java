@@ -96,10 +96,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     public SearchFragment() {
     }
 
-    public SearchFragment(MemberDTO memberDTO) {
-        this.memberDTO = memberDTO;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -133,9 +129,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         region_si = new ArrayList<>();
         search_resultList = new ArrayList<>();
         foretDTO = new ForetDTO();
-        searchAdapter = new SearchAdapter(activity, R.layout.recycle_item3, search_resultList,memberDTO);
-
-        SessionManager sessionManager = new SessionManager(activity);
+        memberDTO = activity.getMemberDTO();
+        searchAdapter = new SearchAdapter(activity, R.layout.recycle_item3, search_resultList, memberDTO);
 
         autoCompleteList = new ArrayList<String>(); //자동완성에 사용할 데이터
 

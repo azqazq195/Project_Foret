@@ -89,6 +89,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     String mUID;
     String id;
 
+    public MemberDTO getMemberDTO() {
+        return memberDTO;
+    }
+
+    public void setMemberDTO(MemberDTO memberDTO) {
+        this.memberDTO = memberDTO;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -272,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
-                    searchFragment = new SearchFragment(memberDTO);
+                    setMemberDTO(memberDTO);
 
                     LoginActivity loginActivity = (LoginActivity)LoginActivity.loginActivity;
                     // 세션에 담아서 로그인 페이지로

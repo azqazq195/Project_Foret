@@ -164,7 +164,7 @@ public class HomeFragment extends Fragment
     private void getViewPager() {
         foretAdapter = new ForetAdapter(activity, homeForetDTOList);
         viewPager.setAdapter(foretAdapter);
-        viewPager.setPadding(130, 0, 130, 0);
+        viewPager.setPadding(100, 0, 100, 0);
         colors = new Integer[homeForetDTOList.size()];
         Integer[] colors_temp = new Integer[homeForetDTOList.size()];
 

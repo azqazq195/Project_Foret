@@ -36,7 +36,7 @@
         android:id="@+id/nestedScrollView2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="@drawable/gradi2"
         android:fillViewport="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,8 +49,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="380dp"
-                android:background="@drawable/gradi2"
+                android:layout_height="350dp"
                 android:elevation="10dp">
 
                 <TextView
@@ -66,11 +65,35 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <ImageView
+                    android:id="@+id/imageView18"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="17dp"
+                    android:src="@drawable/star"
+                    app:layout_constraintStart_toEndOf="@+id/textView7"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/button1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/round3"
+                    android:elevation="4dp"
+                    android:padding="4dp"
+                    android:text=" 더 많은 포레들을 만나보세요! "
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/viewPager_layout" />
+
                 <RelativeLayout
                     android:id="@+id/viewPager_layout"
                     android:layout_width="0dp"
                     android:layout_height="270dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="5dp"
                     android:foregroundGravity="center"
                     android:orientation="vertical"
                     app:layout_constraintStart_toStartOf="parent"
@@ -85,35 +108,19 @@
                         android:overScrollMode="never" />
                 </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/button1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/round3"
-                    android:elevation="4dp"
-                    android:padding="4dp"
-                    android:text=" 더 많은 포레들을 만나보세요! "
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="15dp"
-                android:background="#FFFFFF">
+                android:layout_marginTop="8dp"
+                android:background="@drawable/gradi">
 
                 <TextView
                     android:id="@+id/textView_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/gradi"
                     android:elevation="3dp"
                     android:letterSpacing="-0.05"
                     android:paddingLeft="15dp"
@@ -123,9 +130,10 @@
                     android:singleLine="true"
                     android:text="포레이름이 들어감 포레이름이 들어감"
                     android:textAlignment="center"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/foret4"
                     android:textColorLink="#FFFFFF"
                     android:textSize="32dp"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -184,6 +192,26 @@
                     app:layout_constraintHorizontal_bias="0.47"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+                <ImageView
+                    android:id="@+id/imageView19"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/notice2"
+                    app:layout_constraintStart_toEndOf="@+id/textView13"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_name" />
+
+                <ImageView
+                    android:id="@+id/imageView21"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/new2"
+                    app:layout_constraintStart_toEndOf="@+id/textView15"
+                    app:layout_constraintTop_toBottomOf="@+id/recyclerView1" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
