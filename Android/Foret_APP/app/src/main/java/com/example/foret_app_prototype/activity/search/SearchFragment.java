@@ -213,6 +213,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item_search:
+                searchAdapter.clear();
                 layout_search.setVisibility(View.VISIBLE);
                 break;
             case R.id.item_menu: //햄버거 메뉴 열기
