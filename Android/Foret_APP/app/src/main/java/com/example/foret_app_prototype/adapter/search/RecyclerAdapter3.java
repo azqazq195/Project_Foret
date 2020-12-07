@@ -1,9 +1,8 @@
-package com.example.foret_app_prototype.adapter;
+package com.example.foret_app_prototype.adapter.search;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.ViewForetActivity;
 import com.example.foret_app_prototype.model.ForetDTO;
-import com.example.foret_app_prototype.model.Test;
 
 import java.util.Arrays;
 import java.util.List;

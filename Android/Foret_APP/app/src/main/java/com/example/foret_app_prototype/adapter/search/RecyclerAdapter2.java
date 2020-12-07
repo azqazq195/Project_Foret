@@ -1,4 +1,4 @@
-package com.example.foret_app_prototype.adapter;
+package com.example.foret_app_prototype.adapter.search;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.search.SearchResultActivity;
-import com.example.foret_app_prototype.model.Test;
 
 import java.util.List;
 

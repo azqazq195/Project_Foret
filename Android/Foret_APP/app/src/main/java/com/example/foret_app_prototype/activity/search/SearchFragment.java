@@ -37,12 +37,11 @@ import com.example.foret_app_prototype.activity.foret.MakeForetActivity;
 import com.example.foret_app_prototype.activity.foret.ViewForetActivity;
 import com.example.foret_app_prototype.activity.login.SessionManager;
 import com.example.foret_app_prototype.activity.menu.EditMyInfoActivity;
-import com.example.foret_app_prototype.adapter.RecyclerAdapter2;
-import com.example.foret_app_prototype.adapter.RecyclerAdapter3;
+import com.example.foret_app_prototype.adapter.search.RecyclerAdapter2;
+import com.example.foret_app_prototype.adapter.search.RecyclerAdapter3;
 import com.example.foret_app_prototype.adapter.search.SearchAdapter;
 import com.example.foret_app_prototype.model.ForetDTO;
 import com.example.foret_app_prototype.model.MemberDTO;
-import com.example.foret_app_prototype.model.Test;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -53,7 +52,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;

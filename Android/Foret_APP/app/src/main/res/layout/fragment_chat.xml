@@ -97,24 +97,23 @@
 
             <ImageView
                 android:id="@+id/imageView12"
-                android:layout_width="25dp"
-                android:layout_height="20dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginStart="3dp"
-                android:layout_marginTop="17dp"
-                android:src="@drawable/chaticon"
+                android:layout_marginTop="12dp"
                 app:layout_constraintStart_toEndOf="@+id/textView26"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/chaticon2" />
+                app:srcCompat="@drawable/chaticon_f" />
 
             <ImageView
                 android:id="@+id/imageView14"
-                android:layout_width="25dp"
-                android:layout_height="20dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginStart="3dp"
-                android:layout_marginTop="27dp"
-                android:src="@drawable/chaticon2"
+                android:layout_marginTop="20dp"
                 app:layout_constraintStart_toEndOf="@+id/textView28"
-                app:layout_constraintTop_toBottomOf="@+id/recyclerViewForGroup" />
+                app:layout_constraintTop_toBottomOf="@+id/recyclerViewForGroup"
+                app:srcCompat="@drawable/chaticon_f" />
 
             <View
                 android:id="@+id/view10"

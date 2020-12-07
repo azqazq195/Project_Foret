@@ -70,9 +70,9 @@ public class CommentListFreeBoardAdapter extends RecyclerView.Adapter<CommentLis
         ForetBoardComment comment = list.get(position);
         holder.textView1.setText(comment.getWriter());
         if (String.valueOf(memberID).equals(comment.getWriter())) {
-            // holder.layout.setVisibility(View.VISIBLE);
-            // holder.imageView6.setVisibility(View.INVISIBLE);
-            // holder.button1.setVisibility(View.INVISIBLE);
+             holder.layout.setVisibility(View.VISIBLE);
+             holder.imageView6.setVisibility(View.INVISIBLE);
+             holder.button1.setVisibility(View.INVISIBLE);
             holder.textView1.setText("내가 작성한 댓글");
         } else {
             holder.layout.setVisibility(View.GONE);
