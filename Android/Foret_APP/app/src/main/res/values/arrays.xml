@@ -34,7 +34,7 @@
     <!-- 가이드 지역 선택 -->
     <string-array name="region">
         <item>-- 선택 --</item>
-        <item>서울</item>
+        <item>서울시</item>
         <item>경기/인천</item>
         <item>충청/대전</item>
         <item>강원</item>

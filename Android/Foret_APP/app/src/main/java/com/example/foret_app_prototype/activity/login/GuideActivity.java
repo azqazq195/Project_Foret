@@ -111,7 +111,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     String downloadUri;
     int member_id;
     String deviceToken;
-    RegionListResponse regionListResponse;
+    //RegionListResponse regionListResponse;
     TagListResponse tagListResponse;
 
     @Override
@@ -127,8 +127,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                             Log.e("[test]", "Fetching FCM registration token failed", task.getException());
                             return;
                         }
-                        Log.e("[test]", "deviceToken?"+deviceToken);
                         deviceToken = task.getResult();
+                        Log.e("[test]", "deviceToken?"+deviceToken);
                     }
                 });
         activity = this;
@@ -148,7 +148,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         layout4 = findViewById(R.id.layout4); // 프사설정화면
         layout5 = findViewById(R.id.layout5); // 포레시작하기
         profile = findViewById(R.id.profile);
-        regionListResponse = new RegionListResponse();
+        //regionListResponse = new RegionListResponse();
         tagListResponse = new TagListResponse();
 
         region_si = new ArrayList<>();
@@ -158,7 +158,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         region_list = new HashMap<>(); //구, 시
         tag_list = new ArrayList<>();
 
-      //  profile.setImageResource(R.drawable.foret); // 사진이 출력이 안되서 초기세팅해줌
+        //  profile.setImageResource(R.drawable.foret); // 사진이 출력이 안되서 초기세팅해줌
 
         textView_region.setVisibility(View.GONE);
         textView_tag.setVisibility(View.GONE);
@@ -172,14 +172,18 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         button5.setOnClickListener(this);
         button6.setOnClickListener(this);
 
+        TextView textView = findViewById(R.id.textView_nick);
+
         name = getIntent().getStringExtra("name");
         nickname = getIntent().getStringExtra("nickname");
         birth = getIntent().getStringExtra("birth");
         email = getIntent().getStringExtra("email");
         pw2 = getIntent().getStringExtra("pw2");
 
+        textView.setText(nickname + " 님!");
+
         //각 지역, 태그 리스트에 DB에 저장된 목록 저장
-        client.post("http://34.72.240.24:8085/foret/region/region_list.do", regionListResponse);
+        //client.post("http://34.72.240.24:8085/foret/region/region_list.do", regionListResponse);
         client.post("http://34.72.240.24:8085/foret/tag/tag_list.do", tagListResponse);
 
     }
@@ -366,7 +370,6 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             }
 
 
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -377,13 +380,13 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 확인 버튼 누르면
-                if(ischecked) {
+                if (ischecked) {
                     region_si.add(last_selected_si);
                     region_gu.add(last_selected_gu);
                     Log.d("[TEST]", "region_si.size() => " + region_si.size());
                     Log.d("[TEST]", "region_gu.size() => " + region_gu.size());
 
-                    for (int a=0; a<region_si.size(); a++) {
+                    for (int a = 0; a < region_si.size(); a++) {
                         show += region_si.get(a) + " " + region_gu.get(a) + "\n";
                         Log.d("[TEST]", "region_si.get(a) => " + region_si.get(a));
                         Log.d("[TEST]", "region_gu.get(a) => " + region_gu.get(a));
@@ -391,7 +394,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                     textView_region.setText(show);
                     textView_region.setVisibility(View.VISIBLE);
 
-                } else if(region_si.size() == 0) {
+                } else if (region_si.size() == 0) {
                     Toast.makeText(GuideActivity.this, "최소 1개의 지역을 선택해주세요.", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -418,7 +421,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         Spinner spinner_tag = region_view.findViewById(R.id.spinner_tag);
         TextView selected_view = region_view.findViewById(R.id.selected_view);
 
-        ArrayAdapter adapter = new ArrayAdapter<>(getApplicationContext(),android.R.layout.simple_spinner_dropdown_item, tag_list);
+        ArrayAdapter adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, tag_list);
         spinner_tag.setVisibility(View.VISIBLE);
         spinner_tag.setAdapter(adapter);
 
@@ -449,24 +452,24 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 확인 버튼 누르면
-                if(ischecked) {
+                if (ischecked) {
                     member_tag = selected_tag;
                     Log.d("[TEST]", "member_tag.size() => " + member_tag.size());
 
-                    for (int a=0; a<member_tag.size(); a++) {
+                    for (int a = 0; a < member_tag.size(); a++) {
                         show += "#" + member_tag.get(a) + " ";
                         Log.d("[TEST]", "foret_tag.get(a) => " + member_tag.get(a));
                     }
                     textView_tag.setText(show);
                     textView_tag.setVisibility(View.VISIBLE);
                     ischecked = false;
-                } else if(member_tag.size() == 0) {
+                } else if (member_tag.size() == 0) {
                     Toast.makeText(GuideActivity.this, "최소 1개의 태그를 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
-        builder.setNegativeButton("취소",null);
+        builder.setNegativeButton("취소", null);
 
         builder.setView(region_view);
         AlertDialog alertDialog = builder.create();
@@ -578,12 +581,14 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         for (int a = 0; a < str_si.length; a++) {
             str_si[a] = region_si.get(a);
             str_gu[a] = region_gu.get(a);
-            if(a==0){
-                params.put("region_si",str_si[a] );
+            if (a == 0) {
+                params.put("region_si", str_si[a]);
                 params.put("region_gu", str_gu[a]);
-            }else {
+                Log.e("[test]","리전?"+str_si[a]+","+str_gu[a]);
+            } else {
                 params.add("region_si", str_si[a]);
                 params.add("region_gu", str_gu[a]);
+                Log.e("[test]","리전?"+str_si[a]+","+str_gu[a]);
             }
 
         }
@@ -591,16 +596,17 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         for (int a = 0; a < str_tag.length; a++) {
             str_tag[a] = member_tag.get(a);
 
-            if(a==0){
-                params.put("tag",str_tag[a] );
-            }else {
-                params.add("tag",str_tag[a]);
+            if (a == 0) {
+                params.put("tag", str_tag[a]);
+                Log.e("[test]","태그??"+str_tag[a]);
+            } else {
+                params.add("tag", str_tag[a]);
+                Log.e("[test]","태그??"+str_tag[a]);
             }
         }
 
 
-
-        params.put("device_Token", deviceToken);
+        params.put("deviceToken", deviceToken);
         Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
         String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
         try {
@@ -612,13 +618,15 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         // 멀티파트리퀘스트 형태로 보내는 메서드
         params.setForceMultipartEntityContentType(true);
 
-        final int DEFAULT_TIME = 50*1000;
+        final int DEFAULT_TIME = 50 * 1000;
         client.setConnectTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
         client.setTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
-        client.post(url, params, new Response(activity));
         ProgressDialogHelper.getInstance().getProgressbar(this, "가입 진행중.");
+        client.post(url, params, new Response(activity));
+
+
     }
 
     private class Response extends AsyncHttpResponseHandler {
@@ -667,11 +675,11 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         }
 
 
-
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Log.e("[test]", "온페일 진입"+statusCode);
+            Log.e("[test]", "온페일 진입" + statusCode);
             Toast.makeText(activity, "통신실패, 원인 : " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            ProgressDialogHelper.getInstance().removeProgressbar();
         }
     }
 
@@ -720,7 +728,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                             //파이어 베이스 이미지 생성
                             sendImageMessage(uri);
                         } else {
-                            Log.w("TAG", "createUserWithEmail:failure", task.getException());
+                            Log.e("TAG", "createUserWithEmail:failure", task.getException());
                             Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show();
                         }
 
@@ -730,6 +738,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             public void onFailure(@NonNull Exception e) {
                 // 사용중인 이메일이 있을때 나옴.
                 Toast.makeText(context, "Fail : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                ProgressDialogHelper.getInstance().removeProgressbar();
 
             }
         });
@@ -742,7 +751,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String timeStamp = "" + System.currentTimeMillis();
-        String fileNameAndPath = "profileImages/"+user.getUid()+ "_post_" + timeStamp;
+        String fileNameAndPath = "profileImages/" + user.getUid() + "_post_" + timeStamp;
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_rui);
             ByteArrayOutputStream baos = null;
@@ -756,7 +765,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Log.e("[test]", "이미지등록성공");
                     Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                    while (!uriTask.isSuccessful());
+                    while (!uriTask.isSuccessful()) ;
                     downloadUri = uriTask.getResult().toString();
 
                     Log.e("[test]", "이미지등록종료");
@@ -768,11 +777,13 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 public void onFailure(@NonNull Exception e) {
 
                     Log.e("[test]", "이미지등록 실패");
+                    ProgressDialogHelper.getInstance().removeProgressbar();
                 }
             });
 
         } catch (IOException e) {
             e.printStackTrace();
+            ProgressDialogHelper.getInstance().removeProgressbar();
         }
 
     }
@@ -780,8 +791,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     //이미지 주소 설정
     private void addphotopathinfirebase() {
 
-        FirebaseAuth currentUseruser = FirebaseAuth.getInstance();
-        final String userUid = currentUseruser.getUid();
+        FirebaseAuth currentUser = FirebaseAuth.getInstance();
+        final String userUid = currentUser.getUid();
         DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
         HashMap<String, Object> photopathupdate = new HashMap<>();
         photopathupdate.put("photoRoot", downloadUri);
@@ -795,6 +806,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    //서버에서 주소 받아오기
     class RegionListResponse extends AsyncHttpResponseHandler {
 
         @Override
@@ -804,9 +816,9 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                if(json.getInt("total") != 0) {
+                if (json.getInt("total") != 0) {
                     JSONArray region = json.getJSONArray("region");
-                    for (int a=0; a<region.length(); a++) {
+                    for (int a = 0; a < region.length(); a++) {
                         JSONObject object = region.getJSONObject(a);
                         region_list.put(object.getString("region_gu"), object.getString("region_si"));
                     }
@@ -817,12 +829,14 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(GuideActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
         }
     }
 
+    //서버애서 태그 받아오기
     class TagListResponse extends AsyncHttpResponseHandler {
 
         @Override
@@ -830,9 +844,9 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                if(json.getInt("total") != 0) {
+                if (json.getInt("total") != 0) {
                     JSONArray tag = json.getJSONArray("tag");
-                    for (int a=0; a<tag.length(); a++) {
+                    for (int a = 0; a < tag.length(); a++) {
                         JSONObject object = tag.getJSONObject(a);
                         tag_list.add(object.getString("tag_name"));
                     }

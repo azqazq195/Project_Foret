@@ -204,7 +204,7 @@
                             android:layout_marginTop="3dp"
                             android:background="@drawable/edit_text_box"
                             android:ems="10"
-                            android:hint="생년월일 8자리"
+                            android:hint="19970815"
                             android:inputType="date"
                             android:maxLength="8"
                             android:padding="5dp"

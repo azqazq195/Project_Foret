@@ -85,19 +85,23 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
     private void setData(MemberDTO memberDTO) {
 
 
-        region = (memberDTO.getRegion_si().toString()+","+memberDTO.getRegion_gu().toString()).replace("[", "").replace("]","");
-        for (int a=0; a<memberDTO.getTag().size(); a++) {
-            tag += "#"+memberDTO.getTag().get(a)+" ";
+        region = (memberDTO.getRegion_si().toString() + "," + memberDTO.getRegion_gu().toString()).replace("[", "").replace("]", "");
+        for (int a = 0; a < memberDTO.getTag().size(); a++) {
+            tag += "#" + memberDTO.getTag().get(a) + " ";
         }
 
         textView1.setText(memberDTO.getNickname());
         textView2.setText(memberDTO.getEmail());
-        textView3.setText(memberDTO.getId()+"");
+        textView3.setText(memberDTO.getId() + "");
         textView4.setText(memberDTO.getBirth());
         textView5.setText(memberDTO.getReg_date());
         textView6.setText(region);
         textView7.setText(tag);
-        Glide.with(this).load("memberDTO.getPhoto()").into(profile);
+        Glide.with(this).load(memberDTO.getPhoto())
+                .fallback(R.drawable.icon2)
+                .into(profile);
+
+
     }
 
     @Override //메뉴 설정
@@ -110,14 +114,14 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
     @Override //메뉴 이벤트 처리
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.modify :
+            case R.id.modify:
                 intent = new Intent(this, EditMyInfoActivity.class);
                 intent.putExtra("memberDTO", memberDTO);
                 intent.putExtra("region", region);
                 intent.putExtra("tag", tag);
                 startActivityForResult(intent, 1);
                 break;
-            case android.R.id.home :
+            case android.R.id.home:
                 finish();
                 break;
         }
@@ -127,7 +131,7 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button_out :
+            case R.id.button_out:
                 dialogOUT();
                 break;
         }
@@ -153,15 +157,15 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1) {
+        if (requestCode == 1) {
             switch (resultCode) {
-                case RESULT_OK :
+                case RESULT_OK:
                     memberDTO = (MemberDTO) data.getSerializableExtra("memberDTO");
                     setData(memberDTO);
 
 
                     break;
-                case RESULT_CANCELED : //아무것도 안함
+                case RESULT_CANCELED: //아무것도 안함
                     break;
             }
         }
@@ -174,7 +178,7 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                if(json.getString("memberRT").equals("OK")) {
+                if (json.getString("memberRT").equals("OK")) {
                     Toast.makeText(MyInfoActivity.this, "탈퇴하셨습니다.", Toast.LENGTH_SHORT).show();
                     intent = new Intent(MyInfoActivity.this, SplashActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -193,11 +197,11 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
         }
 
 
-
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(MyInfoActivity.this, "회원탈퇴 500에러뜸", Toast.LENGTH_SHORT).show();
         }
+
         //파이어 베이스 모두제거
         private void removeFirebase() {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -215,8 +219,8 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
             ref2.removeEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for(DataSnapshot ds : snapshot.getChildren()){
-                        if(ds.getRef().equals(user.getUid())){
+                    for (DataSnapshot ds : snapshot.getChildren()) {
+                        if (ds.getRef().equals(user.getUid())) {
                             ds.child(user.getUid()).getRef().removeValue();
                         }
                     }
@@ -232,8 +236,8 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
             ref3.removeEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for(DataSnapshot ds : snapshot.getChildren()){
-                        if(ds.child("participants").child(memberDTO.getNickname()).exists()){
+                    for (DataSnapshot ds : snapshot.getChildren()) {
+                        if (ds.child("participants").child(memberDTO.getNickname()).exists()) {
                             // ds.child("participants").child(memberDTO.getNickname()).removeValue();
                         }
                     }
@@ -244,7 +248,6 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
                 }
             });
 
-
             //파이어베이스에서 삭제
             user.delete()
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -252,11 +255,6 @@ public class MyInfoActivity extends AppCompatActivity implements View.OnClickLis
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Log.d("TAG", "User account deleted.");
-
-
-
-
-
                             }
                         }
                     });

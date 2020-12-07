@@ -30,6 +30,7 @@ import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
+import com.example.foret_app_prototype.activity.login.GuideActivity;
 import com.example.foret_app_prototype.activity.login.SessionManager;
 import com.example.foret_app_prototype.helper.CalendarHelper;
 import com.example.foret_app_prototype.helper.FileUtils;
@@ -88,11 +89,15 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     String select_tag = "";
     String str = "";
     String show = "";
-
+    List<String> selected_tag;
     List<String> region_si;
     List<String> region_gu;
     List<String> foret_tag;
     List<String> tag_name;
+    List<String> tag_list;
+    boolean ischecked = false;
+
+
 
     //파이어 베이스 채팅방 리소스
     private FirebaseAuth firebaseAuth;
@@ -109,7 +114,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     String downloadUri;
     Uri uri;
 
-    RegionListResponse3 regionListResponse;
+    //RegionListResponse3 regionListResponse;
     TagListResponse3 tagListResponse;
 
     @Override
@@ -131,22 +136,22 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         region_gu = new ArrayList<>();
         foret_tag = new ArrayList<>();
         tag_name = new ArrayList<>();
-
+        tag_list = new ArrayList<>();
         button_cancel.setOnClickListener(this);
         button_picture.setOnClickListener(this);
         button_complete.setOnClickListener(this);
         button_region.setOnClickListener(this);
         button_tag.setOnClickListener(this);
-
+        selected_tag = new ArrayList<>();
         firebaseAuth = FirebaseAuth.getInstance();
 
         client = new AsyncHttpClient();
         foretResponse = new ForetResponse();
-        regionListResponse = new RegionListResponse3();
+        //regionListResponse = new RegionListResponse3();
         tagListResponse = new TagListResponse3();
 
         //각 지역, 태그 리스트에 DB에 저장된 목록 저장
-        client.post("http://34.72.240.24:8085/foret/region/region_list.do", regionListResponse);
+        //client.post("http://34.72.240.24:8085/foret/region/region_list.do", regionListResponse);
         client.post("http://34.72.240.24:8085/foret/tag/tag_list.do", tagListResponse);
 
     }
@@ -192,25 +197,31 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
         String[] str_si = new String[region_si.size()];
         String[] str_gu = new String[region_gu.size()];
+
         for (int a = 0; a < str_si.length; a++) {
             str_si[a] = region_si.get(a);
             str_gu[a] = region_gu.get(a);
-            if(a==0){
-                params.put("region_si","서울시" );
-                params.put("region_gu", "강남구");
-            }else {
-                params.add("region_si", "성남시");
-                params.add("region_gu", "분당구");
+            if (a == 0) {
+                params.put("region_si", str_si[a]);
+                params.put("region_gu", str_gu[a]);
+                Log.e("[test]","리전?"+str_si[a]+","+str_gu[a]);
+            } else {
+                params.add("region_si", str_si[a]);
+                params.add("region_gu", str_gu[a]);
+                Log.e("[test]","리전?"+str_si[a]+","+str_gu[a]);
             }
-        }
 
+        }
         String[] str_tag = new String[foret_tag.size()];
         for (int a = 0; a < str_tag.length; a++) {
             str_tag[a] = foret_tag.get(a);
-            if(a==0){
-                params.put("tag","태그1" );
-            }else {
-                params.add("tag", "태그2");
+
+            if (a == 0) {
+                params.put("tag", str_tag[a]);
+                Log.e("[test]","태그??"+str_tag[a]);
+            } else {
+                params.add("tag", str_tag[a]);
+                Log.e("[test]","태그??"+str_tag[a]);
             }
         }
 
@@ -349,14 +360,19 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     public void tagDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
-        builder.setMessage("태그를 골라주세요.");
+        builder.setMessage("태그를 선택해주세요.");
 
         str = "";
         show = "";
+        ischecked = false;
+        selected_tag = new ArrayList<>();
 
         Spinner spinner_tag = region_view.findViewById(R.id.spinner_tag);
         TextView selected_view = region_view.findViewById(R.id.selected_view);
+
+        ArrayAdapter adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, tag_list);
         spinner_tag.setVisibility(View.VISIBLE);
+        spinner_tag.setAdapter(adapter);
 
         spinner_tag.setSelection(0);
 
@@ -364,13 +380,15 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != 0) {
-                    select_tag = (String) parent.getSelectedItem();
-                    foret_tag.add(select_tag);
-                    Log.d("[TEST]", "foret_tag.size() => " + foret_tag.size());
+                    Log.d("[TEST]", "position => " + position);
+                    String select_tag = (String) parent.getSelectedItem();
+                    selected_tag.add(select_tag);
                     str += "#" + select_tag + " ";
                     selected_view.setText(str);
                     spinner_tag.setSelection(0);
+                    ischecked = true;
                 }
+                Log.d("[TEST]", "ischecked => " + ischecked);
             }
 
             @Override
@@ -382,14 +400,25 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //확인 버튼 누르면
-                for (int a = 0; a < foret_tag.size(); a++) {
-                    show += "#" + foret_tag.get(a) + " ";
-                    Log.d("[TEST]", "foret_tag.get(a) => " + foret_tag.get(a));
+                // 확인 버튼 누르면
+                if (ischecked) {
+                    foret_tag = selected_tag;
+                    Log.d("[TEST]", "member_tag.size() => " + foret_tag.size());
+
+                    for (int a = 0; a < foret_tag.size(); a++) {
+                        show += "#" + foret_tag.get(a) + " ";
+                        Log.d("[TEST]", "foret_tag.get(a) => " + foret_tag.get(a));
+                    }
+                    button_tag.setText(show);
+                    button_tag.setVisibility(View.VISIBLE);
+                    ischecked = false;
+                } else if (foret_tag.size() == 0) {
+                    Toast.makeText(MakeForetActivity.this, "최소 1개의 태그를 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }
-                button_tag.setText(show);
+
             }
         });
+
         builder.setNegativeButton("취소", null);
 
         builder.setView(region_view);
@@ -604,7 +633,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             Log.e("[test]", error.getMessage()+"/ "+statusCode);
         }
     }
-
+    /*
     class RegionListResponse3 extends AsyncHttpResponseHandler {
 
         @Override
@@ -630,7 +659,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(MakeForetActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
         }
     }
-
+    */
     class TagListResponse3 extends AsyncHttpResponseHandler {
 
         @Override
@@ -642,7 +671,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                     JSONArray tag = json.getJSONArray("tag");
                     for (int a=0; a<tag.length(); a++) {
                         JSONObject object = tag.getJSONObject(a);
-                        tag_name.add(object.getString("tag_name"));
+                        tag_list.add(object.getString("tag_name"));
                     }
                 }
             } catch (JSONException e) {

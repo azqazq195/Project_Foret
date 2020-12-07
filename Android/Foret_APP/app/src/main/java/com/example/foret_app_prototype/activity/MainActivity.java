@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         drawer_text2 = findViewById(R.id.drawer_text2); //이메일
         drawer_text3 = findViewById(R.id.drawer_text3); //멤머 아이디
         drawer_text4 = findViewById(R.id.drawer_text4); //가입일
-        profile = findViewById(R.id.profile); //햄버거메뉴에 들어갈 프로필사진
+        profile = findViewById(R.id.drawer_profile); //햄버거메뉴에 들어갈 프로필사진
 
         nav_bottom.setOnNavigationItemSelectedListener(this);
         nav_drawer.setNavigationItemSelectedListener(this::onNavigationItemSelected);
@@ -284,27 +284,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     fillTextView(R.id.drawer_text2, memberDTO.getEmail());
                     fillTextView(R.id.drawer_text3, memberDTO.getId() + "");
                     fillTextView(R.id.drawer_text4, memberDTO.getReg_date());
-                    if (memberDTO.getPhoto() == null || memberDTO.getPhoto().equals("")) {
-                        //if(memberDTO.getPhoto()!=null||!memberDTO.getPhoto().equals("")){
-                        //Glide.with(context).load(memberDTO.getPhoto()).into(profile);//햄버거메뉴에 들어갈 프로필사진
-                    } else {//파이어 베이스 대체 이미지
-                        DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("Users").child(currntuser.getUid()).child("photoRoot");
-                        ref2.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                //Log.e("[test]","ref ?"+ref2.getRef());
-                                //Log.e("[test]","스냅샷 데이터는??"+snapshot.getValue());
-                                message = "" + snapshot.getValue();
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-                        intoImage(context, message, R.id.profile);
-
-
+                    try {
+                        //사진이 있을 떄
+                        intoImage(context, memberDTO.getPhoto(), R.id.drawer_profile);
+                    }catch (Exception e){
+                        //사진이 없을떄
+                        intoImage(context, "", R.id.drawer_profile);
                     }
 
                     //파이어 베이스 로그인 상태 만들기
@@ -400,7 +385,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void intoImage(Context context, String message, int profile) {
         ImageView iv = (ImageView) findViewById(profile);
-        Glide.with(context).load(message).fallback(R.drawable.ic_default_image_foreground)
+        if(message.equals("")||message==null){
+            Glide.with(context).load(R.drawable.icon4)
+                    .into(iv);
+        }
+        Glide.with(context).load(message).fallback(R.drawable.icon2)
                 .into(iv);
     }
 
