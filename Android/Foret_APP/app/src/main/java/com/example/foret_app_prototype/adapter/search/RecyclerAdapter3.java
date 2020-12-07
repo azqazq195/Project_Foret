@@ -17,6 +17,8 @@ import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.foret.ViewForetActivity;
 import com.example.foret_app_prototype.model.ForetDTO;
+import com.example.foret_app_prototype.model.MemberDTO;
+import com.example.foret_app_prototype.model.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,10 +28,12 @@ public class RecyclerAdapter3 extends RecyclerView.Adapter<RecyclerAdapter3.Adap
     List<ForetDTO> list;
     Activity activity;
     View holderView;
+    MemberDTO memberDTO;
 
-    public RecyclerAdapter3(List<ForetDTO> list, Context context) {
+    public RecyclerAdapter3(List<ForetDTO> list, Context context,MemberDTO memberDTO) {
         this.list = list;
         this.activity = (Activity)context;
+        this.memberDTO = memberDTO;
     }
 
     @NonNull
@@ -57,6 +61,7 @@ public class RecyclerAdapter3 extends RecyclerView.Adapter<RecyclerAdapter3.Adap
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ViewForetActivity.class);
                 intent.putExtra("foret_id", foret.getForet_id());
+                intent.putExtra("memberDTO", memberDTO);
                 activity.startActivity(intent);
             }
         });

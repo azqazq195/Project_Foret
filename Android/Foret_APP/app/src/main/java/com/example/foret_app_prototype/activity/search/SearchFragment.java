@@ -180,7 +180,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     //내 태그 정보 불러오기
     private void myTagData() {
         List<String> myTag = memberDTO.getTag();
-        adapter2 = new RecyclerAdapter2(myTag, activity);
+        adapter2 = new RecyclerAdapter2(myTag, activity,SearchFragment.this);
         recyclerView1.setAdapter(adapter2);
     }
 
@@ -279,7 +279,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    private void search_keyword(String keyword) {
+    public void search_keyword(String keyword) {
         searchAdapter.clear();
         layout_search.setVisibility(View.VISIBLE);
         autoCompleteTextView.setText(keyword);
@@ -429,7 +429,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                         Log.e("[TEST]", foretDTO.getForet_photo());*/
                         search_resultList.add(foretDTO);
                     }
-                    adapter3 = new RecyclerAdapter3(search_resultList, activity);
+                    Log.e("[test]","memberDTO? " +memberDTO.toString());
+                    adapter3 = new RecyclerAdapter3(search_resultList, activity,memberDTO);
+
+
                     recyclerView2.setAdapter(adapter3);
                 }
             } catch (JSONException e) {

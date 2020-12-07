@@ -394,5 +394,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 .into(iv);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        updateuserActiveStatusOff();
+    }
 }
