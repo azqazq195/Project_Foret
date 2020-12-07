@@ -58,7 +58,7 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ReadForetBoardActivity.class);
-                intent.putExtra("homeForetBoardDTO", homeForetBoardDTO);
+                intent.putExtra("board_id", homeForetBoardDTO.getId());
                 intent.putExtra("memberDTO", memberDTO);
                 activity.startActivity(intent);
             }

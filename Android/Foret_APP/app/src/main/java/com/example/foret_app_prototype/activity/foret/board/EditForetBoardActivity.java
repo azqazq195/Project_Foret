@@ -33,6 +33,7 @@ import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
 import com.example.foret_app_prototype.model.ForetBoardDTO;
 import com.example.foret_app_prototype.model.MemberDTO;
+import com.example.foret_app_prototype.model.ReadForetDTO;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -48,7 +49,7 @@ public class EditForetBoardActivity extends AppCompatActivity
         implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     // 데이터
     MemberDTO memberDTO;
-    ForetBoardDTO foretBoardDTO;
+    ReadForetDTO readForetDTO;
 
     AsyncHttpClient client;
     EditForetBoardResponse editForetBoardResponse;
@@ -81,8 +82,8 @@ public class EditForetBoardActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowTitleEnabled(false); // 기존 타이틀 제거
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 뒤로가기 버튼
 
-        foretBoardDTO = (ForetBoardDTO) getIntent().getSerializableExtra("foretBoardDTO");
-        memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
+        readForetDTO = (ReadForetDTO) getIntent().getSerializableExtra("readForetDTO");
+//        memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
 
         getFindbyId(); // 객체 초기화
 
@@ -91,54 +92,49 @@ public class EditForetBoardActivity extends AppCompatActivity
     }
 
     private void dataSetting() {
-        if(foretBoardDTO.getType() == 2) {
+        if(readForetDTO.getType() == 2) {
             type = 1;
-        } else if (foretBoardDTO.getType() == 4) {
+        } else if (readForetDTO.getType() == 4) {
             type = 2;
         } else {
-            type = 4;
+            Toast.makeText(this, "언노운", Toast.LENGTH_SHORT).show();
         }
         spinner_board_type.setSelection(type);
-        textView_writer.setText(memberDTO.getNickname());
-        editText_subject.setText(foretBoardDTO.getSubject());
-        editText_content.setText(foretBoardDTO.getContent());
-        if(foretBoardDTO.getPhoto().length > 0) { // 사진이 있으면
-            for(int a=0; a<foretBoardDTO.getPhoto().length; a++) {
-                str_boardImage[a] = foretBoardDTO.getPhoto()[a];
+        textView_writer.setText(readForetDTO.getWriter_nickname());
+        editText_subject.setText(readForetDTO.getSubject());
+        editText_content.setText(readForetDTO.getContent());
+        if(readForetDTO.getPhoto().size() > 0) { // 사진이 있으면
+            for(int a=0; a<readForetDTO.getPhoto().size(); a++) {
+                str_boardImage[a] = readForetDTO.getPhoto().get(a);
             }
         }
-        switch (str_boardImage.length) {
-            case 1:
-                Glide.with(this).load(foretBoardDTO.getPhoto()[0]).into(imageView0);
-                image_count = 1;
-                break;
-            case 2:
-                Glide.with(this).load(foretBoardDTO.getPhoto()[0]).into(imageView0);
-                Glide.with(this).load(foretBoardDTO.getPhoto()[1]).into(imageView1);
-                image_count = 2;
-                break;
-            case 3:
-                Glide.with(this).load(foretBoardDTO.getPhoto()[0]).into(imageView0);
-                Glide.with(this).load(foretBoardDTO.getPhoto()[1]).into(imageView1);
-                Glide.with(this).load(foretBoardDTO.getPhoto()[2]).into(imageView2);
-                image_count = 3;
-                break;
-            case 4:
-                Glide.with(this).load(foretBoardDTO.getPhoto()[0]).into(imageView0);
-                Glide.with(this).load(foretBoardDTO.getPhoto()[1]).into(imageView1);
-                Glide.with(this).load(foretBoardDTO.getPhoto()[2]).into(imageView2);
-                Glide.with(this).load(foretBoardDTO.getPhoto()[3]).into(imageView3);
-                image_count = 4;
-                break;
-            case 5:
-                Glide.with(this).load(foretBoardDTO.getPhoto()[0]).into(imageView0);
-                Glide.with(this).load(foretBoardDTO.getPhoto()[1]).into(imageView1);
-                Glide.with(this).load(foretBoardDTO.getPhoto()[2]).into(imageView2);
-                Glide.with(this).load(foretBoardDTO.getPhoto()[3]).into(imageView3);
-                Glide.with(this).load(foretBoardDTO.getPhoto()[4]).into(imageView4);
-                image_count = 5;
-                break;
-        }
+        Log.d("[TEST]", "사진 랭스 : " + str_boardImage.length);
+//        if(str_boardImage.length == 1) {
+//            Glide.with(this).load(readForetDTO.getPhoto().get(0)).into(imageView0);
+//            image_count = 1;
+//        } else if (str_boardImage.length == 2) {
+//            Glide.with(this).load(readForetDTO.getPhoto().get(0)).into(imageView0);
+//            Glide.with(this).load(readForetDTO.getPhoto().get(1)).into(imageView1);
+//            image_count = 2;
+//        } else if (str_boardImage.length == 3) {
+//            Glide.with(this).load(readForetDTO.getPhoto().get(0)).into(imageView0);
+//            Glide.with(this).load(readForetDTO.getPhoto().get(1)).into(imageView1);
+//            Glide.with(this).load(readForetDTO.getPhoto().get(2)).into(imageView2);
+//            image_count = 3;
+//        } else if (str_boardImage.length == 3) {
+//            Glide.with(this).load(readForetDTO.getPhoto().get(0)).into(imageView0);
+//            Glide.with(this).load(readForetDTO.getPhoto().get(1)).into(imageView1);
+//            Glide.with(this).load(readForetDTO.getPhoto().get(2)).into(imageView2);
+//            Glide.with(this).load(readForetDTO.getPhoto().get(3)).into(imageView3);
+//            image_count = 4;
+//        } else if (str_boardImage.length == 5) {
+//            Glide.with(this).load(readForetDTO.getPhoto().get(0)).into(imageView1);
+//            Glide.with(this).load(readForetDTO.getPhoto().get(1)).into(imageView1);
+//            Glide.with(this).load(readForetDTO.getPhoto().get(2)).into(imageView2);
+//            Glide.with(this).load(readForetDTO.getPhoto().get(3)).into(imageView3);
+//            Glide.with(this).load(readForetDTO.getPhoto().get(4)).into(imageView4);
+//            image_count = 5;
+//        }
     }
 
     private void getFindbyId() {
@@ -234,8 +230,8 @@ public class EditForetBoardActivity extends AppCompatActivity
         editForetBoardResponse = new EditForetBoardResponse();
         RequestParams params = new RequestParams();
 
-        params.put("id", foretBoardDTO.getId());
-        params.put("writer", memberDTO.getId());
+        params.put("id", readForetDTO.getId());
+        params.put("writer", readForetDTO.getWriter());
         params.put("type", selectedIndex);
         params.put("subject", subject);
         params.put("content", content);

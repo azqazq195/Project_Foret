@@ -19,6 +19,7 @@ public class ReadForetDTO implements Serializable {
     private int type;
     private int hit;
     private int board_comment;
+    private boolean like;
 
     private List<FBCommentDTO> fbCommentDTOList;
 
@@ -140,5 +141,13 @@ public class ReadForetDTO implements Serializable {
 
     public void setFbCommentDTOList(List<FBCommentDTO> fbCommentDTOList) {
         this.fbCommentDTOList = fbCommentDTOList;
+    }
+
+    public boolean isLike() {
+        return like;
+    }
+
+    public void setLike(boolean like) {
+        this.like = like;
     }
 }

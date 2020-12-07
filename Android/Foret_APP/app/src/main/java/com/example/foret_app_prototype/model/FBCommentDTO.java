@@ -11,6 +11,7 @@ public class FBCommentDTO implements Serializable {
     private int id;
     private int writer;
     private int group_no;
+    private boolean parent;
 
     public String getReg_date() {
         return reg_date;
@@ -66,5 +67,13 @@ public class FBCommentDTO implements Serializable {
 
     public void setGroup_no(int group_no) {
         this.group_no = group_no;
+    }
+
+    public boolean isParent() {
+        return parent;
+    }
+
+    public void setParent(boolean parent) {
+        this.parent = parent;
     }
 }

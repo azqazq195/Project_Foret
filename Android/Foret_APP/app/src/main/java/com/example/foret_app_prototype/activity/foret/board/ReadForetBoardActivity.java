@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,10 +25,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.MainActivity;
+import com.example.foret_app_prototype.activity.foret.ViewForetActivity;
+import com.example.foret_app_prototype.activity.free.EditFreeActivity;
+import com.example.foret_app_prototype.activity.free.ReadFreeActivity;
+import com.example.foret_app_prototype.activity.login.SessionManager;
 import com.example.foret_app_prototype.adapter.foret.BoardViewPagerAdapter;
+import com.example.foret_app_prototype.adapter.foret.CommentBoardAdapter;
 import com.example.foret_app_prototype.adapter.foret.CommentsAdapter;
+import com.example.foret_app_prototype.adapter.foret.ReadViewPagerAdapter;
+import com.example.foret_app_prototype.adapter.free.CommentListFreeBoardAdapter;
 import com.example.foret_app_prototype.model.FBCommentDTO;
 import com.example.foret_app_prototype.model.ForetBoard;
 import com.example.foret_app_prototype.model.ForetBoardComment;
@@ -50,227 +60,274 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ReadForetBoardActivity extends AppCompatActivity implements View.OnClickListener {
+public class ReadForetBoardActivity extends AppCompatActivity implements View.OnClickListener, CommentBoardAdapter.CommentClickListener {
     MemberDTO memberDTO;
-    ReadForetDTO readForetDTO;
-    ForetBoardDTO foretBoardDTO;
-    List<ReadForetDTO> readForetDTOList;
-    List<ForetBoardDTO> foretBoardDTOList;
-    FBCommentDTO commentDTO;
-    List<FBCommentDTO> commentList;
-    int value;
+    ReadForetDTO foretBoardDTO;
 
-    String url;
+    TextView textView_writer, textView_like, textView_subject, textView_date,
+            textView_reply, textView_content, textView_comment2;
+    ToggleButton likeButton;
+    ImageView button_cancel, image_profile; //답글 닫기
+    EditText editText_comment;
+    RecyclerView recyclerView;
+    Button button_input; //답글 달기 버튼
+
+    int memberID;
+    int board_id;
+    Intent intent;
+    String url = "";
     AsyncHttpClient client;
     MemberResponse memberResponse;
-    BoardResponse boardResponse;
-    LikeResponse likeResponse;
-    LikeOffResponse likeOffResponse;
+//    BoardResponse boardResponse;
+
+    ViewFreeBoardResponse viewResponse;
+    InsertCommentResponse writeCommentResponse;
+    ViewFreeBoardResponse readBoardResponse;
+    LikeChangeResponse likeChangeResponse;
+    DeleteBoardResponse deleteBoardResponse;
+
+    CommentBoardAdapter adapter;
+    List<FBCommentDTO> commentlist;
+    FBCommentDTO foretBoardComment;
 
     ViewPager imageViewpager;
     TabLayout tab_layout;
-    TextView textView_boardName, textView_subject, textView_writer, textView_content,
-            textView_date, textView_like, textView_comment2, textView_reply;
-    EditText editText_comment;
-    ToggleButton likeButton;
-    Button button_input;
-    ImageView button_cancel;
-    CircleImageView image_profile;
-    RecyclerView recyclerView;
-    RecyclerView.LayoutManager layoutManager;
+    ReadViewPagerAdapter readViewPagerAdapter;
 
-    BoardViewPagerAdapter boardViewPagerAdapter;
-    CommentsAdapter commentsAdapter;
-
-    Intent intent;
-    ForetBoardComment foretBoardComment;
+    int noGet = 0;
     int like_count;
     int comment_count;
     InputMethodManager inputMethodManager;
-    int position;
     String target;
     boolean replying = false;
+    int initial_likecount; //내가 처음 글을 봤을 때의 라이크 개수 저장 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_foret_board);
-
+        //툴바 설정
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayShowTitleEnabled(false); // 기존 타이틀 제거
+        getSupportActionBar().setDisplayShowTitleEnabled(false); // 기존 타이틀 제거
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 뒤로가기 버튼
-        foretBoardDTOList = new ArrayList<>();
 
-        memberDTO = new MemberDTO();
-        memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
-        foretBoardDTO = (ForetBoardDTO) getIntent().getSerializableExtra("foretBoardDTO");
-        foretBoardDTOList = (List<ForetBoardDTO>) getIntent().getSerializableExtra("foretBoardDTOList");
-        Log.d("[TEST]", "멤버아디 ===> " + memberDTO.getId());
-        Log.d("[TEST]", "foretBoardDTO ===> " + foretBoardDTO.getId());
-        Log.d("[TEST]", "foretBoardDTOList ===> " + foretBoardDTOList.size());
-
-        setFindById(); // 객체 초기화
-        getBoard();
-    }
-
-    private void setFindById() {
-        imageViewpager = findViewById(R.id.imageViewpager);
-        image_profile = findViewById(R.id.image_profile);
-        textView_boardName = findViewById(R.id.textView_boardName);
-        textView_subject = findViewById(R.id.textView_subject);
         textView_writer = findViewById(R.id.textView_writer);
-        textView_content = findViewById(R.id.textView_content);
+        textView_like = findViewById(R.id.textView_like); //좋아요 개수
+        textView_subject = findViewById(R.id.textView_subject);
         textView_date = findViewById(R.id.textView_date);
-        textView_like = findViewById(R.id.textView_like);
+        textView_reply = findViewById(R.id.textView_reply); //OO님께 댓글 작성중입니다 창뜨기
         textView_comment2 = findViewById(R.id.textView_comment2);
-        textView_reply = findViewById(R.id.textView_reply);
-        button_cancel = findViewById(R.id.button_cancel);
-        editText_comment = findViewById(R.id.editText_comment);
-        likeButton = findViewById(R.id.likeButton);
+        textView_content = findViewById(R.id.textView_content);
+        likeButton = findViewById(R.id.likeButton); //좋아요 버튼
+        button_cancel = findViewById(R.id.button_cancel); //답글달기 취소
+        editText_comment = findViewById(R.id.editText_comment); //코멘트창
+        recyclerView = findViewById(R.id.recyclerView); //댓글이 나올 리사이클러뷰
         button_input = findViewById(R.id.button_input);
-        recyclerView = findViewById(R.id.comment_listView);
-        imageViewpager = findViewById(R.id.imageViewpager);
+        image_profile = findViewById(R.id.image_profile);
         tab_layout = findViewById(R.id.tab_layout);
-        boardViewPagerAdapter = new BoardViewPagerAdapter(this, memberDTO, foretBoardDTOList);
+        imageViewpager = findViewById(R.id.imageViewpager);
 
-        layoutManager = new LinearLayoutManager(this);
 
-        likeButton.setOnClickListener(this);
-        button_input.setOnClickListener(this);
+        inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+//        SessionManager sessionManager = new SessionManager(this);
+//        memberID = sessionManager.getSession();
+
+        commentlist = new ArrayList<>();
+        client = new AsyncHttpClient();
+        viewResponse = new ViewFreeBoardResponse();
+        writeCommentResponse = new InsertCommentResponse();
+        readBoardResponse = new ViewFreeBoardResponse();
+        likeChangeResponse = new LikeChangeResponse();
+        deleteBoardResponse = new DeleteBoardResponse();
+
+        board_id = getIntent().getIntExtra("board_id", 0);
+        memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
+
+        getMember(memberDTO.getId());
+//        initial_likecount = foretBoardDTO.getBoard_like(); //초반 라이크 수 저장
+//        like_count = foretBoardDTO.getBoard_like();
+//        comment_count = foretBoardDTO.getBoard_comment();
+
+//        setDataBoard(foretBoardDTO);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+
+        textView_reply.setVisibility(View.GONE);
+        button_cancel.setVisibility(View.GONE);
+        button_cancel.setOnClickListener(this); //답글 작성 취소
+        button_input.setOnClickListener(this); //댓글쓰기 ->서버 리셋할 것
+        likeButton.setOnClickListener(this); //좋아요버튼
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        getMember();
+    private void getBoard(int board_id) {
+        //글 불러오기
+        url = "http://34.72.240.24:8085/foret/search/boardSelect.do";
+        RequestParams params = new RequestParams();
+        params.put("id", board_id);
+        client.post(url, params, viewResponse);
     }
 
-    private void setViewContent() {
-        textView_writer.setText(readForetDTO.getWriter_nickname());
-        String date = readForetDTO.getReg_date().substring(0, 10);
-        textView_date.setText(date);
-        textView_subject.setText(readForetDTO.getSubject());
-        textView_content.setText(readForetDTO.getContent());
-
+    //좋아요 수 변화 때문에 반드시 서버에서 데이터 불러오거나 할것
+    private void setDataBoard(ReadForetDTO foretBoardDTO) {
+        if(foretBoardDTO.getWriter_photo() != null) {
+            Glide.with(this).load(foretBoardDTO.getWriter_photo())
+                    .placeholder(R.drawable.iu).into(image_profile);
+        } else {
+            Glide.with(this).load(R.drawable.iu9)
+                    .placeholder(R.drawable.iu).into(image_profile);
+        }
+        textView_writer.setText(foretBoardDTO.getWriter_nickname());
+        textView_subject.setText(foretBoardDTO.getSubject());
+        textView_content.setText(foretBoardDTO.getContent());
+        textView_like.setText(foretBoardDTO.getBoard_like()+"");
+        textView_date.setText(foretBoardDTO.getReg_date());
+        textView_comment2.setText(foretBoardDTO.getBoard_comment()+"");
+        if(foretBoardDTO.isLike()) {
+            likeButton.setChecked(true);
+        }
         // 뷰페이저
-        if(foretBoardDTOList.size() > 0) {
-            imageViewpager.setAdapter(boardViewPagerAdapter);
+        readViewPagerAdapter = new ReadViewPagerAdapter(this, foretBoardDTO);
+        if(foretBoardDTO.getPhoto().size() != 0) {
+            imageViewpager.setAdapter(readViewPagerAdapter);
             tab_layout.setupWithViewPager(imageViewpager, true);
         } else {
             imageViewpager.setVisibility(View.GONE);
             tab_layout.setVisibility(View.GONE);
         }
-
-        textView_like.setText("공감(" + readForetDTO.getBoard_like()+ ")");
-
-        textView_comment2.setText("댓글("+ readForetDTO.getBoard_comment()+")");
-
-
-        // 댓글 리스트
-        commentsAdapter = new CommentsAdapter(this, memberDTO, commentList);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(commentsAdapter);
-//        commentsAdapter.setItems(commentList);
-
-        // 대댓글 달때만 보이게, '대댓글 작성자'님께로 추후 수정
-        textView_reply.setVisibility(View.GONE);
-        button_cancel.setVisibility(View.GONE);
-//        textView_reply.setText(foretBoard.getWriter() + "님께 답글 작성중입니다...");
     }
 
-    private void getMember() {
-        url = "http://34.72.240.24:8085/foret/search/member.do";
-        client = new AsyncHttpClient();
-        memberResponse = new MemberResponse();
-        RequestParams params = new RequestParams();
-        params.put("id", memberDTO.getId());
-        client.post(url, params, memberResponse);
-    }
-
-    private void getBoard() {
-        url = "http://34.72.240.24:8085/foret/search/boardSelect.do";
-        client = new AsyncHttpClient();
-        boardResponse = new BoardResponse();
-        RequestParams params = new RequestParams();
-        params.put("id", memberDTO.getId());
-        client.post(url, params, boardResponse);
-    }
-
-    private void inputComment() {
-        String comment_content = editText_comment.getText().toString().trim();
-        if(comment_content.equals("")) {
-            Toast.makeText(this,"댓글을 작성해주세요.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        commentDTO = new FBCommentDTO();
-        commentDTO.setWriter_nickname(memberDTO.getNickname());
-        commentDTO.setContent(comment_content);
-        commentDTO.setReg_date(memberDTO.getReg_date());
-        commentDTO.setWriter_photo(memberDTO.getPhoto());
-        commentList.add(commentDTO);
-
-        recyclerView.setLayoutManager(layoutManager);
-//        layoutManager.scrollToPosition(commentList.size()-1);
-        recyclerView.setAdapter(commentsAdapter);
-        commentsAdapter.notifyDataSetChanged();
-//        commentsAdapter.setItems(commentList);
-        textView_comment2.setText("댓글("+ commentList.size() +")");
-        editText_comment.setText("");
-    }
-
-    // 버튼 이벤트
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.likeButton: // 좋아요 버튼
-                boolean check = likeButton.isChecked();
-                if(check) {
-                    likeButton.setBackgroundDrawable(v.getResources().
-                            getDrawable(R.drawable.like));
-                    plusLike(readForetDTO.getId());
-                } else {
-                    likeButton.setBackgroundDrawable(v.getResources().
-                            getDrawable(R.drawable.like_off));
-                    minusLike(readForetDTO.getId());
-                }
-                break;
-            case R.id.button_input: // 댓글 입력 버튼
-                inputComment();
-                break;
+    protected void onResume() {
+        super.onResume();
+        if(noGet != 0) {
+            commentlist.clear();
+            //글 불러오기
+            url = "http://34.72.240.24:8085/foret/search/boardSelect.do";
+            RequestParams params = new RequestParams();
+            params.put("id", foretBoardDTO.getId());
+            client.post(url, params, viewResponse);
         }
     }
 
-    // 툴바 메뉴 버튼 이벤트
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = null;
-        switch (item.getItemId()){
-            case R.id.btn_modify : // 수정 버튼
-                Toast.makeText(this, "게시판 수정", Toast.LENGTH_SHORT).show();
+    public boolean onCreateOptionsMenu(Menu menu) {
+//        if(memberDTO.getId() == foretBoardDTO.getWriter()) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.edit_toolbar, menu);
+//        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home : // 뒤로가기
+                finish();
+                break;
+            case R.id.btn_modify: // 수정
                 intent = new Intent(this, EditForetBoardActivity.class);
-                intent.putExtra("membetDTO", memberDTO);
-                intent.putExtra("readForetDTO", readForetDTO);
+                intent.putExtra("readForetDTO", foretBoardDTO);
                 startActivity(intent);
                 break;
-            case R.id.btn_delete : // 삭제 버튼
+            case R.id.btn_delete : // 삭제
                 getDialog();
                 break;
-            case android.R.id.home : // 뒤로가기 버튼
-                finish();
-                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-
-    // 메뉴 추가
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // 수행 표시줄에 항목이 있는 경우 이 항목이 추가됨.
-        getMenuInflater().inflate(R.menu.edit_toolbar, menu);
-        return true;
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.button_cancel : //답글 작성 취소
+                textView_reply.setVisibility(View.GONE);
+                button_cancel.setVisibility(View.GONE);
+                editText_comment.setText("");
+                replying = false;
+                break;
+            case R.id.button_input : //댓글 쓰기
+                inputComment();
+                break;
+            case R.id.likeButton : //좋아요 처리
+                if(likeButton.isChecked()) {
+                    like_count++;
+                    textView_like.setText(like_count+"");
+                } else {
+                    like_count--;
+                    textView_like.setText(like_count + "");
+                }
+                break;
+        }
+    }
+
+    private void inputComment() { //댓글 쓰기
+        foretBoardComment = new FBCommentDTO();
+        foretBoardComment.setWriter((memberDTO.getId()));
+        foretBoardComment.setContent(editText_comment.getText().toString().trim());
+        foretBoardComment.setId(foretBoardDTO.getId());
+        RequestParams params = new RequestParams();
+        url = "http://34.72.240.24:8085/foret/comment/recomment_insert.do";
+        params.put("board_id", foretBoardDTO.getId());
+        params.put("writer", memberDTO.getId());
+        params.put("content", editText_comment.getText().toString().trim());
+        client.post(url, params, writeCommentResponse);
+    }
+
+    //답글버튼 눌렀을 때
+    @Override
+    public void onReplyButtonClick(View v, String target, boolean reply) {
+        if(reply) {
+            textView_reply.setText(target + "님에게 답글 작성중 입니다.");
+            editText_comment.setText("@" + target + " ");
+            textView_reply.setVisibility(View.VISIBLE);
+            button_cancel.setVisibility(View.VISIBLE);
+            this.target = target;
+            replying = true;
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        }
+    }
+
+    //수정버튼 눌렀을 때
+    @Override
+    public void onModifyButtonClick(View v, boolean modify) {
+        if(modify) {
+            textView_reply.setVisibility(View.GONE);
+            button_cancel.setVisibility(View.GONE);
+            editText_comment.setVisibility(View.GONE);
+            button_input.setVisibility(View.GONE);
+        } else {
+            //textView_reply.setVisibility(View.VISIBLE);
+            button_cancel.setVisibility(View.VISIBLE);
+            editText_comment.setVisibility(View.VISIBLE);
+            button_input.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onDeleteButtonClick(boolean delete) {
+        if(delete) {
+            comment_count --;
+            textView_comment2.setText(String.valueOf(comment_count));
+        }
+    }
+
+    //좋아요 상태 저장
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(initial_likecount != like_count) {
+            //처음 라이크 수와 달라졌을 때, 좋아요 상태를 저장해야한다. 첫 라이크보다 적어지면(-1) 좋아요 마이너스.(좋아요 삭제)
+            //첫 라이크보다 커지면(+1) 좋아요를 추가한 상태임을 DB에 저장한다.
+            RequestParams params = new RequestParams();
+            params.put("id", memberID);
+            params.put("board_id", foretBoardDTO.getId());
+            params.put("type", 0);
+            if(initial_likecount > like_count) { //좋아요 수가 1감소함->좋아요 삭제
+                client.post("http://34.72.240.24:8085/foret/member/member_board_dislike.do", params, likeChangeResponse);
+            } else { //어차피 초반 if문이 처음 좋아요개수가 같지 않을때 였으므로 else를 쓰면 라이크 수가 증가한 경우만 해당
+                client.post("http://34.72.240.24:8085/foret/member/member_board_like.do", params, likeChangeResponse);
+            }
+        }
     }
 
     private void getDialog() {
@@ -284,40 +341,25 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
         builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getApplicationContext(),"삭제되었습니다.",Toast.LENGTH_SHORT).show();
-                readForetDTOList.remove(value);
-                Log.d("[TEST]", "foretBoardList.size() => " + readForetDTOList.size());
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("foretBoardList", (Serializable) readForetDTOList);
-                setResult(RESULT_OK, intent);
-                finish();
+                url = "http://34.72.240.24:8085/foret/board/board_delete.do";
+                RequestParams params = new RequestParams();
+                params.put("id", foretBoardDTO.getId());
+                client.post(url, params, deleteBoardResponse);
             }
         });
         // 취소
-        builder.setNeutralButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getApplicationContext(),"삭제 취소",Toast.LENGTH_SHORT).show();
-            }
-        });
+        builder.setNeutralButton("취소", null);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case 123:
-                    readForetDTO = (ReadForetDTO) data.getSerializableExtra("foretBoard");
-                    readForetDTOList.get(value).setType(readForetDTO.getType());
-                    readForetDTOList.get(value).setSubject(readForetDTO.getSubject());
-                    readForetDTOList.get(value).setContent(readForetDTO.getContent());
-                    setViewContent();
-                    break;
-            }
-        }
+    private void getMember(int board_id) {
+        url = "http://34.72.240.24:8085/foret/search/member.do";
+        client = new AsyncHttpClient();
+        memberResponse = new MemberResponse();
+        RequestParams params = new RequestParams();
+        params.put("id", board_id);
+        client.post(url, params, memberResponse);
     }
 
     class MemberResponse extends AsyncHttpResponseHandler {
@@ -325,14 +367,13 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
         public void onStart() {
             super.onStart();
             Log.d("[TEST]", "MemeberResponse onStart() 호출");
-            getBoard();
         }
 
         @Override
         public void onFinish() {
             super.onFinish();
             Log.d("[TEST]", "MemeberResponse onStart() 호출");
-            getBoard(); // 보드정보 가져오기
+
         }
 
         @Override
@@ -346,7 +387,17 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
+                    Log.d("[member]", "아디 가져옴 ==== " + memberDTO.getId());
+                    Log.d("[member]", "닉넴 가져옴 ==== " + memberDTO.getNickname());
+                    Log.d("[member]", "이름 가져옴 ==== " + memberDTO.getName());
+                    Log.d("[member]", "생일 가져옴 ==== " + memberDTO.getBirth());
+                    Log.d("[member]", "사진 가져옴 ==== " + memberDTO.getPhoto());
+                    Log.d("[member]", "이멜 가져옴 ==== " + memberDTO.getEmail());
+                    Log.d("[member]", "비번 가져옴 ==== " + memberDTO.getPassword());
+                    Log.d("[member]", "가입일 가져옴 ==== " + memberDTO.getReg_date());
                     Log.d("[TEST]", "회원정보 가져옴");
+
+                    getBoard(board_id);
                 } else {
                     Log.d("[TEST]", "회원정보 못가져옴");
                 }
@@ -361,162 +412,132 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
         }
     }
 
-    class BoardResponse extends AsyncHttpResponseHandler {
-        @Override
-        public void onStart() {
-            Log.d("[TEST]", "BoardResponse onStart() 호출");
-        }
-
-        @Override
-        public void onFinish() {
-            Log.d("[TEST]", "BoardResponse onFinish() 호출");
-            setViewContent();
-        }
+    class ViewFreeBoardResponse extends AsyncHttpResponseHandler { //글 상세보기기
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            readForetDTOList = new ArrayList<>();
             String str = new String(responseBody);
             Gson gson = new Gson();
             try {
                 JSONObject json = new JSONObject(str);
-                String RT = json.getString("RT");
-                if (RT.equals("OK")) {
+                if(json.getString("RT").equals("OK")) {
                     JSONArray board = json.getJSONArray("board");
-                    for (int i=0; i<board.length(); i++) {
-                        JSONObject temp = board.getJSONObject(i);
-                        readForetDTO = new ReadForetDTO();
-                        readForetDTO = gson.fromJson(temp.toString(), ReadForetDTO.class);
+                    JSONObject object = board.optJSONObject(0);
+                    foretBoardDTO = gson.fromJson(object.toString(), ReadForetDTO.class);
+                    initial_likecount = foretBoardDTO.getBoard_like(); //초반 라이크 수 저장
+                    like_count = foretBoardDTO.getBoard_like();
+                    comment_count = foretBoardDTO.getBoard_comment();
+                    Log.e("[TEST1]", "포레보드 보드아이디 ==== " + foretBoardDTO.getId());
+                    Log.e("[TEST1]", "포레보드 작성자아디  ==== " + foretBoardDTO.getWriter());
+                    Log.e("[TEST1]", "포레보드 타입  ==== " + foretBoardDTO.getType());
+                    setDataBoard(foretBoardDTO);
 
-                        JSONArray comment = temp.getJSONArray("comment");
-                        commentList = new ArrayList<>();
-                        if(comment.length() > 0) {
-                            for (int a=0; a<comment.length(); a++) {
-                                JSONObject temp2 = comment.getJSONObject(a);
-                                FBCommentDTO[] fbCommentDTO = new FBCommentDTO[comment.length()];
-                                fbCommentDTO[a] = gson.fromJson(temp2.toString(), FBCommentDTO.class);
-                                Log.d("[TEST]", "fbCommentDTO[a].getContent() => " + fbCommentDTO[a].getContent());
-                                Log.d("[TEST]", "fbCommentDTO[a].getWriter_nickname => " + fbCommentDTO[a].getWriter_nickname());
-                                commentList.add(fbCommentDTO[a]);
-                                Log.d("[TEST]", "포문 안commentList.size() => " + commentList.size());
+                    if(object.getJSONArray("comment").length() != 0) {
+                        JSONArray comment = object.getJSONArray("comment");
+                        for (int a = 0; a < comment.length(); a++) {
+                            JSONObject commnetOject = comment.getJSONObject(a);
+                            foretBoardComment = new FBCommentDTO();
+                            foretBoardComment.setId(commnetOject.getInt("id"));
+                            foretBoardComment.setReg_date(commnetOject.getString("reg_date"));
+                            foretBoardComment.setGroup_no(commnetOject.getInt("group_no"));
+                            foretBoardComment.setWriter(commnetOject.getInt("writer"));
+                            foretBoardComment.setContent(commnetOject.getString("content"));
+                            if (foretBoardComment.getId() == foretBoardComment.getGroup_no()) {
+                                foretBoardComment.setParent(true);
+                            } else {
+                                foretBoardComment.setParent(false);
                             }
-                            readForetDTO.setFbCommentDTOList(commentList);
-                            Log.d("[TEST]", "포문끝나고 foretBoard.getFbCommentDTOList() 저장된 사이즈 => " + readForetDTO.getFbCommentDTOList().size());
+                            commentlist.add(foretBoardComment);
                         }
-                        readForetDTOList.add(readForetDTO);
-                        Log.d("[TEST]", "foretBoardList.add(foretBoard) 사이즈 => " + readForetDTOList.size());
-                        Log.d("[TEST]", "foretBoard.getFbCommentDTOList() 사이즈 => " + readForetDTO.getFbCommentDTOList().size());
-                        Log.d("[TEST]", "foretBoardList.get(i).getId() => " + readForetDTOList.get(i).getId());
-                        Log.d("[TEST]", "foretBoardList.get(i).getWriter() => " + readForetDTOList.get(i).getWriter());
-                        Log.d("[TEST]", "foretBoardList.get(i).getForet_id() => " + readForetDTOList.get(i).getForet_id());
-                        Log.d("[TEST]", "foretBoardList.get(i).getWriter_nickname() => " + readForetDTOList.get(i).getWriter_nickname());
+                        adapter = new CommentBoardAdapter(commentlist, ReadForetBoardActivity.this, memberID);
+                        adapter.setCommentClickListener(ReadForetBoardActivity.this);
+                        recyclerView.setAdapter(adapter);
                     }
-                    Log.d("[TEST]", "포레 게시판 리스트 가져옴");
-                    Log.d("[TEST]", "foretBoardList.size() => " + readForetDTOList.size());
-                    Log.d("[TEST]", "foretBoard.getFbCommentDTOList() 사이즈 => " + readForetDTO.getFbCommentDTOList().size());
-                } else {
-                    Log.d("[TEST]", "포레 게시판 리스트 못가져옴");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(ReadForetBoardActivity.this, "BoardResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ReadForetBoardActivity.this, "댓글 목록 불러오기 실패함", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void plusLike(int board_id) {
-        String url = "http://34.72.240.24:8085/foret/board/member_board_like.do";
-        client = new AsyncHttpClient();
-        likeResponse = new LikeResponse();
-        RequestParams params = new RequestParams();
-
-//        params.put("id", memberDTO.getId());
-        params.put("id", 1);
-        params.put("board_id", board_id);
-
-        client.post(url, params, likeResponse);
-    }
-
-    private void minusLike(int board_id) {
-        String url = "http://34.72.240.24:8085/foret/board/member_board_dislike.do";
-        client = new AsyncHttpClient();
-        likeOffResponse = new LikeOffResponse();
-        RequestParams params = new RequestParams();
-
-        params.put("id", memberDTO.getId());
-        params.put("id", 1);
-        params.put("board_id", board_id);
-
-        client.post(url, params, likeOffResponse);
-    }
-
-    class LikeResponse extends AsyncHttpResponseHandler {
-        @Override
-        public void onStart() {
-            super.onStart();
-        }
-
-        @Override
-        public void onFinish() {
-            super.onFinish();
-            textView_like.setText("공감("+ readForetDTO.getBoard_like()+")");
-        }
+    class DeleteBoardResponse extends AsyncHttpResponseHandler {
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                String memberRT = json.getString("OK");
-                if(memberRT.equals("OK")) {
-                    Toast.makeText(ReadForetBoardActivity.this, "공감", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(ReadForetBoardActivity.this, "공감 실패", Toast.LENGTH_SHORT).show();
+                if(json.getString("boardRT").equals("OK")) {
+                    Toast.makeText(ReadForetBoardActivity.this, "게시글을 삭제했습니다.", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(ReadForetBoardActivity.this, "LikeResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ReadForetBoardActivity.this, "DeleteBoardResponse 통신 실패 " + statusCode, Toast.LENGTH_SHORT).show();
         }
     }
 
-    class LikeOffResponse extends AsyncHttpResponseHandler {
-        @Override
-        public void onStart() {
-            super.onStart();
-        }
 
-        @Override
-        public void onFinish() {
-            super.onFinish();
-            textView_like.setText("공감("+ readForetDTO.getBoard_like()+")");
-        }
+    class InsertCommentResponse extends AsyncHttpResponseHandler {
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                String memberRT = json.getString("OK");
-                if(memberRT.equals("OK")) {
-                    Toast.makeText(ReadForetBoardActivity.this, "공감 취소", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(ReadForetBoardActivity.this, "공감 취소 실패", Toast.LENGTH_SHORT).show();
+                if(json.getString("commentRT").equals("OK")) {
+                    Toast.makeText(ReadForetBoardActivity.this, "댓글 작성 성공", Toast.LENGTH_SHORT).show();
+                    Log.e("[TEST1]", commentlist.size()+"");
+                    commentlist.add(foretBoardComment);
+                    Log.e("[TEST2]", commentlist.size()+"");
+                    editText_comment.setText("");
+                    inputMethodManager.hideSoftInputFromWindow(editText_comment.getWindowToken(), 0);
+                    adapter = new CommentBoardAdapter(commentlist, ReadForetBoardActivity.this, memberID);
+                    Log.e("[TEST3]", commentlist.size()+"");
+                    recyclerView.setAdapter(adapter);
+                    recyclerView.scrollToPosition(commentlist.size());
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(ReadForetBoardActivity.this, "LikeOffResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ReadForetBoardActivity.this, "댓글 작성 실패", Toast.LENGTH_SHORT).show();
         }
     }
+
+    class LikeChangeResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                if(json.getString("memberRT").equals("OK")) {
+                    Toast.makeText(ReadForetBoardActivity.this, "좋아요 상태 저장 성공", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(ReadForetBoardActivity.this, "좋아요 저장 실패", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 }
