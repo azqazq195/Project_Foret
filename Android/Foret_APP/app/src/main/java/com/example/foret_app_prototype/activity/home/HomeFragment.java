@@ -113,7 +113,7 @@ public class HomeFragment extends Fragment
 //        memberDTO.setNickname("zi젼성하");
 //        memberDTO.setPhoto("asd");
 
-        getMember(); // 회원 정보 가져오기
+        getMember(id); // 회원 정보 가져오기
 
         Log.d("[TEST]", "getHomeData() 종료");
 
@@ -134,7 +134,7 @@ public class HomeFragment extends Fragment
 
     }
 
-    private void getMember() {
+    private void getMember(int id) {
         url = "http://34.72.240.24:8085/foret/search/member.do";
         client = new AsyncHttpClient();
         memberResponse = new MemberResponse();
@@ -284,7 +284,7 @@ public class HomeFragment extends Fragment
         public void onFinish() {
             super.onFinish();
             Log.d("[TEST]", "MemeberResponse onStart() 호출");
-            getHomeData();
+
         }
 
         @Override
@@ -307,6 +307,8 @@ public class HomeFragment extends Fragment
                     Log.d("[member]", "이멜 가져옴 ==== " + memberDTO.getEmail());
                     Log.d("[member]", "비번 가져옴 ==== " + memberDTO.getPassword());
                     Log.d("[member]", "가입일 가져옴 ==== " + memberDTO.getReg_date());
+
+                    getHomeData();
                 } else {
                     Log.d("[TEST]", "회원정보 못가져옴");
                 }
