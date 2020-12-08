@@ -460,7 +460,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                         search_resultList.add(foretDTO);
                     }
                     Log.e("[test]","memberDTO? " +memberDTO.toString());
-                    adapter3 = new RecyclerAdapter3(search_resultList, context,memberDTO);
+                    adapter3 = new RecyclerAdapter3(search_resultList, context, memberDTO);
 
 
                     recyclerView2.setAdapter(adapter3);

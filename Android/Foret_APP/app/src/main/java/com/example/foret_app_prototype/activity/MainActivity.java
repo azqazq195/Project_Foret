@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity
         nav_drawer.setNavigationItemSelectedListener(this::onNavigationItemSelected);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, homeFragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, freeFragment).commit();
         }
 
         client = new AsyncHttpClient();

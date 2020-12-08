@@ -63,6 +63,8 @@ public class WriteFreeActivity extends AppCompatActivity {
         Log.e("[TEST]", sessionManager.getSession()+"출력");
         id = sessionManager.getSession();
 
+        textView_writer.setText("작성자 : "+id);
+
         client = new AsyncHttpClient();
         response = new FreeBoardWriteResponse();
 
