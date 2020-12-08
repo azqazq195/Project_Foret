@@ -406,7 +406,7 @@ public class HomeFragment extends Fragment
                             homeForetDTO = new HomeForetDTO();
                             homeForetDTO.setId(0);
                             homeForetDTO.setName("가입한 포레가 없습니다");
-                            homeForetDTO.setPhoto("https://lh3.googleusercontent.com/proxy/ENLBHF-rHAT6N6RhgkF0ybfvVNynwKS_YkuNTfEXk3zdgEHvkUTzHd0ueG08skKIZhjuxrZEZHSn3r_hubApTyNtuY9pZWF_Aot8rOIGAj2vT45l");
+                            homeForetDTO.setPhoto("noforet");
                             homeForetDTOList.add(homeForetDTO);
                             homeForetBoardDTO = new HomeForetBoardDTO();
                             homeForetBoardDTO.setSubject("Join or create Foret");
