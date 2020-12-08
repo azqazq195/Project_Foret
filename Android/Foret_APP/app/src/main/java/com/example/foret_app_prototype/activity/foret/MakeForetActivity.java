@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -103,6 +104,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     List<String> tag_list;
     boolean ischecked = false;
 
+    boolean isFinishMakeChat;
+    boolean isFinishMakeDB;
+    boolean isFinishMakeImage;
 
 
     //파이어 베이스 채팅방 리소스
@@ -573,8 +577,11 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                     DatabaseReference userName = FirebaseDatabase.getInstance().getReference("Users");
                     Log.e("[test]","포레 생성중");
                     ProgressDialogHelper.getInstance().removeProgressbar();
+
                     if(!uri.equals("")||uri!=null){
                         sendImageMessage(uri);
+                    }else {
+                        isFinishMakeImage = true;
                     }
 
                     userName.addValueEventListener(new ValueEventListener() {
@@ -612,6 +619,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                     ref.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
+                                            isFinishMakeDB = true;
                                             //유저 정보 얻로드 -- 안들어가있음
 
                                             HashMap<String, String> hashMap1 = new HashMap<>();
@@ -624,12 +632,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                                 public void onSuccess(Void aVoid) {
                                                     Toast.makeText(context, "포레와 채팅방 생성 성공!", Toast.LENGTH_LONG).show();
                                                     ProgressDialogHelper.getInstance().removeProgressbar();
+                                                    isFinishMakeChat = true;
 
-                                                    Intent intent = new Intent(context, ViewForetActivity.class);
-                                                    intent.putExtra("memberDTO",memberDTO);
-                                                    intent.putExtra("foret_id",foret_id);
-                                                    startActivity(intent);
-                                                    finish(); // 현재 액티비티 종료
+                                                    checkUploadStatus();
 
                                                 }
                                             })
@@ -638,6 +643,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                                         public void onFailure(@NonNull Exception e) {
                                                             ProgressDialogHelper.getInstance().removeProgressbar();
                                                             Toast.makeText(context, "유저 정보 업로드 실패", Toast.LENGTH_LONG).show();
+                                                            checkUploadStatus();
                                                         }
                                                     });
 
@@ -647,6 +653,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                         public void onFailure(@NonNull Exception e) {
                                             Log.e("[test]","그룹생성 실패 원인 : "+e.getMessage());
                                             ProgressDialogHelper.getInstance().removeProgressbar();
+                                            checkUploadStatus();
                                         }
                                     });
                                 }
@@ -661,7 +668,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
                 } else {
                     Toast.makeText(MakeForetActivity.this, "포레를 만들지 못했습니다.", Toast.LENGTH_SHORT).show();
+                    checkUploadStatus();
                 }
+                checkUploadStatus();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -671,6 +680,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(MakeForetActivity.this, "통신 실패", Toast.LENGTH_SHORT).show();
             Log.e("[test]", error.getMessage()+"/ "+statusCode);
+            checkUploadStatus();
         }
     }
     /*
@@ -728,7 +738,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
     //이미지 보내기
     private void sendImageMessage(Uri image_rui) {
-        ProgressDialogHelper.getInstance().getProgressbar(this, "사진을 전송중입니다..");
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         String timeStamp = "" + System.currentTimeMillis();
@@ -750,6 +760,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                             Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
                             while (!uriTask.isSuccessful()) ;
                              downloadUri = uriTask.getResult().toString();
+                            isFinishMakeImage = true;
+
+                            checkUploadStatus();
 
                         }
                     })
@@ -765,5 +778,20 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             e.printStackTrace();
         }
 
+    }
+
+
+    void checkUploadStatus(){
+        if(isFinishMakeChat=true&&isFinishMakeDB&&isFinishMakeImage){
+            Intent intent = new Intent(context, ViewForetActivity.class);
+            intent.putExtra("memberDTO",memberDTO);
+            intent.putExtra("foret_id",foret_id);
+            Log.e("[test]","메익 포레에서 만들어진 아이디?"+foret_id);
+            startActivity(intent);
+            finish(); // 현재 액티비티 종료
+        }else{
+            Toast.makeText(context,"모든 업로드 실패 각 상태 \n image? "+String.valueOf(isFinishMakeImage)
+                    +"\n Chat?"+String.valueOf(isFinishMakeChat)+"\n DB?"+String.valueOf(isFinishMakeDB),Toast.LENGTH_SHORT).show();
+        }
     }
 }

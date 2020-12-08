@@ -279,7 +279,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                 goToMakeNewForet();
                 break;
             case R.id.button9: //포레 만들기 화면으로 이동
-                goToMakeNewForet();
+                //goToMakeNewForet();
+                startActivity(new Intent(context,SearchTagActivity.class));
                 break;
             case R.id.button_back:
                 searchAdapter.clear();

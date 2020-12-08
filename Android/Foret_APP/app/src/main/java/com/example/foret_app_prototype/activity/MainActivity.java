@@ -259,15 +259,15 @@ public class MainActivity extends AppCompatActivity
                 // 파이어 베이스 로그아웃 만들기
                 FirebaseAuth auth = FirebaseAuth.getInstance();
                 FirebaseUser user = auth.getCurrentUser();
-                updateuserActiveStatusOff();
+
                 auth.signOut();
+                updateuserActiveStatusOff();
+                Toast.makeText(context, "로그아웃 됨", Toast.LENGTH_LONG).show();
 
-                if (user == null) {
-                    Toast.makeText(context, "로그아웃 됨", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                    MainActivity.this.finish();
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                MainActivity.this.finish();
 
-                }
+
             }
         });
         builder.setNegativeButton("취소", null);
@@ -379,8 +379,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-      //  if (FirebaseAuth.getInstance().getCurrentUser() != null)
-            //updateuserActiveStatusOff();
+        //  if (FirebaseAuth.getInstance().getCurrentUser() != null)
+        //updateuserActiveStatusOff();
     }
 
     // 내상태 온라인 만들기

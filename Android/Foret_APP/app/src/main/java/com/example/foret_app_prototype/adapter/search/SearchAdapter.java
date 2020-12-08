@@ -69,7 +69,10 @@ public class SearchAdapter extends ArrayAdapter<ForetDTO> {
                 Glide.with(convertView).load(R.drawable.icon_foret)
                         .into(imageView);
             }else {
-                Glide.with(convertView).load(foret.getForet_photo()).fallback(R.drawable.icon_foret)
+
+                Glide.with(convertView).load(foret.getForet_photo())
+                        .placeholder(R.drawable.icon4)
+                        .fallback(R.drawable.icon_foret)
                         .into(imageView);
             }
 

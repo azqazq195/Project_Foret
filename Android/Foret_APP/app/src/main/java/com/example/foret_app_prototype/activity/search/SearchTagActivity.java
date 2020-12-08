@@ -105,7 +105,9 @@ public class SearchTagActivity extends AppCompatActivity implements View.OnClick
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(SearchTagActivity.this, "통신 에러", Toast.LENGTH_SHORT).show();
+            //이미 등록되었거나 인터넷 통신 오류임 로그확인 필요
+            Toast.makeText(SearchTagActivity.this, "이미 존재하는 태그입니다.", Toast.LENGTH_SHORT).show();
+            Log.d("[TEST]", "오류 상태 "+statusCode+", 메세지 : "+error.getMessage());
         }
     }
 }

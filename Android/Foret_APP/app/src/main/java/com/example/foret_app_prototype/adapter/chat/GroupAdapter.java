@@ -74,7 +74,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
 
         holder.groupName.setText(grounName);
         try {
-            Glide.with(context).load(groupPhoto).fallback(R.drawable.ic_launcher_foreground)
+            Glide.with(context).load(groupPhoto).fallback(R.drawable.icon_foret)
                     .into(holder.groupImage);
         } catch (Exception e) {
             holder.groupImage.setImageResource(R.drawable.ic_default_image_foreground);

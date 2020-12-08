@@ -347,7 +347,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(activity, "불러오기 실패", Toast.LENGTH_LONG).show();
+                //Toast.makeText(activity, "불러오기 실패", Toast.LENGTH_LONG).show();
                 Glide.with(activity)
                         .load(R.drawable.icon_foret)
                         .into(groupImage);

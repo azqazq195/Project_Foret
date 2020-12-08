@@ -140,7 +140,9 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
 
         getFindId(); // 객체 초기화
         addFab(); // 플로팅 버튼
-
+        getNotice();
+        getBoard();
+        checkUserStatus();
 
         foret_id = getIntent().getIntExtra("foret_id", 0);
         Log.d("[TEST]", "넘어온 포레 아디 => " + foret_id);
@@ -165,9 +167,6 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     protected void onResume() {
         super.onResume();
 //        getForet(); // 포레 정보
-        getNotice();
-        getBoard();
-        checkUserStatus();
 
         board_list.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -420,7 +419,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-
+    //초기 데이터 로딩 멤버 정보 가져오기
     class MemberResponse extends AsyncHttpResponseHandler {
         @Override
         public void onStart() {
@@ -468,7 +467,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(ViewForetActivity.this, "MemeberResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
-
+    //초기 데이터 로딩 포레 정보
     class ViewForetResponse extends AsyncHttpResponseHandler {
         @Override
         public void onStart() {
@@ -575,7 +574,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             Log.e("[test]","ViewForetResponse 통신 실패 오류코드 "+statusCode +"/ error? "+error.getStackTrace());
         }
     }
-
+    //초기 데이터 리딩 노티스
     class NoticeResponse extends AsyncHttpResponseHandler {
         @Override
         public void onStart() {
@@ -622,7 +621,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(ViewForetActivity.this, "NoticeResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
-
+    //초기 데이터 리딩 보드
     class BoardResponse extends AsyncHttpResponseHandler {
         @Override
         public void onStart() {
@@ -669,7 +668,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(ViewForetActivity.this, "BoardResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
-
+    //신규 가입시
     class JoinResponse extends AsyncHttpResponseHandler {
         @Override
         public void onStart() {
@@ -780,7 +779,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(ViewForetActivity.this, "JoinResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
-
+    //탈퇴시
     class LeaveResponse extends AsyncHttpResponseHandler {
         @Override
         public void onStart() {
@@ -822,39 +821,13 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     }
 
 
-    // 온라인 상태 만들기
-    private void updateuserActiveStatusOn() {
-        FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
-        final String userUid = currentUseruser.getUid();
-        DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
-        HashMap<String, Object> onlineStatus = new HashMap<>();
-        onlineStatus.put("onlineStatus", "online");
-        onlineStatus.put("listlogined_date", "현재 접속중");
-        userAcitive.updateChildren(onlineStatus);
-    }
-
-    // 오프라인 상태 만들기
-    private void updateuserActiveStatusOff() {
-        FirebaseUser currentUseruser = FirebaseAuth.getInstance().getCurrentUser();
-        final String userUid = currentUseruser.getUid();
-        DatabaseReference userAcitive = FirebaseDatabase.getInstance().getReference("Users").child(userUid);
-        HashMap<String, Object> onlineStatus = new HashMap<>();
-        onlineStatus.put("onlineStatus", "offline");
-
-        java.util.Calendar cal = java.util.Calendar.getInstance(Locale.KOREAN);
-        cal.setTimeInMillis(Long.parseLong(String.valueOf(System.currentTimeMillis())));
-        String dateTime = DateFormat.format("yy/MM/dd hh:mm aa", cal).toString();
-
-        onlineStatus.put("listlogined_date", "Last Seen at : " + dateTime);
-        userAcitive.updateChildren(onlineStatus);
-    }
 
     // 유저 접송 상태
     private void checkUserStatus() {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            updateuserActiveStatusOn();
+
         } else {
             // 유저가 로그인 안한 상태
             Toast.makeText(this, "오프라인 상태입니다.", Toast.LENGTH_LONG).show();

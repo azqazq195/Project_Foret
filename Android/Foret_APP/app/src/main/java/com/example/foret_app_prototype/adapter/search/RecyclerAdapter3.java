@@ -57,10 +57,12 @@ public class RecyclerAdapter3 extends RecyclerView.Adapter<RecyclerAdapter3.Adap
         String result = foret.getForet_photo().substring(foret.getForet_photo().lastIndexOf("/")+1);
         //Log.e("[test]", "섭스트링값?" +result);
         if(result.equals("null")){
-            Glide.with(holderView).load(R.drawable.icon_foret)
+            Glide.with(holderView).load(R.drawable.icon_foret).placeholder(R.drawable.icon)
                     .into(holder.imageView);
         }else {
-            Glide.with(holderView).load(foret.getForet_photo()).fallback(R.drawable.icon_foret)
+            Glide.with(holderView).load(foret.getForet_photo())
+                    .placeholder(R.drawable.icon)
+                    .fallback(R.drawable.icon_foret)
                     .into(holder.imageView);
         }
 
