@@ -55,7 +55,7 @@ import cz.msebera.android.httpclient.Header;
 public class HomeFragment extends Fragment
         implements ViewPager.OnPageChangeListener, View.OnClickListener {
     MemberDTO memberDTO;
-    int id;
+    String id;
 
     Toolbar toolbar;
     MainActivity activity;
@@ -99,7 +99,7 @@ public class HomeFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         toolbar = rootView.findViewById(R.id.home_toolbar);
         activity = (MainActivity) getActivity();
-
+        id = activity.getId()+"";
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle("");
         setHasOptionsMenu(true);
@@ -114,8 +114,6 @@ public class HomeFragment extends Fragment
         homeFragment = new HomeFragment(context);
 
 
-        SessionManager sessionManager = new SessionManager(activity);
-        id = sessionManager.getSession();
 
 //        id = 1;
 //        memberDTO = new MemberDTO();
@@ -147,7 +145,7 @@ public class HomeFragment extends Fragment
 
     }
 
-    private void getMember(int id) {
+    private void getMember(String id) {
         url = "http://34.72.240.24:8085/foret/search/member.do";
         client = new AsyncHttpClient();
         memberResponse = new MemberResponse();
@@ -318,18 +316,6 @@ public class HomeFragment extends Fragment
     }
 
     class MemberResponse extends AsyncHttpResponseHandler {
-        @Override
-        public void onStart() {
-            super.onStart();
-            Log.d("[TEST]", "MemeberResponse onStart() 호출");
-        }
-
-        @Override
-        public void onFinish() {
-            super.onFinish();
-            Log.d("[TEST]", "MemeberResponse onStart() 호출");
-
-        }
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -368,15 +354,12 @@ public class HomeFragment extends Fragment
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(getActivity(), "MemeberResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Log.e("[TEST]", "MemeberResponse 통신 실패 => " + statusCode);
         }
     }
 
 
     class HomeDataResponse extends AsyncHttpResponseHandler {
-        @Override
-        public void onStart() {
-            Log.d("[TEST]", "HomeDataResponse onStart() 호출");
-        }
 
         @Override
         public void onFinish() {
@@ -408,7 +391,7 @@ public class HomeFragment extends Fragment
                             homeForetDTO = new HomeForetDTO();
                             homeForetDTO.setId(0);
                             homeForetDTO.setName("가입한 포레가 없습니다");
-                            homeForetDTO.setPhoto("https://lh3.googleusercontent.com/proxy/ENLBHF-rHAT6N6RhgkF0ybfvVNynwKS_YkuNTfEXk3zdgEHvkUTzHd0ueG08skKIZhjuxrZEZHSn3r_hubApTyNtuY9pZWF_Aot8rOIGAj2vT45l");
+                            homeForetDTO.setPhoto("noforet");
                             homeForetDTOList.add(homeForetDTO);
                             homeForetBoardDTO = new HomeForetBoardDTO();
                             homeForetBoardDTO.setSubject("Join or create Foret");
@@ -472,7 +455,7 @@ public class HomeFragment extends Fragment
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(getActivity(), "HomeDataResponse 통신 실패", Toast.LENGTH_SHORT).show();
-            Log.d("[TEST]", "HomeDataResponse 통신 실패");
+            Log.e("[TEST]", "HomeDataResponse 통신 실패 => " + statusCode);
         }
     }
 

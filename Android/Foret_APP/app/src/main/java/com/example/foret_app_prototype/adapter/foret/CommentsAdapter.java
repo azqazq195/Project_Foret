@@ -43,7 +43,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         FBCommentDTO item = commentList.get(position);
 
-        if (!item.getWriter_photo().equals("") && item.getWriter_photo() != null) {
+        if (item.getWriter_photo().equals("") && item.getWriter_photo() == null) {
+            viewHolder.image_writer.setImageResource(R.drawable.basic_image);
+        } else {
             Glide.with(activity).load(item.getWriter_photo()).
                     placeholder(R.drawable.sss).into(viewHolder.image_writer);
         }

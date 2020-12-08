@@ -73,10 +73,15 @@ import retrofit2.Callback;
 public class ViewForetActivity extends AppCompatActivity implements View.OnClickListener {
     MemberDTO memberDTO;
     int foret_id;
+    int member_id;
+    String foret_leader;
 
     ForetViewDTO foretViewDTO;
     ForetBoardDTO foretBoardDTO;
+    List<ForetBoardDTO> noticeBoardDTOList;
     List<ForetBoardDTO> foretBoardDTOList;
+    List<ForetBoardDTO> noticeTotalList;
+    List<ForetBoardDTO> boardTotalList;
 
     ViewForetBoardAdapter viewForetBoardAdapter;
     BoardViewAdapter boardViewAdapter;
@@ -99,14 +104,19 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     BoardResponse boardResponse;
     JoinResponse joinResponse;
     LeaveResponse leaveResponse;
+    LeaderResponse leaderResponse;
+    BoardTotalResponse boardTotalResponse;
+    NoticeTotalResponse noticeTotalResponse;
 
     // 공지사항 페이징
     int noti_pg = 1;
     final int noti_size = 3;
+    int total_noti_pg;
 
     // 새글 페이징
     int board_pg = 1;
     final int board_size = 5;
+    int total_board_pg;
 
     String rank = ""; // guest = 가입안함, member = 가입함, leader = 리더
 
@@ -122,8 +132,8 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
-      //  searchFragment = new SearchFragment(memberDTO);
-      //  searchFragment = searchFragment.getSearchFragment();
+        //  searchFragment = new SearchFragment(memberDTO);
+        //  searchFragment = searchFragment.getSearchFragment();
 
         setContentView(R.layout.activity_view_foret);
 
@@ -132,7 +142,8 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.foret4));
-
+        MemberDTO memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
+        foret_id = getIntent().getIntExtra("foret_id", 0);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -140,20 +151,18 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
 
         getFindId(); // 객체 초기화
         addFab(); // 플로팅 버튼
-        getNotice();
-        getBoard();
+//        getMember(); // 멤버 가져오기
+        getTotalNotice();
+        getTotalBoard();
         checkUserStatus();
 
-        foret_id = getIntent().getIntExtra("foret_id", 0);
         Log.d("[TEST]", "넘어온 포레 아디 => " + foret_id);
-
         Log.d("[TEST]", "넘어온 회원 아디 => " + memberDTO.getId());
         Log.d("[TEST]", "넘어온 회원 아디 => " + memberDTO.getNickname());
         myNickName = memberDTO.getNickname();
 
         // 푸쉬 알림 생성
         apiService = Client.getRetrofit("https://fcm.googleapis.com/").create(APIService.class);
-
 
     }
 
@@ -218,6 +227,15 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         client.post(url, params, memberResponse);
     }
 
+    private void getLeader() {
+        url = "http://34.72.240.24:8085/foret/search/member.do";
+        client = new AsyncHttpClient();
+        leaderResponse = new LeaderResponse();
+        RequestParams params = new RequestParams();
+        params.put("id", foretViewDTO.getLeader_id());
+        client.post(url, params, leaderResponse);
+    }
+
     private void getForet() {
         url = "http://34.72.240.24:8085/foret/search/foretSelect.do";
         client = new AsyncHttpClient();
@@ -252,6 +270,28 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         params.put("size", board_size);
         params.put("inquiry_type", 1);
         client.post(url, params, boardResponse);
+    }
+
+    private void getTotalBoard() {
+        url = "http://34.72.240.24:8085/foret/search/boardList.do";
+        client = new AsyncHttpClient();
+        boardTotalResponse = new BoardTotalResponse();
+        RequestParams params = new RequestParams();
+        params.put("type", 4);
+        params.put("foret_id", foret_id);
+        params.put("inquiry_type", 1);
+        client.post(url, params, boardTotalResponse);
+    }
+
+    private void getTotalNotice() {
+        url = "http://34.72.240.24:8085/foret/search/boardList.do";
+        client = new AsyncHttpClient();
+        noticeTotalResponse = new NoticeTotalResponse();
+        RequestParams params = new RequestParams();
+        params.put("type", 2);
+        params.put("foret_id", foret_id);
+        params.put("inquiry_type", 1);
+        client.post(url, params, noticeTotalResponse);
     }
 
     private void foretJoin() {
@@ -303,7 +343,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void dataSetting() {
-        Log.e("[test]","foretViewDTO.getPhoto()?"+foretViewDTO.getPhoto());
+        Log.e("[test]", "foretViewDTO.getPhoto()?" + foretViewDTO.getPhoto());
         Glide.with(this).load(foretViewDTO.getPhoto()).
                 placeholder(R.drawable.sss).into(imageView_profile);
 
@@ -325,7 +365,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         textView_member.setText(foretViewDTO.getMember().size() + "/" + foretViewDTO.getMax_member());
         textView_master.setText("포레 리더 : " + memberDTO.getNickname());
         String date = foretViewDTO.getReg_date().substring(0, 10);
-        textView_date.setText(date);
+        textView_date.setText("Since : " + date);
         textView_intro.setText(foretViewDTO.getIntroduce());
 
         //파이어 베이스용
@@ -419,6 +459,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
     //초기 데이터 로딩 멤버 정보 가져오기
     class MemberResponse extends AsyncHttpResponseHandler {
         @Override
@@ -467,6 +508,42 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(ViewForetActivity.this, "MemeberResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
+
+    class LeaderResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onFinish() {
+            super.onFinish();
+        }
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            String str = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(str);
+                String RT = json.getString("RT");
+                if (RT.equals("OK")) {
+                    JSONArray member = json.getJSONArray("member");
+                    JSONObject temp = member.getJSONObject(0);
+                    foret_leader = temp.getString("nickname");
+                    Log.d("[TEST]", "리더 이름 가져옴");
+                    Log.d("[TEST]", "foret_leader => " + foret_leader);
+                    textView_master.setText("포레 리더 : " + foret_leader);
+                } else {
+                    Log.d("[TEST]", "리더 이름 못가져옴");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(ViewForetActivity.this, "MemeberResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Log.d("[SERVER]", "LeaderResponse 통신 실패" + statusCode);
+        }
+    }
+
     //초기 데이터 로딩 포레 정보
     class ViewForetResponse extends AsyncHttpResponseHandler {
         @Override
@@ -479,6 +556,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         public void onFinish() {
             super.onFinish();
             Log.d("[TEST]", "ViewForetResponse onFinish() 호출");
+            dataSetting();
         }
 
         @Override
@@ -559,7 +637,8 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                     } else {
                         Toast.makeText(ViewForetActivity.this, "언노운", Toast.LENGTH_SHORT).show();
                     }
-                    dataSetting();
+                    getLeader();
+
                 } else {
                     Log.d("[TEST]", "포레정보 못가져옴");
                 }
@@ -571,9 +650,10 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(ViewForetActivity.this, "ViewForetResponse 통신 실패", Toast.LENGTH_SHORT).show();
-            Log.e("[test]","ViewForetResponse 통신 실패 오류코드 "+statusCode +"/ error? "+error.getStackTrace());
+            Log.e("[test]", "ViewForetResponse 통신 실패 오류코드 " + statusCode + "/ error? " + error.getStackTrace());
         }
     }
+
     //초기 데이터 리딩 노티스
     class NoticeResponse extends AsyncHttpResponseHandler {
         @Override
@@ -584,16 +664,16 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void onFinish() {
             Log.d("[TEST]", "NoticeResponse onFinish() 호출");
-            viewForetBoardAdapter = new ViewForetBoardAdapter(ViewForetActivity.this, memberDTO, foretBoardDTOList);
+            viewForetBoardAdapter = new ViewForetBoardAdapter(ViewForetActivity.this, memberDTO, noticeBoardDTOList);
             listView_notice.setLayoutManager(new LinearLayoutManager(ViewForetActivity.this));
             listView_notice.setAdapter(viewForetBoardAdapter);
-            viewForetBoardAdapter.setItems(foretBoardDTOList);
-
+            viewForetBoardAdapter.setItems(noticeBoardDTOList);
+            viewForetBoardAdapter.notifyDataSetChanged();
         }
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            foretBoardDTOList = new ArrayList<>();
+            noticeBoardDTOList = new ArrayList<>();
             String str = new String(responseBody);
             Gson gson = new Gson();
             try {
@@ -601,15 +681,18 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                 String RT = json.getString("RT");
                 if (RT.equals("OK")) {
                     JSONArray board = json.getJSONArray("board");
-                    JSONObject temp = board.getJSONObject(0);
                     for (int i = 0; i < board.length(); i++) {
+                        JSONObject temp = board.getJSONObject(i);
+                        foretBoardDTO = new ForetBoardDTO();
                         foretBoardDTO = gson.fromJson(temp.toString(), ForetBoardDTO.class);
-                        foretBoardDTOList.add(foretBoardDTO);
+                        noticeBoardDTOList.add(foretBoardDTO);
+                        Log.d("[TEST]", "노티스보드리스트 => " + noticeBoardDTOList.get(i).getId());
                     }
-                    Log.d("[TEST]", "foretBoardDTOList.size() => " + foretBoardDTOList.size());
-                    Log.d("[TEST]", "포레 게시판 리스트 가져옴");
+
+                    Log.d("[TEST]", "foretBoardDTOList.size() => " + noticeBoardDTOList.size());
+                    Log.d("[TEST]", "공지 리스트 가져옴");
                 } else {
-                    Log.d("[TEST]", "포레 게시판 리스트 못가져옴");
+                    Log.d("[TEST]", "공지 리스트 못가져옴");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -619,10 +702,11 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(ViewForetActivity.this, "NoticeResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Log.d("[SERVER]", "NoticeResponse 통신 실패" + statusCode);
         }
     }
-    //초기 데이터 리딩 보드
 
+    //초기 데이터 리딩 노티스
     class BoardResponse extends AsyncHttpResponseHandler {
         @Override
         public void onStart() {
@@ -636,7 +720,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             board_list.setLayoutManager(new LinearLayoutManager(ViewForetActivity.this));
             board_list.setAdapter(boardViewAdapter);
             boardViewAdapter.setItems(foretBoardDTOList);
-
+            boardViewAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -649,13 +733,106 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                 String RT = json.getString("RT");
                 if (RT.equals("OK")) {
                     JSONArray board = json.getJSONArray("board");
-                    JSONObject temp = board.getJSONObject(0);
                     for (int i = 0; i < board.length(); i++) {
+                        JSONObject temp = board.getJSONObject(i);
+                        foretBoardDTO = new ForetBoardDTO();
                         foretBoardDTO = gson.fromJson(temp.toString(), ForetBoardDTO.class);
                         foretBoardDTOList.add(foretBoardDTO);
+                        Log.d("[TEST]", "새글 리스트 => " + foretBoardDTOList.get(i).getId());
                     }
                     Log.d("[TEST]", "foretBoardDTOList.size() => " + foretBoardDTOList.size());
-                    Log.d("[TEST]", "포레 게시판 리스트 가져옴");
+                    Log.d("[TEST]", "새글 리스트 가져옴");
+                } else {
+                    Log.d("[TEST]", "새글 리스트 못가져옴");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(ViewForetActivity.this, "BoardResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Log.e("[SERVER]", "BoardResponse 통신 실패" + statusCode);
+        }
+    }
+
+    //초기 노티스 토탈개수
+    class NoticeTotalResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onFinish() {
+            super.onFinish();
+            getNotice();
+        }
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            noticeTotalList = new ArrayList<>();
+            String str = new String(responseBody);
+            Gson gson = new Gson();
+            try {
+                JSONObject json = new JSONObject(str);
+                String RT = json.getString("RT");
+                if (RT.equals("OK")) {
+                    JSONArray board = json.getJSONArray("board");
+                    for (int i = 0; i < board.length(); i++) {
+                        JSONObject temp = board.getJSONObject(i);
+                        foretBoardDTO = new ForetBoardDTO();
+                        foretBoardDTO = gson.fromJson(temp.toString(), ForetBoardDTO.class);
+                        noticeTotalList.add(foretBoardDTO);
+                    }
+
+                    Log.d("[TEST]", "공지 토탈 가져옴");
+
+                    total_noti_pg = noticeTotalList.size();
+                    Log.e("[TEST]", "공지 게시글 총 수 => " + total_noti_pg);
+
+                } else {
+                    Log.d("[TEST]", "포레 게시판 리스트 못가져옴");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(ViewForetActivity.this, "NoticeResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Log.d("[SERVER]", "NoticeResponse 통신 실패" + statusCode);
+        }
+    }
+
+    //초기 보드 토탈 개수
+    class BoardTotalResponse extends AsyncHttpResponseHandler {
+
+        @Override
+        public void onFinish() {
+            super.onFinish();
+            getBoard();
+        }
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            boardTotalList = new ArrayList<>();
+            String str = new String(responseBody);
+            Gson gson = new Gson();
+            try {
+                JSONObject json = new JSONObject(str);
+                String RT = json.getString("RT");
+                if (RT.equals("OK")) {
+                    JSONArray board = json.getJSONArray("board");
+                    for (int i = 0; i < board.length(); i++) {
+                        JSONObject temp = board.getJSONObject(i);
+                        foretBoardDTO = new ForetBoardDTO();
+                        foretBoardDTO = gson.fromJson(temp.toString(), ForetBoardDTO.class);
+                        boardTotalList.add(foretBoardDTO);
+                    }
+                    Log.d("[TEST]", "새글 토탈 가져옴");
+
+                    total_board_pg = boardTotalList.size();
+                    Log.e("[TEST]", "새글 게시글 총 수 => " + total_board_pg);
+
                 } else {
                     Log.d("[TEST]", "포레 게시판 리스트 못가져옴");
                 }
@@ -667,8 +844,10 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(ViewForetActivity.this, "BoardResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Log.e("[SERVER]", "BoardResponse 통신 실패" + statusCode);
         }
     }
+
     //신규 가입시
     class JoinResponse extends AsyncHttpResponseHandler {
         @Override
@@ -737,7 +916,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                                                             ModelUser user = snapshot.getValue(ModelUser.class);
 
                                                             if (notify) {
-                                                                sendNotification(hisUid,user.getNickname(),msg);
+                                                                sendNotification(hisUid, user.getNickname(), msg);
                                                             }
                                                             notify = false;
                                                         }
@@ -780,6 +959,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(ViewForetActivity.this, "JoinResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
+
     //탈퇴시
     class LeaveResponse extends AsyncHttpResponseHandler {
         @Override
@@ -822,7 +1002,6 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     }
 
 
-
     // 유저 접송 상태
     private void checkUserStatus() {
 
@@ -863,7 +1042,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                     Token token = ds.getValue(Token.class);
 
                     // 데이터 셋팅
-                    Data data = new Data(myUid, message, foretname+"의 포레 알림", hisUid,
+                    Data data = new Data(myUid, message, foretname + "의 포레 알림", hisUid,
                             R.drawable.foret_logo);
 
                     // 보내는 사람 셋팅

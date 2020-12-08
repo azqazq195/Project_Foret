@@ -329,8 +329,14 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
     private void inputComment() { //댓글 쓰기
         foretBoardComment = new FBCommentDTO();
         foretBoardComment.setWriter((memberDTO.getId()));
-        foretBoardComment.setContent(editText_comment.getText().toString().trim());
+        String comment = editText_comment.getText().toString().trim();
+        if(comment.equals("")) {
+            Toast.makeText(this, "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         foretBoardComment.setId(foretBoardDTO.getId());
+        foretBoardComment.setContent(comment);
+
         RequestParams params = new RequestParams();
         url = "http://34.72.240.24:8085/foret/comment/recomment_insert.do";
         params.put("board_id", foretBoardDTO.getId());
@@ -520,10 +526,12 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
                             if (!commnetOject.isNull("reg_date")) {
                                 foretBoardComment.setReg_date(commnetOject.getString("reg_date"));
                             }
-
                             foretBoardComment.setGroup_no(commnetOject.getInt("group_no"));
                             foretBoardComment.setWriter(commnetOject.getInt("writer"));
-                            if (commnetOject.isNull("content")) {
+
+
+                            if (!commnetOject.isNull("content")) {
+
                                 foretBoardComment.setContent(commnetOject.getString("content"));
                             }
 
@@ -534,7 +542,7 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
                             }
                             commentlist.add(foretBoardComment);
                         }
-                        adapter = new CommentBoardAdapter(commentlist, ReadForetBoardActivity.this, memberID);
+                        adapter = new CommentBoardAdapter(commentlist, context, memberID);
                         adapter.setCommentClickListener(ReadForetBoardActivity.this);
                         recyclerView.setAdapter(adapter);
                     }
@@ -587,7 +595,7 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
                     Log.e("[TEST2]", commentlist.size() + "");
                     editText_comment.setText("");
                     inputMethodManager.hideSoftInputFromWindow(editText_comment.getWindowToken(), 0);
-                    adapter = new CommentBoardAdapter(commentlist, ReadForetBoardActivity.this, memberID);
+                    adapter = new CommentBoardAdapter(commentlist, context, memberID);
                     Log.e("[TEST3]", commentlist.size() + "");
                     recyclerView.setAdapter(adapter);
                     recyclerView.scrollToPosition(commentlist.size());

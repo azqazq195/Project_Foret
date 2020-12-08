@@ -53,8 +53,13 @@ public class ForetBoardAdapter extends RecyclerView.Adapter<ForetBoardAdapter.Vi
         HomeForetBoardDTO homeForetBoardDTO = homeForetBoardDTOList.get(position);
 
         viewHolder.subject.setText(homeForetBoardDTO.getSubject());
-//            String date = homeForetBoardDTO.getReg_date().substring(0, 10);
-        viewHolder.date.setText(homeForetBoardDTO.getReg_date());
+
+        if(homeForetBoardDTO.getReg_date().length() > 1) {
+            String date = homeForetBoardDTO.getReg_date().substring(0, 16);
+            viewHolder.date.setText(date);
+        } else {
+            viewHolder.date.setText(homeForetBoardDTO.getReg_date());
+        }
 
         // 아이템 클릭 이벤트 처리.
         viewHolder.layout.setOnClickListener(new View.OnClickListener() {

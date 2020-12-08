@@ -19,8 +19,7 @@
             android:layout_height="50sp"
             android:layout_marginBottom="5dp"
             android:background="@null"
-            android:src="@mipmap/ic_launcher"
-            app:srcCompat="@drawable/ic_default_image_foreground" />
+            android:src="@drawable/basic_image" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"

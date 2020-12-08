@@ -174,7 +174,8 @@
         android:src="@drawable/icon2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:srcCompat="@drawable/basic_image" />
 
     <TextView
         android:id="@+id/button_out"

@@ -323,37 +323,87 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 ArrayAdapter guAdapter;
                 switch (position) {
                     case 1:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.seuol_gu,
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.seuol,
                                 R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 2:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeonggi_si,
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.incheon,
                                 R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 3:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daejeon_gu,
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.sejong,
                                 R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 4:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gangwon_si,
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daejeon,
                                 R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 5:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gwangju_gu,
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gwangju,
                                 R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 6:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.busan_gu,
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daegu,
                                 R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 7:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeju_si,
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.ulsan,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 8:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.busan,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 9:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeonggi,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 10:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gangwon,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 11:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.chungbuk,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 12:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.chungnam,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 13:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeonbuk,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 14:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeonnam,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 15:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeongbuk,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 16:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeongnam,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 17:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeju,
                                 R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;

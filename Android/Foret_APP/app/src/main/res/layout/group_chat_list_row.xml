@@ -16,7 +16,7 @@
             android:id="@+id/groupImage"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:src="@drawable/ic_default_image_foreground"/>
+            android:src="@drawable/basic_image" />
 
         <TextView
             android:id="@+id/groupName"

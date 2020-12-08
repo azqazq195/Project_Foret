@@ -19,18 +19,16 @@ import java.util.List;
 //보드뷰 어답터에서사용/ 리드포레보드사용
 public class BoardViewPagerAdapter extends PagerAdapter {
     private Activity activity;
-    private MemberDTO memberDTO;
-    private List<ForetBoardDTO> foretBoardDTOList;
+    private String[] photo;
 
-    public BoardViewPagerAdapter(Activity activity, MemberDTO memberDTO, List<ForetBoardDTO> foretBoardDTOList) {
+    public BoardViewPagerAdapter(Activity activity, String[] photo) {
         this.activity = activity;
-        this.memberDTO = memberDTO;
-        this.foretBoardDTOList = foretBoardDTOList;
+        this.photo = photo;
     }
 
     @Override
     public int getCount() {
-        return foretBoardDTOList.size();
+        return photo.length;
     }
 
     @Override
@@ -48,11 +46,10 @@ public class BoardViewPagerAdapter extends PagerAdapter {
         // main_fragment_home_foret_thum.xml에 설정된 클래스 객체 생성
         View itemView = activity.getLayoutInflater().inflate(R.layout.board_view_pager, null);
         // 한 페이지에 보여줄 데이터 1개 꺼내기
-        final ForetBoardDTO foretBoardDTO = foretBoardDTOList.get(position);
-
+        String str = photo[position];
         ImageView board_view_pager = itemView.findViewById(R.id.board_view_pager);
 
-        Glide.with(activity).load(foretBoardDTO.getPhoto())
+        Glide.with(activity).load(str)
                 .placeholder(R.drawable.sss).into(board_view_pager);
 
         // 컨테이너에 추가 (viewPager에 등록)

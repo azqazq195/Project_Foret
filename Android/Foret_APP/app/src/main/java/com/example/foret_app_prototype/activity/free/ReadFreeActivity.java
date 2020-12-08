@@ -323,7 +323,6 @@ public class ReadFreeActivity extends AppCompatActivity
             this.group_no = group_no;
             this.position = position;
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-
             // 알림설정
             notify = true;
             takeReceiver = target;
