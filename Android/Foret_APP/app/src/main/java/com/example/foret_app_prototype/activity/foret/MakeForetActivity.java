@@ -151,7 +151,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         button_region = findViewById(R.id.button_region);
         button_tag = findViewById(R.id.button_tag);
 
-        memberDTO = (MemberDTO)getIntent().getSerializableExtra("memberDTO");
+        memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
 
         region_si = new ArrayList<>();
         region_gu = new ArrayList<>();
@@ -181,9 +181,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_complete: //완료(확인 버튼)
-                if(file == null){
-                    Toast.makeText(context,"포레 대표 사진을 선택해주세요.",Toast.LENGTH_LONG).show();
-                }else{
+                if (file == null) {
+                    Toast.makeText(context, "포레 대표 사진을 선택해주세요.", Toast.LENGTH_LONG).show();
+                } else {
                     foretInsert();
                 }
 
@@ -205,7 +205,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void foretInsert() {
-         name = editText_name.getText().toString().trim();
+        name = editText_name.getText().toString().trim();
         max_member = Integer.parseInt(editText_member.getText().toString().trim());
         introduce = editText_intro.getText().toString().trim();
 
@@ -230,11 +230,11 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             if (a == 0) {
                 params.put("region_si", str_si[a]);
                 params.put("region_gu", str_gu[a]);
-                Log.e("[test]","리전?"+str_si[a]+","+str_gu[a]);
+                Log.e("[test]", "리전?" + str_si[a] + "," + str_gu[a]);
             } else {
                 params.add("region_si", str_si[a]);
                 params.add("region_gu", str_gu[a]);
-                Log.e("[test]","리전?"+str_si[a]+","+str_gu[a]);
+                Log.e("[test]", "리전?" + str_si[a] + "," + str_gu[a]);
             }
 
         }
@@ -244,10 +244,10 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
             if (a == 0) {
                 params.put("tag", str_tag[a]);
-                Log.e("[test]","태그??"+str_tag[a]);
+                Log.e("[test]", "태그??" + str_tag[a]);
             } else {
                 params.add("tag", str_tag[a]);
-                Log.e("[test]","태그??"+str_tag[a]);
+                Log.e("[test]", "태그??" + str_tag[a]);
             }
         }
 
@@ -258,9 +258,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         params.put("name", name);
         params.put("introduce", introduce);
         params.put("max_member", max_member);
-       // params.put("tag", str_tag);
-       // params.put("region_si", str_si);
-       // params.put("region_gu", str_gu);
+        // params.put("tag", str_tag);
+        // params.put("region_si", str_si);
+        // params.put("region_gu", str_gu);
         try {
             if (file != null)
                 params.put("photo", file);
@@ -268,7 +268,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             e.printStackTrace();
         }
         params.setForceMultipartEntityContentType(true);
-        final int DEFAULT_TIME = 20*1000;
+        final int DEFAULT_TIME = 20 * 1000;
         client.setConnectTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
         client.setTimeout(DEFAULT_TIME);
@@ -276,7 +276,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         client.post(url, params, foretResponse);
 
 
-        ProgressDialogHelper.getInstance().getProgressbar(this,"포레 생성중");
+        ProgressDialogHelper.getInstance().getProgressbar(this, "포레 생성중");
 
     }
 
@@ -550,26 +550,26 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     class ForetResponse extends AsyncHttpResponseHandler {
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            Log.e("[test]","통신 성공");
+            Log.e("[test]", "통신 성공");
             ProgressDialogHelper.getInstance().removeProgressbar();
 
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
                 String rt = json.getString("foretRT");
-                String foretPhotoRT =json.getString("foretPhotoRT");
-                String foretMemberRT =json.getString("foretMemberRT");
-                String foretRegionRT =json.getString("foretRegionRT");
-                String foretTagRT =json.getString("foretTagRT");
+                String foretPhotoRT = json.getString("foretPhotoRT");
+                String foretMemberRT = json.getString("foretMemberRT");
+                String foretRegionRT = json.getString("foretRegionRT");
+                String foretTagRT = json.getString("foretTagRT");
 
                 foret_id = json.getString("foret_id");
 
                 //포레 멤버로 가입입
 
-               Toast.makeText(context,"결과? \n foretPhotoRT : "+foretPhotoRT+"\n foretMemberRT : "+foretMemberRT +"\n foretRegionRT : "+foretRegionRT
-                +"\n foretTagRT : "+ foretTagRT,Toast.LENGTH_SHORT).show();
-                Log.e("[test]","결과? foretPhotoRT : "+foretPhotoRT+", foretMemberRT : "+foretMemberRT +", foretRegionRT : "+foretRegionRT
-                        +", foretTagRT : "+ foretTagRT);
+                Toast.makeText(context, "결과? \n foretPhotoRT : " + foretPhotoRT + "\n foretMemberRT : " + foretMemberRT + "\n foretRegionRT : " + foretRegionRT
+                        + "\n foretTagRT : " + foretTagRT, Toast.LENGTH_SHORT).show();
+                Log.e("[test]", "결과? foretPhotoRT : " + foretPhotoRT + ", foretMemberRT : " + foretMemberRT + ", foretRegionRT : " + foretRegionRT
+                        + ", foretTagRT : " + foretTagRT);
                 if (rt.equals("OK")) {
                     //파이어 베이스용 데이터 삽입
                     foret = new Foret();
@@ -583,37 +583,33 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                     String makeForetTime = CalendarHelper.getInstance().getCurrentTimeFull();
                     foret.setReg_date(makeForetTime);
                     DatabaseReference userName = FirebaseDatabase.getInstance().getReference("Users");
-                    Log.e("[test]","포레 생성중");
-                    ProgressDialogHelper.getInstance().removeProgressbar();
+                    Log.e("[test]", "포레 생성중");
 
-                    if(!uri.equals("")||uri!=null){
-                        sendImageMessage(uri);
-                    }else {
-                        isFinishMakeImage = true;
-                    }
+
+                    ProgressDialogHelper.getInstance().getProgressbar(context, "채팅방 생성중입니다.");
 
                     userName.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                            Log.e("[test]","레퍼런스?"+userName.getRef().toString());
+                            Log.e("[test]", "레퍼런스?" + userName.getRef().toString());
+
+
                             for (DataSnapshot ds : snapshot.getChildren()) {
-                                Log.e("[test]","firebaseAuth.getCurrentUser().getUid()  : "+firebaseAuth.getCurrentUser().getUid());
+                                Log.e("[test]", "firebaseAuth.getCurrentUser().getUid()  : " + firebaseAuth.getCurrentUser().getUid());
 
                                 if (firebaseAuth.getCurrentUser().getUid().equals(ds.child("uid").getValue())) {
                                     user = ds.getValue(ModelUser.class);
                                     foret.setLeader(user.getNickname());
-                                    Log.e("[test]","user.getNickname() : "+user.getNickname());
-                                    Log.e("[test]",user.getNickname());
+                                    Log.e("[test]", "user.getNickname() : " + user.getNickname());
+                                    Log.e("[test]", user.getNickname());
 
-
-                                    ProgressDialogHelper.getInstance().getProgressbar(context,"채팅방 생성중입니다.");
-                                    Log.e("[test]","파이어 베이스에 포레 생성중");
-                                    Log.e("[test]"," 자료들 확인 : "+foret.getName()+foret.getIntroduce());
+                                    Log.e("[test]", "파이어 베이스에 포레 생성중");
+                                    Log.e("[test]", " 자료들 확인 : " + foret.getName() + foret.getIntroduce());
                                     HashMap<String, Object> hashMap = new HashMap<>();
                                     hashMap.put("GroupName", foret.getName());
-                                    if(!uri.equals("")||uri!=null){
-                                        hashMap.put("GroupPhoto",downloadUri );
+                                    if (!uri.equals("") || uri != null) {
+                                        hashMap.put("GroupPhoto", downloadUri);
                                     }
                                     hashMap.put("GroupLeader", user.getUid()); //안들어가있음
                                     hashMap.put("GroupDescription", foret.getIntroduce());
@@ -639,10 +635,70 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     Toast.makeText(context, "포레와 채팅방 생성 성공!", Toast.LENGTH_LONG).show();
-                                                    ProgressDialogHelper.getInstance().removeProgressbar();
-                                                    isFinishMakeChat = true;
 
-                                                    checkUploadStatus();
+                                                    if (!uri.equals("") || uri != null) {
+
+                                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                                                        String timeStamp = "" + System.currentTimeMillis();
+                                                        String fileNameAndPath = "GroupImages/" + "post_" + timeStamp + " by " + user.getUid() + " file : ";
+
+                                                        try {
+                                                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+                                                            ByteArrayOutputStream baos = null;
+                                                            baos = new ByteArrayOutputStream();
+                                                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                                                            byte[] data = baos.toByteArray();
+                                                            StorageReference ref = FirebaseStorage.getInstance().getReference().child(fileNameAndPath + uri.getLastPathSegment());
+                                                            ref.putBytes(data)
+                                                                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                                                        @Override
+                                                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                                            ProgressDialogHelper.getInstance().removeProgressbar();
+                                                                            Toast.makeText(context, "업로드 성공", Toast.LENGTH_LONG).show();
+                                                                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                                                                            while (!uriTask.isSuccessful())
+                                                                                ;
+                                                                            downloadUri = uriTask.getResult().toString();
+
+                                                                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups").child(foret.getName());
+                                                                            HashMap<String, Object> updatePhoto = new HashMap<>();
+                                                                            updatePhoto.put("GroupPhoto", downloadUri);
+                                                                            ref.updateChildren(updatePhoto);
+
+                                                                            ProgressDialogHelper.getInstance().removeProgressbar();
+
+
+                                                                            Intent intent = new Intent(MakeForetActivity.this, ViewForetActivity.class);
+                                                                            intent.putExtra("memberDTO",memberDTO);
+                                                                            intent.putExtra("foret_id",foret_id);
+                                                                            Log.e("[test]","메익 포레에서 만들어진 아이디?"+foret_id);
+
+                                                                            startActivity(intent);
+                                                                            finish(); // 현재 액티비티 종료
+
+                                                                        }
+                                                                    })
+                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            ProgressDialogHelper.getInstance().removeProgressbar();
+                                                                            Toast.makeText(context, "업로드 실패", Toast.LENGTH_LONG).show();
+                                                                        }
+                                                                    });
+
+                                                        } catch (IOException e) {
+                                                            e.printStackTrace();
+                                                        }
+
+
+                                                    } else {
+                                                        isFinishMakeImage = true;
+                                                    }
+                                                    //이미지 보내기
+
+
+                                                    isFinishMakeChat = true;
 
                                                 }
                                             })
@@ -651,7 +707,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                                         public void onFailure(@NonNull Exception e) {
                                                             ProgressDialogHelper.getInstance().removeProgressbar();
                                                             Toast.makeText(context, "유저 정보 업로드 실패", Toast.LENGTH_LONG).show();
-                                                            checkUploadStatus();
+
                                                         }
                                                     });
 
@@ -659,9 +715,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.e("[test]","그룹생성 실패 원인 : "+e.getMessage());
+                                            Log.e("[test]", "그룹생성 실패 원인 : " + e.getMessage());
                                             ProgressDialogHelper.getInstance().removeProgressbar();
-                                            checkUploadStatus();
+
                                         }
                                     });
                                 }
@@ -670,15 +726,16 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("[test]","error " +error.getMessage());
+                            Log.e("[test]", "error " + error.getMessage());
+                            ProgressDialogHelper.getInstance().removeProgressbar();
                         }
                     });
 
                 } else {
                     Toast.makeText(MakeForetActivity.this, "포레를 만들지 못했습니다.", Toast.LENGTH_SHORT).show();
-                    checkUploadStatus();
+                    ProgressDialogHelper.getInstance().removeProgressbar();
+
                 }
-                checkUploadStatus();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -687,37 +744,11 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(MakeForetActivity.this, "통신 실패", Toast.LENGTH_SHORT).show();
-            Log.e("[test]", error.getMessage()+"/ "+statusCode);
-            checkUploadStatus();
+            Log.e("[test]", error.getMessage() + "/ " + statusCode);
+            ProgressDialogHelper.getInstance().removeProgressbar();
         }
     }
-    /*
-    class RegionListResponse3 extends AsyncHttpResponseHandler {
 
-        @Override
-        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            String str = new String(responseBody);
-            try {
-                JSONObject json = new JSONObject(str);
-                if(json.getInt("total") != 0) {
-                    JSONArray region = json.getJSONArray("region");
-                    for (int a=0; a<region.length(); a++) {
-                        JSONObject object = region.getJSONObject(a);
-                        region_si.add(object.getString("region_si"));
-                        region_gu.add(object.getString("region_gu"));
-                    }
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        @Override
-        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(MakeForetActivity.this, "서버통신 에러", Toast.LENGTH_SHORT).show();
-        }
-    }
-    */
     class TagListResponse3 extends AsyncHttpResponseHandler {
 
         @Override
@@ -725,9 +756,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                if(json.getInt("total") != 0) {
+                if (json.getInt("total") != 0) {
                     JSONArray tag = json.getJSONArray("tag");
-                    for (int a=0; a<tag.length(); a++) {
+                    for (int a = 0; a < tag.length(); a++) {
                         JSONObject object = tag.getJSONObject(a);
                         tag_list.add(object.getString("tag_name"));
                     }
@@ -743,64 +774,4 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-
-    //이미지 보내기
-    private void sendImageMessage(Uri image_rui) {
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        String timeStamp = "" + System.currentTimeMillis();
-        String fileNameAndPath = "GroupImages/" + "post_" + timeStamp + " by " + user.getUid() + " file : ";
-
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_rui);
-            ByteArrayOutputStream baos = null;
-            baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] data = baos.toByteArray();
-            StorageReference ref = FirebaseStorage.getInstance().getReference().child(fileNameAndPath + image_rui.getLastPathSegment());
-            ref.putBytes(data)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            ProgressDialogHelper.getInstance().removeProgressbar();
-                            Toast.makeText(context, "업로드 성공", Toast.LENGTH_LONG).show();
-                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!uriTask.isSuccessful()) ;
-                             downloadUri = uriTask.getResult().toString();
-                            isFinishMakeImage = true;
-
-                            checkUploadStatus();
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            ProgressDialogHelper.getInstance().removeProgressbar();
-                            Toast.makeText(context, "업로드 실패", Toast.LENGTH_LONG).show();
-                        }
-                    });
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-    void checkUploadStatus(){
-        if(isFinishMakeChat=true&&isFinishMakeDB&&isFinishMakeImage){
-            Intent intent = new Intent(context, ViewForetActivity.class);
-            intent.putExtra("memberDTO",memberDTO);
-            intent.putExtra("foret_id",foret_id);
-            Log.e("[test]","메익 포레에서 만들어진 아이디?"+foret_id);
-
-            startActivity(intent);
-            finish(); // 현재 액티비티 종료
-        }else{
-            Toast.makeText(context,"모든 업로드 실패 각 상태 \n image? "+String.valueOf(isFinishMakeImage)
-                    +"\n Chat?"+String.valueOf(isFinishMakeChat)+"\n DB?"+String.valueOf(isFinishMakeDB),Toast.LENGTH_SHORT).show();
-        }
-    }
 }

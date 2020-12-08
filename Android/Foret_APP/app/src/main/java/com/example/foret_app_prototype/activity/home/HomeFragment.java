@@ -56,7 +56,6 @@ public class HomeFragment extends Fragment
         implements ViewPager.OnPageChangeListener, View.OnClickListener {
     MemberDTO memberDTO;
     String id;
-
     Toolbar toolbar;
     MainActivity activity;
     TextView button1, textView_name;
@@ -98,6 +97,7 @@ public class HomeFragment extends Fragment
                              ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         toolbar = rootView.findViewById(R.id.home_toolbar);
+        context = getContext();
         activity = (MainActivity) getActivity();
         id = activity.getId()+"";
         activity.setSupportActionBar(toolbar);
@@ -113,17 +113,6 @@ public class HomeFragment extends Fragment
         searchFragment = new SearchFragment(context);
         homeFragment = new HomeFragment(context);
 
-
-
-//        id = 1;
-//        memberDTO = new MemberDTO();
-//        memberDTO.setId(1);
-//        memberDTO.setName("문성하");
-//        memberDTO.setNickname("zi젼성하");
-//        memberDTO.setPhoto("asd");
-
-        Log.d("[TEST]", "getHomeData() 종료");
-
         // 뷰페이저(포레)
         viewPager = rootView.findViewById(R.id.viewPager);
         viewPager.setOnPageChangeListener(this);
@@ -137,13 +126,6 @@ public class HomeFragment extends Fragment
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        //getMember(id); // 회원 정보 가져오기
-        //이거 움김
-
-    }
 
     private void getMember(String id) {
         url = "http://34.72.240.24:8085/foret/search/member.do";
@@ -166,7 +148,7 @@ public class HomeFragment extends Fragment
 
         homeDataResponse = new HomeDataResponse();
         RequestParams params = new RequestParams();
-//        params.put("id", memberDTO.getId());
+
         params.put("id", id);
         client.post(url, params, homeDataResponse);
     }
@@ -190,13 +172,13 @@ public class HomeFragment extends Fragment
             @Override
             public void onClick(View v, HomeForetDTO homeForetDTO) {
                 if(homeForetDTO.getId() > 0) {
-                    intent = new Intent(activity, ViewForetActivity.class);
+                    intent = new Intent(context, ViewForetActivity.class);
                     Log.d("[TEST]", "포레 클릭 homeForetDTO.getId() => " + homeForetDTO.getId());
                     intent.putExtra("foret_id", homeForetDTO.getId()); // 포레 아이디값 넘김
                     intent.putExtra("memberDTO", memberDTO);
                     startActivity(intent);
                 } else {
-                    activity.getSupportFragmentManager().beginTransaction().remove(homeFragment).commit();
+                    //activity.getSupportFragmentManager().beginTransaction().remove(homeFragment).commit();
                     activity.getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, searchFragment).commit();
                 }
             }
@@ -207,50 +189,53 @@ public class HomeFragment extends Fragment
     //데이터 셋팅
     private void setView() {
         // 공지사항
-        foretBoardAdapter = new ForetBoardAdapter(getActivity(), memberDTO, homeForetDTO.getHomeNoticeList());
-        recyclerView1.setHasFixedSize(true);
-        recyclerView1.setLayoutManager(new LinearLayoutManager(activity));
-        recyclerView1.setAdapter(foretBoardAdapter);
+        if(homeForetDTO.getHomeNoticeList() != null){
+            foretBoardAdapter = new ForetBoardAdapter(getActivity(), memberDTO, homeForetDTO.getHomeNoticeList());
+            recyclerView1.setHasFixedSize(true);
+            recyclerView1.setLayoutManager(new LinearLayoutManager(activity));
+            recyclerView1.setAdapter(foretBoardAdapter);
 
-        foretBoardAdapter.setOnClickListener(new ForetBoardAdapter.OnClickListener() {
-            @Override
-            public void onClick(View v, HomeForetBoardDTO homeForetBoardDTO) {
-                if(homeForetBoardDTO.getId() == 0) {
-                    activity.getSupportFragmentManager().beginTransaction().remove(homeFragment).commit();
-                    activity.getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, searchFragment).commit();
-                } else {
-                    Intent intent = new Intent(getActivity(), ReadForetBoardActivity.class);
-                    intent.putExtra("board_id", homeForetBoardDTO.getId());
-                    intent.putExtra("memberDTO", memberDTO);
-                    startActivity(intent);
+            foretBoardAdapter.setOnClickListener(new ForetBoardAdapter.OnClickListener() {
+                @Override
+                public void onClick(View v, HomeForetBoardDTO homeForetBoardDTO) {
+                    if(homeForetBoardDTO.getId() == 0) {
+                        //activity.getSupportFragmentManager().beginTransaction().remove(homeFragment).commit();
+                        activity.getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, searchFragment).commit();
+                    } else {
+                        Intent intent = new Intent(getActivity(), ReadForetBoardActivity.class);
+                        intent.putExtra("board_id", homeForetBoardDTO.getId());
+                        intent.putExtra("memberDTO", memberDTO);
+                        startActivity(intent);
+                    }
                 }
-            }
-        });
+            });
 
-//        foretBoardAdapter.setItems(homeForetDTO.getHomeNoticeList());
+        }
 
         // 새글
-        newBoardFeedAdapter = new NewBoardFeedAdapter(getActivity(), memberDTO, homeForetDTO.getHomeBoardList());
-        recyclerView3.setHasFixedSize(true);
-        recyclerView3.setLayoutManager(new LinearLayoutManager(activity));
-        recyclerView3.setAdapter(newBoardFeedAdapter);
+        if( homeForetDTO.getHomeBoardList() != null){
+            newBoardFeedAdapter = new NewBoardFeedAdapter(getActivity(), memberDTO, homeForetDTO.getHomeBoardList());
+            recyclerView3.setHasFixedSize(true);
+            recyclerView3.setLayoutManager(new LinearLayoutManager(activity));
+            recyclerView3.setAdapter(newBoardFeedAdapter);
 
-        newBoardFeedAdapter.setOnClickListener(new NewBoardFeedAdapter.OnClickListener() {
-            @Override
-            public void onClick(View v, HomeForetBoardDTO homeForetBoardDTO) {
-                if(homeForetBoardDTO.getId() == 0) {
-                    activity.getSupportFragmentManager().beginTransaction().remove(homeFragment).commit();
-                    activity.getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, searchFragment).commit();
-                } else {
-                    Intent intent = new Intent(getActivity(), ReadForetBoardActivity.class);
-                    intent.putExtra("board_id", homeForetBoardDTO.getId());
-                    intent.putExtra("memberDTO", memberDTO);
-                    startActivity(intent);
+            newBoardFeedAdapter.setOnClickListener(new NewBoardFeedAdapter.OnClickListener() {
+                @Override
+                public void onClick(View v, HomeForetBoardDTO homeForetBoardDTO) {
+                    if(homeForetBoardDTO.getId() == 0) {
+                        //activity.getSupportFragmentManager().beginTransaction().remove(homeFragment).commit();
+                        activity.getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, searchFragment).commit();
+                    } else {
+                        Intent intent = new Intent(getActivity(), ReadForetBoardActivity.class);
+                        intent.putExtra("board_id", homeForetBoardDTO.getId());
+                        intent.putExtra("memberDTO", memberDTO);
+                        startActivity(intent);
+                    }
                 }
-            }
-        });
+            });
+        }
 
-//        newBoardFeedAdapter.setItems(homeForetDTO.getHomeBoardList());
+
     }
 
     @Override
@@ -316,18 +301,6 @@ public class HomeFragment extends Fragment
     }
 
     class MemberResponse extends AsyncHttpResponseHandler {
-        @Override
-        public void onStart() {
-            super.onStart();
-            Log.d("[TEST]", "MemeberResponse onStart() 호출");
-        }
-
-        @Override
-        public void onFinish() {
-            super.onFinish();
-            Log.d("[TEST]", "MemeberResponse onStart() 호출");
-
-        }
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -371,20 +344,6 @@ public class HomeFragment extends Fragment
 
 
     class HomeDataResponse extends AsyncHttpResponseHandler {
-        @Override
-        public void onStart() {
-            Log.d("[TEST]", "HomeDataResponse onStart() 호출");
-        }
-
-        @Override
-        public void onFinish() {
-            Log.d("[TEST]", "HomeDataResponse onFinish() 호출");
-            // 뷰페이져
-            getViewPager();
-            // 게시판
-            setView();
-            textView_name.setText(homeForetDTOList.get(0).getName());
-        }
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -449,8 +408,8 @@ public class HomeFragment extends Fragment
                         }
                         homeForetDTOList.add(homeForetDTO);
                         Log.d("[TEST]", "최종 저장된 homeForetDTOList.add(homeForetDTO) 사이즈 => " + homeForetDTOList.size());
-                        Log.d("[TEST]", "최종 저장된 homeNoticeList.size() 사이즈 => " + homeForetDTO.getHomeNoticeList().size());
-                        Log.d("[TEST]", "최종 저장된 homeNoticeList.size() 사이즈 => " + homeForetDTO.getHomeBoardList().size());
+                        //Log.d("[TEST]", "최종 저장된 homeNoticeList.size() 사이즈 => " + homeForetDTO.getHomeNoticeList().size());
+                        //Log.d("[TEST]", "최종 저장된 homeNoticeList.size() 사이즈 => " + homeForetDTO.getHomeBoardList().size());
                         Log.d("[TEST]", "homeForetDTOList.get(i).getId() => " + homeForetDTOList.get(i).getId());
                         Log.d("[TEST]", "homeForetDTOList.get(i).getName() => " + homeForetDTOList.get(i).getName());
                     }
@@ -462,6 +421,13 @@ public class HomeFragment extends Fragment
                 } else {
                     Log.d("[TEST]", "포레 게시판 리스트 가져오지못함");
                 }
+
+                // 뷰페이져
+                getViewPager();
+                // 게시판
+                setView();
+                textView_name.setText(homeForetDTOList.get(0).getName());
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

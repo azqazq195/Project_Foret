@@ -34,7 +34,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_default_image_foreground" />
+            android:src="@drawable/icon_defalut" />
 
         <LinearLayout
             android:layout_width="match_parent"

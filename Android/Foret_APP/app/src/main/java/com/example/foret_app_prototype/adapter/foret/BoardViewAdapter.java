@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -29,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -48,7 +50,21 @@ public class BoardViewAdapter extends RecyclerView.Adapter<BoardViewAdapter.View
     private WriterResponse writerResponse;
     private String writer;
 
-//    private OnClickListener mListener = null;
+    ImageView writerPhoto;
+    TextView textViewWriter;
+
+    public TextView getTextViewWriter() {
+        return textViewWriter;
+    }
+
+
+    public void setWriter(String writer) {
+        this.writer = writer;
+    }
+
+    public ImageView getWriterPhoto() {
+        return writerPhoto;
+    }
 
     private int like_count;
     int initial_likecount; //내가 처음 글을 봤을 때의 라이크 개수 저장 변수
@@ -58,6 +74,7 @@ public class BoardViewAdapter extends RecyclerView.Adapter<BoardViewAdapter.View
         this.activity = activity;
         this.memberDTO = memberDTO;
         this.foretBoardDTOList = foretBoardDTOList;
+
     }
 
     @NonNull
@@ -73,24 +90,24 @@ public class BoardViewAdapter extends RecyclerView.Adapter<BoardViewAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ForetBoardDTO foretBoardDTO = foretBoardDTOList.get(position);
-        Log.d("[TEST]", "foretBoardList.size() => " + foretBoardDTOList.size());
-        Log.d("[TEST]", "item.getLike_count().size() => " + foretBoardDTO.getBoard_like());
 
         getWriter(foretBoardDTO.getWriter());
 
-        boardViewPagerAdapter = new BoardViewPagerAdapter(activity, foretBoardDTO.getPhoto());
-        Log.e("[TEST]", "뷰페이저 사진 개수 =>" + foretBoardDTO.getPhoto().length);
-        Log.e("[TEST]", "뷰페이저 사진 이름 =>" + foretBoardDTO.getPhoto()[position]);
+        String photopath = Arrays.toString(foretBoardDTO.getPhoto()).replace("[", "").replace("]", "");
+        String convertImageUrl = "http://34.72.240.24:8085/foret/storage/" +photopath;
 
-        for(int i=0; i<foretBoardDTOList.size(); i++) {
-            Log.d("[TEST]", "리스트 내용 => " + foretBoardDTOList.get(i).getId());
+
+
+        if(!photopath.equals("null")) {
+            Glide.with(activity).load(convertImageUrl).fallback(R.drawable.icon_defalut).into(holder.viewPager_board);
+            holder.viewPager_board.setVisibility(View.VISIBLE);
         }
+
 
         initial_likecount = foretBoardDTO.getBoard_like(); //초반 라이크 수 저장
         like_count = foretBoardDTO.getBoard_like();
 
-        Glide.with(viewHolder.imageBoard.getContext()).load(foretBoardDTO.getPhoto()).
-                placeholder(R.drawable.sss).into(viewHolder.imageBoard);
+
 
         viewHolder.name.setText(writer);
 
@@ -105,12 +122,7 @@ public class BoardViewAdapter extends RecyclerView.Adapter<BoardViewAdapter.View
         }
         viewHolder.date.setText(date);
 
-        if(!foretBoardDTO.getPhoto().equals("") && !foretBoardDTO.getPhoto().equals(null)) {
-            viewHolder.viewPager_board.setVisibility(View.VISIBLE);
-            viewHolder.tab_layout.setVisibility(View.VISIBLE);
-            viewHolder.viewPager_board.setAdapter(boardViewPagerAdapter);
-            viewHolder.tab_layout.setupWithViewPager(viewHolder.viewPager_board, true);
-        }
+
 
         viewHolder.like_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,7 +151,7 @@ public class BoardViewAdapter extends RecyclerView.Adapter<BoardViewAdapter.View
             }
         });
 
-        viewHolder.commenting.setOnClickListener(new View.OnClickListener() {
+        viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ReadForetBoardActivity.class);
@@ -150,16 +162,6 @@ public class BoardViewAdapter extends RecyclerView.Adapter<BoardViewAdapter.View
             }
         });
 
-        viewHolder.comment_count.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(activity, ReadForetBoardActivity.class);
-                intent.putExtra("board_id", foretBoardDTO.getId());
-                intent.putExtra("memberDTO", memberDTO);
-                Log.d("[Test]", "memberDTO  => " + memberDTO.getId());
-                activity.startActivity(intent);
-            }
-        });
     }
 
     private void getWriter(int id) {
@@ -180,14 +182,15 @@ public class BoardViewAdapter extends RecyclerView.Adapter<BoardViewAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ToggleButton like_btn;
-        ImageView imageBoard, commenting;
+        ImageView imageBoard, commenting,viewPager_board;
         TextView name, like_count, subject, content, comment_count, date;
-        ViewPager viewPager_board;
+
         TabLayout tab_layout;
+        LinearLayout linearLayout;
 
         ViewHolder(View itemView) {
             super(itemView);
-
+            linearLayout = itemView.findViewById(R.id.gotonext);
             imageBoard = itemView.findViewById(R.id.imageBoard);
             like_btn = itemView.findViewById(R.id.like_btn);
             commenting = itemView.findViewById(R.id.commenting);
@@ -199,80 +202,13 @@ public class BoardViewAdapter extends RecyclerView.Adapter<BoardViewAdapter.View
             date = itemView.findViewById(R.id.date);
             viewPager_board = itemView.findViewById(R.id.viewPager_board);
             tab_layout = itemView.findViewById(R.id.tab_layout);
-
+            writerPhoto = imageBoard;
+            textViewWriter = name;
             client = new AsyncHttpClient();
             likeChangeResponse = new LikeChangeResponse();
             writerResponse = new WriterResponse();
         }
     }
-
-//    private void plusLike(int board_id) {
-//        String url = "http://34.72.240.24:8085/foret/board/member_board_like.do";
-//        client = new AsyncHttpClient();
-//        likeResponse = new LikeResponse();
-//        RequestParams params = new RequestParams();
-//
-//        params.put("id", memberDTO.getId());
-//        params.put("board_id", board_id);
-//
-//        client.post(url, params, likeResponse);
-//    }
-//
-//    private void minusLike(int board_id) {
-//        String url = "http://34.72.240.24:8085/foret/board/member_board_dislike.do";
-//        client = new AsyncHttpClient();
-//        likeOffResponse = new LikeOffResponse();
-//        RequestParams params = new RequestParams();
-//
-//        params.put("id", memberDTO.getId());
-//        params.put("board_id", board_id);
-//
-//        client.post(url, params, likeOffResponse);
-//    }
-
-//    class LikeResponse extends AsyncHttpResponseHandler {
-//        @Override
-//        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//            String str = new String(responseBody);
-//            try {
-//                JSONObject json = new JSONObject(str);
-//                String memberRT = json.getString("OK");
-//                if(memberRT.equals("OK")) {
-//                    Toast.makeText(activity, "공감", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Toast.makeText(activity, "공감 실패", Toast.LENGTH_SHORT).show();
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        @Override
-//        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-//            Toast.makeText(activity, "LikeResponse 통신 실패", Toast.LENGTH_SHORT).show();
-//        }
-//    }
-//
-//    class LikeOffResponse extends AsyncHttpResponseHandler {
-//        @Override
-//        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//            String str = new String(responseBody);
-//            try {
-//                JSONObject json = new JSONObject(str);
-//                String memberRT = json.getString("OK");
-//                if(memberRT.equals("OK")) {
-//                    Toast.makeText(activity, "공감 취소", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Toast.makeText(activity, "공감 취소 실패", Toast.LENGTH_SHORT).show();
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        @Override
-//        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-//            Toast.makeText(activity, "LikeOffResponse 통신 실패", Toast.LENGTH_SHORT).show();
-//        }
-//    }
 
     class LikeChangeResponse extends AsyncHttpResponseHandler {
 
@@ -307,9 +243,15 @@ public class BoardViewAdapter extends RecyclerView.Adapter<BoardViewAdapter.View
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     writer = temp.getString("nickname");
-                    Log.d("[TEST]", "작성자 이름 가져옴 => " + writer);
+                    if(!temp.isNull("photo")){
+                        ImageView imageView = getWriterPhoto();
+                        String convertImageUrl = "http://34.72.240.24:8085/foret/storage/" + temp.getString("photo");
+                        Glide.with(activity).load(convertImageUrl).fallback(R.drawable.icon_defalut).into(imageView);
+                    }
+                   TextView textView = getTextViewWriter();
+                   textView.setText(writer);
                 } else {
-                    Log.d("[TEST]", "작성자 이름 못가져옴");
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

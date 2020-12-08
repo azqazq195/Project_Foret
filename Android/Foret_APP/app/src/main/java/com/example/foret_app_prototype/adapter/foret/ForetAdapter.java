@@ -12,12 +12,18 @@ import androidx.viewpager.widget.PagerAdapter;
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.model.HomeForetDTO;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
 public class ForetAdapter extends PagerAdapter {
     private Activity activity;
     private List<HomeForetDTO> homeForetDTOList;
+    String path;
 //    private List<ForetDTO> foretDTOList;
 
     // 리스너 객체 참조를 저장하는 변수
@@ -54,9 +60,29 @@ public class ForetAdapter extends PagerAdapter {
 
         ImageView image = itemView.findViewById(R.id.image);
 
-        Glide.with(activity).load(homeForetDTO.getPhoto())
-                .placeholder(R.drawable.foret_logo) // 이미지가 없으면 기본 사진
-                .into(image);
+        String name = homeForetDTO.getName();
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups").child(name);
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.e("[test]", "name?" + name);
+                path = snapshot.child("GroupPhoto").getValue()+"";
+               Log.e("[test]", "path?" + path);
+                Glide.with(activity).load(path)
+                        .fallback(R.drawable.icon_defalut)
+                        .into(image);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
 
         // 이벤트 설정
         image.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +104,7 @@ public class ForetAdapter extends PagerAdapter {
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         // viewPager에서 삭제
         Log.d("[TEST]", "destroyItem() position : " + position);
-        container.removeView((View)object);
+        container.removeView((View) object);
     }
 
     public interface OnClickListener {

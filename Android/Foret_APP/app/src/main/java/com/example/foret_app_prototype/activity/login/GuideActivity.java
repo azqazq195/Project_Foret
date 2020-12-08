@@ -522,16 +522,18 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void permissionCheck() {
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
             } else {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET,
-                                Manifest.permission.ACCESS_MEDIA_LOCATION, Manifest.permission.CAMERA},
-                        100);
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.INTERNET,
+                                Manifest.permission.ACCESS_MEDIA_LOCATION,
+                                Manifest.permission.CAMERA}, 100);
             }
         }
     }
@@ -808,7 +810,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String timeStamp = "" + System.currentTimeMillis();
-        String fileNameAndPath = "profileImages/" + user.getUid() + "_post_" + timeStamp;
+        String fileNameAndPath = "userProfileImage/" + user.getUid();
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_rui);
             ByteArrayOutputStream baos = null;

@@ -184,17 +184,12 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
         deleteBoardResponse = new DeleteBoardResponse();
 
         board_id = getIntent().getIntExtra("board_id", 0);
-        board_id = getIntent().getIntExtra("board_id", 0);
         memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
 
 
         getMember(memberDTO.getId());
-//        initial_likecount = foretBoardDTO.getBoard_like(); //초반 라이크 수 저장
-//        like_count = foretBoardDTO.getBoard_like();
-//        comment_count = foretBoardDTO.getBoard_comment();
 
-//        setDataBoard(foretBoardDTO);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
 
         textView_reply.setVisibility(View.GONE);
         button_cancel.setVisibility(View.GONE);
@@ -218,7 +213,7 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
 
         if (foretBoardDTO.getWriter_photo() != null) {
             Glide.with(this).load(foretBoardDTO.getWriter_photo())
-                    .placeholder(R.drawable.iu).into(image_profile);
+                    .placeholder(R.drawable.icon_defalut).into(image_profile);
         } else {
             Glide.with(this).load(R.drawable.icon4).into(image_profile);
         }
@@ -441,13 +436,13 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
         @Override
         public void onStart() {
             super.onStart();
-            Log.d("[TEST]", "MemeberResponse onStart() 호출");
+            //Log.d("[TEST]", "MemeberResponse onStart() 호출");
         }
 
         @Override
         public void onFinish() {
             super.onFinish();
-            Log.d("[TEST]", "MemeberResponse onStart() 호출");
+            //Log.d("[TEST]", "MemeberResponse onStart() 호출");
 
         }
 
@@ -462,6 +457,7 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
                     memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
+                    /*
                     Log.d("[member]", "아디 가져옴 ==== " + memberDTO.getId());
                     Log.d("[member]", "닉넴 가져옴 ==== " + memberDTO.getNickname());
                     Log.d("[member]", "이름 가져옴 ==== " + memberDTO.getName());
@@ -472,9 +468,11 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
                     Log.d("[member]", "가입일 가져옴 ==== " + memberDTO.getReg_date());
                     Log.d("[TEST]", "회원정보 가져옴");
 
+                     */
+
                     getBoard(board_id);
                 } else {
-                    Log.d("[TEST]", "회원정보 못가져옴");
+                    //Log.d("[TEST]", "회원정보 못가져옴");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -504,16 +502,16 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
                     comment_count = foretBoardDTO.getBoard_comment();
 
                     Log.e("[TEST1]", "포레보드 보드아이디 ==== " + foretBoardDTO.getId());
-                    Log.e("[TEST1]", "포레보드 작성자아디  ==== " + foretBoardDTO.getWriter());
+                   Log.e("[TEST1]", "포레보드 작성자아디  ==== " + foretBoardDTO.getWriter());
                     Log.e("[TEST1]", "포레보드 타입  ==== " + foretBoardDTO.getType());
-
+                    Log.e("[TEST1]", "작성자 포토  ==== " + object.isNull("writer_photo"));
                     if (!object.isNull("writer_photo")) {
                         Log.e("[TEST1]", "작성자 포토  ==== " + object.getString("writer_photo"));
                         foretBoardDTO.setWriter_photo(object.getString("writer_photo"));
                         wirterPhotoGet = object.getString("writer_photo");
                         String myPhoto = "http://34.72.240.24:8085/foret/storage/" + wirterPhotoGet.toString().replace("[", "").replace("]", "");
-                        Glide.with(context).load(foretBoardDTO.getWriter_photo())
-                                .placeholder(R.drawable.iu).into(image_profile);
+                        Glide.with(context).load(myPhoto)
+                                .placeholder(R.drawable.icon_defalut).into(image_profile);
                     }
                     setDataBoard(foretBoardDTO);
 

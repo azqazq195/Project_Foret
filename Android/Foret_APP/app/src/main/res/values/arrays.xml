@@ -2,9 +2,9 @@
 <resources>
     <!-- 게시판 타입 배열 -->
     <string-array name="spinner_data">
+        <item>선택</item>
+        <item>공지</item>
         <item>일반</item>
-        <item>일정</item>
-        <item>공지사항</item>
     </string-array>
 
     <!-- 최대 멤버수 -->

@@ -123,11 +123,11 @@ public class MainActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
 
         context = this;
-        homeFragment = new HomeFragment(this);
-        freeFragment = new FreeFragment(this);
-        searchFragment = new SearchFragment(this);
-        chatFragment = new ChatFragment(this);
-        notifyFragment = new NotifyFragment(this);
+        homeFragment = new HomeFragment(context);
+        freeFragment = new FreeFragment(context);
+        searchFragment = new SearchFragment(context);
+        chatFragment = new ChatFragment(context);
+        notifyFragment = new NotifyFragment(context);
 
         nav_bottom = findViewById(R.id.nav_bottom);
         container = findViewById(R.id.container);
@@ -308,6 +308,7 @@ public class MainActivity extends AppCompatActivity
 
                     LoginActivity loginActivity = (LoginActivity) LoginActivity.loginActivity;
                     // 세션에 담아서 로그인 페이지로
+                    Log.e("[test]","세션 담기전 DTO?"+memberDTO+toString());
                     SessionManager sessionManager = new SessionManager(loginActivity);
                     sessionManager.saveSession(memberDTO);
 

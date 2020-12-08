@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clipToPadding="false"
+    android:id="@+id/gotonext"
     android:orientation="vertical"
     android:overScrollMode="never">
 
@@ -35,7 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    app:srcCompat="@mipmap/ic_launcher" />
+                    android:src="@drawable/icon_defalut" />
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -57,11 +58,11 @@
             android:descendantFocusability="blocksDescendants"
             android:orientation="vertical">
 
-            <androidx.viewpager.widget.ViewPager
+            <ImageView
                 android:id="@+id/viewPager_board"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_centerInParent="true"
+                android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
@@ -69,7 +70,7 @@
                 android:overScrollMode="never"
                 android:visibility="gone">
 
-            </androidx.viewpager.widget.ViewPager>
+            </ImageView>
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
