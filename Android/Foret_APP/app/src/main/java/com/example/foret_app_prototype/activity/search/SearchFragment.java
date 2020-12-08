@@ -41,6 +41,7 @@ import com.example.foret_app_prototype.activity.menu.EditMyInfoActivity;
 import com.example.foret_app_prototype.adapter.search.RecyclerAdapter2;
 import com.example.foret_app_prototype.adapter.search.RecyclerAdapter3;
 import com.example.foret_app_prototype.adapter.search.SearchAdapter;
+import com.example.foret_app_prototype.helper.ProgressDialogHelper;
 import com.example.foret_app_prototype.model.ForetDTO;
 import com.example.foret_app_prototype.model.MemberDTO;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -94,6 +95,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
 
     AsyncHttpClient client;
 
+    public SearchFragment() {
+    }
+
+    public SearchFragment(Context context) {
+        this.context = context;
+    }
     /*
 
     SearchFragment searchFragment;
@@ -123,7 +130,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         activity.getSupportActionBar().setTitle(null);
         memberDTO = activity.getMemberDTO();
         setHasOptionsMenu(true);
-        context = getContext();
         layout_search = rootView.findViewById(R.id.layout_search);
         button_back = rootView.findViewById(R.id.button_back);
         button1 = rootView.findViewById(R.id.button1); //내 관심태그 설정 페이지로 이동(햄버거 메뉴에 넣을 예정)
@@ -192,6 +198,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
 
     //내 태그 정보 불러오기
     private void myTagData() {
+        ProgressDialogHelper.getInstance().getProgressbar(context,"잠시만 기다려주세요.");
         List<String> myTag = memberDTO.getTag();
         adapter2 = new RecyclerAdapter2(myTag, activity,SearchFragment.this);
         recyclerView1.setAdapter(adapter2);
@@ -390,11 +397,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            ProgressDialogHelper.getInstance().removeProgressbar();
         }
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(context, "인기 태그 목록 못가져옴", Toast.LENGTH_SHORT).show();
+            ProgressDialogHelper.getInstance().removeProgressbar();
         }
     }
 
@@ -421,6 +430,11 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                         foretDTO.setForet_id(object.getInt("id"));
                         foretDTO.setIntroduce(object.getString("introduce"));
                         foretDTO.setReg_date(object.getString("reg_date"));
+
+                        if (!object.isNull("photo")){
+                            foretDTO.setForet_photo(object.getString("photo"));
+                        }
+
                         if(object.getJSONArray("region_si").length() != 0) {
                             List<String> si = new ArrayList<>();
                             JSONArray si_list = object.getJSONArray("region_si");
@@ -450,15 +464,18 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
 
 
                     recyclerView2.setAdapter(adapter3);
+                    ProgressDialogHelper.getInstance().removeProgressbar();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                ProgressDialogHelper.getInstance().removeProgressbar();
             }
         }
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(context, "서버통신 에러 추천목록 못가져옴", Toast.LENGTH_SHORT).show();
+            ProgressDialogHelper.getInstance().removeProgressbar();
         }
     }
 
@@ -492,14 +509,17 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                     Log.e("[자동완성]", autoCompleteList.size()+"");
                 }
                 autoCompleteTextView.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, autoCompleteList));
+                ProgressDialogHelper.getInstance().removeProgressbar();
             } catch (JSONException e) {
                 e.printStackTrace();
+                ProgressDialogHelper.getInstance().removeProgressbar();
             }
         }
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(context, "서버통신 에러 태그 이름 못가져옴", Toast.LENGTH_SHORT).show();
+            ProgressDialogHelper.getInstance().removeProgressbar();
         }
     }
 
@@ -512,6 +532,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                 JSONObject json = new JSONObject(str);
                 if(json.getString("RT").equals("OK")) {
                     JSONArray foret = json.getJSONArray("foret");
+                    search_resultList.clear();
                     for (int a=0; a<foret.length(); a++) {
                         JSONObject object = foret.getJSONObject(a);
                         foretDTO = new ForetDTO();
@@ -525,6 +546,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                         foretDTO.setForet_id(object.getInt("id"));
                         foretDTO.setIntroduce(object.getString("introduce"));
                         foretDTO.setReg_date(object.getString("reg_date"));
+                        if (!object.isNull("photo")){
+                            foretDTO.setForet_photo(object.getString("photo"));
+                        }
                         if(object.getJSONArray("region_si").length() != 0) {
                             List<String> si = new ArrayList<>();
                             JSONArray si_list = object.getJSONArray("region_si");
@@ -547,19 +571,23 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                             foretDTO.setForet_photo("");
                         }
                         Log.e("[TEST]", foretDTO.getForet_photo());*/
+
                         searchAdapter.add(foretDTO);
                         Log.e("어댑터 사이즈", searchAdapter.getCount()+"");
                     }
                     Toast.makeText(context, "검색 완료", Toast.LENGTH_SHORT).show();
                 }
+                ProgressDialogHelper.getInstance().removeProgressbar();
             } catch (JSONException e) {
                 e.printStackTrace();
+                ProgressDialogHelper.getInstance().removeProgressbar();
             }
         }
 
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(context, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
+            ProgressDialogHelper.getInstance().removeProgressbar();
         }
     }
 }

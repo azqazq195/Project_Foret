@@ -105,7 +105,7 @@ public class ForetBoard implements Serializable {
     }
 
     public String getMember_photo() {
-        return member_photo;
+        return "http://34.72.240.24:8085/foret/storage/"+member_photo;
     }
 
     public void setMember_photo(String member_photo) {

@@ -3,6 +3,7 @@ package com.example.foret_app_prototype.adapter.search;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +51,19 @@ public class RecyclerAdapter3 extends RecyclerView.Adapter<RecyclerAdapter3.Adap
         String [] si = foret.getForet_region_si().toArray(new String[foret.getForet_region_si().size()]);
         String [] gu = foret.getForet_region_gu().toArray(new String[foret.getForet_region_gu().size()]);
 
-        Glide.with(holderView).load(foret.getForet_photo()).into(holder.imageView);
+       // Log.e("[test]","리사이클 어뎁터 3에서 포토 루트?"+foret.getForet_photo());
+        //Log.e("[test]","리사이클 어뎁터 3에서 포레명??"+foret.getForet_name());
+
+        String result = foret.getForet_photo().substring(foret.getForet_photo().lastIndexOf("/")+1);
+        //Log.e("[test]", "섭스트링값?" +result);
+        if(result.equals("null")){
+            Glide.with(holderView).load(R.drawable.icon_foret)
+                    .into(holder.imageView);
+        }else {
+            Glide.with(holderView).load(foret.getForet_photo()).fallback(R.drawable.icon_foret)
+                    .into(holder.imageView);
+        }
+
         holder.textView1.setText(foret.getForet_name());
         holder.textView2.setText(Arrays.toString(tag_name));
         holder.textView3.setText(foret.getIntroduce());

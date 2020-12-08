@@ -32,6 +32,12 @@ import com.example.foret_app_prototype.activity.foret.ViewForetActivity;
 import com.example.foret_app_prototype.activity.free.EditFreeActivity;
 import com.example.foret_app_prototype.activity.free.ReadFreeActivity;
 import com.example.foret_app_prototype.activity.login.SessionManager;
+import com.example.foret_app_prototype.activity.notify.APIService;
+import com.example.foret_app_prototype.activity.notify.Client;
+import com.example.foret_app_prototype.activity.notify.Data;
+import com.example.foret_app_prototype.activity.notify.Response;
+import com.example.foret_app_prototype.activity.notify.Sender;
+import com.example.foret_app_prototype.activity.notify.Token;
 import com.example.foret_app_prototype.adapter.foret.BoardViewPagerAdapter;
 import com.example.foret_app_prototype.adapter.foret.CommentBoardAdapter;
 import com.example.foret_app_prototype.adapter.foret.CommentsAdapter;
@@ -42,8 +48,16 @@ import com.example.foret_app_prototype.model.ForetBoard;
 import com.example.foret_app_prototype.model.ForetBoardComment;
 import com.example.foret_app_prototype.model.ForetBoardDTO;
 import com.example.foret_app_prototype.model.MemberDTO;
+import com.example.foret_app_prototype.model.ModelUser;
 import com.example.foret_app_prototype.model.ReadForetDTO;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -55,10 +69,13 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class ReadForetBoardActivity extends AppCompatActivity implements View.OnClickListener, CommentBoardAdapter.CommentClickListener {
     MemberDTO memberDTO;
@@ -102,6 +119,16 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
     boolean replying = false;
     int initial_likecount; //내가 처음 글을 봤을 때의 라이크 개수 저장 변수
 
+    // 알림설정
+    APIService apiService;
+    boolean notify = false;
+    String myUid;
+    String hisUid;
+    String takeMessage;
+    String takerSender;
+    String takeReceiver;
+    String originalReciver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,8 +168,9 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
         likeChangeResponse = new LikeChangeResponse();
         deleteBoardResponse = new DeleteBoardResponse();
 
-        board_id = getIntent().getIntExtra("board_id", 0);
+        board_id = getIntent().getIntExtra("board_id", 0);   board_id = getIntent().getIntExtra("board_id", 0);
         memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
+
 
         getMember(memberDTO.getId());
 //        initial_likecount = foretBoardDTO.getBoard_like(); //초반 라이크 수 저장
@@ -157,6 +185,8 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
         button_cancel.setOnClickListener(this); //답글 작성 취소
         button_input.setOnClickListener(this); //댓글쓰기 ->서버 리셋할 것
         likeButton.setOnClickListener(this); //좋아요버튼
+        // 푸쉬 알림 생성
+        apiService = Client.getRetrofit("https://fcm.googleapis.com/").create(APIService.class);
     }
 
     private void getBoard(int board_id) {
@@ -185,6 +215,8 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
         if(foretBoardDTO.isLike()) {
             likeButton.setChecked(true);
         }
+        Log.e("[test]","포토?" + foretBoardDTO.getPhoto());
+
         // 뷰페이저
         readViewPagerAdapter = new ReadViewPagerAdapter(this, foretBoardDTO);
         if(foretBoardDTO.getPhoto().size() != 0) {
@@ -194,6 +226,8 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
             imageViewpager.setVisibility(View.GONE);
             tab_layout.setVisibility(View.GONE);
         }
+        //파이어 베이스
+        takeReceiver = foretBoardDTO.getWriter()+"";
     }
 
     @Override
@@ -270,6 +304,9 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
         params.put("board_id", foretBoardDTO.getId());
         params.put("writer", memberDTO.getId());
         params.put("content", editText_comment.getText().toString().trim());
+
+        takeMessage = editText_comment.getText().toString().trim();
+
         client.post(url, params, writeCommentResponse);
     }
 
@@ -506,6 +543,69 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
                     Log.e("[TEST3]", commentlist.size()+"");
                     recyclerView.setAdapter(adapter);
                     recyclerView.scrollToPosition(commentlist.size());
+
+                    //파이어베이스 설정
+                    Log.e("[test]","takeMessage : "+takeMessage);
+                    Log.e("[test]","takeReceiver : "+takeReceiver);
+
+
+                    myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    // 노티피케이션 설정
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+                    ref.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot ds : snapshot.getChildren()) {
+                                //Log.e("[test]","ds ref?: "+ds.getRef());
+                                //Log.e("[test]","ds id??: "+ds.child("id").getValue());
+                                //Log.e("[test]","ds 트루?: "+ds.child("id").getValue().equals(takeReceiver));
+                                if (ds.child("id").getValue().toString().equals(takeReceiver)) {
+                                    // 받는사람
+                                    hisUid = ds.child("uid").getValue() + "";
+
+                                    String message = takeMessage;
+                                    Log.e("[test]","myUid"+myUid);
+                                    Log.e("[test]","hisUid"+hisUid);
+
+                                    updateNewItem("REPLIED_NEW_ITEM", myUid, hisUid, message, "" + System.currentTimeMillis());
+
+                                    String msg = message;
+                                    // 설정
+                                    DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+                                    database.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            ModelUser user = snapshot.getValue(ModelUser.class);
+
+                                            if (notify) {
+                                                sendNotification(hisUid, user.getNickname(), message);
+                                            }
+                                            notify = false;
+                                            //타켓 초기화
+                                            takeReceiver = originalReciver;
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+
+
+
+                                }
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -540,4 +640,60 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
     }
 
 
+    // 새글데이터
+    public void updateNewItem(String type, String sender, String receiver, String content, String time) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notify");
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("type", type);
+        hashMap.put("sender", sender);
+        hashMap.put("receiver", receiver);
+        hashMap.put("content", content);
+        hashMap.put("time", time);
+        hashMap.put("isSeen", false);
+
+        ref.child(receiver).push().setValue(hashMap);
+    }
+
+    // 알림 발송 설정.
+    private void sendNotification(String hisUid, String nickname, String message) {
+        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = allTokens.orderByKey().equalTo(hisUid); // 상대 찾기
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    // 상대 토큰값 토큰화 하기
+                    Token token = ds.getValue(Token.class);
+
+                    // 데이터 셋팅
+                    Data data = new Data(myUid, nickname + " : " + message, "내포레에 작성한 댓글알림", hisUid,
+                            R.drawable.foret_logo);
+
+                    // 보내는 사람 셋팅
+                    Sender sender = new Sender(data, token.getToken());
+                    // 발송
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<Response>() {
+                                @Override
+                                public void onResponse(
+                                        Call<Response> call,
+                                        retrofit2.Response<com.example.foret_app_prototype.activity.notify.Response> response) {
+                                    // Toast.makeText(ChatActivity.this,""+response.message(),Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onFailure(Call<Response> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }
