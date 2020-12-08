@@ -122,8 +122,8 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
-      //  searchFragment = new SearchFragment(memberDTO);
-      //  searchFragment = searchFragment.getSearchFragment();
+        //  searchFragment = new SearchFragment(memberDTO);
+        //  searchFragment = searchFragment.getSearchFragment();
 
         setContentView(R.layout.activity_view_foret);
 
@@ -132,7 +132,8 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.foret4));
-
+        MemberDTO memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
+        foret_id = getIntent().getIntExtra("foret_id", 0);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -144,9 +145,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         getBoard();
         checkUserStatus();
 
-        foret_id = getIntent().getIntExtra("foret_id", 0);
         Log.d("[TEST]", "넘어온 포레 아디 => " + foret_id);
-
         Log.d("[TEST]", "넘어온 회원 아디 => " + memberDTO.getId());
         Log.d("[TEST]", "넘어온 회원 아디 => " + memberDTO.getNickname());
         myNickName = memberDTO.getNickname();
@@ -303,7 +302,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void dataSetting() {
-        Log.e("[test]","foretViewDTO.getPhoto()?"+foretViewDTO.getPhoto());
+        Log.e("[test]", "foretViewDTO.getPhoto()?" + foretViewDTO.getPhoto());
         Glide.with(this).load(foretViewDTO.getPhoto()).
                 placeholder(R.drawable.sss).into(imageView_profile);
 
@@ -419,6 +418,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
     //초기 데이터 로딩 멤버 정보 가져오기
     class MemberResponse extends AsyncHttpResponseHandler {
         @Override
@@ -467,6 +467,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(ViewForetActivity.this, "MemeberResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
+
     //초기 데이터 로딩 포레 정보
     class ViewForetResponse extends AsyncHttpResponseHandler {
         @Override
@@ -571,9 +572,10 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(ViewForetActivity.this, "ViewForetResponse 통신 실패", Toast.LENGTH_SHORT).show();
-            Log.e("[test]","ViewForetResponse 통신 실패 오류코드 "+statusCode +"/ error? "+error.getStackTrace());
+            Log.e("[test]", "ViewForetResponse 통신 실패 오류코드 " + statusCode + "/ error? " + error.getStackTrace());
         }
     }
+
     //초기 데이터 리딩 노티스
     class NoticeResponse extends AsyncHttpResponseHandler {
         @Override
@@ -669,6 +671,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(ViewForetActivity.this, "BoardResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
+
     //신규 가입시
     class JoinResponse extends AsyncHttpResponseHandler {
         @Override
@@ -737,7 +740,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                                                             ModelUser user = snapshot.getValue(ModelUser.class);
 
                                                             if (notify) {
-                                                                sendNotification(hisUid,user.getNickname(),msg);
+                                                                sendNotification(hisUid, user.getNickname(), msg);
                                                             }
                                                             notify = false;
                                                         }
@@ -780,6 +783,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(ViewForetActivity.this, "JoinResponse 통신 실패", Toast.LENGTH_SHORT).show();
         }
     }
+
     //탈퇴시
     class LeaveResponse extends AsyncHttpResponseHandler {
         @Override
@@ -822,7 +826,6 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     }
 
 
-
     // 유저 접송 상태
     private void checkUserStatus() {
 
@@ -863,7 +866,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
                     Token token = ds.getValue(Token.class);
 
                     // 데이터 셋팅
-                    Data data = new Data(myUid, message, foretname+"의 포레 알림", hisUid,
+                    Data data = new Data(myUid, message, foretname + "의 포레 알림", hisUid,
                             R.drawable.foret_logo);
 
                     // 보내는 사람 셋팅

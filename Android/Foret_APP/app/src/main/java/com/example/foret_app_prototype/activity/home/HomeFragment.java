@@ -55,7 +55,7 @@ import cz.msebera.android.httpclient.Header;
 public class HomeFragment extends Fragment
         implements ViewPager.OnPageChangeListener, View.OnClickListener {
     MemberDTO memberDTO;
-    int id;
+    String id;
 
     Toolbar toolbar;
     MainActivity activity;
@@ -99,7 +99,7 @@ public class HomeFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         toolbar = rootView.findViewById(R.id.home_toolbar);
         activity = (MainActivity) getActivity();
-
+        id = activity.getId()+"";
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle("");
         setHasOptionsMenu(true);
@@ -114,8 +114,6 @@ public class HomeFragment extends Fragment
         homeFragment = new HomeFragment(context);
 
 
-        SessionManager sessionManager = new SessionManager(activity);
-        id = sessionManager.getSession();
 
 //        id = 1;
 //        memberDTO = new MemberDTO();
@@ -147,7 +145,7 @@ public class HomeFragment extends Fragment
 
     }
 
-    private void getMember(int id) {
+    private void getMember(String id) {
         url = "http://34.72.240.24:8085/foret/search/member.do";
         client = new AsyncHttpClient();
         memberResponse = new MemberResponse();

@@ -229,45 +229,32 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
         Log.e("[test]--포레 글쓰기", "content" + content);
         Log.e("[test]--포레 글쓰기", "subject" + subject);
 
-        List<File> fileList = new ArrayList<>();
-        switch (image_count) {
-            case 1:
-                fileList.add(file[1]);
-                break;
-            case 2:
-                fileList.add(file[1]);
-                fileList.add(file[2]);
-                break;
-            case 3:
-                fileList.add(file[1]);
-                fileList.add(file[2]);
-                fileList.add(file[3]);
-                break;
-            case 4:
-                fileList.add(file[1]);
-                fileList.add(file[2]);
-                fileList.add(file[3]);
-                fileList.add(file[4]);
+        try {
+            switch (image_count) {
+                case 5:
+                    params.put("photo", file[4]);
+                case 4:
+                    params.put("photo", file[3]);
+                case 3:
+                    params.put("photo", file[2]);
+                case 2:
+                    params.put("photo", file[1]);
+                case 1:
+                    params.put("photo", file[0]);
+                    break;
+            }
 
-                break;
-            case 5:
-                fileList.add(file[1]);
-                fileList.add(file[2]);
-                fileList.add(file[3]);
-                fileList.add(file[4]);
-                fileList.add(file[5]);
-                break;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
 
-        if (fileList.size() > 0) {
-            params.put("photo", fileList);
-        }
 
         for (int a = 1; a <= image_count; a++) {
 
             Log.d("[TEST]", "포토 테스트 => " + str_boardImage[a]);
         }
-        client.setURLEncodingEnabled(false);
+        //client.setURLEncodingEnabled(false);
 
         params.setForceMultipartEntityContentType(true);
         final int DEFAULT_TIME = 20 * 1000;
@@ -507,6 +494,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
                 JSONObject json = new JSONObject(str);
                 String boardRT = json.getString("boardRT");
                 String boardPhotoRT = json.getString("boardPhotoRT");
+                Toast.makeText(context, "boardPhotoRT?" + boardPhotoRT + "\n 리절트? " + boardRT, Toast.LENGTH_LONG).show();
                 if (boardRT.equals("OK")) {
                     Toast.makeText(context, "등록 성공!", Toast.LENGTH_LONG).show();
 

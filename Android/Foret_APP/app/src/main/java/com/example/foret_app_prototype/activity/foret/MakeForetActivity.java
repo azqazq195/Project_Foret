@@ -181,7 +181,6 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_complete: //완료(확인 버튼)
-
                 if(file == null){
                     Toast.makeText(context,"포레 대표 사진을 선택해주세요.",Toast.LENGTH_LONG).show();
                 }else{
@@ -796,6 +795,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             intent.putExtra("memberDTO",memberDTO);
             intent.putExtra("foret_id",foret_id);
             Log.e("[test]","메익 포레에서 만들어진 아이디?"+foret_id);
+
             startActivity(intent);
             finish(); // 현재 액티비티 종료
         }else{
