@@ -57,7 +57,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView26" />
+                app:layout_constraintTop_toBottomOf="@+id/textView26" >
+
+            </androidx.recyclerview.widget.RecyclerView>
 
             <TextView
                 android:id="@+id/textView26"
@@ -71,6 +73,17 @@
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewUnknown1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="아직 추가된 포레가 없습니다."
+                app:layout_constraintBottom_toBottomOf="@+id/recyclerViewForGroup"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/recyclerViewForGroup"
+                app:layout_constraintTop_toTopOf="@+id/recyclerViewForGroup" />
 
             <TextView
                 android:id="@+id/textView28"
@@ -115,6 +128,17 @@
                 app:layout_constraintStart_toEndOf="@+id/textView28"
                 app:layout_constraintTop_toBottomOf="@+id/recyclerViewForGroup"
                 app:srcCompat="@drawable/chaticon_f" />
+
+            <TextView
+                android:id="@+id/textViewUnknown2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="아직 시작한 채팅이 없습니다. \n 하단 + 버튼을 눌러 새로운 채팅을 시작해보세요."
+                app:layout_constraintBottom_toBottomOf="@+id/recyclerViewForPersonal"
+                app:layout_constraintEnd_toEndOf="@+id/recyclerViewForPersonal"
+                app:layout_constraintStart_toStartOf="@+id/recyclerViewForPersonal"
+                app:layout_constraintTop_toTopOf="@+id/recyclerViewForPersonal" />
 
             <View
                 android:id="@+id/view10"

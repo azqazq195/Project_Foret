@@ -1,6 +1,7 @@
 package com.example.foret_app_prototype.activity.home;
 
 import android.animation.ArgbEvaluator;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -81,10 +82,17 @@ public class HomeFragment extends Fragment
     ForetAdapter foretAdapter;
     Integer[] colors = null;
     ArgbEvaluator evaluator = new ArgbEvaluator();
-
+    Context context;
     // 포레 게시판
     ForetBoardAdapter foretBoardAdapter;
     NewBoardFeedAdapter newBoardFeedAdapter;
+
+     public HomeFragment() {
+    }
+
+    public HomeFragment(Context context) {
+        this.context = context;
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -104,10 +112,7 @@ public class HomeFragment extends Fragment
         intent = activity.getIntent();
         searchFragment = new SearchFragment();
         homeFragment = new HomeFragment();
-        homeForetDTOList = new ArrayList<>();
-//        homeForetBoardDTOList = new ArrayList<>();
-        homeNoticeList = new ArrayList<>();
-        homeBoardList = new ArrayList<>();
+
 
         SessionManager sessionManager = new SessionManager(activity);
         id = sessionManager.getSession();
@@ -320,6 +325,10 @@ public class HomeFragment extends Fragment
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            homeForetDTOList = new ArrayList<>();
+//        homeForetBoardDTOList = new ArrayList<>();
+            homeNoticeList = new ArrayList<>();
+            homeBoardList = new ArrayList<>();
             String str = new String(responseBody);
             Gson gson = new Gson();
             try {

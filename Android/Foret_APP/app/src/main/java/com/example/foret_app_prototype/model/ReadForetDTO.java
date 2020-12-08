@@ -64,7 +64,7 @@ public class ReadForetDTO implements Serializable {
     }
 
     public String getWriter_photo() {
-        return writer_photo;
+        return "http://34.72.240.24:8085/foret/storage/"+writer_photo;
     }
 
     public void setWriter_photo(String writer_photo) {

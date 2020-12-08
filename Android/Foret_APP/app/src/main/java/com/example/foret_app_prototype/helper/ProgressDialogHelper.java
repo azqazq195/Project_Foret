@@ -21,7 +21,7 @@ public class ProgressDialogHelper {
         this.context = context;
         progressDialog = new ProgressDialog(this.context);
         progressDialog.setMessage(message);
-//        progressDialog.show();
+        progressDialog.show();
     }
 
     public void removeProgressbar(){

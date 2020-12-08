@@ -1,5 +1,6 @@
 package com.example.foret_app_prototype.activity.free;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -67,6 +68,15 @@ public class FreeFragment extends Fragment implements View.OnClickListener {
     ForetBoard foretBoard;
     List<Integer> like_plus;
     List<Integer> like_minus;
+
+    Context context;
+
+    public FreeFragment(Context context) {
+        this.context = context;
+    }
+
+    public FreeFragment() {
+    }
 
     int id;
 

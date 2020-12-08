@@ -2,6 +2,7 @@ package com.example.foret_app_prototype.adapter.search;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -55,7 +56,23 @@ public class SearchAdapter extends ArrayAdapter<ForetDTO> {
             textView3.setText(foret.getIntroduce());
             textView4.setText(foret.getReg_date());
             textView5.setText(Arrays.toString(si)+Arrays.toString(gu));
-            Glide.with(convertView).load(foret.getForet_photo()).into(imageView);
+
+
+            Glide.with(convertView).load(foret.getForet_photo()) .fallback(R.drawable.icon2)
+                    .into(imageView);
+
+
+            String result = foret.getForet_photo().substring(foret.getForet_photo().lastIndexOf("/")+1);
+            Log.e("[test]", "셀렉트 섭스트링값?" +result);
+
+            if(result.equals("null")){
+                Glide.with(convertView).load(R.drawable.icon_foret)
+                        .into(imageView);
+            }else {
+                Glide.with(convertView).load(foret.getForet_photo()).fallback(R.drawable.icon_foret)
+                        .into(imageView);
+            }
+
         }
         return convertView;
     }

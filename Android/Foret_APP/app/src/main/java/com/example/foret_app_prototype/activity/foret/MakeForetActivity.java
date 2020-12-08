@@ -35,6 +35,7 @@ import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
 import com.example.foret_app_prototype.activity.login.GuideActivity;
 import com.example.foret_app_prototype.activity.login.SessionManager;
+import com.example.foret_app_prototype.activity.notify.APIService;
 import com.example.foret_app_prototype.helper.CalendarHelper;
 import com.example.foret_app_prototype.helper.FileUtils;
 import com.example.foret_app_prototype.helper.PhotoHelper;
@@ -118,6 +119,8 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     Context context;
     String downloadUri;
     Uri uri;
+
+    String board_id;
 
     //RegionListResponse3 regionListResponse;
     TagListResponse3 tagListResponse;
@@ -526,6 +529,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                     Log.d("[TEST]", "fileName = " + fileName);
                     filePath = FileUtils.getPath(this, data.getData());
                     Log.d("[TEST]", "filePath = " + filePath);
+                    file = new File(filePath);
                     Toast.makeText(this, fileName + "을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
                     Glide.with(this).load(filePath).into(image_View_picture);
             }
@@ -547,6 +551,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                 String foretMemberRT =json.getString("foretMemberRT");
                 String foretRegionRT =json.getString("foretRegionRT");
                 String foretTagRT =json.getString("foretTagRT");
+
+                // board_id = json.getString("board_id");
+
                 Toast.makeText(context,"결과? \n foretPhotoRT : "+foretPhotoRT+"\n foretMemberRT : "+foretMemberRT +"\n foretRegionRT : "+foretRegionRT
                 +"\n foretTagRT : "+ foretTagRT,Toast.LENGTH_SHORT).show();
                 Log.e("[test]","결과? foretPhotoRT : "+foretPhotoRT+", foretMemberRT : "+foretMemberRT +", foretRegionRT : "+foretRegionRT
@@ -565,6 +572,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                     foret.setReg_date(makeForetTime);
                     DatabaseReference userName = FirebaseDatabase.getInstance().getReference("Users");
                     Log.e("[test]","포레 생성중");
+                    ProgressDialogHelper.getInstance().removeProgressbar();
                     if(!uri.equals("")||uri!=null){
                         sendImageMessage(uri);
                     }
@@ -572,6 +580,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                     userName.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                             Log.e("[test]","레퍼런스?"+userName.getRef().toString());
                             for (DataSnapshot ds : snapshot.getChildren()) {
                                 Log.e("[test]","firebaseAuth.getCurrentUser().getUid()  : "+firebaseAuth.getCurrentUser().getUid());
@@ -582,7 +591,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                     Log.e("[test]","user.getNickname() : "+user.getNickname());
                                     Log.e("[test]",user.getNickname());
 
-                                    ProgressDialogHelper.getInstance().removeProgressbar();
+
                                     ProgressDialogHelper.getInstance().getProgressbar(context,"채팅방 생성중입니다.");
                                     Log.e("[test]","파이어 베이스에 포레 생성중");
                                     Log.e("[test]"," 자료들 확인 : "+foret.getName()+foret.getIntroduce());
@@ -616,8 +625,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                                                     Toast.makeText(context, "포레와 채팅방 생성 성공!", Toast.LENGTH_LONG).show();
                                                     ProgressDialogHelper.getInstance().removeProgressbar();
 
-                                                    Intent intent = new Intent(MakeForetActivity.this, ViewForetActivity.class);
+                                                    Intent intent = new Intent(context, ViewForetActivity.class);
                                                     intent.putExtra("memberDTO",memberDTO);
+                                                    intent.putExtra("board_id",board_id);
                                                     startActivity(intent);
                                                     finish(); // 현재 액티비티 종료
 

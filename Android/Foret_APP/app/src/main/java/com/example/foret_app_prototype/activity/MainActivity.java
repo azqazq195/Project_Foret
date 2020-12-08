@@ -115,11 +115,11 @@ public class MainActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
 
         context = this;
-        homeFragment = new HomeFragment();
-        freeFragment = new FreeFragment();
-        searchFragment = new SearchFragment();
-        chatFragment = new ChatFragment();
-        notifyFragment = new NotifyFragment();
+        homeFragment = new HomeFragment(this);
+        freeFragment = new FreeFragment(this);
+        searchFragment = new SearchFragment(this);
+        chatFragment = new ChatFragment(this);
+        notifyFragment = new NotifyFragment(this);
 
         nav_bottom = findViewById(R.id.nav_bottom);
         container = findViewById(R.id.container);
@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity
                     memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
 
                     setMemberDTO(memberDTO);
-                    memberDTO.setPhoto("http://34.72.240.24:8085/foret/storage/" + temp.getString("photo"));
+                    memberDTO.setPhoto(temp.getString("photo"));
                     // Bundle bundle = new Bundle();
                     // bundle.putSerializable("membetDTO",memberDTO);
                     // searchFragment = new SearchFragment(memberDTO);
@@ -379,8 +379,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-            updateuserActiveStatusOff();
+      //  if (FirebaseAuth.getInstance().getCurrentUser() != null)
+            //updateuserActiveStatusOff();
     }
 
     // 내상태 온라인 만들기

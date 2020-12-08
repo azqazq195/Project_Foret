@@ -45,6 +45,14 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
 
     Context context;
     Fragment thisFragment;
+
+    public NotifyFragment(Context context) {
+        this.context = context;
+    }
+
+    public NotifyFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,7 +62,7 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle(null);
         setHasOptionsMenu(true);
-        context = rootView.getContext();
+        //context = rootView.getContext();
         thisFragment = this;
 
         listView = rootView.findViewById(R.id.listView);

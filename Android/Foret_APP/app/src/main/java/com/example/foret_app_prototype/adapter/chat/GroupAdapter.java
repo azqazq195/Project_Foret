@@ -2,6 +2,7 @@ package com.example.foret_app_prototype.adapter.chat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +95,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
     //마지막 메세지 셋팅
     private void loadLastMessage(ModelGroupChatList model, MyViewHolder holder) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("GroupChats");
+        //Log.e("[test]"," ref.child(model.getGroupName()).child(\"Messages\").limitToLast(1)?"+ ref.child(model.getGroupName()).child("Messages").limitToLast(1).toString());
         ref.child(model.getGroupName()).child("Messages").limitToLast(1)
                 //.child("message").limitToLast(1).addValueEventListener(new ValueEventListener() {
                 .addValueEventListener(new ValueEventListener() {

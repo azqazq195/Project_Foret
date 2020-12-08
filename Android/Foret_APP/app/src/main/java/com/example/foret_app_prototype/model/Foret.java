@@ -77,7 +77,8 @@ public class Foret implements Serializable {
     }
 
     public String getForet_photo() {
-        return foret_photo;
+
+        return "http://34.72.240.24:8085/foret/storage/"+foret_photo;
     }
 
     public void setForet_photo(String foret_photo) {

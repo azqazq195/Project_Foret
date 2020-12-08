@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -56,7 +57,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     FloatingActionButton floatingActionButton;
 
     RecyclerView recyclerView1, recyclerView2;
-
+    TextView textView1,textView2;
     LinearLayout layout_search;
     ImageView button_back;
     SearchView searchView;
@@ -88,6 +89,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    public ChatFragment(Context context) {
+        this.context = context;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,6 +102,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle(null);
         setHasOptionsMenu(true);
+
+        textView1 = rootView.findViewById(R.id.textViewUnknown1);
+        textView2 = rootView.findViewById(R.id.textViewUnknown2);
 
         floatingActionButton = rootView.findViewById(R.id.floatingActionButton);
         recyclerView1 = rootView.findViewById(R.id.recyclerView1);
@@ -114,7 +122,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         recyclerViewpersonal = rootView.findViewById(R.id.recyclerViewForPersonal);
         reCycleViewGroup = rootView.findViewById(R.id.recyclerViewForGroup);
 
-        context = container.getContext();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(container.getContext());
         linearLayoutManager.setStackFromEnd(true);
         recyclerViewpersonal.setHasFixedSize(true);
@@ -124,7 +131,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         linearLayoutManager1.setStackFromEnd(true);
         reCycleViewGroup.setHasFixedSize(true);
         reCycleViewGroup.setLayoutManager(linearLayoutManager1);
-
+        textView1.setVisibility(View.GONE);
+        textView2.setVisibility(View.GONE);
         getChatData();
 
         return rootView;
@@ -228,6 +236,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                                }
                                groupAdapter = new GroupAdapter(context, groupChatLists);
                                reCycleViewGroup.setAdapter(groupAdapter);
+                               if(groupChatLists.size()>0){
+                                   textView1.setVisibility(View.GONE);
+                               }
                            }
                        }
                        @Override
@@ -270,6 +281,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 //마지막 메세지 읽어오기
                 for (int i = 0; i < userList.size(); i++) {
                     loadPersonalLastMessage(userList.get(i).getUid());
+                }
+                if(userList.size()>0){
+                    textView2.setVisibility(View.GONE);
                 }
             }
 
@@ -347,7 +361,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         super.onResume();
         if( chatlistList.size()==0 &&groupChatLists.size()==0){
             //Toast.makeText(context,"아직 생성된 채팅이 없네요! +버튼을 눌러 새로운 대화를 시작해 볼까요?",Toast.LENGTH_LONG).show();
-
+            textView1.setVisibility(View.VISIBLE);
+            textView2.setVisibility(View.VISIBLE);
         }
     }
 }
