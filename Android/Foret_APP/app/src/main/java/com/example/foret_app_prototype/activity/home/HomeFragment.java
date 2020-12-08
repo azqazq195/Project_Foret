@@ -110,8 +110,8 @@ public class HomeFragment extends Fragment
         recyclerView1 = rootView.findViewById(R.id.recyclerView1);
         recyclerView3 = rootView.findViewById(R.id.recyclerView3);
         intent = activity.getIntent();
-        searchFragment = new SearchFragment();
-        homeFragment = new HomeFragment();
+        searchFragment = new SearchFragment(context);
+        homeFragment = new HomeFragment(context);
 
 
         SessionManager sessionManager = new SessionManager(activity);
@@ -311,7 +311,8 @@ public class HomeFragment extends Fragment
         switch (v.getId()) {
             case R.id.button1: // 더많포레 -> 서치로 이동
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.containerLayout, searchFragment).commit();
-                activity.getSupportFragmentManager().beginTransaction().remove(this).commit();
+
+                //activity.getSupportFragmentManager().beginTransaction().remove(this).commit();
                 break;
         }
     }
