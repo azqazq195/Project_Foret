@@ -279,8 +279,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                 goToMakeNewForet();
                 break;
             case R.id.button9: //포레 만들기 화면으로 이동
-                //goToMakeNewForet();
-                startActivity(new Intent(context,SearchTagActivity.class));
+                goToMakeNewForet();
                 break;
             case R.id.button_back:
                 searchAdapter.clear();
@@ -502,10 +501,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                         } else if (object.getString("type").equals("foret")) {
                             foret_name.add(object.getString("name"));
                         }
-                        /*Log.e("[키워드 리스트 확인]", tag_name.size()+"");
-                        Log.e("[키워드 리스트 확인]", region_si.size()+"");
-                        Log.e("[키워드 리스트 확인]", region_gu.size()+"");
-                        Log.e("[키워드 리스트 확인]", foret_name.size()+"");*/
+                       // Log.e("[키워드 리스트 확인]", tag_name.size()+"");
+                       // Log.e("[키워드 리스트 확인]", region_si.size()+"");
+                       // Log.e("[키워드 리스트 확인]", region_gu.size()+"");
+                       // Log.e("[키워드 리스트 확인]", foret_name.size()+"");
                     }
                     Log.e("[자동완성]", autoCompleteList.size()+"");
                 }

@@ -319,7 +319,9 @@ public class ReadFreeActivity extends AppCompatActivity
             textView_reply.setVisibility(View.VISIBLE);
             button_cancel.setVisibility(View.VISIBLE);
             this.target = target;
-            replying = true;
+            replying = reply;
+            this.group_no = group_no;
+            this.position = position;
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
             // 알림설정
