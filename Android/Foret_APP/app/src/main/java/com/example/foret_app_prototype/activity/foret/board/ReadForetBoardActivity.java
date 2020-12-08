@@ -1,5 +1,6 @@
 package com.example.foret_app_prototype.activity.foret.board;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -72,6 +73,8 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -105,7 +108,7 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
     ViewFreeBoardResponse readBoardResponse;
     LikeChangeResponse likeChangeResponse;
     DeleteBoardResponse deleteBoardResponse;
-
+    String wirterPhotoGet;
     CommentBoardAdapter adapter;
     List<FBCommentDTO> commentlist;
     FBCommentDTO foretBoardComment;
@@ -131,12 +134,14 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
     String takerSender;
     String takeReceiver;
     String originalReciver;
+    Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_foret_board);
-
+        context =this;
         // 상태바 색상 변경
         Window window = this.getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -166,7 +171,7 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
         imageViewpager = findViewById(R.id.imageViewpager);
 
 
-        inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+        inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 //        SessionManager sessionManager = new SessionManager(this);
 //        memberID = sessionManager.getSession();
 
@@ -178,7 +183,8 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
         likeChangeResponse = new LikeChangeResponse();
         deleteBoardResponse = new DeleteBoardResponse();
 
-        board_id = getIntent().getIntExtra("board_id", 0);   board_id = getIntent().getIntExtra("board_id", 0);
+        board_id = getIntent().getIntExtra("board_id", 0);
+        board_id = getIntent().getIntExtra("board_id", 0);
         memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
 
 
@@ -209,27 +215,43 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
 
     //좋아요 수 변화 때문에 반드시 서버에서 데이터 불러오거나 할것
     private void setDataBoard(ReadForetDTO foretBoardDTO) {
-        if(foretBoardDTO.getWriter_photo() != null) {
+
+        if (foretBoardDTO.getWriter_photo() != null) {
             Glide.with(this).load(foretBoardDTO.getWriter_photo())
                     .placeholder(R.drawable.iu).into(image_profile);
         } else {
-            Glide.with(this).load(R.drawable.iu9)
-                    .placeholder(R.drawable.iu).into(image_profile);
+            Glide.with(this).load(R.drawable.icon4).into(image_profile);
         }
         textView_writer.setText(foretBoardDTO.getWriter_nickname());
         textView_subject.setText(foretBoardDTO.getSubject());
         textView_content.setText(foretBoardDTO.getContent());
-        textView_like.setText(foretBoardDTO.getBoard_like()+"");
+        textView_like.setText(foretBoardDTO.getBoard_like() + "");
         textView_date.setText(foretBoardDTO.getReg_date());
-        textView_comment2.setText(foretBoardDTO.getBoard_comment()+"");
-        if(foretBoardDTO.isLike()) {
+        textView_comment2.setText(foretBoardDTO.getBoard_comment() + "");
+        if (foretBoardDTO.isLike()) {
             likeButton.setChecked(true);
         }
-        Log.e("[test]","포토?" + foretBoardDTO.getPhoto());
+
+        int photoSize = foretBoardDTO.getPhoto().size();
+        List<String> photolist = new ArrayList<>();
+
+        List<String> test = foretBoardDTO.getPhoto();
+
+
+        for (int a = 0; a < photoSize; a++) {
+            if(!test.removeAll(Collections.singleton(null))){
+                Log.e("[test]", "포토 어레?" + foretBoardDTO.getPhoto().get(a).replace("[", "").replace("]", ""));
+                photolist.add("http://34.72.240.24:8085/foret/storage/" + foretBoardDTO.getPhoto().get(a).toString().replace("[", "").replace("]", ""));
+            }
+
+        }
+
+
+        foretBoardDTO.setPhoto(photolist);
 
         // 뷰페이저
         readViewPagerAdapter = new ReadViewPagerAdapter(this, foretBoardDTO);
-        if(foretBoardDTO.getPhoto().size() != 0) {
+        if (foretBoardDTO.getPhoto().size() != 0) {
             imageViewpager.setAdapter(readViewPagerAdapter);
             tab_layout.setupWithViewPager(imageViewpager, true);
         } else {
@@ -237,13 +259,13 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
             tab_layout.setVisibility(View.GONE);
         }
         //파이어 베이스
-        takeReceiver = foretBoardDTO.getWriter()+"";
+        takeReceiver = foretBoardDTO.getWriter() + "";
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(noGet != 0) {
+        if (noGet != 0) {
             commentlist.clear();
             //글 불러오기
             url = "http://34.72.240.24:8085/foret/search/boardSelect.do";
@@ -265,7 +287,7 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home : // 뒤로가기
+            case android.R.id.home: // 뒤로가기
                 finish();
                 break;
             case R.id.btn_modify: // 수정
@@ -273,7 +295,7 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
                 intent.putExtra("readForetDTO", foretBoardDTO);
                 startActivity(intent);
                 break;
-            case R.id.btn_delete : // 삭제
+            case R.id.btn_delete: // 삭제
                 getDialog();
                 break;
         }
@@ -283,19 +305,19 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button_cancel : //답글 작성 취소
+            case R.id.button_cancel: //답글 작성 취소
                 textView_reply.setVisibility(View.GONE);
                 button_cancel.setVisibility(View.GONE);
                 editText_comment.setText("");
                 replying = false;
                 break;
-            case R.id.button_input : //댓글 쓰기
+            case R.id.button_input: //댓글 쓰기
                 inputComment();
                 break;
-            case R.id.likeButton : //좋아요 처리
-                if(likeButton.isChecked()) {
+            case R.id.likeButton: //좋아요 처리
+                if (likeButton.isChecked()) {
                     like_count++;
-                    textView_like.setText(like_count+"");
+                    textView_like.setText(like_count + "");
                 } else {
                     like_count--;
                     textView_like.setText(like_count + "");
@@ -323,7 +345,7 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
     //답글버튼 눌렀을 때
     @Override
     public void onReplyButtonClick(View v, String target, boolean reply) {
-        if(reply) {
+        if (reply) {
             textView_reply.setText(target + "님에게 답글 작성중 입니다.");
             editText_comment.setText("@" + target + " ");
             textView_reply.setVisibility(View.VISIBLE);
@@ -337,7 +359,7 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
     //수정버튼 눌렀을 때
     @Override
     public void onModifyButtonClick(View v, boolean modify) {
-        if(modify) {
+        if (modify) {
             textView_reply.setVisibility(View.GONE);
             button_cancel.setVisibility(View.GONE);
             editText_comment.setVisibility(View.GONE);
@@ -352,8 +374,8 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onDeleteButtonClick(boolean delete) {
-        if(delete) {
-            comment_count --;
+        if (delete) {
+            comment_count--;
             textView_comment2.setText(String.valueOf(comment_count));
         }
     }
@@ -362,14 +384,14 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
     @Override
     protected void onPause() {
         super.onPause();
-        if(initial_likecount != like_count) {
+        if (initial_likecount != like_count) {
             //처음 라이크 수와 달라졌을 때, 좋아요 상태를 저장해야한다. 첫 라이크보다 적어지면(-1) 좋아요 마이너스.(좋아요 삭제)
             //첫 라이크보다 커지면(+1) 좋아요를 추가한 상태임을 DB에 저장한다.
             RequestParams params = new RequestParams();
             params.put("id", memberID);
             params.put("board_id", foretBoardDTO.getId());
             params.put("type", 0);
-            if(initial_likecount > like_count) { //좋아요 수가 1감소함->좋아요 삭제
+            if (initial_likecount > like_count) { //좋아요 수가 1감소함->좋아요 삭제
                 client.post("http://34.72.240.24:8085/foret/member/member_board_dislike.do", params, likeChangeResponse);
             } else { //어차피 초반 if문이 처음 좋아요개수가 같지 않을때 였으므로 else를 쓰면 라이크 수가 증가한 경우만 해당
                 client.post("http://34.72.240.24:8085/foret/member/member_board_like.do", params, likeChangeResponse);
@@ -467,28 +489,44 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
             Gson gson = new Gson();
             try {
                 JSONObject json = new JSONObject(str);
-                if(json.getString("RT").equals("OK")) {
+                if (json.getString("RT").equals("OK")) {
                     JSONArray board = json.getJSONArray("board");
                     JSONObject object = board.optJSONObject(0);
                     foretBoardDTO = gson.fromJson(object.toString(), ReadForetDTO.class);
                     initial_likecount = foretBoardDTO.getBoard_like(); //초반 라이크 수 저장
                     like_count = foretBoardDTO.getBoard_like();
                     comment_count = foretBoardDTO.getBoard_comment();
+
                     Log.e("[TEST1]", "포레보드 보드아이디 ==== " + foretBoardDTO.getId());
                     Log.e("[TEST1]", "포레보드 작성자아디  ==== " + foretBoardDTO.getWriter());
                     Log.e("[TEST1]", "포레보드 타입  ==== " + foretBoardDTO.getType());
+
+                    if (!object.isNull("writer_photo")) {
+                        Log.e("[TEST1]", "작성자 포토  ==== " + object.getString("writer_photo"));
+                        foretBoardDTO.setWriter_photo(object.getString("writer_photo"));
+                        wirterPhotoGet = object.getString("writer_photo");
+                        String myPhoto = "http://34.72.240.24:8085/foret/storage/" + wirterPhotoGet.toString().replace("[", "").replace("]", "");
+                        Glide.with(context).load(foretBoardDTO.getWriter_photo())
+                                .placeholder(R.drawable.iu).into(image_profile);
+                    }
                     setDataBoard(foretBoardDTO);
 
-                    if(object.getJSONArray("comment").length() != 0) {
+                    if (object.getJSONArray("comment").length() != 0) {
                         JSONArray comment = object.getJSONArray("comment");
                         for (int a = 0; a < comment.length(); a++) {
                             JSONObject commnetOject = comment.getJSONObject(a);
                             foretBoardComment = new FBCommentDTO();
                             foretBoardComment.setId(commnetOject.getInt("id"));
-                            foretBoardComment.setReg_date(commnetOject.getString("reg_date"));
+                            if (!commnetOject.isNull("reg_date")) {
+                                foretBoardComment.setReg_date(commnetOject.getString("reg_date"));
+                            }
+
                             foretBoardComment.setGroup_no(commnetOject.getInt("group_no"));
                             foretBoardComment.setWriter(commnetOject.getInt("writer"));
-                            foretBoardComment.setContent(commnetOject.getString("content"));
+                            if (commnetOject.isNull("content")) {
+                                foretBoardComment.setContent(commnetOject.getString("content"));
+                            }
+
                             if (foretBoardComment.getId() == foretBoardComment.getGroup_no()) {
                                 foretBoardComment.setParent(true);
                             } else {
@@ -519,7 +557,7 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                if(json.getString("boardRT").equals("OK")) {
+                if (json.getString("boardRT").equals("OK")) {
                     Toast.makeText(ReadForetBoardActivity.this, "게시글을 삭제했습니다.", Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -542,21 +580,21 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                if(json.getString("commentRT").equals("OK")) {
+                if (json.getString("commentRT").equals("OK")) {
                     Toast.makeText(ReadForetBoardActivity.this, "댓글 작성 성공", Toast.LENGTH_SHORT).show();
-                    Log.e("[TEST1]", commentlist.size()+"");
+                    Log.e("[TEST1]", commentlist.size() + "");
                     commentlist.add(foretBoardComment);
-                    Log.e("[TEST2]", commentlist.size()+"");
+                    Log.e("[TEST2]", commentlist.size() + "");
                     editText_comment.setText("");
                     inputMethodManager.hideSoftInputFromWindow(editText_comment.getWindowToken(), 0);
                     adapter = new CommentBoardAdapter(commentlist, ReadForetBoardActivity.this, memberID);
-                    Log.e("[TEST3]", commentlist.size()+"");
+                    Log.e("[TEST3]", commentlist.size() + "");
                     recyclerView.setAdapter(adapter);
                     recyclerView.scrollToPosition(commentlist.size());
 
                     //파이어베이스 설정
-                    Log.e("[test]","takeMessage : "+takeMessage);
-                    Log.e("[test]","takeReceiver : "+takeReceiver);
+                    Log.e("[test]", "takeMessage : " + takeMessage);
+                    Log.e("[test]", "takeReceiver : " + takeReceiver);
 
 
                     myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -574,8 +612,8 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
                                     hisUid = ds.child("uid").getValue() + "";
 
                                     String message = takeMessage;
-                                    Log.e("[test]","myUid"+myUid);
-                                    Log.e("[test]","hisUid"+hisUid);
+                                    Log.e("[test]", "myUid" + myUid);
+                                    Log.e("[test]", "hisUid" + hisUid);
 
                                     updateNewItem("REPLIED_NEW_ITEM", myUid, hisUid, message, "" + System.currentTimeMillis());
 
@@ -602,7 +640,6 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
                                     });
 
 
-
                                 }
 
                             }
@@ -613,7 +650,6 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
 
                         }
                     });
-
 
 
                 }
@@ -635,7 +671,7 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                if(json.getString("memberRT").equals("OK")) {
+                if (json.getString("memberRT").equals("OK")) {
                     Toast.makeText(ReadForetBoardActivity.this, "좋아요 상태 저장 성공", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {

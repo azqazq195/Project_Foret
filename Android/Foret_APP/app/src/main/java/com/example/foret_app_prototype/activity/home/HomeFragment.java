@@ -133,13 +133,17 @@ public class HomeFragment extends Fragment
         // 버튼 이벤트
         button1.setOnClickListener(this);
 
+        //여기로
+        getMember(id); // 회원 정보 가져오기
+
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getMember(id); // 회원 정보 가져오기
+        //getMember(id); // 회원 정보 가져오기
+        //이거 움김
 
     }
 
@@ -170,6 +174,7 @@ public class HomeFragment extends Fragment
     }
 
 
+    //메인 페이저 뷰
     private void getViewPager() {
         foretAdapter = new ForetAdapter(activity, homeForetDTOList);
         viewPager.setAdapter(foretAdapter);
@@ -200,6 +205,8 @@ public class HomeFragment extends Fragment
         });
     }
 
+
+    //데이터 셋팅
     private void setView() {
         // 공지사항
         foretBoardAdapter = new ForetBoardAdapter(getActivity(), memberDTO, homeForetDTO.getHomeNoticeList());

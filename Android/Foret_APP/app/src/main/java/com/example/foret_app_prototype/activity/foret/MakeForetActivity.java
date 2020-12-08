@@ -181,7 +181,13 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_complete: //완료(확인 버튼)
-                foretInsert();
+
+                if(file == null){
+                    Toast.makeText(context,"포레 대표 사진을 선택해주세요.",Toast.LENGTH_LONG).show();
+                }else{
+                    foretInsert();
+                }
+
                 break;
             case R.id.button_cancel: //취소 버튼
                 finish();
@@ -269,6 +275,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         client.setTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
         client.post(url, params, foretResponse);
+
 
         ProgressDialogHelper.getInstance().getProgressbar(this,"포레 생성중");
 
@@ -558,7 +565,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
                 foret_id = json.getString("foret_id");
 
-                Toast.makeText(context,"결과? \n foretPhotoRT : "+foretPhotoRT+"\n foretMemberRT : "+foretMemberRT +"\n foretRegionRT : "+foretRegionRT
+                //포레 멤버로 가입입
+
+               Toast.makeText(context,"결과? \n foretPhotoRT : "+foretPhotoRT+"\n foretMemberRT : "+foretMemberRT +"\n foretRegionRT : "+foretRegionRT
                 +"\n foretTagRT : "+ foretTagRT,Toast.LENGTH_SHORT).show();
                 Log.e("[test]","결과? foretPhotoRT : "+foretPhotoRT+", foretMemberRT : "+foretMemberRT +", foretRegionRT : "+foretRegionRT
                         +", foretTagRT : "+ foretTagRT);

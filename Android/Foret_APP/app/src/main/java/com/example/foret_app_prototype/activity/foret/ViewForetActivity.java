@@ -622,6 +622,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         }
     }
     //초기 데이터 리딩 보드
+
     class BoardResponse extends AsyncHttpResponseHandler {
         @Override
         public void onStart() {

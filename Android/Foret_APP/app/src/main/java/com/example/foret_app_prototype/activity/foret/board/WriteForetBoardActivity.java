@@ -323,12 +323,13 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
     }
 
     private void showSelect() {
-        final String[] menu = {"새로 촬영하기", "갤러리에서 가져오기"};
+        final String[] menu = {"갤러리에서 가져오기"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setItems(menu, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
+                    /*
                     case 0: //새로 촬영하기-카메라 호출
                         filePath = PhotoHelper.getInstance().getNewPhotoPath(); //저장할 사진 경로
                         Log.d("[TEST]", "photoPath = " + filePath);
@@ -353,7 +354,9 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
                         //카메라 앱 호출
                         startActivityForResult(intent, 200);
                         break;
-                    case 1: //갤러리에서 가져오기-갤러리 호출
+
+                     */
+                    case 0: //갤러리에서 가져오기-갤러리 호출
                         intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                         intent.addCategory(Intent.CATEGORY_OPENABLE);
                         intent.setType("image/*"); //모든 이미지 표시
