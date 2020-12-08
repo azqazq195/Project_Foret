@@ -45,7 +45,7 @@ public class ReadViewPagerAdapter extends PagerAdapter {
         String item = readForetDTO.getPhoto().get(position);
 
         ImageView board_view_pager = itemView.findViewById(R.id.board_view_pager);
-
+        board_view_pager.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         Glide.with(activity).load(item)
                 .placeholder(R.drawable.sss).into(board_view_pager);

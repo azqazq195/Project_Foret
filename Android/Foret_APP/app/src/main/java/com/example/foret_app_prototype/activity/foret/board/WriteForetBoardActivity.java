@@ -66,7 +66,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
@@ -149,7 +151,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
                 switch (position) {
                     case 0:
                         //Toast.makeText(WriteForetBoardActivity.this, "게시판 타입을 설정해주세요.", Toast.LENGTH_SHORT).show();
-                        type = 4 ;  //일반
+                        type = 4;  //일반
                         break;
                     case 1:
                         type = 3; // 일정
@@ -227,21 +229,48 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
         Log.e("[test]--포레 글쓰기", "content" + content);
         Log.e("[test]--포레 글쓰기", "subject" + subject);
 
-            for (int a = 1; a <= image_count; a++) {
-                try {
-                    Log.e("[test]","file size?"+file.length);
-                    if (file[a] != null) {
-                        params.put("photo", file[a]);
-                    }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+        List<File> fileList = new ArrayList<>();
+        switch (image_count) {
+            case 1:
+                fileList.add(file[1]);
+                break;
+            case 2:
+                fileList.add(file[1]);
+                fileList.add(file[2]);
+                break;
+            case 3:
+                fileList.add(file[1]);
+                fileList.add(file[2]);
+                fileList.add(file[3]);
+                break;
+            case 4:
+                fileList.add(file[1]);
+                fileList.add(file[2]);
+                fileList.add(file[3]);
+                fileList.add(file[4]);
 
-                Log.d("[TEST]", "포토 테스트 => " + str_boardImage[a]);
-            }
+                break;
+            case 5:
+                fileList.add(file[1]);
+                fileList.add(file[2]);
+                fileList.add(file[3]);
+                fileList.add(file[4]);
+                fileList.add(file[5]);
+                break;
+        }
+
+        if (fileList.size() > 0) {
+            params.put("photo", fileList);
+        }
+
+        for (int a = 1; a <= image_count; a++) {
+
+            Log.d("[TEST]", "포토 테스트 => " + str_boardImage[a]);
+        }
+        client.setURLEncodingEnabled(false);
 
         params.setForceMultipartEntityContentType(true);
-        final int DEFAULT_TIME = 20*1000;
+        final int DEFAULT_TIME = 20 * 1000;
         client.setConnectTimeout(DEFAULT_TIME);
         client.setResponseTimeout(DEFAULT_TIME);
         client.setTimeout(DEFAULT_TIME);
@@ -272,7 +301,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 putParams();
-                ProgressDialogHelper.getInstance().getProgressbar(context,"등록중입니다.");
+                ProgressDialogHelper.getInstance().getProgressbar(context, "등록중입니다.");
                 //Toast.makeText(getApplicationContext(), "게시글을 등록했습니다.", Toast.LENGTH_SHORT).show();
                 //
             }
@@ -412,7 +441,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
                     String fileName = uri.substring(uri.lastIndexOf("/") + 1);
                     Log.d("[TEST]", "fileName = " + fileName);
                     filePath = FileUtils.getPath(this, data.getData());
-                    file[image_count+1] = new File(filePath);
+                    file[image_count + 1] = new File(filePath);
                     Log.d("[TEST]", "filePath = " + filePath);
                     Toast.makeText(this, fileName + "을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
                     insertImage();
@@ -479,7 +508,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
                 String boardRT = json.getString("boardRT");
                 String boardPhotoRT = json.getString("boardPhotoRT");
                 if (boardRT.equals("OK")) {
-                    Toast.makeText(context,"등록 성공!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "등록 성공!", Toast.LENGTH_LONG).show();
 
                     //파이어 베이스 연동
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
