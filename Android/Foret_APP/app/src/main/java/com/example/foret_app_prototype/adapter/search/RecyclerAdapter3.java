@@ -52,11 +52,11 @@ public class RecyclerAdapter3 extends RecyclerView.Adapter<RecyclerAdapter3.Adap
         String [] gu = foret.getForet_region_gu().toArray(new String[foret.getForet_region_gu().size()]);
 
        // Log.e("[test]","리사이클 어뎁터 3에서 포토 루트?"+foret.getForet_photo());
-        //Log.e("[test]","리사이클 어뎁터 3에서 포레명??"+foret.getForet_name());
+       //Log.e("[test]","리사이클 어뎁터 3에서 포레명??"+foret.getForet_name());
 
-        String result = foret.getForet_photo().substring(foret.getForet_photo().lastIndexOf("/")+1);
+//        String result = foret.getForet_photo().substring(foret.getForet_photo().lastIndexOf("/")+1);
         //Log.e("[test]", "섭스트링값?" +result);
-        if(result.equals("null")){
+        if(foret.getForet_photo()==null){
             Glide.with(holderView).load(R.drawable.icon_foret).placeholder(R.drawable.icon)
                     .into(holder.imageView);
         }else {
@@ -75,6 +75,7 @@ public class RecyclerAdapter3 extends RecyclerView.Adapter<RecyclerAdapter3.Adap
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ViewForetActivity.class);
+
                 intent.putExtra("foret_id", foret.getForet_id());
                 intent.putExtra("memberDTO", memberDTO);
                 activity.startActivity(intent);

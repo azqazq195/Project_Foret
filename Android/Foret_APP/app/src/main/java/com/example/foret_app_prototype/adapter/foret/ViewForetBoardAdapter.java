@@ -46,6 +46,9 @@ public class ViewForetBoardAdapter extends RecyclerView.Adapter<ViewForetBoardAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ForetBoardDTO foretBoardDTO = foretBoardDTOList.get(position);
 
+        //클릭시 다음아이템으로 넘김
+
+
         viewHolder.subject.setText(foretBoardDTO.getSubject());
         if(foretBoardDTO.getReg_date() != null) {
             String date = foretBoardDTO.getReg_date().substring(0, 10);

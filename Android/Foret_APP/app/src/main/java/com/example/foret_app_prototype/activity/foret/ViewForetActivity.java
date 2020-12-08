@@ -1,5 +1,6 @@
 package com.example.foret_app_prototype.activity.foret;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -127,6 +128,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     boolean notify = false;
     String hisUid, myUid;
     //SearchFragment searchFragment;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +136,7 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
         //  searchFragment = new SearchFragment(memberDTO);
         //  searchFragment = searchFragment.getSearchFragment();
-
+        context = this;
         setContentView(R.layout.activity_view_foret);
 
         // 상태바 색상 변경
@@ -142,8 +144,8 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.foret4));
-        MemberDTO memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
-        foret_id = getIntent().getIntExtra("foret_id", 0);
+        memberDTO = (MemberDTO) getIntent().getSerializableExtra("memberDTO");
+        foret_id = getIntent().getIntExtra("foret_id",0);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -241,6 +243,9 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
         client = new AsyncHttpClient();
         viewForetResponse = new ViewForetResponse();
         RequestParams params = new RequestParams();
+
+        Log.e("[test]","데이터 확인,"+foret_id+"/"+memberDTO.getId());
+
         params.put("foret_id", foret_id);
         params.put("member_id", memberDTO.getId());
         client.post(url, params, viewForetResponse);
@@ -343,9 +348,15 @@ public class ViewForetActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void dataSetting() {
-        Log.e("[test]", "foretViewDTO.getPhoto()?" + foretViewDTO.getPhoto());
-        Glide.with(this).load(foretViewDTO.getPhoto()).
-                placeholder(R.drawable.sss).into(imageView_profile);
+
+        if(!foretViewDTO.getPhoto().equals("http://34.72.240.24:8085/foret/storage/null")){
+            Glide.with(this).load(foretViewDTO.getPhoto()).
+                    placeholder(R.drawable.sss).
+                    error(R.drawable.sss)
+                    .into(imageView_profile);
+        }
+
+
 
         textView_foretName.setText(foretViewDTO.getName());
         String[] str_tag = new String[foretViewDTO.getForet_tag().size()];

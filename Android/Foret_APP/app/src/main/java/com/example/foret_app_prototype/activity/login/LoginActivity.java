@@ -66,6 +66,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     String myUid;
     String myPw;
 
+    boolean switcher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         loginActivity = LoginActivity.this;
@@ -118,6 +120,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 email = emailEditText.getText().toString().trim();
                 pwd = passwordEditText.getText().toString().trim();
 
+                if(email.equals("")){
+                    Toast.makeText(this,"이메일을 입력해주세요.",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Log.e("[test]", email + "/" + pwd);
 
                 RequestParams params = new RequestParams();
@@ -132,63 +139,67 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     break;
                 }
 
+                if(!switcher){
+                    Log.e("[test]", "입력된 이메일 : " + emailEditText.getText().toString());
+                    passwordEditText.setText("");
 
-                Log.e("[test]", "입력된 이메일 : " + emailEditText.getText().toString());
-                ProgressDialogHelper.getInstance().getProgressbar(context, "잠시만 기다려주세요.");
+                    ProgressDialogHelper.getInstance().getProgressbar(context, "잠시만 기다려주세요.");
 
-                FirebaseMessaging.getInstance().getToken()
-                        .addOnCompleteListener(new OnCompleteListener<String>() {
-                            @Override
-                            public void onComplete(@NonNull Task<String> task) {
-                                if (!task.isSuccessful()) {
-                                    Log.e("[test]", "Fetching FCM registration token failed", task.getException());
-                                    return;
-                                }
-                                deviceToken = task.getResult();
+                    FirebaseMessaging.getInstance().getToken()
+                            .addOnCompleteListener(new OnCompleteListener<String>() {
+                                @Override
+                                public void onComplete(@NonNull Task<String> task) {
+                                    if (!task.isSuccessful()) {
+                                        Log.e("[test]", "Fetching FCM registration token failed", task.getException());
+                                        return;
+                                    }
+                                    deviceToken = task.getResult();
 
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
-                                ref.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        for (DataSnapshot ds : snapshot.getChildren()) {
-                                            if (ds.child("token").getValue().equals(deviceToken)) {
-                                                //내 토큰 찾음
-                                                myUid = ds.getKey();
-                                                DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("Users");
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
+                                    ref.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            for (DataSnapshot ds : snapshot.getChildren()) {
+                                                if (ds.child("token").getValue().equals(deviceToken)) {
+                                                    //내 토큰 찾음
+                                                    myUid = ds.getKey();
+                                                    DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("Users");
 
-                                                ref2.child(myUid).child("user_id").addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                        String myPw = snapshot.getValue()+"";
+                                                    ref2.child(myUid).child("user_id").addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                            String myPw = snapshot.getValue()+"";
 
-                                                        passwordEditText.setText(myPw);
-                                                        Toast.makeText(context, "찾으신 이메일의 비밀번호" + myPw + "가 입력되었습니다. 로그인 후 패스워드를 변경해주세요.", Toast.LENGTH_LONG).show();
-                                                        ProgressDialogHelper.getInstance().removeProgressbar();
-                                                    }
+                                                            passwordEditText.setText(myPw);
+                                                            Toast.makeText(context, "찾으신 이메일의 비밀번호" + myPw + "가 입력되었습니다. 로그인 후 패스워드를 변경해주세요.", Toast.LENGTH_LONG).show();
+                                                            ProgressDialogHelper.getInstance().removeProgressbar();
+                                                        }
 
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError error) {
-                                                        Toast.makeText(context, "등록된 이메일이 없습니다. 포레를 시작해주세요.", Toast.LENGTH_LONG).show();
-                                                        ProgressDialogHelper.getInstance().removeProgressbar();
-                                                    }
-                                                });
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                            Toast.makeText(context, "등록된 이메일이 없습니다. 포레를 시작해주세요.", Toast.LENGTH_LONG).show();
+                                                            ProgressDialogHelper.getInstance().removeProgressbar();
+                                                        }
+                                                    });
 
+                                                }
                                             }
                                         }
-                                    }
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-                                        Toast.makeText(context, "회원가입시 등록된 디바이스를 이용해주세요", Toast.LENGTH_LONG).show();
-                                        Log.e("[test]", "error?" + error.getMessage() + "/" + error.getDetails());
-                                        ProgressDialogHelper.getInstance().removeProgressbar();
-                                    }
-                                });
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Toast.makeText(context, "회원가입시 등록된 디바이스를 이용해주세요", Toast.LENGTH_LONG).show();
+                                            Log.e("[test]", "error?" + error.getMessage() + "/" + error.getDetails());
+                                            ProgressDialogHelper.getInstance().removeProgressbar();
+                                        }
+                                    });
 
 
-                            }
-                        });
+                                }
+                            });
 
+                    switcher = false;
+                }
 
                 break;
             case R.id.button4:
@@ -227,6 +238,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                ProgressDialogHelper.getInstance().removeProgressbar();
             }
         }
 
@@ -234,6 +246,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(LoginActivity.this, "이메일과 비밀번호를 확인해 주세요", Toast.LENGTH_SHORT).show();
             Log.e("[test]", error.getMessage() + "/" + statusCode);
+            ProgressDialogHelper.getInstance().removeProgressbar();
         }
     }
 
