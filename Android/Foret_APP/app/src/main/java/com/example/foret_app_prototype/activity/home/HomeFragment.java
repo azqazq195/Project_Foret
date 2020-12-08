@@ -316,18 +316,6 @@ public class HomeFragment extends Fragment
     }
 
     class MemberResponse extends AsyncHttpResponseHandler {
-        @Override
-        public void onStart() {
-            super.onStart();
-            Log.d("[TEST]", "MemeberResponse onStart() 호출");
-        }
-
-        @Override
-        public void onFinish() {
-            super.onFinish();
-            Log.d("[TEST]", "MemeberResponse onStart() 호출");
-
-        }
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -366,15 +354,12 @@ public class HomeFragment extends Fragment
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(getActivity(), "MemeberResponse 통신 실패", Toast.LENGTH_SHORT).show();
+            Log.e("[TEST]", "MemeberResponse 통신 실패 => " + statusCode);
         }
     }
 
 
     class HomeDataResponse extends AsyncHttpResponseHandler {
-        @Override
-        public void onStart() {
-            Log.d("[TEST]", "HomeDataResponse onStart() 호출");
-        }
 
         @Override
         public void onFinish() {
@@ -470,7 +455,7 @@ public class HomeFragment extends Fragment
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(getActivity(), "HomeDataResponse 통신 실패", Toast.LENGTH_SHORT).show();
-            Log.d("[TEST]", "HomeDataResponse 통신 실패");
+            Log.e("[TEST]", "HomeDataResponse 통신 실패 => " + statusCode);
         }
     }
 
