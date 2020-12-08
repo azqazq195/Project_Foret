@@ -80,7 +80,7 @@ public class BoardViewAdapter extends RecyclerView.Adapter<BoardViewAdapter.View
 
         boardViewPagerAdapter = new BoardViewPagerAdapter(activity, foretBoardDTO.getPhoto());
         Log.e("[TEST]", "뷰페이저 사진 개수 =>" + foretBoardDTO.getPhoto().length);
-        Log.e("[TEST]", "뷰페이저 사진 이름 =>" + foretBoardDTO.getPhoto()[position]);
+        Log.e("[TEST]", "뷰페이저 사진 이름 =>" + foretBoardDTO.getPhoto()[(position-1)]);
 
         for(int i=0; i<foretBoardDTOList.size(); i++) {
             Log.d("[TEST]", "리스트 내용 => " + foretBoardDTOList.get(i).getId());
@@ -101,7 +101,7 @@ public class BoardViewAdapter extends RecyclerView.Adapter<BoardViewAdapter.View
 
         String date= "";
         if(foretBoardDTO.getReg_date() != null && foretBoardDTO.getReg_date().equals("")){
-            date = foretBoardDTO.getReg_date().substring(0, 10);
+            date = foretBoardDTO.getReg_date().substring(0, 16);
         }
         viewHolder.date.setText(date);
 

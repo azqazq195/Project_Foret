@@ -55,10 +55,11 @@ public class ForetAdapter extends PagerAdapter {
         ImageView image = itemView.findViewById(R.id.image);
 
         if(homeForetDTO.getPhoto().equals("noforet")) {
-            image.setImageResource(R.drawable.noforet);
+            image.setImageResource(R.drawable.noforet2);
+            image.setPadding(5, 0, 5, 0);
         } else {
             Glide.with(activity).load(homeForetDTO.getPhoto())
-                    .placeholder(R.drawable.foret_logo) // 이미지가 없으면 기본 사진
+                    .placeholder(R.drawable.noforet2) // 이미지가 없으면 기본 사진
                     .into(image);
         }
 

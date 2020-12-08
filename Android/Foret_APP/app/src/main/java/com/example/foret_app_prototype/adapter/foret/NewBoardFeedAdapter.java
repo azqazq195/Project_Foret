@@ -51,9 +51,12 @@ public class NewBoardFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         viewHolder.textView2.setText(homeForetBoardDTO.getSubject());
         viewHolder.textView3.setText(homeForetBoardDTO.getContent());
 
-//            String date = homeForetBoardDTO.getReg_date().substring(0, 10);
-        viewHolder.textView4.setText(homeForetBoardDTO.getReg_date());
-
+        if(homeForetBoardDTO.getReg_date().length() > 1) {
+            String date = homeForetBoardDTO.getReg_date().substring(0, 16);
+            viewHolder.textView4.setText(date);
+        } else {
+            viewHolder.textView4.setText(homeForetBoardDTO.getReg_date());
+        }
 
         // 아이템 클릭 이벤트 처리.
         viewHolder.layout.setOnClickListener(new View.OnClickListener() {

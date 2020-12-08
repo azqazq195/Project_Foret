@@ -64,21 +64,26 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
     Intent intent;
     File file;
     String filePath = null;
+
+    // 스피너 관련
     List<String> selected_tag;
-    String select_si = "";
-    String select_gu = "";
-    String select_tag = "";
+    List<String> selected_si;
+    List<String> selected_gu;
+    String last_selected_si = "";
+    String last_selected_gu = "";
     String str = "";
     String show = "";
-    int max_member_count = 0;
     boolean ischecked = false;
+    boolean ischecked2 = false;
+    List<String> str_check;
 
+    List<String> region_si;
+    List<String> region_gu;
     List<String> tag_name;
     List<String> member_tag;
     List<String> tag_list;
 
-    List<String> region_si;
-    List<String> region_gu;
+    int max_member_count = 0;
     List<String> foret_tag;
 
     TagListResponse tagListResponse;
@@ -153,10 +158,10 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
                 finish();
                 break;
             case R.id.button_tag_edit : // 태그 수정
-                tagSelectDialog();
+                tagDialog();
                 break;
             case R.id.button_region_edit : // 지역 수정
-                regionSelectDialog();
+                regionDialog();
                 break;
             case R.id.button_member_edit : // 최대 인원 수정
                 memberSelectDialog();
@@ -343,13 +348,18 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
         alertDialog.show();
     }
 
-    private void regionSelectDialog() { // 결과 : 지역 정보 텍스트뷰에 출력
+    public void regionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
         builder.setTitle("지역을 선택해주세요.");
 
         str = "";
         show = "";
+        ischecked = false;
+        ischecked2 = false;
+        selected_si = new ArrayList<>();
+        selected_gu = new ArrayList<>();
+        str_check = new ArrayList<>();
 
         Spinner spinner_si = region_view.findViewById(R.id.spinner_si);
         Spinner spinner_gu = region_view.findViewById(R.id.spinner_gu);
@@ -361,44 +371,107 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
         spinner_si.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                select_si = (String) parent.getSelectedItem();
-                if(position != 0 && !select_si.equals("")) {
+                Log.d("[TEST]", "region_si position => " + position);
+                String select_si = (String) parent.getSelectedItem();
+                if (position != 0 && !select_si.equals("")) {
+                    last_selected_si = select_si;
                     Log.d("[TEST]", "select_si => " + select_si);
-                    region_si.add(select_si);
+                    spinner_gu.setVisibility(View.VISIBLE);
+                    ischecked = false;
+                } else {
+                    spinner_gu.setVisibility(View.INVISIBLE);
                 }
+                Log.d("[TEST]", "ischecked => " + ischecked);
+                Log.d("[TEST]", "ischecked2 => " + ischecked2);
 
                 ArrayAdapter guAdapter;
                 switch (position) {
                     case 1:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.seuol_gu, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.seuol,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 2:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeonggi_si, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.incheon,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 3:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daejeon_gu, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.sejong,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 4:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gangwon_si, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daejeon,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 5:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gwangju_gu, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gwangju,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 6:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.busan_gu, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.daegu,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                     case 7:
-                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeju_si, R.layout.support_simple_spinner_dropdown_item);
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.ulsan,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 8:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.busan,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 9:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeonggi,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 10:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gangwon,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 11:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.chungbuk,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 12:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.chungnam,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 13:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeonbuk,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 14:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeonnam,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 15:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeongbuk,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 16:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.gyeongnam,
+                                R.layout.support_simple_spinner_dropdown_item);
+                        spinner_gu.setAdapter(guAdapter);
+                        break;
+                    case 17:
+                        guAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.jeju,
+                                R.layout.support_simple_spinner_dropdown_item);
                         spinner_gu.setAdapter(guAdapter);
                         break;
                 }
-                spinner_gu.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -410,17 +483,42 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
         spinner_gu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("[TEST]", "region_gu onItemSelected 호출");
                 Log.d("[TEST]", "region_gu position => " + position);
-                select_gu = (String) parent.getSelectedItem();
-                if(position != 0 && !select_gu.equals("")) {
+                String select_gu = (String) parent.getSelectedItem();
+                Log.d("[TEST]", "select_gu => " + select_gu);
+                for(int i=0; i<str_check.size(); i++) {
+                    if (str_check.get(i).equals(select_gu)) {
+                        Toast.makeText(EditForetActivity.this, "이미 선택한 지역입니다.", Toast.LENGTH_SHORT).show();
+                        spinner_gu.setSelection(0);
+                        return;
+                    }
+                }
+
+                if (position > 0 && !select_gu.equals("")) {
                     Log.d("[TEST]", "select_gu => " + select_gu);
-                    region_gu.add(select_gu);
-                    str += select_si + " " + select_gu + "\n";
+                    selected_si.add(last_selected_si);
+                    selected_gu.add(select_gu);
+                    str += last_selected_si + " " + select_gu + "\n";
+
                     selected_view.setText(str);
                     spinner_si.setSelection(0);
                     spinner_gu.setSelection(0);
+                    ischecked = true;
+                    ischecked2 = true;
+                    str_check.add(select_gu);
+                }
+
+
+                Log.d("[TEST]", "ischecked => " + ischecked);
+                Log.d("[TEST]", "ischecked2 => " + ischecked2);
+                Log.d("[TEST]", "str_check.size() => " + str_check.size());
+                for(int a=0; a<str_check.size(); a++) {
+                    Log.d("[TEST]", "str_check.size() => " + str_check.get(a));
                 }
             }
+
+
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -431,21 +529,26 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //확인 버튼 누르면
-                if (str.equals("")) {
-                    textView_region.setText("등록된 지역이 없습니다.");
-                } else if(region_si.size() != region_gu.size()) {
-                    for(int a=0; a<region_si.size(); a++) {
-                        show += region_gu.get(a) + " ";
-                    }
-                }
-                for (int a=0; a<region_si.size(); a++) {
-                    show += region_si.get(a) + " " + region_gu.get(a) + ", ";
-                    Log.d("[TEST]", "region_si.get(a) => " + region_si.get(a));
-                    Log.d("[TEST]", "region_gu.get(a) => " + region_gu.get(a));
+                // 확인 버튼 누르면
+                if(ischecked2) {
+                    region_si = selected_si;
+                    region_gu = selected_gu;
+                    Log.d("[TEST]", "region_si.size() => " + region_si.size());
+                    Log.d("[TEST]", "region_gu.size() => " + region_gu.size());
 
-                    textView_region.setText(show.substring(0, show.length()-2));
+                    for (int a=0; a<region_si.size(); a++) {
+                        show += region_si.get(a) + " " + region_gu.get(a) + "\n";
+                        Log.d("[TEST]", "region_si.get(a) => " + region_si.get(a));
+                        Log.d("[TEST]", "region_gu.get(a) => " + region_gu.get(a));
+                    }
+                    textView_region.setText(show);
+                    textView_region.setVisibility(View.VISIBLE);
+                } else if(region_si.size() == 0) {
+                    Toast.makeText(EditForetActivity.this, "최소 1개의 지역을 선택해주세요.", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+                last_selected_gu = "";
+
             }
         });
         builder.setNegativeButton("취소", null);
@@ -455,15 +558,16 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
         alertDialog.show();
     }
 
-    private void tagSelectDialog() { //결과 : 태그 정보 텍스트뷰에 출력
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+    public void tagDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View region_view = getLayoutInflater().inflate(R.layout.guide_select_region, null);
-        builder.setMessage("태그를 골라주세요.");
+        builder.setMessage("태그를 선택해주세요.");
 
         str = "";
         show = "";
         ischecked = false;
         selected_tag = new ArrayList<>();
+        str_check = new ArrayList<>();
 
         Spinner spinner_tag = region_view.findViewById(R.id.spinner_tag);
         TextView selected_view = region_view.findViewById(R.id.selected_view);
@@ -477,15 +581,24 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
         spinner_tag.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("[TEST]", "position => " + position);
+                String select_tag = (String) parent.getSelectedItem();
+                for(int i=0; i<str_check.size(); i++) {
+                    if (str_check.get(i).equals(select_tag)) {
+                        Toast.makeText(EditForetActivity.this, "이미 선택한 태그입니다.", Toast.LENGTH_SHORT).show();
+                        spinner_tag.setSelection(0);
+                        return;
+                    }
+                }
                 if (position != 0) {
-                    Log.d("[TEST]", "position => " + position);
-                    String select_tag = (String) parent.getSelectedItem();
                     selected_tag.add(select_tag);
                     str += "#" + select_tag + " ";
                     selected_view.setText(str);
                     spinner_tag.setSelection(0);
+                    str_check.add(select_tag);
                     ischecked = true;
                 }
+                Log.d("[TEST]", "ischecked => " + ischecked);
             }
 
             @Override
@@ -498,27 +611,27 @@ public class EditForetActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 확인 버튼 누르면
-                if (ischecked) {
+                if(ischecked) {
                     member_tag = selected_tag;
                     Log.d("[TEST]", "member_tag.size() => " + member_tag.size());
 
-                    for (int a = 0; a < member_tag.size(); a++) {
+                    for (int a=0; a<member_tag.size(); a++) {
                         show += "#" + member_tag.get(a) + " ";
                         Log.d("[TEST]", "foret_tag.get(a) => " + member_tag.get(a));
                     }
                     textView_tag.setText(show);
                     textView_tag.setVisibility(View.VISIBLE);
                     ischecked = false;
-                } else if (member_tag.size() == 0) {
+                } else if(member_tag.size() == 0) {
                     Toast.makeText(EditForetActivity.this, "최소 1개의 태그를 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
-        builder.setNegativeButton("취소", null);
+        builder.setNegativeButton("취소",null);
 
         builder.setView(region_view);
-        android.app.AlertDialog alertDialog = builder.create();
+        AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
 
