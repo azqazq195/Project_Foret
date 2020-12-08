@@ -329,8 +329,14 @@ public class ReadForetBoardActivity extends AppCompatActivity implements View.On
     private void inputComment() { //댓글 쓰기
         foretBoardComment = new FBCommentDTO();
         foretBoardComment.setWriter((memberDTO.getId()));
-        foretBoardComment.setContent(editText_comment.getText().toString().trim());
+        String comment = editText_comment.getText().toString().trim();
+        if(comment.equals("")) {
+            Toast.makeText(this, "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         foretBoardComment.setId(foretBoardDTO.getId());
+        foretBoardComment.setContent(comment);
+
         RequestParams params = new RequestParams();
         url = "http://34.72.240.24:8085/foret/comment/recomment_insert.do";
         params.put("board_id", foretBoardDTO.getId());
