@@ -8,6 +8,7 @@
     <ImageView
         android:id="@+id/board_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="230dp"
+        android:scaleType="centerCrop"
         tools:srcCompat="@tools:sample/avatars" />
 </LinearLayout>
