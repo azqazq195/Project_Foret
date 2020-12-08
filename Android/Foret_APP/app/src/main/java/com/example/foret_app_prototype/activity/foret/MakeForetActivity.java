@@ -120,7 +120,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
     String downloadUri;
     Uri uri;
 
-    String board_id;
+    String foret_id;
 
     //RegionListResponse3 regionListResponse;
     TagListResponse3 tagListResponse;
@@ -552,7 +552,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                 String foretRegionRT =json.getString("foretRegionRT");
                 String foretTagRT =json.getString("foretTagRT");
 
-                // board_id = json.getString("board_id");
+                foret_id = json.getString("foret_id");
 
                 Toast.makeText(context,"결과? \n foretPhotoRT : "+foretPhotoRT+"\n foretMemberRT : "+foretMemberRT +"\n foretRegionRT : "+foretRegionRT
                 +"\n foretTagRT : "+ foretTagRT,Toast.LENGTH_SHORT).show();
@@ -627,7 +627,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
                                                     Intent intent = new Intent(context, ViewForetActivity.class);
                                                     intent.putExtra("memberDTO",memberDTO);
-                                                    intent.putExtra("board_id",board_id);
+                                                    intent.putExtra("foret_id",foret_id);
                                                     startActivity(intent);
                                                     finish(); // 현재 액티비티 종료
 

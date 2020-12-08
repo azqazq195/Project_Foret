@@ -26,6 +26,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -55,13 +61,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     FirebaseAuth mAuth;
     Context context;
     FirebaseUser user;
+    String deviceToken;
+    String myUid ;
+    String myPw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         loginActivity = LoginActivity.this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         // 상태바 색상 변경
         Window window = this.getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -118,7 +126,78 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 client.post(url, params, response);
                 break;
             case R.id.button3 :
-                Toast.makeText(this, "이름, 이메일 주소로 비밀번호 찾기", Toast.LENGTH_SHORT).show();
+                if(emailEditText.getText().toString().trim().equals("")||emailEditText.getText().toString().trim() ==null){
+                    Toast.makeText(this,"찾으실 이메일을 입력해주세요.",Toast.LENGTH_LONG).show();
+                    break;
+                }
+                ProgressDialogHelper.getInstance().getProgressbar(context,"잠시만 기다려주세요.");
+                FirebaseMessaging.getInstance().getToken()
+                        .addOnCompleteListener(new OnCompleteListener<String>() {
+                            @Override
+                            public void onComplete(@NonNull Task<String> task) {
+                                if (!task.isSuccessful()) {
+                                    Log.e("[test]", "Fetching FCM registration token failed", task.getException());
+                                    return;
+                                }
+                                deviceToken = task.getResult();
+                                Log.e("[test]", "deviceToken?" + deviceToken);
+
+
+                                if(deviceToken != null){
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
+                                    ref.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            for(DataSnapshot ds : snapshot.getChildren()){
+                                                Log.e("[test]", "ds ref? ?" + ds.getRef());
+                                                if(ds.child(ds.getKey()).getValue().equals(deviceToken)){
+                                                    //내 토큰 찻음
+                                                    myUid = ds.getKey();
+                                                    Log.e("[test]", "ds.getKey()).getValue()?" + ds.child(ds.getKey()).getValue());
+                                                }
+                                                if(myUid!=null){
+                                                    DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("Users");
+
+                                                    ref2.child(myUid).addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                            for(DataSnapshot ds : snapshot.getChildren()){
+                                                                Log.e("[test]", "ds 22 의 ref??" + ds.getRef());
+                                                                myPw = ds.child("user_id").getValue()+"";
+                                                                Log.e("[test]", "myPw?" + myPw);
+
+                                                                passwordEditText.setText(myPw);
+                                                                Toast.makeText(context,"찾으신 이메일의 비밀번호가 입력되었습니다. 로그인 후 패스워드를 변경해주세요.",Toast.LENGTH_LONG).show();
+                                                                ProgressDialogHelper.getInstance().removeProgressbar();
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                            Toast.makeText(context,"등록된 이메일이 없습니다. 포레를 시작해주세요.",Toast.LENGTH_LONG).show();
+                                                            ProgressDialogHelper.getInstance().removeProgressbar();
+                                                        }
+                                                    });
+
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Toast.makeText(context,"회원가입시 등록된 디바이스를 이용해주세요",Toast.LENGTH_LONG).show();
+                                            ProgressDialogHelper.getInstance().removeProgressbar();
+                                        }
+                                    });
+
+
+                                }
+                            }
+                        });
+
+
+
+
                 break;
             case R.id.button4 :
                 intent = new Intent(this, JoinUsActivity.class);
