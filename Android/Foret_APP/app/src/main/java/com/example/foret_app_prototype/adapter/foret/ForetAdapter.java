@@ -1,9 +1,13 @@
 package com.example.foret_app_prototype.adapter.foret;
 
-import java.util.List;
+import android.app.Activity;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
-import javax.swing.text.View;
-import javax.swing.text.html.ImageView;
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
 import com.example.foret_app_prototype.R;
@@ -14,16 +18,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import android.app.Activity;
-import android.view.ViewGroup;
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.PagerAdapter;
+import java.util.List;
 
 public class ForetAdapter extends PagerAdapter {
     private Activity activity;
     private List<HomeForetDTO> homeForetDTOList;
     String path;
-    // private List<ForetDTO> foretDTOList;
+//    private List<ForetDTO> foretDTOList;
 
     // 리스너 객체 참조를 저장하는 변수
     private OnClickListener clickListener = null;
@@ -67,9 +68,11 @@ public class ForetAdapter extends PagerAdapter {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Log.e("[test]", "name?" + name);
-                path = snapshot.child("GroupPhoto").getValue() + "";
-                Log.e("[test]", "path?" + path);
-                Glide.with(activity).load(path).fallback(R.drawable.icon_defalut).into(image);
+                path = snapshot.child("GroupPhoto").getValue()+"";
+               Log.e("[test]", "path?" + path);
+                Glide.with(activity).load(path)
+                        .fallback(R.drawable.icon_defalut)
+                        .into(image);
 
             }
 
@@ -78,6 +81,8 @@ public class ForetAdapter extends PagerAdapter {
 
             }
         });
+
+
 
         // 이벤트 설정
         image.setOnClickListener(new View.OnClickListener() {
