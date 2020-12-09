@@ -31,6 +31,7 @@ public class SearchAdapter extends ArrayAdapter<ForetDTO> {
         activity = (Activity)context;
         this.resource = resource;
         this.memberDTO = memberDTO;
+        Log.e("[test]","뭐가 널?"+context.toString()+"/"+resource+"/"+objects.toString()+"/"+memberDTO.toString());
     }
 
     @NonNull
@@ -58,14 +59,7 @@ public class SearchAdapter extends ArrayAdapter<ForetDTO> {
             textView5.setText(Arrays.toString(si)+Arrays.toString(gu));
 
 
-            Glide.with(convertView).load(foret.getForet_photo()) .fallback(R.drawable.icon2)
-                    .into(imageView);
-
-
-            String result = foret.getForet_photo().substring(foret.getForet_photo().lastIndexOf("/")+1);
-            Log.e("[test]", "셀렉트 섭스트링값?" +result);
-
-            if(result.equals("null")){
+            if(foret.getForet_photo().equals("null")){
                 Glide.with(convertView).load(R.drawable.icon_foret)
                         .into(imageView);
             }else {

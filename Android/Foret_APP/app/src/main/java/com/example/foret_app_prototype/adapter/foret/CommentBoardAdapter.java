@@ -72,14 +72,6 @@ public class CommentBoardAdapter extends RecyclerView.Adapter<CommentBoardAdapte
         FBCommentDTO comment = list.get(position);
         holder.textView1.setText(comment.getWriter_nickname());
 
-     /*
-        Glide.with(activity).load(comment.getWriter_photo()).
-                placeholder(R.drawable.iu).
-                fallback(R.drawable.icon3).
-                into(holder.image_writer);
-
-      */
-
 
         if (memberID == comment.getWriter()) {
             holder.layout.setVisibility(View.VISIBLE);
@@ -91,16 +83,7 @@ public class CommentBoardAdapter extends RecyclerView.Adapter<CommentBoardAdapte
         }
         holder.textView2.setText(comment.getContent());
         holder.textView3.setText(comment.getReg_date());
-        /*
-        holder.button1.setOnClickListener(new View.OnClickListener() { //답글쓰기
-            @Override
-            public void onClick(View v) {
-                String target = comment.getWriter_nickname();
-                commentClickListener.onReplyButtonClick(v, target, true);
-            }
-        });
 
-         */
         holder.button2.setOnClickListener(new View.OnClickListener() { //수정하기 //엔터 누를시 수정한다
             @Override
             public void onClick(View v) {

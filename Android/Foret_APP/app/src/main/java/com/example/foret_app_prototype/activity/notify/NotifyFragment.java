@@ -32,6 +32,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -104,6 +105,30 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notify").child(user.getUid());
 
+        Query query = FirebaseDatabase.getInstance().getReference("Notify").child(user.getUid());
+        query.orderByChild("time").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                notifyList.clear();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    ModelNotify item = ds.getValue(ModelNotify.class);
+
+                    adapter = new NotificationAdapter2(context, R.layout.item_row_notification, notifyList,thisFragment);
+                    listView.setAdapter(adapter);
+                    notifyList.add(item);
+
+                }
+
+                //Collections.sort(notifyList, Collections.reverseOrder());
+                Log.e("[test]","최신 1128");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        /*
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -114,14 +139,18 @@ public class NotifyFragment extends Fragment implements View.OnClickListener {
                     adapter = new NotificationAdapter2(context, R.layout.item_row_notification, notifyList,thisFragment);
                     listView.setAdapter(adapter);
                     notifyList.add(item);
+
                 }
+
+                //Collections.sort(notifyList, Collections.reverseOrder());
+                Log.e("[test]","최신 1128");
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
-
+*/
     }
 
     @Override

@@ -150,15 +150,13 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        //Toast.makeText(WriteForetBoardActivity.this, "게시판 타입을 설정해주세요.", Toast.LENGTH_SHORT).show();
-                        type = 4;  //일반
+                        Toast.makeText(WriteForetBoardActivity.this, "게시판 타입을 설정해주세요.", Toast.LENGTH_SHORT).show();
                         break;
-                    case 1:
-                        type = 3; // 일정
+                    case 1: type = 2; // 공지
                         break;
-                    case 2:
-                        type = 1; // 공지
+                    case 2: type = 4; // 일반
                         break;
+
                 }
             }
 
@@ -496,8 +494,9 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
                 String boardPhotoRT = json.getString("boardPhotoRT");
                 Toast.makeText(context, "boardPhotoRT?" + boardPhotoRT + "\n 리절트? " + boardRT, Toast.LENGTH_LONG).show();
                 if (boardRT.equals("OK")) {
-                    Toast.makeText(context, "등록 성공!", Toast.LENGTH_LONG).show();
 
+                    Toast.makeText(context, "등록 성공!", Toast.LENGTH_LONG).show();
+                    ProgressDialogHelper.getInstance().removeProgressbar();
                     //파이어 베이스 연동
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     myUid = user.getUid();
@@ -524,7 +523,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             ModelUser user = snapshot.getValue(ModelUser.class);
-
+                                            ProgressDialogHelper.getInstance().removeProgressbar();
                                             if (notify) {
                                                 sendNotification(hisUid, user.getNickname(), msg);
                                                 ProgressDialogHelper.getInstance().removeProgressbar();
@@ -645,6 +644,7 @@ public class WriteForetBoardActivity extends AppCompatActivity implements View.O
                                         Call<Response> call,
                                         retrofit2.Response<com.example.foret_app_prototype.activity.notify.Response> response) {
                                     // Toast.makeText(ChatActivity.this,""+response.message(),Toast.LENGTH_LONG).show();
+                                    ProgressDialogHelper.getInstance().removeProgressbar();
                                     finish();
                                 }
 

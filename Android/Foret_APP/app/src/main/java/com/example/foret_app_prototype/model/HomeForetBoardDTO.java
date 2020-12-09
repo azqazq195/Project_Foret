@@ -14,6 +14,19 @@ public class HomeForetBoardDTO implements Serializable {
     private int board_like;
     private int board_comment;
     private int type;
+    private String photo;
+
+    public String getPhoto() {
+        if(photo!=null){
+            return  photo = "http://34.72.240.24:8085/foret/storage/"+photo;
+        }else {
+            return photo;
+        }
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
 
     public int getId() {
         return id;

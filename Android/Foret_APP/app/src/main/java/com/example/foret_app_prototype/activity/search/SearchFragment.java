@@ -153,8 +153,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         region_si = new ArrayList<>();
         search_resultList = new ArrayList<>();
         foretDTO = new ForetDTO();
-        memberDTO = activity.getMemberDTO();
-        searchAdapter = new SearchAdapter(activity, R.layout.recycle_item3, search_resultList, memberDTO);
+
+        searchAdapter = new SearchAdapter(context, R.layout.recycle_item3, search_resultList, memberDTO);
 
         autoCompleteList = new ArrayList<String>(); //자동완성에 사용할 데이터
 
@@ -173,8 +173,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         button_searchGO.setOnClickListener(this);
         search_listView.setOnItemClickListener(this);
 
-        recyclerView1.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false));
-        recyclerView2.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false)); //추천포레 리스트
+        recyclerView1.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false));
+        recyclerView2.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false)); //추천포레 리스트
         search_listView.setAdapter(searchAdapter);
 
         button1.setOnClickListener(this);
@@ -200,7 +200,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     private void myTagData() {
         ProgressDialogHelper.getInstance().getProgressbar(context,"잠시만 기다려주세요.");
         List<String> myTag = memberDTO.getTag();
-        adapter2 = new RecyclerAdapter2(myTag, activity,SearchFragment.this);
+        adapter2 = new RecyclerAdapter2(myTag, context,SearchFragment.this);
         recyclerView1.setAdapter(adapter2);
     }
 
@@ -250,10 +250,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         String keyword = "";
         switch (v.getId()) {
             case R.id.button1: //내 관심 설정페이지로 이동
-                intent = new Intent(activity, EditMyInfoActivity.class);
+                intent = new Intent(context, EditMyInfoActivity.class);
                 intent.putExtra("memberDTO", memberDTO);
                 startActivity(intent);
-                Toast.makeText(activity, "내 관심 설정 페이지로 이동", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "내 관심 설정 페이지로 이동", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.button2:
                 keyword = button2.getText().toString().trim();
@@ -324,7 +324,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         searchAdapter.clear();
         String search_word = autoCompleteTextView.getText().toString().trim();
         if(search_word.equals("")) { //입력검사
-            Toast.makeText(activity, "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show();
             return;
         }
         //autoCompleteTextView에 입력된 검색결과 요청하기
@@ -343,7 +343,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
         client.post("http://34.72.240.24:8085/foret/search/foret_keyword_search.do", params, keywordSearchResultResponse);
         //검색 요청시 키보드를 내려줘야 한다.
         inputMethodManager.hideSoftInputFromWindow(autoCompleteTextView.getWindowToken(), 0);
-        Toast.makeText(activity, search_word+"를 검색합니다.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, search_word+"를 검색합니다.", Toast.LENGTH_SHORT).show();
     }
 
     private void goToMakeNewForet() {
@@ -355,6 +355,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     //검색결과 서치 레이아웃에 출력된 것을 누르면 이동
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.e("[test]",searchAdapter.getItem(position).toString());
+
         ForetDTO foretDTO = searchAdapter.getItem(position);
         Intent intent = new Intent(context, ViewForetActivity.class);
         intent.putExtra("foret_id", foretDTO.getForet_id());
