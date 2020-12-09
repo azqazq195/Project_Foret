@@ -430,7 +430,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                 Log.d("[TEST]", "region_gu position => " + position);
                 String select_gu = (String) parent.getSelectedItem();
                 Log.d("[TEST]", "select_gu => " + select_gu);
-                for(int i=0; i<str_check.size(); i++) {
+                for (int i = 0; i < str_check.size(); i++) {
                     if (str_check.get(i).equals(select_gu)) {
                         Toast.makeText(MakeForetActivity.this, "이미 선택한 지역입니다.", Toast.LENGTH_SHORT).show();
                         spinner_gu.setSelection(0);
@@ -456,11 +456,10 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
                 Log.d("[TEST]", "ischecked => " + ischecked);
                 Log.d("[TEST]", "ischecked2 => " + ischecked2);
                 Log.d("[TEST]", "str_check.size() => " + str_check.size());
-                for(int a=0; a<str_check.size(); a++) {
+                for (int a = 0; a < str_check.size(); a++) {
                     Log.d("[TEST]", "str_check.size() => " + str_check.get(a));
                 }
             }
-
 
 
             @Override
@@ -473,20 +472,20 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 확인 버튼 누르면
-                if(ischecked2) {
+                if (ischecked2) {
                     region_si = selected_si;
                     region_gu = selected_gu;
                     Log.d("[TEST]", "region_si.size() => " + region_si.size());
                     Log.d("[TEST]", "region_gu.size() => " + region_gu.size());
 
-                    for (int a=0; a<region_si.size(); a++) {
+                    for (int a = 0; a < region_si.size(); a++) {
                         show += region_si.get(a) + " " + region_gu.get(a) + "\n";
                         Log.d("[TEST]", "region_si.get(a) => " + region_si.get(a));
                         Log.d("[TEST]", "region_gu.get(a) => " + region_gu.get(a));
                     }
                     button_region.setText(show);
                     button_region.setVisibility(View.VISIBLE);
-                } else if(region_si.size() == 0) {
+                } else if (region_si.size() == 0) {
                     Toast.makeText(MakeForetActivity.this, "최소 1개의 지역을 선택해주세요.", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -526,7 +525,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("[TEST]", "position => " + position);
                 String select_tag = (String) parent.getSelectedItem();
-                for(int i=0; i<str_check.size(); i++) {
+                for (int i = 0; i < str_check.size(); i++) {
                     if (str_check.get(i).equals(select_tag)) {
                         Toast.makeText(MakeForetActivity.this, "이미 선택한 태그입니다.", Toast.LENGTH_SHORT).show();
                         spinner_tag.setSelection(0);
@@ -554,24 +553,25 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 확인 버튼 누르면
-                if(ischecked) {
-                    member_tag = selected_tag;
-                    Log.d("[TEST]", "member_tag.size() => " + member_tag.size());
+                if (ischecked) {
+                    foret_tag  = selected_tag;
+                    Log.d("[TEST]", "member_tag.size() => " + foret_tag .size());
 
-                    for (int a=0; a<member_tag.size(); a++) {
-                        show += "#" + member_tag.get(a) + " ";
-                        Log.d("[TEST]", "foret_tag.get(a) => " + member_tag.get(a));
+                    for (int a = 0; a < foret_tag .size(); a++) {
+                        show += "#" + foret_tag .get(a) + " ";
+                        Log.d("[TEST]", "foret_tag.get(a) => " + foret_tag .get(a));
                     }
+                    Log.e("[test]","선택 태그?"+show);
                     button_tag.setText(show);
                     button_tag.setVisibility(View.VISIBLE);
                     ischecked = false;
-                } else if(member_tag.size() == 0) {
+                } else if (foret_tag .size() == 0) {
                     Toast.makeText(MakeForetActivity.this, "최소 1개의 태그를 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
-        builder.setNegativeButton("취소",null);
+        builder.setNegativeButton("취소", null);
 
         builder.setView(region_view);
         AlertDialog alertDialog = builder.create();
@@ -792,9 +792,9 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
 
                                                                             Intent intent = new Intent(MakeForetActivity.this, ViewForetActivity.class);
-                                                                            intent.putExtra("memberDTO",memberDTO);
-                                                                            intent.putExtra("foret_id",foret_id);
-                                                                            Log.e("[test]","메익 포레에서 만들어진 아이디?"+foret_id);
+                                                                            intent.putExtra("memberDTO", memberDTO);
+                                                                            intent.putExtra("foret_id", Integer.parseInt(foret_id));
+                                                                            Log.e("[test]", "메익 포레에서 만들어진 아이디?" + foret_id);
 
                                                                             startActivity(intent);
                                                                             finish(); // 현재 액티비티 종료

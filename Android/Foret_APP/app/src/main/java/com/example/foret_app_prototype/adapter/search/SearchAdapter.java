@@ -59,7 +59,7 @@ public class SearchAdapter extends ArrayAdapter<ForetDTO> {
             textView5.setText(Arrays.toString(si)+Arrays.toString(gu));
 
 
-            if(foret.getForet_photo().equals("null")){
+            if(foret.getForet_photo()==null){
                 Glide.with(convertView).load(R.drawable.icon_foret)
                         .into(imageView);
             }else {
