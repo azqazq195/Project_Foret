@@ -302,30 +302,9 @@ AS
   ORDER  BY member.id ASC, 
             foret_member.foret_id ASC, 
             board.id DESC; 
-            
-            
--- 내가 속한 포레의 게시글 5개씩, 멤버 아이디 순, 포레 아이디순, 보드 최신 순
---CREATE OR replace VIEW v_member_b5 
---AS 
-  SELECT * 
-  FROM  (SELECT * 
-         FROM   v_board_all
-         WHERE  TYPE = 2 
-                AND ROWNUM <= 5 
-                and foret_id in (select foret_id from v_member_f where id = 1)
-         UNION 
-         SELECT * 
-         FROM   v_board_all
-         WHERE  TYPE = 3 
-                AND ROWNUM <= 5 
-         UNION 
-         SELECT * 
-         FROM   v_board_all
-         WHERE  TYPE = 4 
-                AND ROWNUM <= 5); 
+             
                 
 -- 보드 모든 정보     
-select * from v_board_all;
 CREATE OR REPLACE VIEW v_board_all
 AS 
   SELECT board.*, 
@@ -435,7 +414,7 @@ AS
          v_member_f.foret_id     AS foret_id 
   FROM   member 
          left outer join member_photo 
-                      ON member.id = member_photo.id 
+                      ON member.id = member_photo.member_id 
          left outer join member_tag 
                       ON member.id = member_tag.id 
          left outer join tag 
@@ -457,7 +436,27 @@ AS
             like_comment.comment_id ASC,
             v_member_f.foret_id ASC; 
       
-      
+ 
+-------------------------------------------------------------------------------------------------------------------------
+-- 검색 키워드
+CREATE OR replace VIEW v_search_keyword 
+AS 
+  SELECT DISTINCT 'tag'        AS TYPE, 
+                  tag.tag_name AS NAME 
+  FROM   tag 
+  UNION ALL 
+  SELECT DISTINCT 'region_si' AS TYPE, 
+                  region.si   AS NAME 
+  FROM   region 
+  UNION ALL 
+  SELECT DISTINCT 'region_gu' AS TYPE, 
+                  region.gu   AS NAME 
+  FROM   region 
+  UNION ALL 
+  SELECT DISTINCT 'foret'    AS TYPE, 
+                  foret.name AS NAME 
+  FROM   foret; 
+  
 ------------------------------------------------------------------------------------------------------------------------
 -- 홈 프레그먼트
 SELECT 
@@ -494,14 +493,69 @@ WHERE  v_board_all.id IN (SELECT id
                                 board.id DESC) 
               WHERE  foret_id IN(SELECT foret_id 
                                  FROM   v_member_f 
-                                 WHERE  id = 1) 
+                                 WHERE  id = 229) 
                      AND row_num <= 3) 
 ORDER  BY v_board_all.foret_id ASC, 
           v_board_all.type ASC, 
           v_board_all.id DESC,
           v_board_all.photo ASC;
-            
-           
+          
+          
+select * from(
+select row_number() over
+(
+partition by temp.foret_id, temp.type
+order by temp.foret_id asc, temp.type asc
+) row_num
+,
+temp.*
+from(
+select
+v_board_all.id as id,
+v_board_all.writer as writer,
+V_FORET_AND_PHOTO.id as foret_id,
+v_board_all.type as type,
+v_board_all.hit as hit,
+v_board_all.subject as subject,
+v_board_all.content as content,
+v_board_all.reg_date as reg_date,
+v_board_all.edit_date as edit_date,
+v_board_all.board_like as board_like,
+v_board_all.board_comment as board_comment,
+v_board_all.photo as board_photo,
+v_foret_and_photo.name as foret_name,
+v_foret_and_photo.photo as foret_photo
+from V_FORET_AND_PHOTO
+left outer join v_board_all
+on v_foret_and_photo.id = v_board_all.foret_id
+where V_FORET_AND_PHOTO.id in(select foret_id from v_member_f where id = 229)
+order by V_FORET_AND_PHOTO.id asc,
+          v_board_all.type ASC, 
+          v_board_all.id DESC,
+          v_board_all.photo ASC
+) temp) temp2
+
+where temp2.row_num <= 3;
+
+
+select * from member;
+select * from v_foret_and_photo;
+select * from v_board_all;
+
+
+
+
+
+
+
+select * from V_FORET_AND_PHOTO;
+select foret_id from v_member_f where id = 1;      
+select  * from v_member_f;
+select * from v_board_all;
+select * from foret order by id;
+
+
+
 -------------------------------------------------------------------------------------------------------------------------
 -- BOARD SELECT
 SELECT v_board_all.id, 
@@ -579,26 +633,6 @@ FROM  (SELECT Dense_rank()
                                GROUP  BY foret_id) cnt 
                            ON v_foret_all.id = cnt.foret_id) 
 WHERE  row_num <= 10; 
-
--------------------------------------------------------------------------------------------------------------------------
--- 검색 키워드
-CREATE OR replace VIEW v_search_keyword 
-AS 
-  SELECT DISTINCT 'tag'        AS TYPE, 
-                  tag.tag_name AS NAME 
-  FROM   tag 
-  UNION ALL 
-  SELECT DISTINCT 'region_si' AS TYPE, 
-                  region.si   AS NAME 
-  FROM   region 
-  UNION ALL 
-  SELECT DISTINCT 'region_gu' AS TYPE, 
-                  region.gu   AS NAME 
-  FROM   region 
-  UNION ALL 
-  SELECT DISTINCT 'foret'    AS TYPE, 
-                  foret.name AS NAME 
-  FROM   foret; 
   
 ---------------------------------------------------------------------------------------------------------------------------
 -- 키워드 검색
