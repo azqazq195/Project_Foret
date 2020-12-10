@@ -25,10 +25,19 @@
 	<!-- 홈 프레그먼트 조회 -->
 	<select id="homeSelect" parameterType="int" resultType="BoardALLDTO">
 		<![CDATA[
-			SELECT 
+			select * from(
+			select row_number() over
+			(
+			partition by temp.foret_id, temp.type
+			order by temp.foret_id asc, temp.type asc
+			) row_num
+			,
+			temp.*
+			from(
+			select
 			v_board_all.id as id,
 			v_board_all.writer as writer,
-			v_board_all.foret_id as foret_id,
+			V_FORET_AND_PHOTO.id as foret_id,
 			v_board_all.type as type,
 			v_board_all.hit as hit,
 			v_board_all.subject as subject,
@@ -40,31 +49,17 @@
 			v_board_all.photo as board_photo,
 			v_foret_and_photo.name as foret_name,
 			v_foret_and_photo.photo as foret_photo
-			FROM   v_board_all 
-			left outer join v_foret_and_photo
-			on v_board_all.foret_id = v_foret_and_photo.id
-			WHERE  v_board_all.id IN (SELECT id 
-			              FROM   (SELECT Row_number() 
-			                               OVER( 
-			                                 partition BY board.foret_id, board.type 
-			                                 ORDER BY board.foret_id ASC, board.type ASC, 
-			                               board.id 
-			                               DESC ) 
-			                             row_num 
-			                                     , 
-			                             board.* 
-			                      FROM   board 
-			                      ORDER  BY board.foret_id ASC, 
-			                                board.type ASC, 
-			                                board.id DESC) 
-			              WHERE  foret_id IN(SELECT foret_id 
-			                                 FROM   v_member_f 
-			                                 WHERE  id = #{id}) 
-			                     AND row_num <= 3) 
-			ORDER  BY v_board_all.foret_id ASC, 
+			from V_FORET_AND_PHOTO
+			left outer join v_board_all
+			on v_foret_and_photo.id = v_board_all.foret_id
+			where V_FORET_AND_PHOTO.id in(select foret_id from v_member_f where id = #{id})
+			order by V_FORET_AND_PHOTO.id asc,
 			          v_board_all.type ASC, 
 			          v_board_all.id DESC,
 			          v_board_all.photo ASC
+			) temp) temp2
+			
+			where temp2.row_num <= 3
 		]]>
 	</select>
 	<!-- 태그 조회 -->

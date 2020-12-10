@@ -66,6 +66,7 @@ public class ForetController {
 	    json.put("foretRegionRT", foretRegionRT);
 	    json.put("foretPhotoRT", foretPhotoRT);
 	    json.put("foretMemberRT", foretMemberRT);
+	    json.put("foret_id", foret_id);
 	    
 		System.out.println("-- 함수 종료 : foret_insert.do --\n");
 		return modelAndView(json);
