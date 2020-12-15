@@ -1,6 +1,9 @@
-package com.project.foret.db.dto;
+package com.project.foret.db.model;
 
-public class MemberDTO {
+import org.apache.ibatis.type.Alias;
+
+@Alias("member")
+public class Member {
     private int id;
     private String name;
     private String email;
@@ -8,19 +11,9 @@ public class MemberDTO {
     private String nickname;
     private String birth;
     private String reg_date;
-
-    public MemberDTO() {
-
-    }
-
-    public MemberDTO(String email) {
-        this.email = email;
-    }
-
-    public MemberDTO(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
+    private String tag[];
+    private String region_si[];
+    private String region_gu[];
 
     public int getId() {
         return this.id;
@@ -76,6 +69,43 @@ public class MemberDTO {
 
     public void setReg_date(String reg_date) {
         this.reg_date = reg_date;
+    }
+
+    public String[] getTag() {
+        return this.tag;
+    }
+
+    public void setTag(String tag[]) {
+        this.tag = tag;
+    }
+
+    public String[] getRegion_si() {
+        return this.region_si;
+    }
+
+    public void setRegion_si(String region_si[]) {
+        this.region_si = region_si;
+    }
+
+    public String[] getRegion_gu() {
+        return this.region_gu;
+    }
+
+    public void setRegion_gu(String region_gu[]) {
+        this.region_gu = region_gu;
+    }
+
+    public Member() {
+
+    }
+
+    public Member(String email) {
+        this.email = email;
+    }
+
+    public Member(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 
 }

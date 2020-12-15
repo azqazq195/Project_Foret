@@ -37,7 +37,10 @@ public class DatabaseConfig {
         final SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(customDataSource);
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        // mapper 경로 설정
         sessionFactory.setMapperLocations(resolver.getResources("classpath:mybatis/mapper/*.xml"));
+        // type alias 설정
+        sessionFactory.setTypeAliasesPackage("com.project.foret.db.model");
         return sessionFactory.getObject();
     }
 

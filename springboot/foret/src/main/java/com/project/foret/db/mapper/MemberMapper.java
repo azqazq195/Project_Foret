@@ -1,11 +1,15 @@
 package com.project.foret.db.mapper;
 
-import com.project.foret.db.dto.MemberDTO;
+import com.project.foret.db.model.Member;
 
 public interface MemberMapper {
-    public MemberDTO emailCheck(MemberDTO memberDTO) throws Exception;
+    public Member emailCheck(Member member) throws Exception;
 
-    public MemberDTO login(MemberDTO memberDTO) throws Exception;
+    public Member login(Member member) throws Exception;
 
-    public int insert(MemberDTO memberDTO) throws Exception;
+    public int memberInsert(Member member) throws Exception;
+
+    public int memberUpdate(Member member) throws Exception;
+
+    public int memberDelete(Member member) throws Exception;
 }

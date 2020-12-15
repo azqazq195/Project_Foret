@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.foret.db.mapper.LinkMapper">
+    <!-- tag_link -->
+    <!-- member -->
+    <insert id="memberTagInsert" parameterType="member">
+        INSERT INTO member_tag (member_id, tag_name)
+        VALUES
+        <foreach collection="list" item="tag" separator=", ">
+            (#{tag.id}, #{tag.tag_name})
+        </foreach>   
+    </insert>
+    <delete id="memberTagDelete" parameterType="int">
+        DELETE FROM member_tag
+        WHERE member_id = #{member_id}
+    </delete>
+    <!-- foret -->
+    <insert id="foretTagInsert" parameterType="foret">
+        INSERT INTO foret_tag (foret_id, tag_name)
+        VALUES
+        <foreach collection="list" item="tag" separator=", ">
+            (#{tag.id}, #{tag.tag_name})
+        </foreach>   
+    </insert>
+    <delete id="foretTagDelete" parameterType="int">
+        DELETE FROM foret_tag
+        WHERE foret_id = #{foret_id}
+    </delete>
+
+    <!-- region_link-->  
+    <!-- member --> 
+    <insert id="memberRegionInsert" parameterType="member">
+        INSERT INTO member_region (member_id, region_si, region_gu)
+        VALUES
+        <foreach collection="list" item="region" separator=", ">
+            (#{region.id}, #{region.region_si}, #{region.region_gu})
+        </foreach>
+    </insert>
+    <delete id="memberRegionDelete" parameterType="int">
+        DELETE FROM member_region
+        WHERE member_id = #{member_id}
+    </delete>
+    <!-- foret -->
+    <insert id="foretRegionInsert" parameterType="foret">
+        INSERT INTO foret_region (foret_id, region_si, region_gu)
+        VALUES
+        <foreach collection="list" item="region" separator=", ">
+            (#{region.id}, #{region.region_si}, #{region.region_gu})
+        </foreach>
+    </insert>
+    <delete id="foretRegionDelete" parameterType="int">
+        DELETE FROM foret_region
+        WHERE foret_id = #{foret_id}
+    </delete>
+
+    <!-- photo_link -->
+    <!-- member -->
+    <insert id="memberPhotoInsert" parameterType="photo">
+        INSERT INTO member_photo
+        (id, member_id, dir, filename, originname, filesize, filetype, reg_date)
+        VALUES
+        (#{id}, #{reference_id}, #{dir}, #{filename}, #{originname}, #{filesize}, #{filetype}, NOW())
+    </insert>
+    <delete id="memberPhotoDelete" parameterType="int">
+        DELETE FROM
+        member_photo
+        WHERE
+        member_id = #{member_id}
+    </delete>
+    <!-- foret -->
+    <insert id="foretPhotoInsert" parameterType="photo">
+        INSERT INTO foret_photo
+        (id, foret_id, dir, filename, originname, filesize, filetype, reg_date)
+        VALUES
+        (#{id}, #{reference_id}, #{dir}, #{filename}, #{originname}, #{filesize}, #{filetype}, NOW())
+    </insert>
+    <delete id="foretPhotoDelete" parameterType="int">
+        DELETE FROM
+        foret_photo
+        WHERE
+        foret_id = #{foret_id}
+    </delete>
+</mapper>
