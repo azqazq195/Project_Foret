@@ -3,7 +3,7 @@
 # Foret APP
 온라인 스터디 모임 어플
 
-![ezgif com-gif-maker](https://user-images.githubusercontent.com/45132207/102478706-41a24d00-40a1-11eb-97be-335d2037c00b.gif)
+![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/45132207/102478967-9d6cd600-40a1-11eb-8e72-37fd236d0c79.gif)
 
 ## 개요 
 - 외부 환경에 의한 오프라인 스터디를 온라인 스터디로 계획
