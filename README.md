@@ -37,6 +37,7 @@
 - API를 활용한 SNS 로그인 기능 구현
 
 ## Development environment
+### VER 1.0
 | 종류 | 이름  |
 |--|--|
 | 개발 툴 | STS3, Android Studio, sql developer, firebase, postman |
