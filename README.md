@@ -59,5 +59,5 @@
 - DataBase 테이블 정의
 - Spring 데이터 처리 구축
 
-### Project Note
+## Project Note
 [Foret_Notion](https://www.notion.so/Foret-App-9adac55de18a45969da109b107e096eb)
