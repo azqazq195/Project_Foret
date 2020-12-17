@@ -1,7 +1,8 @@
 
-
+![foret](https://user-images.githubusercontent.com/45132207/102469885-a2785800-4096-11eb-8da7-56e48ef2f2be.png)
 # Foret APP
 온라인 스터디 모임 어플
+
 ## 개요 
 - 외부 환경에 의한 오프라인 스터디를 온라인 스터디로 계획
 - 태그 및 지역을 기반으로 온라인 그룹 참여 및 활동
