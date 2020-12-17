@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.foret.db.mapper.CommentMapper">
+    <!-- Board -->
+    <insert id="commentInsert" parameterType="comment" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO board_comment (board_id, writer_id, group_id, content, reg_date)
+        VALUES(#{board_id}, #{writer_id}, #{group_id}, #{content}, NOW())
+    </insert>
+
+    <update id="commentUpdate" parameterType="comment">
+        UPDATE board_comment SET 
+        content = #{content}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="commentDelete" parameterType="comment">
+        DELETE FROM board_comment WHERE id = #{id}
+    </delete>
+
+    <update id="setGroupId">
+        UPDATE board_comment
+        SET group_id = LAST_INSERT_ID()
+        WHERE id = LAST_INSERT_ID()
+    </update>
+
+</mapper>

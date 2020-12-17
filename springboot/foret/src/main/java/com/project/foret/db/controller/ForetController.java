@@ -32,7 +32,6 @@ public class ForetController {
 
     // kind
     private static final int FORET = 2;
-    private static final int MEMBERFORET = 4;
     private static final int FORETMEMBER = 4;
 
     @RequestMapping(value = "/foret/insert", method = RequestMethod.POST)

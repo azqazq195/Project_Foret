@@ -13,6 +13,14 @@ SELECT * FROM member_like_board;
 SELECT * FROM member_like_comment;
 SELECT * FROM board;
 SELECT * FROM board_photo;
+SELECT * FROM board_comment ORDER BY group_id asc, id asc;
+
+INSERT INTO board_comment(board_id, writer_id, group_id, content, reg_date) 
+VALUES (6, 1, 0, '부모댓글', NOW());
+
+UPDATE board_comment
+SET group_id = LAST_INSERT_ID()
+WHERE id = LAST_INSERT_ID();
 
 INSERT INTO board (writer_id, foret_id, type, subject, content, reg_date, edit_date)
 VALUES(1, 1, 2, '제목', '내용', NOW(), NOW());
