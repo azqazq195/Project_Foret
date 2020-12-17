@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.foret.db.mapper.MemberMapper">
+    <select id="emailCheck" parameterType="member" resultType="member">
+        SELECT * FROM member WHERE email = #{email}
+    </select>
+
+    <select id="login" parameterType="member" resultType="member">
+        SELECT * FROM member WHERE email = #{email} AND password = #{password}
+    </select>
+
+    <!-- member -->
+    <insert id="memberInsert" parameterType="member" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO member (NAME, email, PASSWORD, nickname, birth, reg_date)
+        VALUES(#{name}, #{email}, #{password}, #{nickname}, #{birth}, NOW())
+    </insert>
+
+    <update id="memberUpdate" parameterType="member">
+        UPDATE member SET NAME = #{name}, PASSWORD = #{password}, nickname = #{nickname}, birth = #{birth}, email = #{email}
+        WHERE id = #{id}
+    </update>
+
+     <delete id="memberDelete" parameterType="member">
+        DELETE FROM member WHERE email = #{email}
+    </delete>
+
+</mapper>

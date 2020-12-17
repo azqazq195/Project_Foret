@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.foret.db.mapper.BoardMapper">
+    <!-- Board -->
+    <insert id="boardInsert" parameterType="board" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        <if test="type == 1 || type == 2 || type == 3">
+            INSERT INTO board (writer_id, foret_id, type, subject, content, reg_date, edit_date)
+            VALUES(#{writer_id}, #{foret_id}, #{type}, #{subject}, #{content}, NOW(), NOW())
+        </if>
+        <if test="type == 0 || type == 4">
+            INSERT INTO board (writer_id, type, subject, content, reg_date, edit_date)
+            VALUES(#{writer_id}, #{type}, #{subject}, #{content}, NOW(), NOW())
+        </if>
+    </insert>
+
+    <update id="boardUpdate" parameterType="board">
+        UPDATE board SET 
+        subject = #{subject}, content = #{content}, edit_date = NOW()
+        WHERE id = #{id}
+    </update>
+
+     <delete id="boardDelete" parameterType="board">
+        DELETE FROM board WHERE id = #{id}
+    </delete>
+
+</mapper>
