@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.project.foret.db.model.Link;
 import com.project.foret.db.model.Photo;
 import com.project.foret.db.model.Region;
 import com.project.foret.db.model.Tag;
@@ -14,107 +15,91 @@ import com.project.foret.db.service.LinkService;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+@Controller
 public class Helper {
     @Autowired
     LinkService linkService;
 
-    public String linkTagInsert(int kind, int reference_id, HttpServletRequest request) throws Exception {
-        System.out.println("--- linkTagInsert 실행 ---");
+    public List<Tag> makeTagList(int reference_id, HttpServletRequest request) throws Exception {
         String tag[] = request.getParameterValues("tag");
-        String linkTagRT = "EMPTY";
-
         if (tag != null) {
             List<Tag> tagList = new ArrayList<>();
             for (int i = 0; i < tag.length; i++) {
                 tagList.add(new Tag(reference_id, tag[i]));
             }
-            int linkTagResult = linkService.linkTagInsert(tagList, kind);
-            linkTagRT = linkTagResult > 0 ? "OK" : "FAIL";
+            return tagList;
+        } else {
+            return null;
         }
-
-        System.out.println("--- linkTagInsert 종료 ---\n");
-        return linkTagRT;
     }
 
-    public String linkRegionInsert(int kind, int reference_id, HttpServletRequest request) throws Exception {
-        System.out.println("--- linkRegionInsert 실행 ---");
+    public List<Region> makeRegionList(int reference_id, HttpServletRequest request) throws Exception {
         String region_si[] = request.getParameterValues("region_si");
         String region_gu[] = request.getParameterValues("region_gu");
-        String linkRegionRT = "EMPTY";
 
         if (region_si != null) {
             List<Region> regionList = new ArrayList<>();
             for (int i = 0; i < region_si.length; i++) {
                 regionList.add(new Region(reference_id, region_si[i], region_gu[i]));
             }
-            int linkRegionResult = linkService.linkRegionInsert(regionList, kind);
-            linkRegionRT = linkRegionResult > 0 ? "OK" : "FAIL";
+            return regionList;
+        } else {
+            return null;
         }
-
-        System.out.println("--- linkRegionInsert 종료 ---\n");
-        return linkRegionRT;
     }
 
-    public String linkPhotoInsert(int kind, int reference_id, HttpServletRequest request, MultipartFile photo)
+    public List<Photo> makePhotoList(int reference_id, HttpServletRequest request, MultipartFile[] photos)
             throws Exception {
-        System.out.println("--- linkPhotoInsert 실행 ---");
-        String linkPhotoRT = "EMPTY";
+        if (photos != null) {
+            List<Photo> photoList = new ArrayList<>();
+            for (int i = 0; i < photos.length; i++) {
+                String dir = request.getSession().getServletContext().getRealPath("/storage");
+                String originname = photos[i].getOriginalFilename();
+                String filename = photos[i].getOriginalFilename();
+                int lastIndex = originname.lastIndexOf(".");
+                String filetype = originname.substring(lastIndex + 1);
+                int filesize = (int) photos[i].getSize();
+                File file = new File(dir, filename);
+                FileCopyUtils.copy(photos[i].getInputStream(), new FileOutputStream(file));
 
-        if (photo != null) {
-            String dir = request.getSession().getServletContext().getRealPath("/storage");
-            String originname = photo.getOriginalFilename();
-            String filename = photo.getOriginalFilename();
-            int lastIndex = originname.lastIndexOf(".");
-            String filetype = originname.substring(lastIndex + 1);
-            int filesize = (int) photo.getSize();
-            File file = new File(dir, filename);
-            FileCopyUtils.copy(photo.getInputStream(), new FileOutputStream(file));
+                Photo photo = new Photo();
+                photo.setDir(dir);
+                photo.setOriginname(originname);
+                photo.setFilename(filename);
+                photo.setFiletype(filetype);
+                photo.setFilesize(filesize);
+                photo.setReference_id(reference_id);
 
-            Photo photoVO = new Photo();
-            photoVO.setDir(dir);
-            photoVO.setOriginname(originname);
-            photoVO.setFilename(filename);
-            photoVO.setFiletype(filetype);
-            photoVO.setFilesize(filesize);
-            photoVO.setReference_id(reference_id);
-
-            int linkPhotoResult = linkService.linkPhotoInsert(photoVO, kind);
-            linkPhotoRT = linkPhotoResult > 0 ? "OK" : "FAIL";
+                photoList.add(photo);
+            }
+            return photoList;
+        } else {
+            return null;
         }
-        System.out.println("--- linkPhotoInsert 종료 ---\n");
-        return linkPhotoRT;
     }
 
-    public void linkTagDelete(int reference_id, int kind) throws Exception {
-        System.out.println("--- linkTagDelete 실행 ---");
-        linkService.linkTagDelete(reference_id, kind);
-        System.out.println("--- linkTagDelete 종료 ---\n");
-    }
-
-    public void linkRegionDelete(int reference_id, int kind) throws Exception {
-        System.out.println("--- linkRegionDelete 실행 ---");
-        linkService.linkRegionDelete(reference_id, kind);
-        System.out.println("--- linkRegionDelete 종료 ---\n");
-    }
-
-    public void linkPhotoDelete(int reference_id, int kind) throws Exception {
-        System.out.println("--- linkPhotoDelete 실행 ---");
-        linkService.linkPhotoDelete(reference_id, kind);
-        System.out.println("--- linkPhotoDelete 종료 ---\n");
+    public String linkInsert(Link link, int kind) throws Exception {
+        int linkResult = linkService.linkInsert(link, kind);
+        return linkResult > 0 ? "OK" : "FAIL";
     }
 
     public int isNum(String string) {
         return string == null ? 0 : Integer.parseInt(string);
     }
 
-    public ModelAndView modelAndView(JSONObject json) {
+    public String isOK(int i) {
+        return i > 0 ? "OK" : "FAIL";
+    }
+
+    public ModelAndView modelAndView(JSONObject json, String viewName) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("json", json);
-        modelAndView.setViewName("member");
+        modelAndView.setViewName(viewName);
         return modelAndView;
     }
 }

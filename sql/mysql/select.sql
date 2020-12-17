@@ -1,10 +1,21 @@
 SELECT * FROM member;
 SELECT * FROM foret;
+SELECT * FROM foret_tag;
+SELECT * FROM foret_region;
+SELECT * FROM foret_photo;
 SELECT * FROM tag;
 SELECT * FROM region;
 SELECT * FROM member_tag;
 SELECT * FROM member_region;
 SELECT * FROM member_photo;
+SELECT * FROM member_foret;
+SELECT * FROM member_like_board;
+SELECT * FROM member_like_comment;
+SELECT * FROM board;
+SELECT * FROM board_photo;
+
+INSERT INTO board (writer_id, foret_id, type, subject, content, reg_date, edit_date)
+VALUES(1, 1, 2, '제목', '내용', NOW(), NOW());
 
 DELETE FROM member_tag
 WHERE member_id = 10;

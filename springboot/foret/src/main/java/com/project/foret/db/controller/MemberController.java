@@ -1,9 +1,14 @@
 package com.project.foret.db.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.project.foret.db.helper.Helper;
 import com.project.foret.db.model.Member;
+import com.project.foret.db.model.Photo;
+import com.project.foret.db.model.Region;
+import com.project.foret.db.model.Tag;
 import com.project.foret.db.service.LinkService;
 import com.project.foret.db.service.MemberService;
 
@@ -44,7 +49,7 @@ public class MemberController {
         json.put("RT", RT);
 
         System.out.println("--- member emailCheck 종료 ---\n");
-        return helper.modelAndView(json);
+        return helper.modelAndView(json, "member");
     }
 
     @RequestMapping(value = "/member/login", method = RequestMethod.POST)
@@ -58,7 +63,7 @@ public class MemberController {
 
         member = memberService.login(member);
         int result = member == null ? 0 : member.getId();
-        String RT = result > 0 ? "OK" : "FAIL";
+        String RT = helper.isOK(result);
 
         JSONObject json = new JSONObject();
         json.put("RT", RT);
@@ -78,13 +83,17 @@ public class MemberController {
         }
 
         System.out.println("--- member login 종료 ---\n");
-        return helper.modelAndView(json);
+        return helper.modelAndView(json, "member");
     }
 
     @RequestMapping(value = "/member/insert", method = RequestMethod.POST)
-    public ModelAndView insert(HttpServletRequest request, MultipartFile photo) throws Exception {
+    public ModelAndView insert(HttpServletRequest request, MultipartFile[] photo) throws Exception {
         System.out.println("--- member insert 실행 ---");
         request.setCharacterEncoding("UTF-8");
+
+        String memberTagRT = "EMPTY";
+        String memberRegionRT = "EMPTY";
+        String memberPhotoRT = "EMPTY";
 
         String name = request.getParameter("name");
         String email = request.getParameter("email");
@@ -101,27 +110,44 @@ public class MemberController {
 
         memberService.memberInsert(member);
         int member_id = member.getId();
-        String memberRT = member_id > 0 ? "OK" : "FAIL";
+        String memberRT = helper.isOK(member_id);
 
         JSONObject json = new JSONObject();
         json.put("memberRT", memberRT);
 
         if (memberRT.equals("OK")) {
-            json.put("memberTagRT", helper.linkTagInsert(MEMBER, member_id, request));
-            json.put("memberRegionRT", helper.linkRegionInsert(MEMBER, member_id, request));
-            json.put("memberPhotoRT", helper.linkPhotoInsert(MEMBER, member_id, request, photo));
+            List<Tag> tags = helper.makeTagList(member_id, request);
+            List<Region> regions = helper.makeRegionList(member_id, request);
+            List<Photo> photos = helper.makePhotoList(member_id, request, photo);
+            if (tags != null) {
+                memberTagRT = helper.isOK(linkService.linkTagInsert(tags, MEMBER));
+            }
+            if (regions != null) {
+                memberRegionRT = helper.isOK(linkService.linkRegionInsert(regions, MEMBER));
+            }
+            if (photo != null) {
+                memberPhotoRT = helper.isOK(linkService.linkPhotoInsert(photos, MEMBER));
+            }
+
+            json.put("memberTagRT", memberTagRT);
+            json.put("memberRegionRT", memberRegionRT);
+            json.put("memberPhotoRT", memberPhotoRT);
         }
 
         System.out.println("--- member insert 종료 ---\n");
-        return helper.modelAndView(json);
+        return helper.modelAndView(json, "member");
     }
 
     @RequestMapping(value = "/member/update", method = RequestMethod.POST)
-    public ModelAndView update(HttpServletRequest request, MultipartFile photo) throws Exception {
+    public ModelAndView update(HttpServletRequest request, MultipartFile[] photo) throws Exception {
         System.out.println("--- member update 실행 ---");
         request.setCharacterEncoding("UTF-8");
 
-        int member_id = helper.isNum(request.getParameter("id"));
+        String memberTagRT = "EMPTY";
+        String memberRegionRT = "EMPTY";
+        String memberPhotoRT = "EMPTY";
+
+        int member_id = helper.isNum(request.getParameter("member_id"));
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
@@ -145,22 +171,36 @@ public class MemberController {
             result = 0;
         }
 
-        String memberRT = result > 0 ? "OK" : "FAIL";
+        String memberRT = helper.isOK(result);
 
         JSONObject json = new JSONObject();
         json.put("memberRT", memberRT);
 
         if (memberRT.equals("OK")) {
-            helper.linkTagDelete(member_id, MEMBER);
-            helper.linkRegionDelete(member_id, MEMBER);
-            helper.linkPhotoDelete(member_id, MEMBER);
-            json.put("memberTagRT", helper.linkTagInsert(MEMBER, member_id, request));
-            json.put("memberRegionRT", helper.linkRegionInsert(MEMBER, member_id, request));
-            json.put("memberPhotoRT", helper.linkPhotoInsert(MEMBER, member_id, request, photo));
+            linkService.linkTagDelete(member_id, MEMBER);
+            linkService.linkRegionDelete(member_id, MEMBER);
+            linkService.linkPhotoDelete(member_id, MEMBER);
+
+            List<Tag> tags = helper.makeTagList(member_id, request);
+            List<Region> regions = helper.makeRegionList(member_id, request);
+            List<Photo> photos = helper.makePhotoList(member_id, request, photo);
+            if (tags != null) {
+                memberTagRT = helper.isOK(linkService.linkTagInsert(tags, MEMBER));
+            }
+            if (regions != null) {
+                memberRegionRT = helper.isOK(linkService.linkRegionInsert(regions, MEMBER));
+            }
+            if (photo != null) {
+                memberPhotoRT = helper.isOK(linkService.linkPhotoInsert(photos, MEMBER));
+            }
+
+            json.put("memberTagRT", memberTagRT);
+            json.put("memberRegionRT", memberRegionRT);
+            json.put("memberPhotoRT", memberPhotoRT);
         }
 
         System.out.println("--- member update 종료 ---\n");
-        return helper.modelAndView(json);
+        return helper.modelAndView(json, "member");
     }
 
     @RequestMapping(value = "/member/delete", method = RequestMethod.POST)
@@ -179,7 +219,7 @@ public class MemberController {
         json.put("memberRT", RT);
 
         System.out.println("--- member delete 종료 ---\n");
-        return helper.modelAndView(json);
+        return helper.modelAndView(json, "member");
     }
 
 }

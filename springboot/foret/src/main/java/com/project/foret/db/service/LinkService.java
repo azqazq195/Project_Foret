@@ -3,6 +3,7 @@ package com.project.foret.db.service;
 import java.util.List;
 
 import com.project.foret.db.mapper.LinkMapper;
+import com.project.foret.db.model.Link;
 import com.project.foret.db.model.Photo;
 import com.project.foret.db.model.Region;
 import com.project.foret.db.model.Tag;
@@ -19,6 +20,10 @@ public class LinkService {
     private static final int MEMBER = 1;
     private static final int FORET = 2;
     private static final int BOARD = 3;
+
+    private static final int MEMBERFORET = 4;
+    private static final int LIKEBOARD = 5;
+    private static final int LIKECOMMENT = 6;
 
     public int linkTagInsert(List<Tag> tag, int kind) throws Exception {
         switch (kind) {
@@ -72,7 +77,7 @@ public class LinkService {
         }
     }
 
-    public int linkPhotoInsert(Photo photo, int kind) throws Exception {
+    public int linkPhotoInsert(List<Photo> photo, int kind) throws Exception {
         switch (kind) {
             case MEMBER:
                 System.out.println("--- memberPhotoInsert");
@@ -99,6 +104,38 @@ public class LinkService {
             case BOARD:
                 System.out.println("--- boardPhotoDelete");
                 return linkMapper.boardPhotoDelete(reference_id);
+            default:
+                return 0;
+        }
+    }
+
+    public int linkInsert(Link link, int kind) throws Exception {
+        switch (kind) {
+            case MEMBERFORET:
+                System.out.println("--- memberForetInsert");
+                return linkMapper.memberForetInsert(link);
+            case LIKEBOARD:
+                System.out.println("--- likeBoardInsert");
+                return linkMapper.likeBoardInsert(link);
+            case LIKECOMMENT:
+                System.out.println("--- likeCommentInsert");
+                return linkMapper.likeCommentInsert(link);
+            default:
+                return 0;
+        }
+    }
+
+    public int linkDelete(Link link, int kind) throws Exception {
+        switch (kind) {
+            case MEMBERFORET:
+                System.out.println("--- memberForetDelete");
+                return linkMapper.memberForetDelete(link);
+            case LIKEBOARD:
+                System.out.println("--- likeBoardDelete");
+                return linkMapper.likeBoardDelete(link);
+            case LIKECOMMENT:
+                System.out.println("--- likeCommentDelete");
+                return linkMapper.likeCommentDelete(link);
             default:
                 return 0;
         }
