@@ -3,8 +3,11 @@ select * from member;
 select foret.name from foret
 union all
 select tag.tag_name from tag;
-
-select * from foret;
+select * from member_photo order by id asc;
+select * from
+v_member_all;
+select * from v_foret_all;
+select * from foret_photo;
 select * from V_SEARCH_KEYWORD;
 select * from tag;
 select * from member where email = 'jakejeook5@gmail.com';
@@ -14,6 +17,7 @@ select * from board_comment;
 delete from board_comment where id = 188;
 commit;
 
+select * from V_MEMBER_ALL;
 
 select * from board_comment;
 SELECT * FROM V_MEMBER_AND_PHOTO;
@@ -28,7 +32,7 @@ select id, name from foret;
 
 
 -- ÁÁ¾Æ¿ä °¹¼ö, ´ñ±Û °¹¼ö
-select * from board;
+select * from v_board_all;
 insert into board values (seq_board_id.nextval, 1, null, 0,0, 'Å×½ºÆ®', 'Å×½ºÆ®', sysdate, sysdate);
 select * from v_board_all where type = 0 order by board_like desc nulls last, id desc;
 select * from v_board_all where type = 4 and foret_id = 58;

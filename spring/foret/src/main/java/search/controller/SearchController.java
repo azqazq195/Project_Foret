@@ -175,24 +175,26 @@ public class SearchController {
 				foret_id = boardALLDTO.getForet_id();
 				board_id = boardALLDTO.getId();
 				
-				if(tempBoardId != board_id) {
-					if(tempBoardId != 0) {
-						boardArray.put(boardTemp);
-						boardTemp = new JSONObject();
+				if(board_id != 0) {
+					if(tempBoardId != board_id) {
+						if(tempBoardId != 0) {
+							boardArray.put(boardTemp);
+							boardTemp = new JSONObject();
+						}
+						tempBoardId = board_id;
+						boardTemp.put("id", board_id);
+						boardTemp.put("writer", boardALLDTO.getWriter());
+						boardTemp.put("type", boardALLDTO.getType());
+						boardTemp.put("hit", boardALLDTO.getHit());
+						boardTemp.put("subject", boardALLDTO.getSubject());
+						boardTemp.put("content", boardALLDTO.getContent());
+						boardTemp.put("reg_date", boardALLDTO.getReg_date());
+						boardTemp.put("edit_date", boardALLDTO.getEdit_date());
+						boardTemp.put("board_like", boardALLDTO.getBoard_like());
+						boardTemp.put("board_comment", boardALLDTO.getBoard_comment());
+						boardTemp.put("photo", boardALLDTO.getBoard_photo());
 					}
-					tempBoardId = board_id;
-					boardTemp.put("id", board_id);
-					boardTemp.put("writer", boardALLDTO.getWriter());
-					boardTemp.put("type", boardALLDTO.getType());
-					boardTemp.put("hit", boardALLDTO.getHit());
-					boardTemp.put("subject", boardALLDTO.getSubject());
-					boardTemp.put("content", boardALLDTO.getContent());
-					boardTemp.put("reg_date", boardALLDTO.getReg_date());
-					boardTemp.put("edit_date", boardALLDTO.getEdit_date());
-					boardTemp.put("board_like", boardALLDTO.getBoard_like());
-					boardTemp.put("board_comment", boardALLDTO.getBoard_comment());
 				}
-				
 				if(tempForetId != foret_id) {
 					if(tempForetId != 0) {
 						foretTemp.put("board", boardArray);
@@ -204,7 +206,8 @@ public class SearchController {
 					foretTemp.put("id", foret_id);
 					foretTemp.put("name", boardALLDTO.getForet_name());
 					foretTemp.put("photo", boardALLDTO.getForet_photo());
-				}		
+				}	
+				
 			}
 			boardArray.put(boardTemp);
 			foretTemp.put("board", boardArray);
