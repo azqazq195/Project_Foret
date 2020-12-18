@@ -6,7 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 
 @Configuration
-@PropertySources({ @PropertySource(value = "file:D:/Code/Config/config.properties", ignoreResourceNotFound = true), })
+@PropertySources({ @PropertySource(value = "classpath:/config.properties", ignoreResourceNotFound = true), })
 
 public class GlobalPropertySource {
 
