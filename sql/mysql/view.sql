@@ -1,5 +1,5 @@
 # member select all
-CREATE VIEW V_member_all AS
+CREATE OR REPLACE VIEW V_member_all AS
 SELECT
 member.id,
 member.name,
@@ -11,7 +11,8 @@ member.reg_date,
 member_tag.tag_name,
 member_region.region_si,
 member_region.region_gu,
-member_photo.filename
+member_photo.filename,
+member_foret.foret_id
 FROM member
 LEFT OUTER
 JOIN member_tag ON member.id = member_tag.member_id
@@ -19,4 +20,6 @@ LEFT OUTER
 JOIN member_region ON member.id = member_region.member_id
 LEFT OUTER
 JOIN member_photo ON member.id = member_photo.member_id
+LEFT OUTER
+JOIN member_foret ON member.id = member_foret.member_id
 ORDER BY member.id ASC;
