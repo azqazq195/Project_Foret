@@ -11,9 +11,7 @@ public class Member {
     private String nickname;
     private String birth;
     private String reg_date;
-    private String tag[];
-    private String region_si[];
-    private String region_gu[];
+    private String device_token;
 
     public int getId() {
         return this.id;
@@ -71,28 +69,12 @@ public class Member {
         this.reg_date = reg_date;
     }
 
-    public String[] getTag() {
-        return this.tag;
+    public String getDevice_token() {
+        return this.device_token;
     }
 
-    public void setTag(String tag[]) {
-        this.tag = tag;
-    }
-
-    public String[] getRegion_si() {
-        return this.region_si;
-    }
-
-    public void setRegion_si(String region_si[]) {
-        this.region_si = region_si;
-    }
-
-    public String[] getRegion_gu() {
-        return this.region_gu;
-    }
-
-    public void setRegion_gu(String region_gu[]) {
-        this.region_gu = region_gu;
+    public void setDevice_token(String device_token) {
+        this.device_token = device_token;
     }
 
     public Member() {

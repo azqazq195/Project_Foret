@@ -87,9 +87,13 @@ public class MemberController {
         return helper.modelAndView(json, "member");
     }
 
+    // device_token 받기
+    // id 뱉기
     @RequestMapping(value = "/member/insert", method = RequestMethod.POST)
     public ModelAndView insert(HttpServletRequest request, MultipartFile[] photo) throws Exception {
-        System.out.println("--- member insert 실행 ---");
+        System.out.println
+
+        ("--- member insert 실행 ---");
         request.setCharacterEncoding("UTF-8");
 
         String memberTagRT = "EMPTY";
@@ -101,6 +105,7 @@ public class MemberController {
         String password = request.getParameter("password");
         String nickname = request.getParameter("nickname");
         String birth = request.getParameter("birth");
+        String device_token = request.getParameter("device_token");
 
         Member member = new Member();
         member.setName(name);
@@ -108,6 +113,7 @@ public class MemberController {
         member.setPassword(password);
         member.setNickname(nickname);
         member.setBirth(birth);
+        member.setDevice_token(device_token);
 
         memberService.memberInsert(member);
         int member_id = member.getId();
@@ -115,6 +121,7 @@ public class MemberController {
 
         JSONObject json = new JSONObject();
         json.put("memberRT", memberRT);
+        json.put("member_id", member_id);
 
         if (memberRT.equals("OK")) {
             List<Tag> tags = helper.makeTagList(member_id, request);
