@@ -214,7 +214,7 @@ public class MemberController {
         Member member = new Member(email);
 
         int result = memberService.memberDelete(member);
-        String RT = result > 0 ? "OK" : "FAIL";
+        String RT = helper.isOK(result);
 
         JSONObject json = new JSONObject();
         json.put("memberRT", RT);
@@ -234,7 +234,7 @@ public class MemberController {
         Link link = new Link(member_id, foret_id);
 
         int result = memberService.foretInsert(link);
-        String RT = result > 0 ? "OK" : "FAIL";
+        String RT = helper.isOK(result);
 
         JSONObject json = new JSONObject();
         json.put("RT", RT);
@@ -254,7 +254,7 @@ public class MemberController {
         Link link = new Link(member_id, foret_id);
 
         int result = memberService.foretDelete(link);
-        String RT = result > 0 ? "OK" : "FAIL";
+        String RT = helper.isOK(result);
 
         JSONObject json = new JSONObject();
         json.put("RT", RT);

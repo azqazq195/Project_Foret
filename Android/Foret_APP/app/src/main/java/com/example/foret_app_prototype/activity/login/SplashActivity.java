@@ -40,7 +40,7 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 500); // 0.5초후
+        }, 1000);
     }
 
 
