@@ -703,8 +703,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         }
 
 
-        params.put("deviceToken", deviceToken);
-        Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
+        params.put("device_token", deviceToken);
+        Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname + ", " + deviceToken);
         String url = "http://54.180.219.200:8085/member/insert";
         try {
             if (file != null)
