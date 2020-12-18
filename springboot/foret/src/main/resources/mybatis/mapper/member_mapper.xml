@@ -20,8 +20,18 @@
         WHERE id = #{id}
     </update>
 
-     <delete id="memberDelete" parameterType="member">
+    <delete id="memberDelete" parameterType="member">
         DELETE FROM member WHERE email = #{email}
+    </delete>
+
+    <!-- member_foret -->
+    <insert id="foretInsert" parameterType="link">
+        INSERT INTO member_foret (member_id, foret_id)
+        VALUES(#{member_id}, #{reference_id})
+    </insert>
+
+    <delete id="foretDelete" parameterType="link">
+        DELETE FROM member_foret WHERE member_id = #{member_id} AND foret_id = #{reference_id}
     </delete>
 
 </mapper>

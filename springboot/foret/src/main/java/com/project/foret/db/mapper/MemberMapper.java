@@ -1,5 +1,6 @@
 package com.project.foret.db.mapper;
 
+import com.project.foret.db.model.Link;
 import com.project.foret.db.model.Member;
 
 public interface MemberMapper {
@@ -12,4 +13,8 @@ public interface MemberMapper {
     public int memberUpdate(Member member) throws Exception;
 
     public int memberDelete(Member member) throws Exception;
+
+    public int foretInsert(Link link) throws Exception;
+
+    public int foretDelete(Link link) throws Exception;
 }

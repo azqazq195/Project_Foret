@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.project.foret.db.helper.Helper;
+import com.project.foret.db.model.Link;
 import com.project.foret.db.model.Member;
 import com.project.foret.db.model.Photo;
 import com.project.foret.db.model.Region;
@@ -219,6 +220,46 @@ public class MemberController {
         json.put("memberRT", RT);
 
         System.out.println("--- member delete 종료 ---\n");
+        return helper.modelAndView(json, "member");
+    }
+
+    @RequestMapping(value = "/member/foretInsert", method = RequestMethod.POST)
+    public ModelAndView foretInsert(HttpServletRequest request) throws Exception {
+        System.out.println("--- member foretInsert 실행 ---");
+        request.setCharacterEncoding("UTF-8");
+
+        int member_id = helper.isNum(request.getParameter("member_id"));
+        int foret_id = helper.isNum(request.getParameter("foret_id"));
+
+        Link link = new Link(member_id, foret_id);
+
+        int result = memberService.foretInsert(link);
+        String RT = result > 0 ? "OK" : "FAIL";
+
+        JSONObject json = new JSONObject();
+        json.put("RT", RT);
+
+        System.out.println("--- member foretInsert 종료 ---\n");
+        return helper.modelAndView(json, "member");
+    }
+
+    @RequestMapping(value = "/member/foretDelete", method = RequestMethod.POST)
+    public ModelAndView foretDelete(HttpServletRequest request) throws Exception {
+        System.out.println("--- member foretDelete 실행 ---");
+        request.setCharacterEncoding("UTF-8");
+
+        int member_id = helper.isNum(request.getParameter("member_id"));
+        int foret_id = helper.isNum(request.getParameter("foret_id"));
+
+        Link link = new Link(member_id, foret_id);
+
+        int result = memberService.foretDelete(link);
+        String RT = result > 0 ? "OK" : "FAIL";
+
+        JSONObject json = new JSONObject();
+        json.put("RT", RT);
+
+        System.out.println("--- member foretDelete 종료 ---\n");
         return helper.modelAndView(json, "member");
     }
 
