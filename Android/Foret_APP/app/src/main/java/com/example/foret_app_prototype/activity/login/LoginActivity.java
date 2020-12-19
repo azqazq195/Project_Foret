@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     String id;
     AsyncHttpClient client;
     HttpResponse response;
-    String url = "http://34.72.240.24:8085/foret/search/member_login.do";
+    String url = "http://54.180.219.200:8085/member/login";
     Button button0;
     TextView button3, button4;
     EditText emailEditText, passwordEditText;
@@ -224,13 +224,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             try {
                 JSONObject json = new JSONObject(str);
                 String RT = json.getString("RT");
+                String idJSON = json.getJSONArray("member").getJSONObject(0).getString("id");
                 Log.e("[test]", RT);
-                Log.e("[test]", json.getString("id"));
+                Log.e("[test]", idJSON);
 
                 if (RT.equals("OK")) {
                     //파이어 베이스
                     joinedMember(email, pwd);
-                    id = json.getString("id");
+                    id = idJSON;
 
                     Log.e("[test]", "성공진입/" + statusCode);
                     ProgressDialogHelper.getInstance().removeProgressbar();

@@ -58,7 +58,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
@@ -79,8 +82,7 @@ public class MainActivity extends AppCompatActivity
     MemberDTO memberDTO;
     AsyncHttpClient client;
     HttpResponse response;
-    String url = "http://34.72.240.24:8085/foret/search/member.do";
-    // String url = "http://192.168.0.180:8085/foret/search/member.do";
+    String url = "http://54.180.219.200:8085/get/member";
     TextView button_out, drawer_text1, drawer_text2, drawer_text3, drawer_text4;
     ImageView button_out2, button_drawcancel, profile;
     Intent intent;
@@ -93,21 +95,10 @@ public class MainActivity extends AppCompatActivity
     String mUID;
     String id;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public MemberDTO getMemberDTO() {
-        return memberDTO;
-    }
-
-    public void setMemberDTO(MemberDTO memberDTO) {
-        this.memberDTO = memberDTO;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public MemberDTO getMemberDTO() { return memberDTO; }
+    public void setMemberDTO(MemberDTO memberDTO) { this.memberDTO = memberDTO; }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -298,10 +289,71 @@ public class MainActivity extends AppCompatActivity
 
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
-                    memberDTO = gson.fromJson(temp.toString(), MemberDTO.class);
 
-                    setMemberDTO(memberDTO);
-                    memberDTO.setPhoto(temp.getString("photo"));
+
+                    memberDTO = new MemberDTO();
+                    memberDTO.setId(Integer.parseInt(temp.getString("id")));
+                    memberDTO.setName(temp.getString("name"));
+                    memberDTO.setEmail(temp.getString("email"));
+                    memberDTO.setPassword(temp.getString("password"));
+                    memberDTO.setNickname(temp.getString("nickname"));
+                    memberDTO.setBirth(temp.getString("birth"));
+                    memberDTO.setReg_date(temp.getString("reg_date"));
+                    memberDTO.setDeviceToken(temp.getString("deviceToken"));
+
+                    if(!temp.getString("photo").equals("0")){
+                        memberDTO.setPhoto(temp.getString("photo"));
+                    }
+                    if(!temp.getString("tag").equals("0")){
+                        List<String> tempList = new ArrayList<>();
+                        JSONArray tempArray = temp.getJSONArray("tag");
+                        for(int i = 0; i < tempArray.length(); i++){
+                            tempList.add(tempArray.getString(i));
+                        }
+                        memberDTO.setTag(tempList);
+                    }
+
+                    if(!temp.getString("region_si").equals("0")){
+                        List<String> tempList = new ArrayList<>();
+                        JSONArray tempArray = temp.getJSONArray("region_si");
+                        for(int i = 0; i < tempArray.length(); i++){
+                            tempList.add(tempArray.getString(i));
+                        }
+                        memberDTO.setRegion_si(tempList);
+                    }
+                    if(!temp.getString("region_gu").equals("0")){
+                        List<String> tempList = new ArrayList<>();
+                        JSONArray tempArray = temp.getJSONArray("region_gu");
+                        for(int i = 0; i < tempArray.length(); i++){
+                            tempList.add(tempArray.getString(i));
+                        }
+                        memberDTO.setRegion_gu(tempList);
+                    }
+                    if(!temp.getString("like_board").equals("0")){
+                        List<String> tempList = new ArrayList<>();
+                        JSONArray tempArray = temp.getJSONArray("like_board");
+                        for(int i = 0; i < tempArray.length(); i++){
+                            tempList.add(tempArray.getString(i));
+                        }
+                        memberDTO.setLike_board(tempList);
+                    }
+                    if(!temp.getString("like_comment").equals("0")){
+                        List<String> tempList = new ArrayList<>();
+                        JSONArray tempArray = temp.getJSONArray("like_comment");
+                        for(int i = 0; i < tempArray.length(); i++){
+                            tempList.add(tempArray.getString(i));
+                        }
+                        memberDTO.setLike_comment(tempList);
+                    }
+                    if(!temp.getString("foret_id").equals("0")){
+                        List<String> tempList = new ArrayList<>();
+                        JSONArray tempArray = temp.getJSONArray("foret_id");
+                        for(int i = 0; i < tempArray.length(); i++){
+                            tempList.add(tempArray.getString(i));
+                        }
+                        memberDTO.setForet_id(tempList);
+                    }
+
                     // Bundle bundle = new Bundle();
                     // bundle.putSerializable("membetDTO",memberDTO);
                     // searchFragment = new SearchFragment(memberDTO);
@@ -309,7 +361,7 @@ public class MainActivity extends AppCompatActivity
 
                     LoginActivity loginActivity = (LoginActivity) LoginActivity.loginActivity;
                     // 세션에 담아서 로그인 페이지로
-                    Log.e("[test]","세션 담기전 DTO?"+memberDTO+toString());
+                    Log.e("[test]","세션 담기전 DTO?"+memberDTO.toString());
                     SessionManager sessionManager = new SessionManager(loginActivity);
                     sessionManager.saveSession(memberDTO);
 
