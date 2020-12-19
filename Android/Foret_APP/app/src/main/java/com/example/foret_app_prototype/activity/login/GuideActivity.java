@@ -128,6 +128,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.foret4));
 
         client = new AsyncHttpClient();
+        // getDevice_token
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
@@ -193,7 +194,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
         //각 지역, 태그 리스트에 DB에 저장된 목록 저장
         //client.post("http://34.72.240.24:8085/foret/region/region_list.do", regionListResponse);
-        client.post("http://54.180.219.200:8085/tag/list", tagListResponse);
+        client.post("http://54.180.219.200:8085/get/tagList", tagListResponse);
 
     }
 

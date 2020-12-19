@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity
         response = new HttpResponse();
         sessionManager = new SessionManager(this);
 
+        // 아이디 가져오기
         id = getIntent().getStringExtra("id");
         if (id == null || id.equals("")) {
             id = "" + sessionManager.getSession();
