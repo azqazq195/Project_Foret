@@ -193,7 +193,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
         //각 지역, 태그 리스트에 DB에 저장된 목록 저장
         //client.post("http://34.72.240.24:8085/foret/region/region_list.do", regionListResponse);
-        client.post("http://34.72.240.24:8085/foret/tag/tag_list.do", tagListResponse);
+        client.post("http://54.180.219.200:8085/tag/list", tagListResponse);
 
     }
 
@@ -705,7 +705,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
 
         params.put("deviceToken", deviceToken);
         Log.e("[test]", name + ", " + email + ", " + pw2 + ", " + birth + ", " + nickname);
-        String url = "http://34.72.240.24:8085/foret/member/member_insert.do";
+        String url = "http://54.180.219.200:8085/member/insert";
         try {
             if (file != null)
                 params.put("photo", file);
@@ -743,7 +743,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 String memberTagRT = json.getString("memberTagRT");
                 String memberRegionRT = json.getString("memberRegionRT");
                 String memberPhotoRT = json.getString("memberPhotoRT");
-                member_id = Integer.parseInt(json.getString("id"));
+                member_id = Integer.parseInt(json.getString("member_id"));
 
                 if (memberRT.equals("OK")) {
                     Toast.makeText(
@@ -952,8 +952,9 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
             String str = new String(responseBody);
             try {
+                Log.d("[TEST]", "tagList => " + "완료");
                 JSONObject json = new JSONObject(str);
-                if (json.getInt("total") != 0) {
+                if (json.getString("tagRT").equals("OK")) {
                     JSONArray tag = json.getJSONArray("tag");
                     for (int a = 0; a < tag.length(); a++) {
                         JSONObject object = tag.getJSONObject(a);
@@ -961,6 +962,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                     }
 
                 }
+                Log.d("[TEST]", "tagList => " + tag_list.size());
             } catch (JSONException e) {
                 e.printStackTrace();
             }

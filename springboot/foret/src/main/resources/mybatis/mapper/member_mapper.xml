@@ -11,8 +11,8 @@
 
     <!-- member -->
     <insert id="memberInsert" parameterType="member" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
-        INSERT INTO member (NAME, email, PASSWORD, nickname, birth, reg_date)
-        VALUES(#{name}, #{email}, #{password}, #{nickname}, #{birth}, NOW())
+        INSERT INTO member (NAME, email, PASSWORD, nickname, birth, reg_date, device_token)
+        VALUES(#{name}, #{email}, #{password}, #{nickname}, #{birth}, NOW(), #{device_token})
     </insert>
 
     <update id="memberUpdate" parameterType="member">

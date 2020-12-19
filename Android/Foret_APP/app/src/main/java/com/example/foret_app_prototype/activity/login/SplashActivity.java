@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 
 import com.example.foret_app_prototype.R;
 
-public class SplashActivity extends AppCompatActivity implements View.OnClickListener {
+public class SplashActivity extends AppCompatActivity {
 
     ConstraintLayout splash;
     Intent intent;
@@ -32,16 +33,15 @@ public class SplashActivity extends AppCompatActivity implements View.OnClickLis
 
         splash = findViewById(R.id.splash);
 
-        splash.setOnClickListener(this);
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable()  {
+            public void run() {
+                intent = new Intent(SplashActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }, 1000);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.splash :
-                intent = new Intent(this, LoginActivity.class);
-                break;
-        }
-        startActivity(intent);
-    }
+
 }

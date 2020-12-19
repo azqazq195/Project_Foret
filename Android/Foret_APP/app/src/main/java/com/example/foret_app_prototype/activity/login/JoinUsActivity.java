@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -302,7 +304,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
 
     private void checkedEmail() {
         email = editText4.getText().toString().trim();
-        String url = "http://34.72.240.24:8085/foret/search/check_email.do";
+        String url = "http://54.180.219.200:8085/member/emailCheck";
         AsyncHttpClient client = new AsyncHttpClient();
         EmailResponse emailResponse = new EmailResponse();
         RequestParams params = new RequestParams();
@@ -525,6 +527,7 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
                         break;
                     case 6:
                         inputCheck();
+
                 }
                 break;
             case android.R.id.home: // 뒤로가기 버튼
@@ -534,6 +537,33 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void nextButton(){
+        Log.d("[TEST]", "[이벤트]check_count => " + check_count);
+               switch (check_count) {
+                    case 0:
+                        editName();
+                        break;
+                    case 1:
+                        editNick();
+                        break;
+                    case 2:
+                        editBirth();
+                        break;
+                    case 3:
+                        editEmail();
+                        break;
+                    case 4:
+                        editPw();
+                        break;
+                    case 5:
+                        editPw2();
+                        break;
+                    case 6:
+                        inputCheck();
+                        break;
+                }
     }
 
     private void inputCheck() {
@@ -587,6 +617,73 @@ public class JoinUsActivity extends AppCompatActivity implements View.OnClickLis
         check4 = findViewById(R.id.check4);
         check5 = findViewById(R.id.check5);
         check6 = findViewById(R.id.check6);
+
+        editText1.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // enter key action
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    nextButton();
+                    return true;
+                }
+                return false;
+            }
+        });
+        editText2.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // enter key action
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    nextButton();
+                    return true;
+                }
+                return false;
+            }
+        });
+        editText3.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // enter key action
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    nextButton();
+                    return true;
+                }
+                return false;
+            }
+        });
+        editText4.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // enter key action
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    nextButton();
+                    return true;
+                }
+                return false;
+            }
+        });
+        editText5.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // enter key action
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    nextButton();
+                    return true;
+                }
+                return false;
+            }
+        });
+        editText6.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // enter key action
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    nextButton();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         check4.setOnClickListener(this);
         show_pw.setOnClickListener(this);
