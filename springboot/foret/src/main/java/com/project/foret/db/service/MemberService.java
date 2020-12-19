@@ -1,5 +1,6 @@
 package com.project.foret.db.service;
 
+import com.project.foret.db.model.Link;
 import com.project.foret.db.model.Member;
 
 import com.project.foret.db.mapper.MemberMapper;
@@ -35,6 +36,16 @@ public class MemberService {
     public int memberDelete(Member member) throws Exception {
         System.out.println("--- memberDelete");
         return memberMapper.memberDelete(member);
+    }
+
+    public int foretInsert(Link link) throws Exception {
+        System.out.println("--- foretInsert");
+        return memberMapper.foretInsert(link);
+    }
+
+    public int foretDelete(Link link) throws Exception {
+        System.out.println("--- foretDelete");
+        return memberMapper.foretDelete(link);
     }
 
 }
