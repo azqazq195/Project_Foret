@@ -13,6 +13,27 @@ public class Member {
     private String reg_date;
     private String device_token;
 
+    private String filename;
+    private String tag_name;
+    private String region_si;
+    private String region_gu;
+    private int like_board;
+    private int like_comment;
+    private int foret_id;
+
+    public Member() {
+
+    }
+
+    public Member(String email) {
+        this.email = email;
+    }
+
+    public Member(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
     public int getId() {
         return this.id;
     }
@@ -77,17 +98,60 @@ public class Member {
         this.device_token = device_token;
     }
 
-    public Member() {
-
+    public String getFilename() {
+        return this.filename;
     }
 
-    public Member(String email) {
-        this.email = email;
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
-    public Member(String email, String password) {
-        this.email = email;
-        this.password = password;
+    public String getTag_name() {
+        return this.tag_name;
+    }
+
+    public void setTag_name(String tag_name) {
+        this.tag_name = tag_name;
+    }
+
+    public String getRegion_si() {
+        return this.region_si;
+    }
+
+    public void setRegion_si(String region_si) {
+        this.region_si = region_si;
+    }
+
+    public String getRegion_gu() {
+        return this.region_gu;
+    }
+
+    public void setRegion_gu(String region_gu) {
+        this.region_gu = region_gu;
+    }
+
+    public int getLike_board() {
+        return this.like_board;
+    }
+
+    public void setLike_board(int like_board) {
+        this.like_board = like_board;
+    }
+
+    public int getLike_comment() {
+        return this.like_comment;
+    }
+
+    public void setLike_comment(int like_comment) {
+        this.like_comment = like_comment;
+    }
+
+    public int getForet_id() {
+        return this.foret_id;
+    }
+
+    public void setForet_id(int foret_id) {
+        this.foret_id = foret_id;
     }
 
 }

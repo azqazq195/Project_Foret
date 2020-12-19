@@ -18,6 +18,7 @@ public class MemberDTO implements Serializable {
     private List<String> region_gu;
     private List<String> like_board;
     private List<String> like_comment;
+    private List<String> foret_id;
 
     public int getId() {
         return id;
@@ -131,6 +132,14 @@ public class MemberDTO implements Serializable {
         this.like_comment = like_comment;
     }
 
+    public List<String> getForet_id() {
+        return foret_id;
+    }
+
+    public void setForet_id(List<String> foret_id) {
+        this.foret_id = foret_id;
+    }
+
     @Override
     public String toString() {
         return "MemberDTO{" +
@@ -148,6 +157,7 @@ public class MemberDTO implements Serializable {
                 ", region_gu=" + region_gu +
                 ", like_board=" + like_board +
                 ", like_comment=" + like_comment +
+                ", foret_id=" + foret_id +
                 '}';
     }
 }
