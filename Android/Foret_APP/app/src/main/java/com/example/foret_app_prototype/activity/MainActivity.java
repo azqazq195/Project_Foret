@@ -370,9 +370,13 @@ public class MainActivity extends AppCompatActivity
                     // Toast.LENGTH_SHORT).show();
 
                     fillTextView(R.id.drawer_text1, memberDTO.getNickname());
+                   // Log.e("[SUNMI1]", memberDTO.getNickname());
                     fillTextView(R.id.drawer_text2, memberDTO.getEmail());
+                   // Log.e("[SUNMI2]", memberDTO.getEmail());
                     fillTextView(R.id.drawer_text3, memberDTO.getId() + "");
+                  //  Log.e("[SUNMI3]", memberDTO.getId() + "");
                     fillTextView(R.id.drawer_text4, memberDTO.getReg_date());
+                  //  Log.e("[SUNMI4]", memberDTO.getReg_date());
                     try {
                         // 사진이 있을 떄
                         intoImage(context, memberDTO.getPhoto(), R.id.drawer_profile);
@@ -477,6 +481,7 @@ public class MainActivity extends AppCompatActivity
 
     public void fillTextView(int id, String text) {
         TextView tv = (TextView) findViewById(id);
+        Log.e("[햄버거 텍스트뷰 세팅]", text);
         tv.setText(text);
     }
 
