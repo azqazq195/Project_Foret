@@ -65,6 +65,7 @@ import java.util.List;
 import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -83,8 +84,8 @@ public class MainActivity extends AppCompatActivity
     AsyncHttpClient client;
     HttpResponse response;
     String url = "http://54.180.219.200:8085/get/member";
-    TextView button_out, drawer_text1, drawer_text2, drawer_text3, drawer_text4;
-    ImageView button_out2, button_drawcancel, profile;
+    TextView button_out;
+    ImageView button_out2, button_drawcancel;
     Intent intent;
 
     SessionManager sessionManager;
@@ -127,11 +128,6 @@ public class MainActivity extends AppCompatActivity
         button_out = findViewById(R.id.button_out); // 햄버거 로그아웃버튼
         button_out2 = findViewById(R.id.button_out2); // 햄버거 로그아웃버튼
         button_drawcancel = findViewById(R.id.button_drawcancel); // 햄버거 닫기
-        drawer_text1 = findViewById(R.id.drawer_text1); // 회원닉네임
-        drawer_text2 = findViewById(R.id.drawer_text2); // 이메일
-        drawer_text3 = findViewById(R.id.drawer_text3); // 멤머 아이디
-        drawer_text4 = findViewById(R.id.drawer_text4); // 가입일
-        profile = findViewById(R.id.drawer_profile); // 햄버거메뉴에 들어갈 프로필사진
 
         nav_bottom.setOnNavigationItemSelectedListener(this);
         nav_drawer.setNavigationItemSelectedListener(this::onNavigationItemSelected);
@@ -353,6 +349,8 @@ public class MainActivity extends AppCompatActivity
                         memberDTO.setForet_id(tempList);
                     }
                 }
+                //햄버거 메뉴 데이터 세팅
+                setNavigationView(memberDTO);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -393,6 +391,21 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(MainActivity.this, "에러", Toast.LENGTH_SHORT).show();
             Log.e("[test]", "리스펀스 페일 진입");
         }
+    }
+
+    private void setNavigationView(MemberDTO memberDTO) {
+        View nav_header = nav_drawer.getHeaderView(0);
+        TextView button_out = (TextView)nav_header.findViewById(R.id.button_out);
+        TextView drawer_text1 = (TextView)nav_header.findViewById(R.id.drawer_text1);
+        TextView drawer_text2 = (TextView)nav_header.findViewById(R.id.drawer_text2);
+        TextView drawer_text3 = (TextView)nav_header.findViewById(R.id.drawer_text3);
+        TextView drawer_text4 = (TextView)nav_header.findViewById(R.id.drawer_text4);
+        CircleImageView drawer_profile = (CircleImageView)nav_header.findViewById(R.id.drawer_profile);
+
+        drawer_text1.setText(memberDTO.getNickname());
+        drawer_text2.setText(memberDTO.getEmail());
+        drawer_text3.setText("member ID : "+ memberDTO.getId());
+        drawer_text4.setText("가입일 : "+memberDTO.getReg_date());
     }
 
     @Override

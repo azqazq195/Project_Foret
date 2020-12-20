@@ -1,19 +1,28 @@
 package com.example.foret;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.foret.login.LoginActivity;
 import com.example.foret.login.SessionManager;
 import com.example.foret.model.MemberDTO;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -32,8 +41,10 @@ import java.util.List;
 import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpResponse;
+import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     SessionManager sessionManager;
     FirebaseAuth mAuth;
@@ -43,7 +54,12 @@ public class MainActivity extends AppCompatActivity {
     MemberDTO memberDTO;
     TextView textView1, textView2, textView3, textView4, textView5, textView6, textView7, textView8;
 
+    DrawerLayout container;
+    NavigationView nav_drawer;
+
+
     String url = "http://54.180.219.200:8085/get/member";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +74,17 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        viewSetting();
+
+        client = new AsyncHttpClient();
+        response = new HttpResponse();
+        sessionManager = new SessionManager(this);
+        RequestParams params = new RequestParams();
+        params.put("id", sessionManager.getSession());
+        client.post(url, params, response);
+    }
+
+    private void viewSetting() {
         textView1 = findViewById(R.id.textView1);
         textView2 = findViewById(R.id.textView2);
         textView3 = findViewById(R.id.textView3);
@@ -67,12 +94,8 @@ public class MainActivity extends AppCompatActivity {
         textView7 = findViewById(R.id.textView7);
         textView8 = findViewById(R.id.textView8);
 
-        client = new AsyncHttpClient();
-        response = new HttpResponse();
-        sessionManager = new SessionManager(this);
-        RequestParams params = new RequestParams();
-        params.put("id", sessionManager.getSession());
-        client.post(url, params, response);
+        container = findViewById(R.id.container);
+        nav_drawer = findViewById(R.id.nav_drawer);
     }
 
     @Override
@@ -89,6 +112,34 @@ public class MainActivity extends AppCompatActivity {
         updateuserActiveStatusOff();
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.button_out: // 로그아웃
+                logOutDialog();
+                break;
+            case R.id.button_drawcancel: // 햄버거 닫기
+                container.closeDrawer(GravityCompat.END);
+                break;
+        }
+    }
+
+    private void logOutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("로그아웃 하시겠습니까?");
+        builder.setPositiveButton("로그아웃", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 로그아웃 눌렀을 때 실행되야하는 이벤트->로그아웃처리
+            }
+        });
+        builder.setNegativeButton("취소", null);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    //서버요청처리
     class HttpResponse extends AsyncHttpResponseHandler {
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -172,6 +223,11 @@ public class MainActivity extends AppCompatActivity {
                     textView6.setText(memberDTO.getBirth());
                     textView7.setText(memberDTO.getReg_date());
                     textView8.setText(memberDTO.getDeviceToken());
+
+                    Log.e("[SUNMI]", memberDTO.getNickname());
+                    //햄버거 메뉴 데이터 세팅
+                    setNavigationView(memberDTO);
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -186,6 +242,21 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "에러", Toast.LENGTH_SHORT).show();
             Log.e("[test]", "리스펀스 페일 진입");
         }
+    }
+
+    private void setNavigationView(MemberDTO memberDTO) {
+        View nav_header = nav_drawer.getHeaderView(0);
+        TextView button_out = (TextView)nav_header.findViewById(R.id.button_out);
+        TextView drawer_text1 = (TextView)nav_header.findViewById(R.id.drawer_text1);
+        TextView drawer_text2 = (TextView)nav_header.findViewById(R.id.drawer_text2);
+        TextView drawer_text3 = (TextView)nav_header.findViewById(R.id.drawer_text3);
+        TextView drawer_text4 = (TextView)nav_header.findViewById(R.id.drawer_text4);
+        CircleImageView drawer_profile = (CircleImageView)nav_header.findViewById(R.id.drawer_profile);
+
+        drawer_text1.setText(memberDTO.getNickname());
+        drawer_text2.setText(memberDTO.getEmail());
+        drawer_text3.setText("member ID : "+ memberDTO.getId());
+        drawer_text4.setText("가입일 : "+memberDTO.getReg_date());
     }
 
     // 내상태 온라인 만들기
