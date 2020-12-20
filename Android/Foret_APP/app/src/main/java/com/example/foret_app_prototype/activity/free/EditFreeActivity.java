@@ -37,6 +37,7 @@ public class EditFreeActivity extends AppCompatActivity {
     FreeBoardEditResponse response;
     ForetBoard foretBoard;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
