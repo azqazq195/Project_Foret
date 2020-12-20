@@ -406,6 +406,7 @@ public class MainActivity extends AppCompatActivity
         drawer_text2.setText(memberDTO.getEmail());
         drawer_text3.setText("member ID : "+ memberDTO.getId());
         drawer_text4.setText("가입일 : "+memberDTO.getReg_date());
+        Glide.with(nav_header).load(memberDTO.getPhoto()).into(drawer_profile);
     }
 
     @Override
