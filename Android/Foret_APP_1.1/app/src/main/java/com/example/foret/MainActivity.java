@@ -83,6 +83,12 @@ public class MainActivity extends AppCompatActivity {
         client.post(url, params, response);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        updateuserActiveStatusOff();
+    }
+
     class HttpResponse extends AsyncHttpResponseHandler {
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -212,9 +218,5 @@ public class MainActivity extends AppCompatActivity {
         userAcitive.updateChildren(onlineStatus);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        updateuserActiveStatusOff();
-    }
+
 }
