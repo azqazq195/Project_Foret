@@ -285,7 +285,6 @@ public class MainActivity extends AppCompatActivity
                     JSONArray member = json.getJSONArray("member");
                     JSONObject temp = member.getJSONObject(0);
 
-
                     memberDTO = new MemberDTO();
                     memberDTO.setId(Integer.parseInt(temp.getString("id")));
                     memberDTO.setName(temp.getString("name"));
@@ -395,12 +394,13 @@ public class MainActivity extends AppCompatActivity
 
     private void setNavigationView(MemberDTO memberDTO) {
         View nav_header = nav_drawer.getHeaderView(0);
-        TextView button_out = (TextView)nav_header.findViewById(R.id.button_out);
         TextView drawer_text1 = (TextView)nav_header.findViewById(R.id.drawer_text1);
         TextView drawer_text2 = (TextView)nav_header.findViewById(R.id.drawer_text2);
         TextView drawer_text3 = (TextView)nav_header.findViewById(R.id.drawer_text3);
         TextView drawer_text4 = (TextView)nav_header.findViewById(R.id.drawer_text4);
         CircleImageView drawer_profile = (CircleImageView)nav_header.findViewById(R.id.drawer_profile);
+
+        Log.e("[SUNMI]", memberDTO.getPhoto());
 
         drawer_text1.setText(memberDTO.getNickname());
         drawer_text2.setText(memberDTO.getEmail());
