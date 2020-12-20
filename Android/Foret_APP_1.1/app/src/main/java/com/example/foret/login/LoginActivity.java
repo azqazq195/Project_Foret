@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.foret.MainActivity;
+import com.example.foret.main.MainActivity;
 import com.example.foret.R;
 import com.example.foret.helper.ProgressDialogHelper;
 import com.example.foret.model.MemberDTO;

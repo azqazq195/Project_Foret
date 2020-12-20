@@ -1,19 +1,24 @@
-package com.example.foret;
+package com.example.foret.main;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.foret.login.LoginActivity;
+import com.example.foret.R;
 import com.example.foret.login.SessionManager;
 import com.example.foret.model.MemberDTO;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -33,7 +38,7 @@ import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     SessionManager sessionManager;
     FirebaseAuth mAuth;
@@ -41,9 +46,16 @@ public class MainActivity extends AppCompatActivity {
     HttpResponse response;
 
     MemberDTO memberDTO;
-    TextView textView1, textView2, textView3, textView4, textView5, textView6, textView7, textView8;
 
     String url = "http://54.180.219.200:8085/get/member";
+
+    HomeFragment homeFragment;
+    FreeFragment freeFragment;
+    SearchFragment searchFragment;
+    ChatFragment chatFragment;
+    NotifyFragment notifyFragment;
+
+    BottomNavigationView nav_bottom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +70,22 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        textView1 = findViewById(R.id.textView1);
-        textView2 = findViewById(R.id.textView2);
-        textView3 = findViewById(R.id.textView3);
-        textView4 = findViewById(R.id.textView4);
-        textView5 = findViewById(R.id.textView5);
-        textView6 = findViewById(R.id.textView6);
-        textView7 = findViewById(R.id.textView7);
-        textView8 = findViewById(R.id.textView8);
-
         client = new AsyncHttpClient();
         response = new HttpResponse();
         sessionManager = new SessionManager(this);
         RequestParams params = new RequestParams();
         params.put("id", sessionManager.getSession());
         client.post(url, params, response);
+
+        homeFragment = new HomeFragment(this);
+        freeFragment = new FreeFragment();
+        searchFragment = new SearchFragment();
+        chatFragment = new ChatFragment();
+        notifyFragment = new NotifyFragment();
+
+        nav_bottom = findViewById(R.id.nav_bottom);
+
+        nav_bottom.setOnNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -89,11 +102,57 @@ public class MainActivity extends AppCompatActivity {
         updateuserActiveStatusOff();
     }
 
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) { // 네비게이션 드로어 메뉴, 바텀네비게이션 메뉴 둘다 이벤트 처리
+        switch (item.getItemId()) {
+            case R.id.navigation_home:
+                Log.e("[BOTTOM_NAV]", "clicked : homeFragment");
+//                Bundle bundle = new Bundle();
+//                bundle.putSerializable("memberDTO", memberDTO);
+//                homeFragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment, homeFragment).commit();
+                break;
+            case R.id.navigation_freeboard:
+                Log.e("[BOTTOM_NAV]", "clicked : freeFragment");
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment, freeFragment).commit();
+                break;
+            case R.id.navigation_search:
+                Log.e("[BOTTOM_NAV]", "clicked : searchFragment");
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment, searchFragment).commit();
+                break;
+            case R.id.navigation_chat:
+                Log.e("[BOTTOM_NAV]", "clicked : chatFragment");
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment, chatFragment).commit();
+                break;
+            case R.id.navigation_notify:
+                Log.e("[BOTTOM_NAV]", "clicked : notifyFragment");
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment, notifyFragment).commit();
+                break;
+//            case R.id.drawer_notice: // 햄버거 공지사항 버튼
+//                intent = new Intent(this, AppNoticeActivity.class);
+//                startActivity(intent);
+//                break;
+//            case R.id.drawer_myinfo: // 햄버거 내정보
+//                intent = new Intent(this, MyInfoActivity.class);
+//                intent.putExtra("memberDTO", memberDTO);
+//                startActivity(intent);
+//                break;
+//            case R.id.drawer_help: // 햄버거 도움말
+//                // Toast.makeText(this, "레이아웃으로 도움말 설명할거 레이아웃 5장", Toast.LENGTH_SHORT).show();
+//                startActivity(new Intent(this, AppGuideActivity.class));
+//                break;
+//            case R.id.drawer_foret: // 햄버거 foret ->그냥 넣어놈
+//                break;
+        }
+        return true;
+    }
+
     class HttpResponse extends AsyncHttpResponseHandler {
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            Log.e("[MainActivity]", "onSuccess");
             String str = new String(responseBody);
-
             try {
                 JSONObject json = new JSONObject(str);
                 String RT = json.getString("RT");
@@ -164,14 +223,6 @@ public class MainActivity extends AppCompatActivity {
                         memberDTO.setForet_id(tempList);
                     }
 
-                    textView1.setText(String.valueOf(memberDTO.getId()));
-                    textView2.setText(memberDTO.getName());
-                    textView3.setText(memberDTO.getEmail());
-                    textView4.setText(memberDTO.getPassword());
-                    textView5.setText(memberDTO.getNickname());
-                    textView6.setText(memberDTO.getBirth());
-                    textView7.setText(memberDTO.getReg_date());
-                    textView8.setText(memberDTO.getDeviceToken());
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -184,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(MainActivity.this, "에러", Toast.LENGTH_SHORT).show();
-            Log.e("[test]", "리스펀스 페일 진입");
+            Log.e("[MainActivity]", "onFailure");
         }
     }
 
