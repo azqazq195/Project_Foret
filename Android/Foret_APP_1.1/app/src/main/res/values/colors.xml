@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="foret">#FF23272A</color>
+    <color name="foret2">#FF009845</color>
+    <color name="foret3">#FF007398</color>
+    <color name="foret4">#FF22997b</color>
+    <color name="foret5">#FFf2ffed</color>
+    <color name="board">#FFFFFFFF</color>
+    <color name="text">#FF474747</color>
+    <!-- 뷰페이저 애니메이션 컬러 -->
+    <color name="color">#00FFFFFF</color>
+    <color name="color1">#00424549</color>
+    <color name="color2">#007e455e</color>
+    <color name="color3">#006C4BA6</color>
+    <color name="color4">#004F9852</color>
+    <color name="color5">#00217FAA</color>
+
+    <!-- 읽음 안릭음 컬러-->
+    <color name="read">#F8F1B0</color>
+    <color name="unread">#88FCFEFF</color>
+</resources>
