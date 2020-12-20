@@ -63,7 +63,7 @@ public class WriteFreeActivity extends AppCompatActivity {
         Log.e("[TEST]", sessionManager.getSession()+"출력");
         id = sessionManager.getSession();
 
-        textView_writer.setText("작성자 : "+id);
+        textView_writer.setText("작성자 Member ID : "+id);
 
         client = new AsyncHttpClient();
         response = new FreeBoardWriteResponse();
@@ -89,7 +89,7 @@ public class WriteFreeActivity extends AppCompatActivity {
                     return true;
                 }
                 RequestParams params = new RequestParams();
-                params.put("writer", id);
+                params.put("writer_id", id);
                 params.put("foret_id", 0);
                 params.put("type", 0);
                 params.put("subject", editText_subject.getText().toString().trim());
@@ -100,7 +100,7 @@ public class WriteFreeActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 params.setForceMultipartEntityContentType(true);
-                client.post("http://34.72.240.24:8085/foret/board/board_insert.do", params, response);
+                client.post("http://54.180.219.200:8085/board/insert", params, response);
                 break;
         }
         return super.onOptionsItemSelected(item);

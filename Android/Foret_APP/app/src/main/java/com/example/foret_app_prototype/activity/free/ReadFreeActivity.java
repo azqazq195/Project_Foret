@@ -241,8 +241,8 @@ public class ReadFreeActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 RequestParams params = new RequestParams();
-                params.put("id", foretBoard.getId());
-                client.post("http://34.72.240.24:8085/foret/board/board_delete.do", params, deleteBoardResponse);
+                params.put("board_id", foretBoard.getId());
+                client.post("http://54.180.219.200:8085/board/delete", params, deleteBoardResponse);
             }
         });
         builder.setNegativeButton("취소", null);

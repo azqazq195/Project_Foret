@@ -69,7 +69,7 @@ public class MemberDTO implements Serializable {
     }
 
     public String getPhoto() {
-        return "http://34.72.240.24:8085/foret/storage/"+photo;
+        return "http://54.180.219.200:8085/storage/"+photo;
     }
 
     public void setPhoto(String photo) {
