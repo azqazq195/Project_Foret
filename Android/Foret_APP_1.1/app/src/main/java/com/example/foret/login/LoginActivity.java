@@ -1,5 +1,10 @@
-package com.example.foret_app_prototype.activity.login;
+package com.example.foret.login;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,16 +18,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
-import com.example.foret_app_prototype.R;
-import com.example.foret_app_prototype.activity.MainActivity;
-import com.example.foret_app_prototype.activity.MainActivity2;
-import com.example.foret_app_prototype.activity.notify.Token;
-import com.example.foret_app_prototype.helper.ProgressDialogHelper;
-import com.example.foret_app_prototype.model.MemberDTO;
+import com.example.foret.MainActivity;
+import com.example.foret.R;
+import com.example.foret.helper.ProgressDialogHelper;
+import com.example.foret.model.MemberDTO;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -34,22 +33,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-    public static LoginActivity loginActivity;
-
-    private boolean saveLoginData;
     private String email;
     private String pwd;
     String id;
@@ -69,22 +63,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     boolean switcher;
 
+    SessionManager sessionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        loginActivity = LoginActivity.this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         // 상태바 색상 변경
         Window window = this.getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.foret4));
 
-        button0 = findViewById(R.id.button0);
-        button3 = findViewById(R.id.button3);
-        button4 = findViewById(R.id.button4);
-        emailEditText = findViewById(R.id.editText1);
-        passwordEditText = findViewById(R.id.editText2);
+        button0 = findViewById(R.id.buttonSignIn);
+        button3 = findViewById(R.id.buttonFindPassword);
+        button4 = findViewById(R.id.buttonSignUp);
+        emailEditText = findViewById(R.id.editEmail);
+        passwordEditText = findViewById(R.id.editPassword);
         context = this;
         client = new AsyncHttpClient();
         final int DEFAULT_TIME = 20 * 1000;
@@ -99,23 +95,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         button4.setOnClickListener(this); //회원가입
 
         mAuth = FirebaseAuth.getInstance();
+        sessionManager = new SessionManager(this);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        SessionManager sessionManager = new SessionManager(this);
-        int userID = sessionManager.getSession();
-        if (userID != -1) {
-            moveToMainActivity();
-        }
-    }
-
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         Intent intent = null;
         switch (v.getId()) {
-            case R.id.button0:
+            case R.id.buttonSignIn:
                 //파이어 베이스용
                 email = emailEditText.getText().toString().trim();
                 pwd = passwordEditText.getText().toString().trim();
@@ -125,7 +113,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     return;
                 }
 
-                Log.e("[test]", email + "/" + pwd);
+                Log.e("[Login]", email);
 
                 RequestParams params = new RequestParams();
                 params.put("email", email);
@@ -133,8 +121,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 ProgressDialogHelper.getInstance().getProgressbar(this, "로그인 진행중");
                 client.post(url, params, response);
                 break;
-            case R.id.button3:
-                if (emailEditText.getText().toString().trim().equals("") || emailEditText.getText().toString().trim() == null) {
+            case R.id.buttonFindPassword:
+                if (emailEditText.getText().toString().trim().equals("")) {
                     Toast.makeText(this, "찾으실 이메일을 입력해주세요.", Toast.LENGTH_LONG).show();
                     break;
                 }
@@ -197,24 +185,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                                 }
                             });
-
                     switcher = false;
                 }
-
                 break;
-            case R.id.button4:
-                intent = new Intent(this, JoinUsActivity.class);
-                startActivity(intent);
-                finish();
+            case R.id.buttonSignUp:
+//                intent = new Intent(this, JoinUsActivity.class);
+//                startActivity(intent);
+//                finish();
                 break;
         }
-    }
-
-    private void moveToMainActivity() {
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        intent.putExtra("id", id);
-        startActivity(intent);
-        finish();
     }
 
     class HttpResponse extends AsyncHttpResponseHandler {
@@ -225,17 +204,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 JSONObject json = new JSONObject(str);
                 String RT = json.getString("RT");
                 String idJSON = json.getJSONArray("member").getJSONObject(0).getString("id");
-                Log.e("[test]", RT);
-                Log.e("[test]", idJSON);
-
+                Log.e("[JSON]", RT);
+                Log.e("[JSON]", "member_id : " + idJSON);
                 if (RT.equals("OK")) {
                     //파이어 베이스
                     joinedMember(email, pwd);
                     id = idJSON;
-
-                    Log.e("[test]", "성공진입/" + statusCode);
+                    Log.e("[test]", "성공진입 /" + statusCode);
                     ProgressDialogHelper.getInstance().removeProgressbar();
-
+                    sessionManager.saveSession(new MemberDTO(Integer.parseInt(id), email, pwd));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -249,27 +226,46 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.e("[test]", error.getMessage() + "/" + statusCode);
             ProgressDialogHelper.getInstance().removeProgressbar();
         }
+
     }
 
     //파이어 베이스 로그인
     public void joinedMember(String member_email, String member_id) {
-        Log.d("TAG", "signInWithEmail:진입");
-        Log.d("TAG", "member_email:" + member_email);
-        Log.d("TAG", "member_id:" + member_id);
+        Log.e("[Firebase]", "signInWithEmailAndPassword : 진입");
+        Log.e("[Firebase]", "member_email : " + member_email);
         mAuth.signInWithEmailAndPassword(member_email, member_id).
                 addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Log.d("TAG", "signInWithEmail:success");
+                            Log.e("[Firebase]", "signInWithEmailAndPassword : success");
                             user = mAuth.getCurrentUser();
                             moveToMainActivity();
                         } else {
-                            Log.w("TAG", "signInWithEmail:failure", task.getException());
+                            Log.e("[Firebase]", "signInWithEmailAndPassword : failure", task.getException());
                             Toast.makeText(context, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+    }
+
+    private void moveToMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        int SessionId = sessionManager.getSession();
+        String SessionEmail = sessionManager.getSessionEmail();
+        String SessionPassword = sessionManager.getSessionPassword();
+        if (SessionId != -1) {
+            joinedMember(SessionEmail, SessionPassword);
+            moveToMainActivity();
+        }
     }
 }

@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "418527444178",
+    "project_id": "foret-6e624",
+    "storage_bucket": "foret-6e624.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:418527444178:android:277dafcd5fca5de9e2010b",
+        "android_client_info": {
+          "package_name": "com.example.foret"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "418527444178-08j6g2idvus237fbures0po5qia7bg2h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUhJzVzSSjqGeScOFv_TGkW_AEA3s2bvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "418527444178-08j6g2idvus237fbures0po5qia7bg2h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:418527444178:android:85a7a2dd774eb286e2010b",
+        "android_client_info": {
+          "package_name": "com.example.foret_app_prototype"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "418527444178-08j6g2idvus237fbures0po5qia7bg2h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUhJzVzSSjqGeScOFv_TGkW_AEA3s2bvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "418527444178-08j6g2idvus237fbures0po5qia7bg2h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
