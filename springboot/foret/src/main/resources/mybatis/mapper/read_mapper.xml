@@ -7,4 +7,7 @@
     <select id="getTagList" resultType="tag">
         SELECT * FROM tag
     </select>
+    <select id="getTagRank" resultType="tag">
+        SELECT * from V_tag_rank
+    </select>
 </mapper>

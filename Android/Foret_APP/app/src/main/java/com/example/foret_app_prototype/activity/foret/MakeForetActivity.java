@@ -81,8 +81,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
     AsyncHttpClient client;
     ForetResponse foretResponse;
-    String url = "http://34.72.240.24:8085/foret/foret/foret_insert.do";
-    //String url = "http://192.168.0.180:8085/foret/foret/foret_insert.do";
+    String url = "http://54.180.219.200:8085/foret/insert";
     ImageView image_View_picture, button_cancel;
     EditText editText_name, editText_member, editText_intro;
     Button button_complete, button_picture;
@@ -184,7 +183,7 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
 
         //각 지역, 태그 리스트에 DB에 저장된 목록 저장
         //client.post("http://34.72.240.24:8085/foret/region/region_list.do", regionListResponse);
-        client.post("http://34.72.240.24:8085/foret/tag/tag_list.do", tagListResponse);
+        client.post("http://54.180.219.200:8085/get/tagList", tagListResponse);
 
     }
 
@@ -877,14 +876,17 @@ public class MakeForetActivity extends AppCompatActivity implements View.OnClick
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
             String str = new String(responseBody);
             try {
+                Log.d("[TEST]", "tagList => " + "완료");
                 JSONObject json = new JSONObject(str);
-                if (json.getInt("total") != 0) {
+                if (json.getString("tagRT").equals("OK")) {
                     JSONArray tag = json.getJSONArray("tag");
                     for (int a = 0; a < tag.length(); a++) {
                         JSONObject object = tag.getJSONObject(a);
                         tag_list.add(object.getString("tag_name"));
                     }
+
                 }
+                Log.d("[TEST]", "tagList => " + tag_list.size());
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -207,7 +207,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     private void hotTagData() {
         RequestParams params = new RequestParams();
         params.put("rank", 5);
-        client.post("http://34.72.240.24:8085/foret/tag/tag_rank.do", params, new HotTagResponse());
+        client.post("http://54.180.219.200:8085/get/tagRank", params, new HotTagResponse());
     }
 
     private void recommandForetData() {

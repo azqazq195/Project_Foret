@@ -69,7 +69,7 @@ public class MemberDTO implements Serializable {
     }
 
     public String getPhoto() {
-        return "http://34.72.240.24:8085/foret/storage/"+photo;
+        return "http://54.180.219.200:8085/storage/"+photo;
     }
 
     public void setPhoto(String photo) {
@@ -142,22 +142,20 @@ public class MemberDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "MemberDTO{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", birth='" + birth + '\'' +
-                ", photo='" + photo + '\'' +
-                ", reg_date='" + reg_date + '\'' +
-                ", deviceToken='" + deviceToken + '\'' +
-                ", tag=" + tag +
-                ", region_si=" + region_si +
-                ", region_gu=" + region_gu +
-                ", like_board=" + like_board +
-                ", like_comment=" + like_comment +
-                ", foret_id=" + foret_id +
-                '}';
+        return  "id = " + id +
+                "\nemail = " + email +
+                "\npassword = " + password +
+                "\nname = " + name +
+                "\nnickname = " + nickname +
+                "\nbirth = " + birth +
+                "\nphoto = " + photo +
+                "\nreg_date = " + reg_date +
+                "\ndeviceToken = " + deviceToken +
+                "\ntag = " + tag +
+                "\nregion_si = " + region_si +
+                "\nregion_gu = " + region_gu +
+                "\nlike_board = " + like_board +
+                "\nlike_comment = " + like_comment +
+                "\nforet_id = " + foret_id;
     }
 }

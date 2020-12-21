@@ -22,4 +22,9 @@ public class ReadService {
         System.out.println("--- getTagList");
         return readMapper.getTagList();
     }
+
+    public List<Tag> getTagRank() throws Exception {
+        System.out.println("--- getTagRank");
+        return readMapper.getTagRank();
+    }
 }

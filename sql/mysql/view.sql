@@ -24,3 +24,14 @@ JOIN member_photo ON member.id = member_photo.member_id
 LEFT OUTER
 JOIN member_foret ON member.id = member_foret.member_id
 ORDER BY member.id ASC;
+
+# tag_rank
+CREATE OR REPLACE VIEW V_tag_rank AS
+SELECT COUNT(*) AS cnt, tag_name.tag_name
+FROM 
+(SELECT tag_name
+FROM member_tag UNION ALL
+SELECT tag_name
+FROM foret_tag) tag_name
+GROUP BY tag_name
+ORDER BY cnt DESC;

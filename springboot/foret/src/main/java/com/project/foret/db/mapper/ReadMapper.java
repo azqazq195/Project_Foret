@@ -9,4 +9,6 @@ public interface ReadMapper {
     public List<Member> getMember(int member_id) throws Exception;
 
     public List<Tag> getTagList() throws Exception;
+
+    public List<Tag> getTagRank() throws Exception;
 }

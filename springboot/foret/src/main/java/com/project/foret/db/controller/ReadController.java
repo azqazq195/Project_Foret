@@ -159,4 +159,29 @@ public class ReadController {
         System.out.println("--- getTagList 종료 ---\n");
         return helper.modelAndView(json, "tag");
     }
+
+    @RequestMapping(value = "/get/tagRank", method = RequestMethod.POST)
+    public ModelAndView getTagRank(HttpServletRequest request) throws Exception {
+        System.out.println("--- getTagRank 실행 ---");
+        request.setCharacterEncoding("UTF-8");
+
+        List<Tag> tagList = readService.getTagRank();
+        String RT = helper.isOK(tagList.size());
+
+        JSONObject json = new JSONObject();
+        json.put("tagRT", RT);
+
+        if (tagList != null) {
+            JSONArray array = new JSONArray();
+            for (Tag tag : tagList) {
+                JSONObject temp = new JSONObject();
+                temp.put("tag_name", tag.getTag_name());
+                array.put(temp);
+            }
+            json.put("tag", array);
+        }
+
+        System.out.println("--- getTagRank 종료 ---\n");
+        return helper.modelAndView(json, "tag");
+    }
 }

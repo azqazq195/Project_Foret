@@ -132,10 +132,6 @@ public class MainActivity extends AppCompatActivity
         nav_bottom.setOnNavigationItemSelectedListener(this);
         nav_drawer.setNavigationItemSelectedListener(this::onNavigationItemSelected);
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, freeFragment).commit();
-        }
-
         client = new AsyncHttpClient();
         response = new HttpResponse();
         sessionManager = new SessionManager(this);
@@ -146,14 +142,14 @@ public class MainActivity extends AppCompatActivity
             id = "" + sessionManager.getSession();
         }
 
-        final int DEFAULT_TIME = 40 * 1000;
-        client.setConnectTimeout(DEFAULT_TIME);
-        client.setResponseTimeout(DEFAULT_TIME);
-        client.setTimeout(DEFAULT_TIME);
-        client.setResponseTimeout(DEFAULT_TIME);
-        RequestParams params = new RequestParams();
-        params.put("id", id);
-        client.post(url, params, response);
+//        final int DEFAULT_TIME = 40 * 1000;
+//        client.setConnectTimeout(DEFAULT_TIME);
+//        client.setResponseTimeout(DEFAULT_TIME);
+//        client.setTimeout(DEFAULT_TIME);
+//        client.setResponseTimeout(DEFAULT_TIME);
+//        RequestParams params = new RequestParams();
+//        params.put("id", id);
+//        client.post(url, params, response);
 
         button_out.setOnClickListener(this);
         button_out2.setOnClickListener(this);
@@ -349,6 +345,14 @@ public class MainActivity extends AppCompatActivity
                     }
 
                     setNavigationView(memberDTO);
+
+                    if(memberDTO.getForet_id() == null){
+                        getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, searchFragment).commit();
+                    } else {
+                        getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, homeFragment).commit();
+                    }
+
+
                 }
                 //햄버거 메뉴 데이터 세팅
                 setNavigationView(memberDTO);
@@ -363,7 +367,7 @@ public class MainActivity extends AppCompatActivity
 
             LoginActivity loginActivity = (LoginActivity) LoginActivity.loginActivity;
             // 세션에 담아서 로그인 페이지로
-            Log.e("[test]","세션 담기전 DTO?"+memberDTO.toString());
+            Log.e("[MAIN]","MemberDTO => \n" + memberDTO.toString());
             SessionManager sessionManager = new SessionManager(loginActivity);
             sessionManager.saveSession(memberDTO);
 
@@ -402,8 +406,6 @@ public class MainActivity extends AppCompatActivity
         TextView drawer_text4 = (TextView)nav_header.findViewById(R.id.drawer_text4);
         CircleImageView drawer_profile = (CircleImageView)nav_header.findViewById(R.id.drawer_profile);
 
-        Log.e("[SUNMI]", memberDTO.getPhoto());
-
         drawer_text1.setText(memberDTO.getNickname());
         drawer_text2.setText(memberDTO.getEmail());
         drawer_text3.setText("member ID : "+ memberDTO.getId());
@@ -426,7 +428,7 @@ public class MainActivity extends AppCompatActivity
         client.post(url, params, response);
 
         currntuser = FirebaseAuth.getInstance().getCurrentUser();
-        Log.e("[test]", FirebaseAuth.getInstance().getCurrentUser() + "");
+        Log.e("[MAIN]", FirebaseAuth.getInstance().getCurrentUser() + "");
         if (currntuser == null) {
             // 로그인 아닌상태
             Toast.makeText(context, "파이어베이스 로그아웃 상태..", Toast.LENGTH_LONG).show();
@@ -436,7 +438,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onComplete(@NonNull Task<String> task) {
                     if (!task.isSuccessful()) {
-                        Log.e("[test]", "Fetching FCM registration token failed", task.getException());
+                        Log.e("[MAIN]", "Fetching FCM registration token failed", task.getException());
                         return;
                     }
 
@@ -510,18 +512,4 @@ public class MainActivity extends AppCompatActivity
         updateuserActiveStatusOff();
     }
 
-    private void setNavigationView(MemberDTO memberDTO) {
-        View nav_header = nav_drawer.getHeaderView(0);
-        TextView button_out = (TextView)nav_header.findViewById(R.id.button_out);
-        TextView drawer_text1 = (TextView)nav_header.findViewById(R.id.drawer_text1);
-        TextView drawer_text2 = (TextView)nav_header.findViewById(R.id.drawer_text2);
-        TextView drawer_text3 = (TextView)nav_header.findViewById(R.id.drawer_text3);
-        TextView drawer_text4 = (TextView)nav_header.findViewById(R.id.drawer_text4);
-        CircleImageView drawer_profile = (CircleImageView)nav_header.findViewById(R.id.drawer_profile);
-
-        drawer_text1.setText(memberDTO.getNickname());
-        drawer_text2.setText(memberDTO.getEmail());
-        drawer_text3.setText("member ID : "+ memberDTO.getId());
-        drawer_text4.setText("가입일 : "+memberDTO.getReg_date());
-    }
 }

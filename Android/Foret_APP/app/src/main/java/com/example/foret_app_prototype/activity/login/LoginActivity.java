@@ -125,7 +125,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     return;
                 }
 
-                Log.e("[test]", email + "/" + pwd);
+                Log.e("[LOGIN]", email + "/" + pwd);
 
                 RequestParams params = new RequestParams();
                 params.put("email", email);
@@ -225,15 +225,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 JSONObject json = new JSONObject(str);
                 String RT = json.getString("RT");
                 String idJSON = json.getJSONArray("member").getJSONObject(0).getString("id");
-                Log.e("[test]", RT);
-                Log.e("[test]", idJSON);
+                Log.e("[LOGIN]", RT);
+                Log.e("[LOGIN]", idJSON);
 
                 if (RT.equals("OK")) {
                     //파이어 베이스
                     joinedMember(email, pwd);
                     id = idJSON;
 
-                    Log.e("[test]", "성공진입/" + statusCode);
+                    Log.e("[LOGIN]", "성공진입/" + statusCode);
                     ProgressDialogHelper.getInstance().removeProgressbar();
 
                 }
@@ -246,26 +246,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(LoginActivity.this, "이메일과 비밀번호를 확인해 주세요", Toast.LENGTH_SHORT).show();
-            Log.e("[test]", error.getMessage() + "/" + statusCode);
+            Log.e("[LOGIN]", error.getMessage() + "/" + statusCode);
             ProgressDialogHelper.getInstance().removeProgressbar();
         }
     }
 
     //파이어 베이스 로그인
     public void joinedMember(String member_email, String member_id) {
-        Log.d("TAG", "signInWithEmail:진입");
-        Log.d("TAG", "member_email:" + member_email);
-        Log.d("TAG", "member_id:" + member_id);
+        Log.d("[FIREBASE]", "signInWithEmail:진입");
+        Log.d("[FIREBASE]", "member_email:" + member_email);
+        Log.d("[FIREBASE]", "member_id:" + member_id);
         mAuth.signInWithEmailAndPassword(member_email, member_id).
                 addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Log.d("TAG", "signInWithEmail:success");
+                            Log.d("[FIREBASE]", "signInWithEmail:success");
                             user = mAuth.getCurrentUser();
                             moveToMainActivity();
                         } else {
-                            Log.w("TAG", "signInWithEmail:failure", task.getException());
+                            Log.w("[FIREBASE]", "signInWithEmail:failure", task.getException());
                             Toast.makeText(context, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
