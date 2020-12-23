@@ -62,7 +62,7 @@ public class ReadController {
 
                 while (i < list.size() && tempId == list.get(i).getId()) {
                     String tag = list.get(i).getTag_name();
-                    String region = list.get(i).getRegion_si() + " " + list.get(i).getRegion_gu();
+                    String region = list.get(i).getRegion_si();
                     String photo = list.get(i).getFilename();
                     int like_board = list.get(i).getLike_board();
                     int like_comment = list.get(i).getLike_comment();
@@ -71,8 +71,8 @@ public class ReadController {
                     if (tag != null) {
                         tagTree.add(tag);
                     }
-                    if (region.equals(" ")) {
-                        regionTree.add(region);
+                    if (region != null) {
+                        regionTree.add(region + " " + list.get(i).getRegion_gu());
                     }
                     if (photo != null) {
                         photoTree.add(photo);
