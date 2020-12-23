@@ -11,6 +11,61 @@ public class Foret {
     private int max_member;
     private String reg_date;
 
+    private String filename;
+    private String tag_name;
+    private String region_si;
+    private String region_gu;
+    private int member_id;
+    private int cnt;
+
+    public String getFilename() {
+        return this.filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public String getTag_name() {
+        return this.tag_name;
+    }
+
+    public void setTag_name(String tag_name) {
+        this.tag_name = tag_name;
+    }
+
+    public String getRegion_si() {
+        return this.region_si;
+    }
+
+    public void setRegion_si(String region_si) {
+        this.region_si = region_si;
+    }
+
+    public String getRegion_gu() {
+        return this.region_gu;
+    }
+
+    public void setRegion_gu(String region_gu) {
+        this.region_gu = region_gu;
+    }
+
+    public int getMember_id() {
+        return this.member_id;
+    }
+
+    public void setMember_id(int member_id) {
+        this.member_id = member_id;
+    }
+
+    public int getCnt() {
+        return this.cnt;
+    }
+
+    public void setCnt(int cnt) {
+        this.cnt = cnt;
+    }
+
     public Foret() {
 
     }

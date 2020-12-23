@@ -1,11 +1,13 @@
 package com.project.foret.db.controller;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.project.foret.db.helper.Helper;
+import com.project.foret.db.model.Foret;
 import com.project.foret.db.model.Member;
 import com.project.foret.db.model.Tag;
 import com.project.foret.db.service.ReadService;
@@ -32,100 +34,121 @@ public class ReadController {
         String RT = "FAIL";
 
         int member_id = helper.isNum(request.getParameter("id"));
-
         List<Member> list = readService.getMember(member_id);
-        List<String> stringlist1 = new ArrayList<String>();
-        List<String> stringlist2 = new ArrayList<String>();
-        List<Integer> intlist1 = new ArrayList<Integer>();
-        List<Integer> intlist2 = new ArrayList<Integer>();
-        List<Integer> intlist3 = new ArrayList<Integer>();
-
         JSONObject json = new JSONObject();
+
         if (list != null) {
             RT = "OK";
+            int tempId = 0;
+            TreeSet<String> tagTree = new TreeSet<>();
+            TreeSet<String> regionTree = new TreeSet<>();
+            TreeSet<String> photoTree = new TreeSet<>();
+            TreeSet<Integer> likeBoardTree = new TreeSet<>();
+            TreeSet<Integer> likeCommentTree = new TreeSet<>();
+            TreeSet<Integer> foretTree = new TreeSet<>();
             JSONArray array = new JSONArray();
-            JSONObject temp = new JSONObject();
-            temp.put("id", list.get(0).getId());
-            temp.put("name", list.get(0).getName());
-            temp.put("email", list.get(0).getEmail());
-            temp.put("password", list.get(0).getPassword());
-            temp.put("nickname", list.get(0).getNickname());
-            temp.put("birth", list.get(0).getBirth());
-            temp.put("reg_date", list.get(0).getReg_date());
-            temp.put("deviceToken", list.get(0).getDevice_token());
 
-            JSONArray tagArray = new JSONArray();
-            JSONArray region_siArray = new JSONArray();
-            JSONArray region_guArray = new JSONArray();
-            JSONArray like_boardArray = new JSONArray();
-            JSONArray like_commentArray = new JSONArray();
-            JSONArray foret_idArray = new JSONArray();
+            for (int i = 0; i < list.size();) {
+                JSONObject member = new JSONObject();
+                tempId = list.get(i).getId();
+                member.put("id", list.get(i).getId());
+                member.put("name", list.get(i).getName());
+                member.put("email", list.get(i).getEmail());
+                member.put("password", list.get(i).getPassword());
+                member.put("nickname", list.get(i).getNickname());
+                member.put("birth", list.get(i).getBirth());
+                member.put("reg_date", list.get(i).getReg_date());
+                member.put("device_token", list.get(i).getDevice_token());
 
-            for (Member memberALLDTO : list) {
-                String tag_name = memberALLDTO.getTag_name();
-                String region_si = memberALLDTO.getRegion_si();
-                String region_gu = memberALLDTO.getRegion_gu();
-                String region = region_si + region_gu;
-                int like_board = memberALLDTO.getLike_board();
-                int like_comment = memberALLDTO.getLike_comment();
-                int foret_id = memberALLDTO.getForet_id();
+                while (i < list.size() && tempId == list.get(i).getId()) {
+                    String tag = list.get(i).getTag_name();
+                    String region = list.get(i).getRegion_si() + " " + list.get(i).getRegion_gu();
+                    String photo = list.get(i).getFilename();
+                    int like_board = list.get(i).getLike_board();
+                    int like_comment = list.get(i).getLike_comment();
+                    int foret_id = list.get(i).getForet_id();
 
-                if (!stringlist1.contains(tag_name)) {
-                    stringlist1.add(tag_name);
-                    tagArray.put(tag_name);
+                    if (tag != null) {
+                        tagTree.add(tag);
+                    }
+                    if (region.equals(" ")) {
+                        regionTree.add(region);
+                    }
+                    if (photo != null) {
+                        photoTree.add(photo);
+                    }
+                    if (like_board != 0) {
+                        likeBoardTree.add(like_board);
+                    }
+                    if (like_comment != 0) {
+                        likeCommentTree.add(like_comment);
+                    }
+                    if (foret_id != 0) {
+                        foretTree.add(foret_id);
+                    }
+                    i++;
                 }
-                if (!stringlist2.contains(region)) {
-                    stringlist2.add(region);
-                    region_siArray.put(region_si);
-                    region_guArray.put(region_gu);
-                }
-                if (!intlist1.contains(like_board)) {
-                    intlist1.add(like_board);
-                    like_boardArray.put(like_board);
-                }
-                if (!intlist2.contains(like_comment)) {
-                    intlist2.add(like_comment);
-                    like_commentArray.put(like_comment);
-                }
-                if (!intlist3.contains(foret_id)) {
-                    intlist3.add(foret_id);
-                    foret_idArray.put(foret_id);
-                }
-            }
 
-            if (list.get(0).getFilename() == null) {
-                temp.put("photo", 0);
-            } else {
-                temp.put("photo", list.get(0).getFilename());
+                JSONArray tagArray = new JSONArray();
+                JSONArray regionSiArray = new JSONArray();
+                JSONArray regionGuArray = new JSONArray();
+                JSONArray photoArray = new JSONArray();
+                JSONArray likeBoardArray = new JSONArray();
+                JSONArray likeCommentArray = new JSONArray();
+                JSONArray foretArray = new JSONArray();
+
+                Iterator iter;
+                iter = tagTree.iterator();
+                while (iter.hasNext()) {
+                    tagArray.put(iter.next());
+                }
+                iter = regionTree.iterator();
+                while (iter.hasNext()) {
+                    String[] region = iter.next().toString().split(" ");
+                    regionSiArray.put(region[0]);
+                    regionGuArray.put(region[1]);
+                }
+                iter = photoTree.iterator();
+                while (iter.hasNext()) {
+                    photoArray.put(iter.next());
+                }
+                iter = likeBoardTree.iterator();
+                while (iter.hasNext()) {
+                    likeBoardArray.put(iter.next());
+                }
+                iter = likeCommentTree.iterator();
+                while (iter.hasNext()) {
+                    likeCommentArray.put(iter.next());
+                }
+                iter = foretTree.iterator();
+                while (iter.hasNext()) {
+                    foretArray.put(iter.next());
+                }
+
+                System.out.println("tag : " + tagArray);
+                System.out.println("regionSi : " + regionSiArray);
+                System.out.println("regionGu : " + regionGuArray);
+                System.out.println("photo : " + photoArray);
+                System.out.println("likeBoard : " + likeBoardArray);
+                System.out.println("likeComment : " + likeCommentArray);
+                System.out.println("foretId : " + foretArray);
+
+                putArray("tag", tagArray, member);
+                putArray("region_si", regionSiArray, member);
+                putArray("region_gu", regionGuArray, member);
+                putArray("photo", photoArray, member);
+                putArray("like_board", likeBoardArray, member);
+                putArray("like_comment", likeCommentArray, member);
+                putArray("foret_id", foretArray, member);
+                array.put(member);
+
+                tagTree.clear();
+                regionTree.clear();
+                photoTree.clear();
+                likeBoardTree.clear();
+                likeCommentTree.clear();
+                foretTree.clear();
             }
-            if (tagArray.isNull(0)) {
-                temp.put("tag", 0);
-            } else {
-                temp.put("tag", tagArray);
-            }
-            if (region_siArray.isNull(0)) {
-                temp.put("region_si", 0);
-                temp.put("region_gu", 0);
-            } else {
-                temp.put("region_si", region_siArray);
-                temp.put("region_gu", region_guArray);
-            }
-            if (like_boardArray.getInt(0) == 0) {
-                temp.put("like_board", 0);
-            } else {
-                temp.put("like_board", like_boardArray);
-            }
-            if (like_commentArray.getInt(0) == 0) {
-                temp.put("like_comment", 0);
-            } else {
-                temp.put("like_comment", like_commentArray);
-            }
-            if (foret_idArray.getInt(0) == 0) {
-                temp.put("foret_id", 0);
-            } else {
-                temp.put("foret_id", foret_idArray);
-            }
-            array.put(temp);
             json.put("member", array);
         }
         json.put("RT", RT);
@@ -184,4 +207,115 @@ public class ReadController {
         System.out.println("--- getTagRank 종료 ---\n");
         return helper.modelAndView(json, "tag");
     }
+
+    @RequestMapping(value = "/get/foretRank", method = RequestMethod.POST)
+    public ModelAndView getForetRank(HttpServletRequest request) throws Exception {
+        System.out.println("--- getForetRank 실행 ---");
+        request.setCharacterEncoding("UTF-8");
+        String RT = "FAIL";
+
+        List<Foret> list = readService.getForetRank();
+        JSONObject json = new JSONObject();
+
+        if (list != null) {
+            RT = "OK";
+            int tempId = 0;
+            TreeSet<String> tagTree = new TreeSet<>();
+            TreeSet<String> regionTree = new TreeSet<>();
+            TreeSet<String> photoTree = new TreeSet<>();
+            TreeSet<Integer> memberTree = new TreeSet<>();
+            JSONArray array = new JSONArray();
+
+            for (int i = 0; i < list.size();) {
+                JSONObject foret = new JSONObject();
+                tempId = list.get(i).getId();
+                foret.put("id", list.get(i).getId());
+                foret.put("leader_id", list.get(i).getLeader_id());
+                foret.put("name", list.get(i).getName());
+                foret.put("introduce", list.get(i).getIntroduce());
+                foret.put("max_member", list.get(i).getMax_member());
+                foret.put("reg_date", list.get(i).getReg_date());
+
+                while (i < list.size() && tempId == list.get(i).getId()) {
+                    String tag = list.get(i).getTag_name();
+                    String region = list.get(i).getRegion_si() + " " + list.get(i).getRegion_gu();
+                    String photo = list.get(i).getFilename();
+                    int member_id = list.get(i).getMember_id();
+
+                    if (tag != null) {
+                        tagTree.add(tag);
+                    }
+                    if (region.equals(" ")) {
+                        regionTree.add(region);
+                    }
+                    if (photo != null) {
+                        photoTree.add(photo);
+                    }
+                    if (member_id != 0) {
+                        memberTree.add(member_id);
+                    }
+                    i++;
+                }
+
+                JSONArray tagArray = new JSONArray();
+                JSONArray regionSiArray = new JSONArray();
+                JSONArray regionGuArray = new JSONArray();
+                JSONArray photoArray = new JSONArray();
+                JSONArray memberArray = new JSONArray();
+
+                Iterator iter;
+                iter = tagTree.iterator();
+                while (iter.hasNext()) {
+                    tagArray.put(iter.next());
+                }
+                iter = regionTree.iterator();
+                while (iter.hasNext()) {
+                    String[] region = iter.next().toString().split(" ");
+                    regionSiArray.put(region[0]);
+                    regionGuArray.put(region[1]);
+                }
+                iter = photoTree.iterator();
+                while (iter.hasNext()) {
+                    photoArray.put(iter.next());
+                }
+                iter = memberTree.iterator();
+                while (iter.hasNext()) {
+                    memberArray.put(iter.next());
+                }
+
+                System.out.println("tag : " + tagArray);
+                System.out.println("regionSi : " + regionSiArray);
+                System.out.println("regionGu : " + regionGuArray);
+                System.out.println("photo : " + photoArray);
+                System.out.println("member_id : " + memberArray);
+
+                putArray("tag", tagArray, foret);
+                putArray("region_si", regionSiArray, foret);
+                putArray("region_gu", regionGuArray, foret);
+                putArray("photo", photoArray, foret);
+                putArray("member_id", memberArray, foret);
+                array.put(foret);
+
+                tagTree.clear();
+                regionTree.clear();
+                photoTree.clear();
+                memberTree.clear();
+            }
+            json.put("foret", array);
+        }
+        json.put("RT", RT);
+
+        System.out.println("--- getForetRank 종료 ---\n");
+        return helper.modelAndView(json, "foret");
+    }
+
+    public JSONObject putArray(String name, JSONArray array, JSONObject json) {
+        if (array.isNull(0)) {
+            json.put(name, 0);
+        } else {
+            json.put(name, array);
+        }
+        return json;
+    }
+
 }

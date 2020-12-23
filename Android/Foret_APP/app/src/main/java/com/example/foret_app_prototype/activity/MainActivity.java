@@ -346,11 +346,13 @@ public class MainActivity extends AppCompatActivity
 
                     setNavigationView(memberDTO);
 
-                    if(memberDTO.getForet_id() == null){
-                        getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, searchFragment).commit();
-                    } else {
-                        getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, homeFragment).commit();
-                    }
+//                    if(memberDTO.getForet_id() == null){
+//                        getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, searchFragment).commit();
+//                    } else {
+//                        getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, homeFragment).commit();
+//                    }
+
+                    getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, searchFragment).commit();
 
 
                 }

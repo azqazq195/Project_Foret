@@ -10,4 +10,7 @@
     <select id="getTagRank" resultType="tag">
         SELECT * from V_tag_rank
     </select>
+    <select id="getForetRank" resultType="foret">
+        SELECT * from V_foret_rank
+    </select>
 </mapper>

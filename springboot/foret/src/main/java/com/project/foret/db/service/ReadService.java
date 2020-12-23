@@ -3,6 +3,7 @@ package com.project.foret.db.service;
 import java.util.List;
 
 import com.project.foret.db.mapper.ReadMapper;
+import com.project.foret.db.model.Foret;
 import com.project.foret.db.model.Member;
 import com.project.foret.db.model.Tag;
 
@@ -15,6 +16,7 @@ public class ReadService {
     ReadMapper readMapper;
 
     public List<Member> getMember(int member_id) throws Exception {
+        System.out.println("--- getMember");
         return readMapper.getMember(member_id);
     }
 
@@ -26,5 +28,9 @@ public class ReadService {
     public List<Tag> getTagRank() throws Exception {
         System.out.println("--- getTagRank");
         return readMapper.getTagRank();
+    }
+
+    public List<Foret> getForetRank() throws Exception {
+        return readMapper.getForetRank();
     }
 }

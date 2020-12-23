@@ -63,6 +63,7 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 public class SearchFragment extends Fragment implements View.OnClickListener,
         TextView.OnEditorActionListener, AdapterView.OnItemClickListener {
 
+    String TAG = "[SearchFragment]";
     Toolbar toolbar;
     MainActivity activity;
     LinearLayout layout_search;
@@ -120,7 +121,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.e("[test]","SearchFragment 의 onCreateView");
+        Log.e(TAG,"onCreateView");
         //searchFragment = this;
 
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
@@ -198,7 +199,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
 
     //내 태그 정보 불러오기
     private void myTagData() {
-        ProgressDialogHelper.getInstance().getProgressbar(context,"잠시만 기다려주세요.");
+        ProgressDialogHelper.getInstance().getProgressbar(context,"내 태그 불러오기");
         List<String> myTag = memberDTO.getTag();
         adapter2 = new RecyclerAdapter2(myTag, context,SearchFragment.this);
         recyclerView1.setAdapter(adapter2);
@@ -355,7 +356,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     //검색결과 서치 레이아웃에 출력된 것을 누르면 이동
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.e("[test]",searchAdapter.getItem(position).toString());
+        Log.e(TAG,searchAdapter.getItem(position).toString());
 
         ForetDTO foretDTO = searchAdapter.getItem(position);
         Intent intent = new Intent(context, ViewForetActivity.class);
@@ -384,7 +385,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
             String str = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(str);
-                if(json.getInt("total") > 0) {
+                if(json.getString("tagRT").equals("OK")) {
                     JSONArray tag = json.getJSONArray("tag");
                     for (int a=0; a<tag.length(); a++) {
                         JSONObject object = tag.getJSONObject(a);
@@ -461,7 +462,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                         Log.e("[TEST]", foretDTO.getForet_photo());*/
                         search_resultList.add(foretDTO);
                     }
-                    Log.e("[test]","memberDTO? " +memberDTO.toString());
+                    Log.e(TAG,"memberDTO => \n" +memberDTO.toString());
                     adapter3 = new RecyclerAdapter3(search_resultList, context, memberDTO);
 
 
