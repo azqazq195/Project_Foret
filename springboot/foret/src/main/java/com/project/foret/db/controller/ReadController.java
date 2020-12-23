@@ -311,7 +311,7 @@ public class ReadController {
 
     public JSONObject putArray(String name, JSONArray array, JSONObject json) {
         if (array.isNull(0)) {
-            json.put(name, 0);
+            json.put(name, new JSONArray());
         } else {
             json.put(name, array);
         }

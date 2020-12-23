@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity
                     memberDTO.setDeviceToken(temp.getString("deviceToken"));
 
                     if(!temp.getString("photo").equals("0")){
-                        memberDTO.setPhoto(temp.getString("photo"));
+                        memberDTO.setPhoto(temp.getJSONArray("photo").getString(0));
                     }
                     if(!temp.getString("tag").equals("0")){
                         List<String> tempList = new ArrayList<>();
