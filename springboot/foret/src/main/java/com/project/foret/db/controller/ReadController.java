@@ -125,14 +125,6 @@ public class ReadController {
                     foretArray.put(iter.next());
                 }
 
-                System.out.println("tag : " + tagArray);
-                System.out.println("regionSi : " + regionSiArray);
-                System.out.println("regionGu : " + regionGuArray);
-                System.out.println("photo : " + photoArray);
-                System.out.println("likeBoard : " + likeBoardArray);
-                System.out.println("likeComment : " + likeCommentArray);
-                System.out.println("foretId : " + foretArray);
-
                 putArray("tag", tagArray, member);
                 putArray("region_si", regionSiArray, member);
                 putArray("region_gu", regionGuArray, member);
@@ -282,12 +274,6 @@ public class ReadController {
                 while (iter.hasNext()) {
                     memberArray.put(iter.next());
                 }
-
-                System.out.println("tag : " + tagArray);
-                System.out.println("regionSi : " + regionSiArray);
-                System.out.println("regionGu : " + regionGuArray);
-                System.out.println("photo : " + photoArray);
-                System.out.println("member_id : " + memberArray);
 
                 putArray("tag", tagArray, foret);
                 putArray("region_si", regionSiArray, foret);
