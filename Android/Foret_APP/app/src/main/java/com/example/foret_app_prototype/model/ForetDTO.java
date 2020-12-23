@@ -77,11 +77,10 @@ public class ForetDTO implements Serializable {
 
     public String getForet_photo() {
         if(foret_photo!=null){
-            return"http://34.72.240.24:8085/foret/storage/"+foret_photo;
+            return "http://54.180.219.200:8085/storage/" + foret_photo;
         }else{
-            return     foret_photo;
+            return foret_photo;
         }
-
     }
 
     public void setForet_photo(String foret_photo) {
@@ -127,4 +126,19 @@ public class ForetDTO implements Serializable {
     public void setForet_region_gu(List<String> foret_region_gu) {
         this.foret_region_gu = foret_region_gu;
     }
+
+    @Override
+    public String toString() {
+        return  "id = " + foret_id +
+                "\nname = " + foret_name +
+                "\nintroduce = " + introduce +
+                "\nleader_id = " + foret_leader +
+                "\nmax_member = " + max_member +
+                "\nphoto = " + foret_photo +
+                "\nreg_date = " + reg_date +
+                "\ntag = " + foret_tag +
+                "\nregion_si = " + foret_region_si +
+                "\nregion_gu = " + foret_region_gu + "\n";
+    }
+
 }

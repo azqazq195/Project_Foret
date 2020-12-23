@@ -47,6 +47,7 @@ public class RecyclerAdapter3 extends RecyclerView.Adapter<RecyclerAdapter3.Adap
     @Override
     public void onBindViewHolder(@NonNull RecyclerAdapter3.Adapter3 holder, int position) {
         ForetDTO foret = list.get(position);
+        Log.e("[adpater]", foret.toString());
         String [] tag_name = foret.getForet_tag().toArray(new String[foret.getForet_tag().size()]);
         String [] si = foret.getForet_region_si().toArray(new String[foret.getForet_region_si().size()]);
         String [] gu = foret.getForet_region_gu().toArray(new String[foret.getForet_region_gu().size()]);

@@ -97,32 +97,33 @@ public class ReadController {
                 JSONArray likeCommentArray = new JSONArray();
                 JSONArray foretArray = new JSONArray();
 
-                Iterator iter;
-                iter = tagTree.iterator();
-                while (iter.hasNext()) {
-                    tagArray.put(iter.next());
+                Iterator<Integer> iterInt;
+                Iterator<String> iterStr;
+                iterStr = tagTree.iterator();
+                while (iterStr.hasNext()) {
+                    tagArray.put(iterStr.next());
                 }
-                iter = regionTree.iterator();
-                while (iter.hasNext()) {
-                    String[] region = iter.next().toString().split(" ");
+                iterStr = regionTree.iterator();
+                while (iterStr.hasNext()) {
+                    String[] region = iterStr.next().toString().split(" ");
                     regionSiArray.put(region[0]);
                     regionGuArray.put(region[1]);
                 }
-                iter = photoTree.iterator();
-                while (iter.hasNext()) {
-                    photoArray.put(iter.next());
+                iterStr = photoTree.iterator();
+                while (iterStr.hasNext()) {
+                    photoArray.put(iterStr.next());
                 }
-                iter = likeBoardTree.iterator();
-                while (iter.hasNext()) {
-                    likeBoardArray.put(iter.next());
+                iterInt = likeBoardTree.iterator();
+                while (iterInt.hasNext()) {
+                    likeBoardArray.put(iterInt.next());
                 }
-                iter = likeCommentTree.iterator();
-                while (iter.hasNext()) {
-                    likeCommentArray.put(iter.next());
+                iterInt = likeCommentTree.iterator();
+                while (iterInt.hasNext()) {
+                    likeCommentArray.put(iterInt.next());
                 }
-                iter = foretTree.iterator();
-                while (iter.hasNext()) {
-                    foretArray.put(iter.next());
+                iterInt = foretTree.iterator();
+                while (iterInt.hasNext()) {
+                    foretArray.put(iterInt.next());
                 }
 
                 putArray("tag", tagArray, member);
@@ -230,15 +231,15 @@ public class ReadController {
 
                 while (i < list.size() && tempId == list.get(i).getId()) {
                     String tag = list.get(i).getTag_name();
-                    String region = list.get(i).getRegion_si() + " " + list.get(i).getRegion_gu();
+                    String region = list.get(i).getRegion_si();
                     String photo = list.get(i).getFilename();
                     int member_id = list.get(i).getMember_id();
 
                     if (tag != null) {
                         tagTree.add(tag);
                     }
-                    if (region.equals(" ")) {
-                        regionTree.add(region);
+                    if (region != null) {
+                        regionTree.add(region + " " + list.get(i).getRegion_gu());
                     }
                     if (photo != null) {
                         photoTree.add(photo);
@@ -255,24 +256,25 @@ public class ReadController {
                 JSONArray photoArray = new JSONArray();
                 JSONArray memberArray = new JSONArray();
 
-                Iterator iter;
-                iter = tagTree.iterator();
-                while (iter.hasNext()) {
-                    tagArray.put(iter.next());
+                Iterator<Integer> iterInt;
+                Iterator<String> iterStr;
+                iterStr = tagTree.iterator();
+                while (iterStr.hasNext()) {
+                    tagArray.put(iterStr.next());
                 }
-                iter = regionTree.iterator();
-                while (iter.hasNext()) {
-                    String[] region = iter.next().toString().split(" ");
+                iterStr = regionTree.iterator();
+                while (iterStr.hasNext()) {
+                    String[] region = iterStr.next().toString().split(" ");
                     regionSiArray.put(region[0]);
                     regionGuArray.put(region[1]);
                 }
-                iter = photoTree.iterator();
-                while (iter.hasNext()) {
-                    photoArray.put(iter.next());
+                iterStr = photoTree.iterator();
+                while (iterStr.hasNext()) {
+                    photoArray.put(iterStr.next());
                 }
-                iter = memberTree.iterator();
-                while (iter.hasNext()) {
-                    memberArray.put(iter.next());
+                iterInt = memberTree.iterator();
+                while (iterInt.hasNext()) {
+                    memberArray.put(iterInt.next());
                 }
 
                 putArray("tag", tagArray, foret);

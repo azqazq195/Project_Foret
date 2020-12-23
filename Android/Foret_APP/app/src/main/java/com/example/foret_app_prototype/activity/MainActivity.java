@@ -142,15 +142,6 @@ public class MainActivity extends AppCompatActivity
             id = "" + sessionManager.getSession();
         }
 
-//        final int DEFAULT_TIME = 40 * 1000;
-//        client.setConnectTimeout(DEFAULT_TIME);
-//        client.setResponseTimeout(DEFAULT_TIME);
-//        client.setTimeout(DEFAULT_TIME);
-//        client.setResponseTimeout(DEFAULT_TIME);
-//        RequestParams params = new RequestParams();
-//        params.put("id", id);
-//        client.post(url, params, response);
-
         button_out.setOnClickListener(this);
         button_out2.setOnClickListener(this);
         button_drawcancel.setOnClickListener(this);
@@ -289,12 +280,12 @@ public class MainActivity extends AppCompatActivity
                     memberDTO.setNickname(temp.getString("nickname"));
                     memberDTO.setBirth(temp.getString("birth"));
                     memberDTO.setReg_date(temp.getString("reg_date"));
-                    memberDTO.setDeviceToken(temp.getString("deviceToken"));
+                    memberDTO.setDeviceToken(temp.getString("device_token"));
 
-                    if(!temp.getString("photo").equals("0")){
+                    if(!temp.getJSONArray("photo").isNull(0)){
                         memberDTO.setPhoto(temp.getJSONArray("photo").getString(0));
                     }
-                    if(!temp.getString("tag").equals("0")){
+                    if(!temp.getJSONArray("tag").isNull(0)){
                         List<String> tempList = new ArrayList<>();
                         JSONArray tempArray = temp.getJSONArray("tag");
                         for(int i = 0; i < tempArray.length(); i++){
@@ -302,8 +293,7 @@ public class MainActivity extends AppCompatActivity
                         }
                         memberDTO.setTag(tempList);
                     }
-
-                    if(!temp.getString("region_si").equals("0")){
+                    if(!temp.getJSONArray("region_si").isNull(0)){
                         List<String> tempList = new ArrayList<>();
                         JSONArray tempArray = temp.getJSONArray("region_si");
                         for(int i = 0; i < tempArray.length(); i++){
@@ -311,7 +301,7 @@ public class MainActivity extends AppCompatActivity
                         }
                         memberDTO.setRegion_si(tempList);
                     }
-                    if(!temp.getString("region_gu").equals("0")){
+                    if(!temp.getJSONArray("region_gu").isNull(0)){
                         List<String> tempList = new ArrayList<>();
                         JSONArray tempArray = temp.getJSONArray("region_gu");
                         for(int i = 0; i < tempArray.length(); i++){
@@ -319,7 +309,7 @@ public class MainActivity extends AppCompatActivity
                         }
                         memberDTO.setRegion_gu(tempList);
                     }
-                    if(!temp.getString("like_board").equals("0")){
+                    if(!temp.getJSONArray("like_board").isNull(0)){
                         List<String> tempList = new ArrayList<>();
                         JSONArray tempArray = temp.getJSONArray("like_board");
                         for(int i = 0; i < tempArray.length(); i++){
@@ -327,7 +317,7 @@ public class MainActivity extends AppCompatActivity
                         }
                         memberDTO.setLike_board(tempList);
                     }
-                    if(!temp.getString("like_comment").equals("0")){
+                    if(!temp.getJSONArray("like_comment").isNull(0)){
                         List<String> tempList = new ArrayList<>();
                         JSONArray tempArray = temp.getJSONArray("like_comment");
                         for(int i = 0; i < tempArray.length(); i++){
@@ -335,7 +325,7 @@ public class MainActivity extends AppCompatActivity
                         }
                         memberDTO.setLike_comment(tempList);
                     }
-                    if(!temp.getString("foret_id").equals("0")){
+                    if(!temp.getJSONArray("foret_id").isNull(0)){
                         List<String> tempList = new ArrayList<>();
                         JSONArray tempArray = temp.getJSONArray("foret_id");
                         for(int i = 0; i < tempArray.length(); i++){
@@ -343,15 +333,7 @@ public class MainActivity extends AppCompatActivity
                         }
                         memberDTO.setForet_id(tempList);
                     }
-
                     setNavigationView(memberDTO);
-
-//                    if(memberDTO.getForet_id() == null){
-//                        getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, searchFragment).commit();
-//                    } else {
-//                        getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, homeFragment).commit();
-//                    }
-
                     getSupportFragmentManager().beginTransaction().add(R.id.containerLayout, searchFragment).commit();
 
 
@@ -362,32 +344,12 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
 
-            // Bundle bundle = new Bundle();
-            // bundle.putSerializable("membetDTO",memberDTO);
-            // searchFragment = new SearchFragment(memberDTO);
-            // Log.e("[test]","포토 루트?"+memberDTO.getPhoto());
 
             LoginActivity loginActivity = (LoginActivity) LoginActivity.loginActivity;
             // 세션에 담아서 로그인 페이지로
             Log.e("[MAIN]","MemberDTO => \n" + memberDTO.toString());
             SessionManager sessionManager = new SessionManager(loginActivity);
             sessionManager.saveSession(memberDTO);
-
-            // 데이터 셋팅 HERE ----------------
-            // Toast.makeText(MainActivity.this, memberDTO.toString(),
-            // Toast.LENGTH_SHORT).show();
-
-//            fillTextView(R.id.drawer_text1, memberDTO.getNickname());
-//            fillTextView(R.id.drawer_text2, memberDTO.getEmail());
-//            fillTextView(R.id.drawer_text3, memberDTO.getId() + "");
-//            fillTextView(R.id.drawer_text4, memberDTO.getReg_date());
-//            try {
-//                // 사진이 있을 떄
-//                intoImage(context, memberDTO.getPhoto(), R.id.drawer_profile);
-//            } catch (Exception e) {
-//                // 사진이 없을떄
-//                intoImage(context, "", R.id.drawer_profile);
-//            }
 
             // 파이어 베이스 로그인 상태 만들기
             updateuserActiveStatusOn();

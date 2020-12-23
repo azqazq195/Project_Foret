@@ -31,7 +31,6 @@ public class SearchAdapter extends ArrayAdapter<ForetDTO> {
         activity = (Activity)context;
         this.resource = resource;
         this.memberDTO = memberDTO;
-        Log.e("[test]","뭐가 널?"+context.toString()+"/"+resource+"/"+objects.toString()+"/"+memberDTO.toString());
     }
 
     @NonNull

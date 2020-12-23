@@ -214,7 +214,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
     private void recommandForetData() {
         RequestParams params = new RequestParams();
         params.put("rank", 15);
-        client.post("http://34.72.240.24:8085/foret/search/foret_rank.do", params, recommandListResponse);
+        client.post("http://54.180.219.200:8085/get/foretRank", params, recommandListResponse);
     }
 
     private void autoCompleteData() {
@@ -423,46 +423,45 @@ public class SearchFragment extends Fragment implements View.OnClickListener,
                     for (int a=0; a<foret.length(); a++) {
                         JSONObject object = foret.getJSONObject(a);
                         foretDTO = new ForetDTO();
-                        foretDTO.setForet_name(object.getString("name"));
-                        List<String> tag = new ArrayList<>();
-                        JSONArray tag_list = object.getJSONArray("tag");
-                        for(int b=0; b<tag_list.length(); b++) {
-                            tag.add(tag_list.getString(b));
-                        }
-                        foretDTO.setForet_tag(tag);
                         foretDTO.setForet_id(object.getInt("id"));
+                        foretDTO.setForet_name(object.getString("name"));
                         foretDTO.setIntroduce(object.getString("introduce"));
                         foretDTO.setReg_date(object.getString("reg_date"));
 
-                        if (!object.isNull("photo")){
-                            foretDTO.setForet_photo(object.getString("photo"));
+
+                        if(!object.getJSONArray("photo").isNull(0)){
+                            foretDTO.setForet_photo(object.getJSONArray("photo").getString(0));
+                        }
+                        if(!object.getJSONArray("tag").isNull(0)){
+                            List<String> tempList = new ArrayList<>();
+                            JSONArray tempArray = object.getJSONArray("tag");
+                            for(int i = 0; i < tempArray.length(); i++){
+                                tempList.add(tempArray.getString(i));
+                            }
+                            foretDTO.setForet_tag(tempList);
+                        }
+                        if(!object.getJSONArray("region_si").isNull(0)){
+                            List<String> tempList = new ArrayList<>();
+                            JSONArray tempArray = object.getJSONArray("region_si");
+                            for(int i = 0; i < tempArray.length(); i++){
+                                tempList.add(tempArray.getString(i));
+                            }
+                            foretDTO.setForet_region_si(tempList);
+                        }
+                        if(!object.getJSONArray("region_gu").isNull(0)){
+                            List<String> tempList = new ArrayList<>();
+                            JSONArray tempArray = object.getJSONArray("region_gu");
+                            for(int i = 0; i < tempArray.length(); i++){
+                                tempList.add(tempArray.getString(i));
+                            }
+                            foretDTO.setForet_region_gu(tempList);
                         }
 
-                        if(object.getJSONArray("region_si").length() != 0) {
-                            List<String> si = new ArrayList<>();
-                            JSONArray si_list = object.getJSONArray("region_si");
-                            for (int b=0; b<si_list.length(); b++) {
-                                si.add(si_list.getString(b));
-                            }
-                            foretDTO.setForet_region_si(si);
-                        }
-                        if(object.getJSONArray("region_gu").length() != 0) {
-                            List<String> gu = new ArrayList<>();
-                            JSONArray gu_list = object.getJSONArray("region_gu");
-                            for (int b=0; b<gu_list.length(); b++) {
-                                gu.add(gu_list.getString(b));
-                            }
-                            foretDTO.setForet_region_gu(gu);
-                        }
-                        /*if(object.getString("photo")!= null) {
-                            foretDTO.setForet_photo("http://34.72.240.24:8085/foret/storage/" + object.getString("photo"));
-                        } else {
-                            foretDTO.setForet_photo("");
-                        }
-                        Log.e("[TEST]", foretDTO.getForet_photo());*/
                         search_resultList.add(foretDTO);
                     }
-                    Log.e(TAG,"memberDTO => \n" +memberDTO.toString());
+                    for(ForetDTO foretDTO : search_resultList){
+                        Log.e(TAG,"foretDTO => \n" +foretDTO.toString() +"\n");
+                    }
                     adapter3 = new RecyclerAdapter3(search_resultList, context, memberDTO);
 
 
