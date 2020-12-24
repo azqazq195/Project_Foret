@@ -48,9 +48,22 @@ public class RecyclerAdapter3 extends RecyclerView.Adapter<RecyclerAdapter3.Adap
     public void onBindViewHolder(@NonNull RecyclerAdapter3.Adapter3 holder, int position) {
         ForetDTO foret = list.get(position);
         Log.e("[adpater]", foret.toString());
-        String [] tag_name = foret.getForet_tag().toArray(new String[foret.getForet_tag().size()]);
-        String [] si = foret.getForet_region_si().toArray(new String[foret.getForet_region_si().size()]);
-        String [] gu = foret.getForet_region_gu().toArray(new String[foret.getForet_region_gu().size()]);
+        String [] tag_name, si, gu;
+        if(foret.getForet_tag() != null){
+            tag_name = foret.getForet_tag().toArray(new String[foret.getForet_tag().size()]);
+        } else {
+            tag_name = null;
+        }
+        if(foret.getForet_region_si() != null){
+            si = foret.getForet_region_si().toArray(new String[foret.getForet_region_si().size()]);
+        } else {
+            si = null;
+        }
+        if(foret.getForet_region_si() != null){
+            gu = foret.getForet_region_gu().toArray(new String[foret.getForet_region_gu().size()]);
+        } else {
+            gu = null;
+        }
 
        // Log.e("[test]","리사이클 어뎁터 3에서 포토 루트?"+foret.getForet_photo());
        //Log.e("[test]","리사이클 어뎁터 3에서 포레명??"+foret.getForet_name());

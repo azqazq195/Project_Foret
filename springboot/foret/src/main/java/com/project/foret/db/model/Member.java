@@ -21,6 +21,16 @@ public class Member {
     private int like_comment;
     private int foret_id;
 
+    @Override
+    public String toString() {
+        return "{" + " id='" + getId() + "\n" + ", name='" + getName() + "\n" + ", email='" + getEmail() + "\n"
+                + ", password='" + getPassword() + "\n" + ", nickname='" + getNickname() + "\n" + ", birth='"
+                + getBirth() + "\n" + ", reg_date='" + getReg_date() + "\n" + ", device_token='" + getDevice_token()
+                + "\n" + ", filename='" + getFilename() + "\n" + ", tag_name='" + getTag_name() + "\n" + ", region_si='"
+                + getRegion_si() + "\n" + ", region_gu='" + getRegion_gu() + "\n" + ", like_board='" + getLike_board()
+                + "\n" + ", like_comment='" + getLike_comment() + "\n" + ", foret_id='" + getForet_id() + "'" + "}\n\n";
+    }
+
     public Member() {
 
     }

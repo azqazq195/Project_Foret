@@ -1,13 +1,39 @@
 # member select all
 SELECT *
-FROM V_member_all;
+FROM V_member_all WHERE id = 1;
+
+SELECT *
+FROM member WHERE id = 1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 SELECT *
 FROM V_foret_all;
+
+
+
+
+
+
 SELECT *
 FROM V_foret_rank;
 SELECT *
 FROM V_tag_rank;
 
+SELECT * FROM
+foret_photo;
 SELECT *
 FROM board;
 SELECT *

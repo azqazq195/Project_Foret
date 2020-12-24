@@ -35,6 +35,9 @@ public class ReadController {
 
         int member_id = helper.isNum(request.getParameter("id"));
         List<Member> list = readService.getMember(member_id);
+
+        System.out.println(list.toString());
+
         JSONObject json = new JSONObject();
 
         if (list != null) {

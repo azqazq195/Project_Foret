@@ -31,7 +31,6 @@ public class MemberController {
     @Autowired
     Helper helper;
 
-    // kind
     private static final int MEMBER = 1;
 
     @RequestMapping(value = "/member/emailCheck", method = RequestMethod.POST)

@@ -19,7 +19,7 @@
         WHERE id = #{id}
     </update>
 
-     <delete id="boardDelete" parameterType="board">
+    <delete id="boardDelete" parameterType="board">
         DELETE FROM board WHERE id = #{id}
     </delete>
 
