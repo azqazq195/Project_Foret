@@ -1,4 +1,4 @@
-package com.foret.foret;
+package com.project.foret;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
