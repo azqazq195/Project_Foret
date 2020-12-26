@@ -1,0 +1,29 @@
+###
+
+POST http://localhost:8085/getMember
+
+
+###
+
+POST http://localhost:8085/member/insert
+
+
+{
+    "name":"test"
+    "email":"test@email.com2345"
+    "password":"qwe123"
+    "nickname":"test"
+    "birth":"1994-10-24"
+    "device_token":"test_token"
+}
+
+
+###
+
+POST http://localhost:8085/findByFirstName
+?firstname=Jack
+
+Content-Type: application/json
+
+
+###

@@ -5,7 +5,8 @@ FROM V_member_all WHERE id = 1;
 SELECT *
 FROM member WHERE id = 1;
 
-
+INSERT INTO member(NAME, email, PASSWORD, nickname, birth, device_token)
+VALUES ('11', '2222@email.com', '11', '11', '1944-12-22', '11');
 
 
 
