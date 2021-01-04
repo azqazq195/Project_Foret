@@ -1,5 +1,6 @@
 package com.project.foret.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -25,7 +26,20 @@ public class Region {
     @Column(name = "region_gu")
     private String regionGu;
 
+    // 멤버에 있는 regions변수에 선언된것을 그대로 사용하겠다.
     @ManyToMany(mappedBy = "regions")
     @JsonIgnore
     private List<Member> members;
+
+    public void addMember(Member member) {
+        if (members == null) {
+            members = new ArrayList<>();
+        }
+        members.add(member);
+    }
+
+    public void removeMember(Member member) {
+        members.remove(member);
+    }
+
 }

@@ -1,3 +1,14 @@
+INSERT INTO region(region_si, region_gu)
+VALUES 
+('서울', '강남구');
+# Tag
+INSERT INTO tag(tag_name)
+VALUES 
+('AWS'),
+('spring');
+
+
+
 # Tag
 INSERT INTO tag(tag_name)
 VALUES 

@@ -1,5 +1,6 @@
 package com.project.foret.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -23,7 +24,20 @@ public class Tag {
     @Column(name = "tag_name")
     private String tagName;
 
+    // 멤버
     @ManyToMany(mappedBy = "tags")
     @JsonIgnore
     private List<Member> members;
+
+    public void addMember(Member member) {
+        if (members == null) {
+            members = new ArrayList<>();
+        }
+        members.add(member);
+    }
+
+    public void removeMember(Member member) {
+        members.remove(member);
+    }
+
 }
