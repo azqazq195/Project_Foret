@@ -64,5 +64,6 @@
 - DataBase 테이블 정의
 - Spring 데이터 처리 구축
 
-## Project Note
+## Project PPT, NOT
+[Foret APP PPT.pdf](https://github.com/azqazq195/Project_Foret/files/6768818/Foret.APP.PPT.pdf)
 [Foret_Notion](https://www.notion.so/Foret-App-9adac55de18a45969da109b107e096eb)
